@@ -37,5 +37,5 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           script: |
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pointodo-server
-            docker stop pointodo-server
+            docker rm -f pointodo-server
             docker run -d --rm --name pointodo-server -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/pointodo-server
