@@ -27,7 +27,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pointodo-client
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pointodo-server
           build-args: ORIGIN=${{ secrets.ORIGIN }}
       - name: Pull and restart Docker Container
         uses: appleboy/ssh-action@master
