@@ -13,6 +13,7 @@ import { PasswordHasher } from '@infrastructure/user/passwordHasher';
   providers: [
     UserAppService,
     UserService,
+    PrismaService,
     {
       provide: 'IUserRepository',
       useClass: UserRepository,
@@ -21,7 +22,6 @@ import { PasswordHasher } from '@infrastructure/user/passwordHasher';
       provide: 'IPasswordHasher',
       useClass: PasswordHasher,
     },
-    PrismaService,
   ],
   imports: [
     JwtModule.registerAsync({

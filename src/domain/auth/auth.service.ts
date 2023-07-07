@@ -3,6 +3,7 @@ import { IUserRepository } from '@domain/user/interfaces/iuser.repository';
 import { UserEntity } from '@domain/user/entities/user.entity';
 import { IPasswordHasher } from '@domain/user/interfaces/ipasswordHasher';
 import { Inject, UnauthorizedException } from '@nestjs/common';
+import { ITokenService } from './interfaces/itoken.service';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +12,8 @@ export class AuthService {
     private readonly userRepository: IUserRepository,
     @Inject('IPasswordHasher')
     private readonly passwordHasher: IPasswordHasher,
+    @Inject('ITokenService')
+    private readonly tokenService: ITokenService,
   ) {}
 
   async validateUser(
@@ -33,5 +36,9 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  generateAccessToken(user: UserEntity): string {
+    return this.tokenService.generateAccessToken(user);
   }
 }
