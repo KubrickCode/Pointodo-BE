@@ -10,6 +10,7 @@ import { PrismaService } from '@infrastructure/services/prisma.service';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from '@infrastructure/auth/passport/strategies/local.strategy';
 import { TokenService } from '@infrastructure/auth/passport/token.service';
+import { JwtStrategy } from '@infrastructure/auth/passport/strategies/jwt.strategy';
 
 @Module({
   controllers: [AuthController],
@@ -18,6 +19,7 @@ import { TokenService } from '@infrastructure/auth/passport/token.service';
     AuthService,
     PrismaService,
     LocalStrategy,
+    JwtStrategy,
     {
       provide: 'IUserRepository',
       useClass: UserRepository,
