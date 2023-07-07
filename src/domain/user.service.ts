@@ -1,6 +1,7 @@
 import { IUserRepository } from './user/interfaces/iuser.repository';
 import { UserEntity } from './user/entities/user.entity';
 import { IPasswordHasher } from './user/interfaces/ipasswordHasher.repository';
+import { ConflictException } from '@nestjs/common';
 
 export class UserService {
   constructor(
@@ -9,6 +10,12 @@ export class UserService {
   ) {}
 
   async createUser(email: string, password: string): Promise<UserEntity> {
+    const existingUser = await this.userRepository.findByEmail(email);
+
+    if (existingUser) {
+      throw new ConflictException('이미 존재하는 계정입니다.');
+    }
+
     const hashedPassword = await this.passwordHasher.hashPassword(password);
 
     const user = new UserEntity();
