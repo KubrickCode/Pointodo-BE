@@ -1,18 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserController } from './user.controller';
+import { INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
+import { UserModule } from './user.module';
 
-describe('UserController', () => {
-  let controller: UserController;
+describe('UserController (e2e)', () => {
+  let app: INestApplication;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [UserController],
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [UserModule],
     }).compile();
 
-    controller = module.get<UserController>(UserController);
+    app = moduleFixture.createNestApplication();
+    await app.init();
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  it('/user (POST)', () => {
+    return request(app.getHttpServer())
+      .post('/user')
+      .send({
+        email: 'test@test.com',
+        password: 'test1234!@',
+      })
+      .expect(201);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });
