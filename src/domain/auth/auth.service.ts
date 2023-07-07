@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IUserRepository } from '@domain/user/interfaces/iuser.repository';
 import { UserEntity } from '@domain/user/entities/user.entity';
-import { IPasswordHasher } from '@domain/user/interfaces/ipasswordHasher.repository';
+import { IPasswordHasher } from '@domain/user/interfaces/ipasswordHasher';
 import { Inject, UnauthorizedException } from '@nestjs/common';
 
 @Injectable()

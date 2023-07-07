@@ -11,7 +11,7 @@ export class AuthController {
   @Post('login')
   async login(@Request() req): Promise<{ accessToken: string }> {
     const user = req.user as UserEntity;
-    const accessToken = await this.authAppService.generateAccessToken(user);
+    const accessToken = this.authAppService.generateAccessToken(user);
     return { accessToken };
   }
 }

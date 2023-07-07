@@ -1,5 +1,5 @@
 import { UserEntity } from '@domain/user/entities/user.entity';
-import { ITokenService } from '@domain/user/interfaces/itoken.service';
+import { ITokenService } from '@domain/auth/interfaces/itoken.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 

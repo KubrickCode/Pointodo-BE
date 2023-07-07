@@ -1,6 +1,6 @@
 import { IUserRepository } from './user/interfaces/iuser.repository';
 import { UserEntity } from './user/entities/user.entity';
-import { IPasswordHasher } from './user/interfaces/ipasswordHasher.repository';
+import { IPasswordHasher } from './user/interfaces/ipasswordHasher';
 import { ConflictException } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
 

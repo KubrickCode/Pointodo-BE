@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from '@domain/user/entities/user.entity';
-import { ITokenService } from '@domain/user/interfaces/itoken.service';
+import { ITokenService } from '@domain/auth/interfaces/itoken.service';
 
 @Injectable()
 export class AuthAppService {

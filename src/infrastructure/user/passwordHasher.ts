@@ -1,4 +1,4 @@
-import { IPasswordHasher } from '@domain/user/interfaces/ipasswordHasher.repository';
+import { IPasswordHasher } from '@domain/user/interfaces/ipasswordHasher';
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 
