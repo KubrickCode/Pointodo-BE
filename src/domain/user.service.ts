@@ -2,10 +2,13 @@ import { IUserRepository } from './user/interfaces/iuser.repository';
 import { UserEntity } from './user/entities/user.entity';
 import { IPasswordHasher } from './user/interfaces/ipasswordHasher.repository';
 import { ConflictException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 
 export class UserService {
   constructor(
+    @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
+    @Inject('IPasswordHasher')
     private readonly passwordHasher: IPasswordHasher,
   ) {}
 
