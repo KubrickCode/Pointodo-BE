@@ -13,7 +13,11 @@ export class AuthController {
   async login(@Request() req: any, @Res() res: Response): Promise<void> {
     const user = req.user as UserEntity;
     const accessToken = this.authAppService.generateAccessToken(user);
-    res.cookie('accessToken', accessToken, { httpOnly: true });
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
     res.send();
   }
 }
