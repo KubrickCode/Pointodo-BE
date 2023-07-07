@@ -20,7 +20,7 @@ describe('UserController (e2e)', () => {
       .post('/user')
       .send({
         email: 'test@test.com',
-        password: 'test1234!@',
+        password: 'test1234',
       })
       .expect(201);
   });
