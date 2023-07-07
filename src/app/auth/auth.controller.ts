@@ -1,4 +1,4 @@
-import { Controller, Post, Req, UseGuards, Res } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards, Res, Get } from '@nestjs/common';
 import { AuthAppService } from './auth.app.service';
 import { LocalAuthGuard } from '@infrastructure/auth/passport/guards/local.guard';
 import { UserEntity } from '@domain/user/entities/user.entity';
@@ -31,5 +31,11 @@ export class AuthController {
     return res.send({
       message: 'success',
     });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/is-login')
+  isLogin(): any {
+    return { message: '로그인 상태입니다' };
   }
 }
