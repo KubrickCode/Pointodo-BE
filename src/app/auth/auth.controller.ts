@@ -31,9 +31,10 @@ export class AuthController {
     return res.send({ message: 'success' });
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('/is-login')
-  isLogin(): any {
+  @Get('/refresh')
+  async refresh(@Req() req: any): Promise<any> {
+    const refreshToken = req.cookies['refreshToken'];
+    console.log(refreshToken);
     return { message: '로그인 상태입니다' };
   }
 }

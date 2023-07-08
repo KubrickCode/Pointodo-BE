@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { jwtConfig } from 'config/jwt.config';
+import { DecodedToken } from '@domain/auth/interfaces/decodedToken';
 
 @Injectable()
 export class TokenService implements ITokenService {
@@ -28,5 +29,9 @@ export class TokenService implements ITokenService {
     ).refreshTokenExpiration;
     const payload = { id, email };
     return this.jwtService.sign(payload, { expiresIn: refreshTokenExpiration });
+  }
+
+  decodeToken(token: string): DecodedToken {
+    return this.jwtService.decode(token) as DecodedToken;
   }
 }
