@@ -10,16 +10,20 @@ export class AuthAppService {
     private readonly redisService: RedisService,
   ) {}
 
-  generateAccessToken(user: UserEntity): string {
-    return this.authService.generateAccessToken(user);
-  }
-
   async login(
     user: UserEntity,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const accessToken = this.authService.generateAccessToken(user);
     const refreshToken = this.authService.generateRefreshToken(user);
-    await this.redisService.set(refreshToken, user.id, 60 * 60 * 24 * 7);
+    await this.redisService.set(
+      `refresh_token:${user.id}`,
+      refreshToken,
+      60 * 60 * 24 * 7,
+    );
     return { accessToken, refreshToken };
+  }
+
+  async logout(user: UserEntity) {
+    await this.redisService.delete(`refresh_token:${user.id}`);
   }
 }

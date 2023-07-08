@@ -24,11 +24,9 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('/logout')
-  logout(@Req() req: Request, @Res() res: Response): any {
-    // const refreshToken = req.cookies.refreshToken;
-    // if (refreshToken) {
-    //   await this.redisService.delete(refreshToken); // Remove the refresh token from Redis
-    // }
+  async logout(@Req() req: any, @Res() res: Response): Promise<any> {
+    const user = req.user as UserEntity;
+    await this.authAppService.logout(user);
     res.clearCookie('refreshToken');
     return res.send({ message: 'success' });
   }
