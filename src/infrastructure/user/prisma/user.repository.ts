@@ -17,7 +17,7 @@ export class UserRepository implements IUserRepository {
     return result ? result[0] : null;
   }
 
-  async createUser(user: UserEntity): Promise<User> {
+  async createUser(user: UserEntity): Promise<UserEntity> {
     user.provider = Provider[user.provider] || Provider['Local'];
     user.role = Role[user.role] || Role['User'];
     const uuid = uuidv4();
@@ -28,7 +28,6 @@ export class UserRepository implements IUserRepository {
       RETURNING *
     `;
     const values = [uuid, user.email, user.password, user.provider, user.role];
-    const result = await this.prisma.$queryRawUnsafe<User>(query, ...values);
-    return result[0];
+    return await this.prisma.$queryRawUnsafe<User>(query, ...values);
   }
 }

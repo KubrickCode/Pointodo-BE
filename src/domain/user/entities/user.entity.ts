@@ -9,7 +9,7 @@ export class UserEntity implements User {
   email: string;
 
   @ApiProperty()
-  password: string;
+  password: string | null;
 
   @ApiProperty()
   provider: Provider;

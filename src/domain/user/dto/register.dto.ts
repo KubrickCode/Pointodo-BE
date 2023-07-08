@@ -1,6 +1,6 @@
 import { IsEmail, IsString, Matches } from 'class-validator';
 
-class ReqRegisterDto {
+class DomainRegisterDto {
   @IsEmail()
   readonly email: string;
 
@@ -9,9 +9,4 @@ class ReqRegisterDto {
   readonly password: string;
 }
 
-class ResRegisterDto {
-  @IsString()
-  readonly message: string;
-}
-
-export { ReqRegisterDto, ResRegisterDto };
+export { DomainRegisterDto };

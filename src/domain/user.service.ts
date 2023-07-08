@@ -3,6 +3,7 @@ import { UserEntity } from './user/entities/user.entity';
 import { IPasswordHasher } from './user/interfaces/ipasswordHasher';
 import { ConflictException } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
+import { DomainRegisterDto } from './user/dto/register.dto';
 
 export class UserService {
   constructor(
@@ -12,7 +13,8 @@ export class UserService {
     private readonly passwordHasher: IPasswordHasher,
   ) {}
 
-  async createUser(email: string, password: string): Promise<UserEntity> {
+  async createUser(newUser: DomainRegisterDto): Promise<UserEntity> {
+    const { email, password } = newUser;
     const existingUser = await this.userRepository.findByEmail(email);
 
     if (existingUser) {
@@ -25,10 +27,10 @@ export class UserService {
     user.email = email;
     user.password = hashedPassword;
 
-    return this.userRepository.createUser(user);
+    return await this.userRepository.createUser(user);
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
-    return this.userRepository.findByEmail(email);
+    return await this.userRepository.findByEmail(email);
   }
 }
