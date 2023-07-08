@@ -12,6 +12,9 @@ import { LocalStrategy } from '@infrastructure/auth/passport/strategies/local.st
 import { TokenService } from '@infrastructure/auth/passport/token.service';
 import { JwtStrategy } from '@infrastructure/auth/passport/strategies/jwt.strategy';
 import { jwtConfig } from 'config/jwt.config';
+import { RedisModule } from '@infrastructure/redis/redis.module';
+import { RedisService } from '@domain/redis/redis.service';
+import { RedisService as InfraRedisService } from '@infrastructure/redis/redis.service';
 
 @Module({
   controllers: [AuthController],
@@ -21,6 +24,8 @@ import { jwtConfig } from 'config/jwt.config';
     PrismaService,
     LocalStrategy,
     JwtStrategy,
+    RedisService,
+    InfraRedisService,
     {
       provide: 'IUserRepository',
       useClass: UserRepository,
@@ -33,9 +38,14 @@ import { jwtConfig } from 'config/jwt.config';
       provide: 'ITokenService',
       useClass: TokenService,
     },
+    {
+      provide: 'IRedisService',
+      useClass: InfraRedisService,
+    },
   ],
   imports: [
     PassportModule,
+    RedisModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: jwtConfig(configService).accessTokenSecret,

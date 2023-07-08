@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from '@domain/user/entities/user.entity';
 import { AuthService } from '@domain/auth/auth.service';
-import { IRedisService } from '@domain/redis/iredis.service';
+import { RedisService } from '@domain/redis/redis.service';
 
 @Injectable()
 export class AuthAppService {
   constructor(
     private readonly authService: AuthService,
-    private readonly redisService: IRedisService,
+    private readonly redisService: RedisService,
   ) {}
 
   generateAccessToken(user: UserEntity): string {
