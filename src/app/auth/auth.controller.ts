@@ -32,9 +32,9 @@ export class AuthController {
   }
 
   @Get('/refresh')
-  async refresh(@Req() req: any): Promise<any> {
+  async refresh(@Req() req: any, @Res() res: Response): Promise<any> {
     const refreshToken = req.cookies['refreshToken'];
-    console.log(refreshToken);
-    return { message: '로그인 상태입니다' };
+    const accessToken = await this.authAppService.refresh(refreshToken);
+    res.json({ accessToken });
   }
 }
