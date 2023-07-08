@@ -4,6 +4,7 @@ import { UserEntity } from '@domain/user/entities/user.entity';
 import { IPasswordHasher } from '@domain/user/interfaces/ipasswordHasher';
 import { Inject, UnauthorizedException } from '@nestjs/common';
 import { ITokenService } from './interfaces/itoken.service';
+import { IRedisService } from '@domain/redis/interfaces/iredis.service';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,8 @@ export class AuthService {
     private readonly passwordHasher: IPasswordHasher,
     @Inject('ITokenService')
     private readonly tokenService: ITokenService,
+    @Inject('IRedisService')
+    private readonly redisService: IRedisService,
   ) {}
 
   async validateUser(
@@ -36,6 +39,23 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  async login(
+    user: UserEntity,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const accessToken = this.tokenService.generateAccessToken(user);
+    const refreshToken = this.tokenService.generateRefreshToken(user);
+    await this.redisService.set(
+      `refresh_token:${user.id}`,
+      refreshToken,
+      60 * 60 * 24 * 7,
+    );
+    return { accessToken, refreshToken };
+  }
+
+  async logout(user: UserEntity): Promise<void> {
+    await this.redisService.delete(`refresh_token:${user.id}`);
   }
 
   generateAccessToken(user: UserEntity): string {

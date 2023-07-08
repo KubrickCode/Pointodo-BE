@@ -13,8 +13,7 @@ import { TokenService } from '@infrastructure/auth/passport/token.service';
 import { JwtStrategy } from '@infrastructure/auth/passport/strategies/jwt.strategy';
 import { jwtConfig } from 'config/jwt.config';
 import { RedisModule } from '@infrastructure/redis/redis.module';
-import { RedisService } from '@domain/redis/redis.service';
-import { RedisService as InfraRedisService } from '@infrastructure/redis/redis.service';
+import { RedisService } from '@infrastructure/redis/redis.service';
 
 @Module({
   controllers: [AuthController],
@@ -25,7 +24,6 @@ import { RedisService as InfraRedisService } from '@infrastructure/redis/redis.s
     LocalStrategy,
     JwtStrategy,
     RedisService,
-    InfraRedisService,
     {
       provide: 'IUserRepository',
       useClass: UserRepository,
@@ -40,7 +38,7 @@ import { RedisService as InfraRedisService } from '@infrastructure/redis/redis.s
     },
     {
       provide: 'IRedisService',
-      useClass: InfraRedisService,
+      useClass: RedisService,
     },
   ],
   imports: [
