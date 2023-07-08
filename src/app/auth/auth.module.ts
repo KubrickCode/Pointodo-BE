@@ -16,6 +16,7 @@ import { RedisModule } from '@infrastructure/redis/redis.module';
 import { RedisService } from '@infrastructure/redis/redis.service';
 import { ValidationService } from '@domain/auth/validation.service';
 import { GoogleStrategy } from '@infrastructure/auth/passport/strategies/google.strategy';
+import { KakaoStrategy } from '@infrastructure/auth/passport/strategies/kakao.strategy';
 
 @Module({
   controllers: [AuthController],
@@ -26,6 +27,7 @@ import { GoogleStrategy } from '@infrastructure/auth/passport/strategies/google.
     LocalStrategy,
     JwtStrategy,
     GoogleStrategy,
+    KakaoStrategy,
     RedisService,
     ValidationService,
     {

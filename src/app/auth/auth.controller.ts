@@ -5,6 +5,7 @@ import { UserEntity } from '@domain/user/entities/user.entity';
 import { Response } from 'express';
 import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
 import { GoogleAuthGuard } from '@infrastructure/auth/passport/guards/google.guard';
+import { KakaoAuthGuard } from '@infrastructure/auth/passport/guards/kakao.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -42,6 +43,12 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   async googleCallback(@Req() req: any, @Res() res: Response) {
+    console.log(req.user);
+  }
+
+  @UseGuards(KakaoAuthGuard)
+  @Get('kakao/callback')
+  async kakaoCallback(@Req() req: any, @Res() res: Response) {
     console.log(req.user);
   }
 }
