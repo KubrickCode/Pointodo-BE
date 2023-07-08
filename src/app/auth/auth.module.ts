@@ -15,6 +15,7 @@ import { jwtConfig } from 'config/jwt.config';
 import { RedisModule } from '@infrastructure/redis/redis.module';
 import { RedisService } from '@infrastructure/redis/redis.service';
 import { ValidationService } from '@domain/auth/validation.service';
+import { GoogleStrategy } from '@infrastructure/auth/passport/strategies/google.strategy';
 
 @Module({
   controllers: [AuthController],
@@ -24,6 +25,7 @@ import { ValidationService } from '@domain/auth/validation.service';
     PrismaService,
     LocalStrategy,
     JwtStrategy,
+    GoogleStrategy,
     RedisService,
     ValidationService,
     {

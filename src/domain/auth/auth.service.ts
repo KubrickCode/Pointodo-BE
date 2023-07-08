@@ -42,4 +42,32 @@ export class AuthService {
     const user = await this.userRepository.findByEmail(decoded.email);
     return this.tokenService.generateAccessToken(user);
   }
+
+  async googleLogin(profile: any): Promise<any> {
+    const email = profile._json.email;
+
+    const user = await this.userRepository.findByEmail(email);
+    if (user) {
+      const token = this.tokenService.generateAccessToken(user);
+      const refreshToken = this.tokenService.generateRefreshToken(user);
+      await this.redisService.set(
+        `refresh_token:${user.id}`,
+        refreshToken,
+        60 * 60 * 24 * 7,
+      );
+      return { token, refreshToken };
+    } else {
+      const user = { email, provider: 'Google' } as UserEntity;
+      const newUser = await this.userRepository.createUser(user);
+      const token = this.tokenService.generateAccessToken(newUser);
+      const refreshToken = this.tokenService.generateRefreshToken(newUser);
+      await this.redisService.set(
+        `refresh_token:${newUser.id}`,
+        refreshToken,
+        60 * 60 * 24 * 7,
+      );
+
+      return { token, refreshToken };
+    }
+  }
 }

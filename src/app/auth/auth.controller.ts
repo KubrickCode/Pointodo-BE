@@ -4,6 +4,7 @@ import { LocalAuthGuard } from '@infrastructure/auth/passport/guards/local.guard
 import { UserEntity } from '@domain/user/entities/user.entity';
 import { Response } from 'express';
 import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
+import { GoogleAuthGuard } from '@infrastructure/auth/passport/guards/google.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -23,7 +24,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/logout')
+  @Post('logout')
   async logout(@Req() req: any, @Res() res: Response): Promise<any> {
     const user = req.user as UserEntity;
     await this.authAppService.logout(user);
@@ -31,10 +32,16 @@ export class AuthController {
     return res.send({ message: 'success' });
   }
 
-  @Get('/refresh')
+  @Get('refresh')
   async refresh(@Req() req: any, @Res() res: Response): Promise<any> {
     const refreshToken = req.cookies['refreshToken'];
     const accessToken = await this.authAppService.refresh(refreshToken);
     res.json({ accessToken });
+  }
+
+  @UseGuards(GoogleAuthGuard)
+  @Get('google/callback')
+  async googleCallback(@Req() req: any, @Res() res: Response) {
+    console.log(req.user);
   }
 }
