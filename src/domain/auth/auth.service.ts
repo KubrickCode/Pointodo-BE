@@ -3,6 +3,7 @@ import { UserEntity } from '@domain/user/entities/user.entity';
 import { Inject } from '@nestjs/common';
 import { ITokenService } from './interfaces/itoken.service';
 import { IRedisService } from '@domain/redis/interfaces/iredis.service';
+import { IUserRepository } from '@domain/user/interfaces/iuser.repository';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +12,8 @@ export class AuthService {
     private readonly tokenService: ITokenService,
     @Inject('IRedisService')
     private readonly redisService: IRedisService,
+    @Inject('IUserRepository')
+    private readonly userRepository: IUserRepository,
   ) {}
 
   async login(
@@ -28,5 +31,15 @@ export class AuthService {
 
   async logout(user: UserEntity): Promise<void> {
     await this.redisService.delete(`refresh_token:${user.id}`);
+  }
+
+  async refresh(token: string) {
+    const decoded = this.tokenService.decodeToken(token);
+    const { id, exp } = decoded;
+    if (exp === 0) return;
+    const redisToken = await this.redisService.get(`refresh_token:${id}`);
+    if (token !== redisToken) return;
+    const user = await this.userRepository.findByEmail(decoded.email);
+    return this.tokenService.generateAccessToken(user);
   }
 }

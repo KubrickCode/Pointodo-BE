@@ -1,6 +1,6 @@
 interface DecodedToken {
   id: string;
-  email: number;
+  email: string;
   provider: string;
   role: string;
   defaultBadgeId: number;

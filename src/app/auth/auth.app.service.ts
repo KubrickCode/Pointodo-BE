@@ -16,4 +16,8 @@ export class AuthAppService {
   async logout(user: UserEntity): Promise<void> {
     await this.authService.logout(user);
   }
+
+  async refresh(token: string) {
+    return await this.authService.refresh(token);
+  }
 }
