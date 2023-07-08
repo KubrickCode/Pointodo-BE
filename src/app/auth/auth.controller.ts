@@ -80,4 +80,10 @@ export class AuthController {
       `${globalConfig(this.configService).clientOrigin}/social-login`,
     );
   }
+
+  @Get('social-login')
+  async socialLogin(@Req() req: any, @Res() res: Response) {
+    res.clearCookie('accessToken');
+    res.json({ accessToken: req.cookies['accessToken'] });
+  }
 }

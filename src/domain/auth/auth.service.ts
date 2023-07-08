@@ -48,18 +48,18 @@ export class AuthService {
 
     const user = await this.userRepository.findByEmail(email);
     if (user) {
-      const token = this.tokenService.generateAccessToken(user);
+      const accessToken = this.tokenService.generateAccessToken(user);
       const refreshToken = this.tokenService.generateRefreshToken(user);
       await this.redisService.set(
         `refresh_token:${user.id}`,
         refreshToken,
         60 * 60 * 24 * 7,
       );
-      return { token, refreshToken };
+      return { accessToken, refreshToken };
     } else {
       const user = { email, provider: 'Google' } as UserEntity;
       const newUser = await this.userRepository.createUser(user);
-      const token = this.tokenService.generateAccessToken(newUser);
+      const accessToken = this.tokenService.generateAccessToken(newUser);
       const refreshToken = this.tokenService.generateRefreshToken(newUser);
       await this.redisService.set(
         `refresh_token:${newUser.id}`,
@@ -67,7 +67,7 @@ export class AuthService {
         60 * 60 * 24 * 7,
       );
 
-      return { token, refreshToken };
+      return { accessToken, refreshToken };
     }
   }
 
@@ -76,18 +76,18 @@ export class AuthService {
 
     const user = await this.userRepository.findByEmail(email);
     if (user) {
-      const token = this.tokenService.generateAccessToken(user);
+      const accessToken = this.tokenService.generateAccessToken(user);
       const refreshToken = this.tokenService.generateRefreshToken(user);
       await this.redisService.set(
         `refresh_token:${user.id}`,
         refreshToken,
         60 * 60 * 24 * 7,
       );
-      return { token, refreshToken };
+      return { accessToken, refreshToken };
     } else {
       const user = { email, provider: 'Kakao' } as UserEntity;
       const newUser = await this.userRepository.createUser(user);
-      const token = this.tokenService.generateAccessToken(newUser);
+      const accessToken = this.tokenService.generateAccessToken(newUser);
       const refreshToken = this.tokenService.generateRefreshToken(newUser);
       await this.redisService.set(
         `refresh_token:${newUser.id}`,
@@ -95,7 +95,7 @@ export class AuthService {
         60 * 60 * 24 * 7,
       );
 
-      return { token, refreshToken };
+      return { accessToken, refreshToken };
     }
   }
 }
