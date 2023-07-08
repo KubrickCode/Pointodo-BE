@@ -14,6 +14,7 @@ import { JwtStrategy } from '@infrastructure/auth/passport/strategies/jwt.strate
 import { jwtConfig } from 'config/jwt.config';
 import { RedisModule } from '@infrastructure/redis/redis.module';
 import { RedisService } from '@infrastructure/redis/redis.service';
+import { ValidationService } from '@domain/auth/validation.service';
 
 @Module({
   controllers: [AuthController],
@@ -24,6 +25,7 @@ import { RedisService } from '@infrastructure/redis/redis.service';
     LocalStrategy,
     JwtStrategy,
     RedisService,
+    ValidationService,
     {
       provide: 'IUserRepository',
       useClass: UserRepository,
