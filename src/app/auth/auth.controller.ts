@@ -6,10 +6,15 @@ import { Response } from 'express';
 import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
 import { GoogleAuthGuard } from '@infrastructure/auth/passport/guards/google.guard';
 import { KakaoAuthGuard } from '@infrastructure/auth/passport/guards/kakao.guard';
+import { globalConfig } from 'config/global.config';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authAppService: AuthAppService) {}
+  constructor(
+    private readonly authAppService: AuthAppService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
@@ -43,12 +48,36 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
   async googleCallback(@Req() req: any, @Res() res: Response) {
-    console.log(req.user);
+    res.cookie('accessToken', req.user.accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+    res.cookie('refreshToken', req.user.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+    res.redirect(
+      `${globalConfig(this.configService).clientOrigin}/social-login`,
+    );
   }
 
   @UseGuards(KakaoAuthGuard)
   @Get('kakao/callback')
   async kakaoCallback(@Req() req: any, @Res() res: Response) {
-    console.log(req.user);
+    res.cookie('accessToken', req.user.accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+    res.cookie('refreshToken', req.user.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+    res.redirect(
+      `${globalConfig(this.configService).clientOrigin}/social-login`,
+    );
   }
 }
