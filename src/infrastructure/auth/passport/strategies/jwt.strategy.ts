@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { DecodedToken } from '@domain/auth/interfaces/decodedToken';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
+import { jwtConfig } from 'config/jwt.config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -17,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         return token;
       },
       ignoreExpiration: false,
-      secretOrKey: configService.get('JWT_SECRET'),
+      secretOrKey: jwtConfig(configService).accessTokenSecret,
     });
   }
 

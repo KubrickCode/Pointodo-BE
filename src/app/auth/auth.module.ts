@@ -38,7 +38,7 @@ import { jwtConfig } from 'config/jwt.config';
     PassportModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
-        secret: jwtConfig(configService).jwtSecret,
+        secret: jwtConfig(configService).accessTokenSecret,
         signOptions: {
           expiresIn: jwtConfig(configService).accessTokenExpiration,
         },
