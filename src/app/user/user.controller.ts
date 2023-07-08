@@ -1,7 +1,8 @@
-import { Body, Controller, Post, Get, Req } from '@nestjs/common';
+import { Body, Controller, Post, Get, Req, UseGuards } from '@nestjs/common';
 import { UserAppService } from './user.app.service';
 import { CreateUserDto } from './dto/register.dto';
 import { Request } from 'express';
+import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
 
 @Controller('user')
 export class UserController {
@@ -14,9 +15,9 @@ export class UserController {
     return this.userAppService.registerUser(createUserDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getUser(@Req() req: Request) {
-    const cookies = req.cookies;
-    console.log(cookies);
+    return req.user;
   }
 }
