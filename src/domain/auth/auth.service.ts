@@ -41,4 +41,8 @@ export class AuthService {
   generateAccessToken(user: UserEntity): string {
     return this.tokenService.generateAccessToken(user);
   }
+
+  generateRefreshToken(user: UserEntity): string {
+    return this.tokenService.generateRefreshToken(user);
+  }
 }

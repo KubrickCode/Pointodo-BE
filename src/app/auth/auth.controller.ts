@@ -13,24 +13,24 @@ export class AuthController {
   @Post('login')
   async login(@Req() req: any, @Res() res: Response): Promise<void> {
     const user = req.user as UserEntity;
-    const accessToken = this.authAppService.generateAccessToken(user);
-    res.cookie('accessToken', accessToken, {
+    const { accessToken, refreshToken } = await this.authAppService.login(user);
+    res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
     });
-    res.send();
+    res.json({ accessToken });
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('/logout')
   logout(@Req() req: Request, @Res() res: Response): any {
-    res.cookie('accessToken', '', {
-      maxAge: 0,
-    });
-    return res.send({
-      message: 'success',
-    });
+    // const refreshToken = req.cookies.refreshToken;
+    // if (refreshToken) {
+    //   await this.redisService.delete(refreshToken); // Remove the refresh token from Redis
+    // }
+    res.clearCookie('refreshToken');
+    return res.send({ message: 'success' });
   }
 
   @UseGuards(JwtAuthGuard)
