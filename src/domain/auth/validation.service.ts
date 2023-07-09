@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  Inject,
+  NotFoundException,
+} from '@nestjs/common';
 import { IUserRepository } from '@domain/user/interfaces/iuser.repository';
 import { UserEntity } from '@domain/user/entities/user.entity';
 import { IPasswordHasher } from '@domain/user/interfaces/ipasswordHasher';
@@ -16,7 +21,7 @@ export class ValidationService {
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
-      throw new UnauthorizedException('존재하지 않는 계정입니다');
+      throw new NotFoundException('존재하지 않는 계정입니다');
     }
 
     const isCorrectPassword = await this.passwordHasher.comparePassword(
