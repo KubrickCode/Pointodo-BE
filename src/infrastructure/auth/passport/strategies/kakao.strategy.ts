@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-kakao';
+import { Strategy, VerifyCallback } from 'passport-kakao';
 import { AuthService } from '@domain/auth/auth.service';
 
 @Injectable()
@@ -16,8 +16,8 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     accessToken: string,
     refreshToken: string,
     profile: any,
-    done: (error: any, user?: any, info?: any) => void,
-  ): Promise<any> {
+    done: VerifyCallback,
+  ): Promise<void> {
     const user = await this.authService.kakaoLogin(profile);
     done(null, user);
   }

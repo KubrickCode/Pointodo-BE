@@ -24,7 +24,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     refreshToken: string,
     profile: any,
     done: VerifyCallback,
-  ): Promise<any> {
+  ): Promise<void> {
     const user = await this.authService.googleLogin(profile);
     done(null, user);
   }
