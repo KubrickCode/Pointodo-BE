@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserService } from '@domain/user.service';
+import { UserService } from '@domain/user/user.service';
 import { ReqRegisterDto, ResRegisterDto } from './dto/register.dto';
 import { DomainRegisterDto } from '@domain/user/dto/register.dto';
 import { plainToClass } from 'class-transformer';

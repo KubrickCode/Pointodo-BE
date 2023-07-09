@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserAppService } from './user.app.service';
-import { UserService } from '@domain/user.service';
+import { UserService } from '@domain/user/user.service';
 import { UserRepository } from '@infrastructure/user/prisma/user.repository';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';

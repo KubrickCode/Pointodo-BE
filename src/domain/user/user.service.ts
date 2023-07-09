@@ -1,9 +1,10 @@
-import { IUserRepository } from './user/interfaces/iuser.repository';
-import { UserEntity } from './user/entities/user.entity';
-import { IPasswordHasher } from './user/interfaces/ipasswordHasher';
-import { ConflictException } from '@nestjs/common';
+import { IUserRepository } from './interfaces/iuser.repository';
+import { UserEntity } from './entities/user.entity';
+import { IPasswordHasher } from './interfaces/ipasswordHasher';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
-import { DomainRegisterDto } from './user/dto/register.dto';
+import { DomainRegisterDto } from './dto/register.dto';
+import { USER_ALREADY_EXISTS, USER_NOT_FOUND } from './errors/user.errors';
 
 export class UserService {
   constructor(
@@ -18,7 +19,7 @@ export class UserService {
     const existingUser = await this.userRepository.findByEmail(email);
 
     if (existingUser) {
-      throw new ConflictException('이미 존재하는 계정입니다.');
+      throw new ConflictException(USER_ALREADY_EXISTS);
     }
 
     const hashedPassword = await this.passwordHasher.hashPassword(password);
@@ -31,6 +32,12 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
-    return await this.userRepository.findByEmail(email);
+    const user: UserEntity | null = await this.userRepository.findByEmail(
+      email,
+    );
+    if (user === null) {
+      throw new NotFoundException(USER_NOT_FOUND);
+    }
+    return user;
   }
 }
