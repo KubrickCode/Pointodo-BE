@@ -7,7 +7,7 @@ import { GoogleAuthGuard } from '@infrastructure/auth/passport/guards/google.gua
 import { KakaoAuthGuard } from '@infrastructure/auth/passport/guards/kakao.guard';
 import { globalConfig } from 'config/global.config';
 import { ConfigService } from '@nestjs/config';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { ResLoginDto } from './dto/login.dto';
 import { ResLogoutDto } from './dto/logout.dto';
 import { ResRefreshDto } from './dto/refresh.dto';
@@ -16,6 +16,7 @@ import {
   ResSocialLoginDto,
 } from './dto/socialLogin.dto';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -40,6 +41,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post('logout')
   @ApiOkResponse({ type: ResLogoutDto })
   async logout(@Req() req: Request, @Res() res: Response): Promise<void> {

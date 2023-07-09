@@ -10,14 +10,14 @@ import { ValidationPipe } from '@nestjs/common';
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+
   const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api/docs', app, document);
 
   app.use(cookieParser());
   app.enableCors(corsOptions(configService));
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
-
-  SwaggerModule.setup('api/docs', app, document);
 
   await app.listen(3000);
 };

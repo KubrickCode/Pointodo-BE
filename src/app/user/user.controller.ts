@@ -4,8 +4,9 @@ import { ReqRegisterDto, ResRegisterDto } from './dto/register.dto';
 import { Request } from 'express';
 import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
 import { ResGetUserDto } from './dto/getUser.dto';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userAppService: UserAppService) {}
@@ -18,6 +19,7 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
+  @ApiBearerAuth()
   @ApiOkResponse({ type: ResGetUserDto })
   async getUser(@Req() req: Request): Promise<ResGetUserDto> {
     return req.user;
