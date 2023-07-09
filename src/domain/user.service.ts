@@ -23,10 +23,10 @@ export class UserService {
 
     const hashedPassword = await this.passwordHasher.hashPassword(password);
 
-    const user = new UserEntity();
-    user.email = email;
-    user.password = hashedPassword;
-
+    const user = {
+      email,
+      password: hashedPassword,
+    };
     return await this.userRepository.createUser(user);
   }
 

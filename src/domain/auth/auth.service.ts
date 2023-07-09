@@ -52,7 +52,7 @@ export class AuthService {
     if (user) {
       return await this.login(user);
     } else {
-      const user = { email, provider } as UserEntity;
+      const user = { email, provider };
       const newUser = await this.userRepository.createUser(user);
       return await this.login(newUser);
     }
