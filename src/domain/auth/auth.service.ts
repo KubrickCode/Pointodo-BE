@@ -6,6 +6,7 @@ import { IRedisService } from '@domain/redis/interfaces/iredis.service';
 import { IUserRepository } from '@domain/user/interfaces/iuser.repository';
 import { DomainResLoginDto } from './dto/login.dto';
 import { jwtExpiration } from 'config/jwt.config';
+import { DomainReqSocialLoginDto } from './dto/socialLogin.dto';
 
 @Injectable()
 export class AuthService {
@@ -43,59 +44,17 @@ export class AuthService {
     return this.tokenService.generateAccessToken(user);
   }
 
-  async googleLogin(profile: any): Promise<any> {
-    const email = profile._json.email;
-
+  async socialLogin(
+    socialUser: DomainReqSocialLoginDto,
+  ): Promise<DomainResLoginDto> {
+    const { email, provider } = socialUser;
     const user = await this.userRepository.findByEmail(email);
     if (user) {
-      const accessToken = this.tokenService.generateAccessToken(user);
-      const refreshToken = this.tokenService.generateRefreshToken(user);
-      await this.redisService.set(
-        `refresh_token:${user.id}`,
-        refreshToken,
-        jwtExpiration.refreshTokenExpirationSeconds,
-      );
-      return { accessToken, refreshToken };
+      return await this.login(user);
     } else {
-      const user = { email, provider: 'Google' } as UserEntity;
+      const user = { email, provider } as UserEntity;
       const newUser = await this.userRepository.createUser(user);
-      const accessToken = this.tokenService.generateAccessToken(newUser);
-      const refreshToken = this.tokenService.generateRefreshToken(newUser);
-      await this.redisService.set(
-        `refresh_token:${newUser.id}`,
-        refreshToken,
-        jwtExpiration.refreshTokenExpirationSeconds,
-      );
-
-      return { accessToken, refreshToken };
-    }
-  }
-
-  async kakaoLogin(profile: any): Promise<any> {
-    const email = profile.id + '@kakao.com';
-
-    const user = await this.userRepository.findByEmail(email);
-    if (user) {
-      const accessToken = this.tokenService.generateAccessToken(user);
-      const refreshToken = this.tokenService.generateRefreshToken(user);
-      await this.redisService.set(
-        `refresh_token:${user.id}`,
-        refreshToken,
-        jwtExpiration.refreshTokenExpirationSeconds,
-      );
-      return { accessToken, refreshToken };
-    } else {
-      const user = { email, provider: 'Kakao' } as UserEntity;
-      const newUser = await this.userRepository.createUser(user);
-      const accessToken = this.tokenService.generateAccessToken(newUser);
-      const refreshToken = this.tokenService.generateRefreshToken(newUser);
-      await this.redisService.set(
-        `refresh_token:${newUser.id}`,
-        refreshToken,
-        jwtExpiration.refreshTokenExpirationSeconds,
-      );
-
-      return { accessToken, refreshToken };
+      return await this.login(newUser);
     }
   }
 }
