@@ -21,4 +21,18 @@ class ResRegisterDto {
   readonly message: string;
 }
 
-export { ReqRegisterDto, ResRegisterDto };
+class ResRegisterDtoError {
+  @ApiProperty({ example: 400, description: '에러 상태 코드' })
+  @IsString()
+  readonly statusCode: string;
+
+  @ApiProperty({ example: '에러 메시지', description: '에러 메시지' })
+  @IsString()
+  readonly message: string[];
+
+  @ApiProperty({ example: 'Bad Request', description: '에러 종류' })
+  @IsString()
+  readonly error: string;
+}
+
+export { ReqRegisterDto, ResRegisterDto, ResRegisterDtoError };
