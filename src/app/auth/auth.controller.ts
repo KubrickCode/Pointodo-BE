@@ -7,8 +7,13 @@ import { GoogleAuthGuard } from '@infrastructure/auth/passport/guards/google.gua
 import { KakaoAuthGuard } from '@infrastructure/auth/passport/guards/kakao.guard';
 import { globalConfig } from 'config/global.config';
 import { ConfigService } from '@nestjs/config';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { ResLoginDto } from './dto/login.dto';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { ReqLoginDto, ResLoginDto } from './dto/login.dto';
 import { ResLogoutDto } from './dto/logout.dto';
 import { ResRefreshDto } from './dto/refresh.dto';
 import {
@@ -27,6 +32,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @ApiOkResponse({ type: ResLoginDto })
+  @ApiBody({ type: ReqLoginDto })
   async login(@Req() req: Request, @Res() res: Response): Promise<void> {
     const { accessToken, refreshToken } = await this.authAppService.login(
       req.user,
