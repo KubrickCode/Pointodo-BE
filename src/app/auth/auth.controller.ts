@@ -11,6 +11,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { ReqLoginDto, ResLoginDto } from './dto/login.dto';
@@ -20,6 +21,7 @@ import {
   RedirectSocialLoginDto,
   ResSocialLoginDto,
 } from './dto/socialLogin.dto';
+import { authDocs } from './docs/auth.docs';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -31,6 +33,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @ApiOperation(authDocs.login)
   @ApiOkResponse({ type: ResLoginDto })
   @ApiBody({ type: ReqLoginDto })
   async login(@Req() req: Request, @Res() res: Response): Promise<void> {
@@ -47,6 +50,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiOperation(authDocs.logout)
   @ApiBearerAuth()
   @Post('logout')
   @ApiOkResponse({ type: ResLogoutDto })
@@ -57,6 +61,7 @@ export class AuthController {
   }
 
   @Get('refresh')
+  @ApiOperation(authDocs.refresh)
   @ApiOkResponse({ type: ResRefreshDto })
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
@@ -72,6 +77,7 @@ export class AuthController {
 
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
+  @ApiOperation(authDocs.google)
   @ApiOkResponse({ type: RedirectSocialLoginDto })
   async googleCallback(
     @Req() req: Request,
@@ -94,6 +100,7 @@ export class AuthController {
 
   @UseGuards(KakaoAuthGuard)
   @Get('kakao/callback')
+  @ApiOperation(authDocs.kakao)
   @ApiOkResponse({ type: RedirectSocialLoginDto })
   async kakaoCallback(
     @Req() req: Request,
@@ -118,6 +125,7 @@ export class AuthController {
   }
 
   @Get('social-login')
+  @ApiOperation(authDocs.socialLogin)
   @ApiOkResponse({ type: ResSocialLoginDto })
   async socialLogin(@Req() req: Request, @Res() res: Response): Promise<void> {
     res.clearCookie('accessToken');
