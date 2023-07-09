@@ -28,6 +28,7 @@ export class UserRepository implements IUserRepository {
       RETURNING *
     `;
     const values = [uuid, user.email, user.password, user.provider, user.role];
-    return await this.prisma.$queryRawUnsafe<User>(query, ...values);
+    const newUser = await this.prisma.$queryRawUnsafe<User>(query, ...values);
+    return newUser[0];
   }
 }
