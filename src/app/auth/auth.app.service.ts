@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from '@domain/user/entities/user.entity';
 import { AuthService } from '@domain/auth/auth.service';
+import { ResLogoutDto } from './dto/logout.dto';
 
 @Injectable()
 export class AuthAppService {
@@ -13,8 +14,9 @@ export class AuthAppService {
     return { accessToken, refreshToken };
   }
 
-  async logout(user: UserEntity): Promise<void> {
+  async logout(user: UserEntity): Promise<ResLogoutDto> {
     await this.authService.logout(user);
+    return { message: 'success' };
   }
 
   async refresh(token: string) {

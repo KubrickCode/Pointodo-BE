@@ -4,6 +4,8 @@ import { Inject } from '@nestjs/common';
 import { ITokenService } from './interfaces/itoken.service';
 import { IRedisService } from '@domain/redis/interfaces/iredis.service';
 import { IUserRepository } from '@domain/user/interfaces/iuser.repository';
+import { DomainResLoginDto } from './dto/login.dto';
+import { jwtExpiration } from 'config/jwt.config';
 
 @Injectable()
 export class AuthService {
@@ -16,15 +18,13 @@ export class AuthService {
     private readonly userRepository: IUserRepository,
   ) {}
 
-  async login(
-    user: UserEntity,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async login(user: UserEntity): Promise<DomainResLoginDto> {
     const accessToken = this.tokenService.generateAccessToken(user);
     const refreshToken = this.tokenService.generateRefreshToken(user);
     await this.redisService.set(
       `refresh_token:${user.id}`,
       refreshToken,
-      60 * 60 * 24 * 7,
+      jwtExpiration.refreshTokenExpirationSeconds,
     );
     return { accessToken, refreshToken };
   }
@@ -53,7 +53,7 @@ export class AuthService {
       await this.redisService.set(
         `refresh_token:${user.id}`,
         refreshToken,
-        60 * 60 * 24 * 7,
+        jwtExpiration.refreshTokenExpirationSeconds,
       );
       return { accessToken, refreshToken };
     } else {
@@ -64,7 +64,7 @@ export class AuthService {
       await this.redisService.set(
         `refresh_token:${newUser.id}`,
         refreshToken,
-        60 * 60 * 24 * 7,
+        jwtExpiration.refreshTokenExpirationSeconds,
       );
 
       return { accessToken, refreshToken };
@@ -81,7 +81,7 @@ export class AuthService {
       await this.redisService.set(
         `refresh_token:${user.id}`,
         refreshToken,
-        60 * 60 * 24 * 7,
+        jwtExpiration.refreshTokenExpirationSeconds,
       );
       return { accessToken, refreshToken };
     } else {
@@ -92,7 +92,7 @@ export class AuthService {
       await this.redisService.set(
         `refresh_token:${newUser.id}`,
         refreshToken,
-        60 * 60 * 24 * 7,
+        jwtExpiration.refreshTokenExpirationSeconds,
       );
 
       return { accessToken, refreshToken };

@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 
-export const jwtConfig = (configService: ConfigService) => {
+const jwtConfig = (configService: ConfigService) => {
   return {
     accessTokenSecret: configService.get('ACCESS_TOKEN_SECRET'),
     accessTokenExpiration: '1h',
@@ -8,3 +8,9 @@ export const jwtConfig = (configService: ConfigService) => {
     refreshTokenExpiration: '7d',
   };
 };
+
+const jwtExpiration = {
+  refreshTokenExpirationSeconds: 60 * 60 * 24 * 7,
+};
+
+export { jwtConfig, jwtExpiration };

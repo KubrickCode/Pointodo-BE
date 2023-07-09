@@ -1,13 +1,20 @@
 import { Controller, Post, Req, UseGuards, Res, Get } from '@nestjs/common';
 import { AuthAppService } from './auth.app.service';
 import { LocalAuthGuard } from '@infrastructure/auth/passport/guards/local.guard';
-import { UserEntity } from '@domain/user/entities/user.entity';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
 import { GoogleAuthGuard } from '@infrastructure/auth/passport/guards/google.guard';
 import { KakaoAuthGuard } from '@infrastructure/auth/passport/guards/kakao.guard';
 import { globalConfig } from 'config/global.config';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse } from '@nestjs/swagger';
+import { ResLoginDto } from './dto/login.dto';
+import { ResLogoutDto } from './dto/logout.dto';
+import { ResRefreshDto } from './dto/refresh.dto';
+import {
+  RedirectSocialLoginDto,
+  ResSocialLoginDto,
+} from './dto/socialLogin.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -18,36 +25,45 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Req() req: any, @Res() res: Response): Promise<void> {
-    const user = req.user as UserEntity;
-    const { accessToken, refreshToken } = await this.authAppService.login(user);
+  @ApiOkResponse({ type: ResLoginDto })
+  async login(@Req() req: Request, @Res() res: Response): Promise<void> {
+    const { accessToken, refreshToken } = await this.authAppService.login(
+      req.user,
+    );
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
     });
-    res.json({ accessToken });
+    const result: ResLoginDto = { accessToken };
+    res.json(result);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async logout(@Req() req: any, @Res() res: Response): Promise<any> {
-    const user = req.user as UserEntity;
-    await this.authAppService.logout(user);
+  @ApiOkResponse({ type: ResLogoutDto })
+  async logout(@Req() req: Request, @Res() res: Response): Promise<void> {
+    const result: ResLogoutDto = await this.authAppService.logout(req.user);
     res.clearCookie('refreshToken');
-    return res.send({ message: 'success' });
+    res.json(result);
   }
 
   @Get('refresh')
-  async refresh(@Req() req: any, @Res() res: Response): Promise<any> {
+  @ApiOkResponse({ type: ResRefreshDto })
+  async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     const refreshToken = req.cookies['refreshToken'];
     const accessToken = await this.authAppService.refresh(refreshToken);
-    res.json({ accessToken });
+    const result: ResRefreshDto = { accessToken };
+    res.json(result);
   }
 
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
-  async googleCallback(@Req() req: any, @Res() res: Response) {
+  @ApiOkResponse({ type: RedirectSocialLoginDto })
+  async googleCallback(
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<void> {
     res.cookie('accessToken', req.user.accessToken, {
       httpOnly: true,
       secure: true,
@@ -65,7 +81,11 @@ export class AuthController {
 
   @UseGuards(KakaoAuthGuard)
   @Get('kakao/callback')
-  async kakaoCallback(@Req() req: any, @Res() res: Response) {
+  @ApiOkResponse({ type: RedirectSocialLoginDto })
+  async kakaoCallback(
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<void> {
     res.cookie('accessToken', req.user.accessToken, {
       httpOnly: true,
       secure: true,
@@ -76,14 +96,21 @@ export class AuthController {
       secure: true,
       sameSite: 'strict',
     });
-    res.redirect(
-      `${globalConfig(this.configService).clientOrigin}/social-login`,
-    );
+    const result: RedirectSocialLoginDto = {
+      redirectUri: `${
+        globalConfig(this.configService).clientOrigin
+      }/social-login`,
+    };
+    res.redirect(result.redirectUri);
   }
 
   @Get('social-login')
-  async socialLogin(@Req() req: any, @Res() res: Response) {
+  @ApiOkResponse({ type: ResSocialLoginDto })
+  async socialLogin(@Req() req: Request, @Res() res: Response): Promise<void> {
     res.clearCookie('accessToken');
-    res.json({ accessToken: req.cookies['accessToken'] });
+    const result: ResSocialLoginDto = {
+      accessToken: req.cookies['accessToken'],
+    };
+    res.json(result);
   }
 }
