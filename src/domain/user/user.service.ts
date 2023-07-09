@@ -32,9 +32,7 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
-    const user: UserEntity | null = await this.userRepository.findByEmail(
-      email,
-    );
+    const user = await this.userRepository.findByEmail(email);
     if (user === null) {
       throw new NotFoundException(USER_NOT_FOUND);
     }
