@@ -1,7 +1,7 @@
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { DecodedToken } from '@domain/auth/interfaces/decodedToken';
+import { DecodedAccessToken } from '@domain/auth/interfaces/decodedToken';
 import { ConfigService } from '@nestjs/config';
 import { jwtConfig } from 'config/jwt.config';
 
@@ -15,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: DecodedToken): Promise<DecodedToken> {
+  async validate(payload: DecodedAccessToken): Promise<DecodedAccessToken> {
     const { id, email, provider, role, defaultBadgeId, createdAt } = payload;
     return { id, email, provider, role, defaultBadgeId, createdAt };
   }

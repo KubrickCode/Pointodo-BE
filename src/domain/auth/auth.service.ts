@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserEntity } from '@domain/user/entities/user.entity';
 import { Inject } from '@nestjs/common';
 import { ITokenService } from './interfaces/itoken.service';
@@ -7,6 +7,7 @@ import { IUserRepository } from '@domain/user/interfaces/iuser.repository';
 import { DomainResLoginDto } from './dto/login.dto';
 import { jwtExpiration } from 'config/jwt.config';
 import { DomainReqSocialLoginDto } from './dto/socialLogin.dto';
+import { AUTH_EXPIRED_TOKEN, AUTH_INVALID_TOKEN } from './errors/auth.errors';
 
 @Injectable()
 export class AuthService {
@@ -36,10 +37,18 @@ export class AuthService {
 
   async refresh(token: string) {
     const decoded = this.tokenService.decodeToken(token);
-    const { id, exp } = decoded;
-    if (exp === 0) return;
-    const redisToken = await this.redisService.get(`refresh_token:${id}`);
-    if (token !== redisToken) return;
+    if (!decoded || !decoded.id || !decoded.email) {
+      throw new UnauthorizedException(AUTH_INVALID_TOKEN);
+    }
+    const redisToken = await this.redisService.get(
+      `refresh_token:${decoded.id}`,
+    );
+    if (redisToken === null) {
+      throw new UnauthorizedException(AUTH_EXPIRED_TOKEN);
+    }
+    if (token !== redisToken) {
+      throw new UnauthorizedException(AUTH_INVALID_TOKEN);
+    }
     const user = await this.userRepository.findByEmail(decoded.email);
     return this.tokenService.generateAccessToken(user);
   }

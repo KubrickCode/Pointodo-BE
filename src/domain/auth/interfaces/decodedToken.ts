@@ -1,6 +1,6 @@
 import { Provider, Role } from '@prisma/client';
 
-interface DecodedToken {
+interface DecodedAccessToken {
   id: string;
   email: string;
   provider: Provider;
@@ -11,4 +11,11 @@ interface DecodedToken {
   exp?: number;
 }
 
-export { DecodedToken };
+interface DecodedRefreshToken {
+  id: string;
+  email: string;
+  iat?: number;
+  exp?: number;
+}
+
+export { DecodedAccessToken, DecodedRefreshToken };

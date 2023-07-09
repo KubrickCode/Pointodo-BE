@@ -53,10 +53,15 @@ export class AuthController {
   @Get('refresh')
   @ApiOkResponse({ type: ResRefreshDto })
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
-    const refreshToken = req.cookies['refreshToken'];
-    const accessToken = await this.authAppService.refresh(refreshToken);
-    const result: ResRefreshDto = { accessToken };
-    res.json(result);
+    try {
+      const refreshToken = req.cookies['refreshToken'];
+      const accessToken = await this.authAppService.refresh(refreshToken);
+      const result: ResRefreshDto = { accessToken };
+      res.json(result);
+    } catch (error) {
+      res.clearCookie('refreshToken');
+      res.send();
+    }
   }
 
   @UseGuards(GoogleAuthGuard)
