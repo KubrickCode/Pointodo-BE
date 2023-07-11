@@ -17,6 +17,8 @@ export class RedisService
       host: redisConfig(this.configService).redisHost,
       port: redisConfig(this.configService).redisPort,
       password: redisConfig(this.configService).redisPassword,
+      lazyConnect: false,
+      connectTimeout: 10000,
     });
   }
 

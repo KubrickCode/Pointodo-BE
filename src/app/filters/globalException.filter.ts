@@ -23,13 +23,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = '서버 내부 오류';
+    let error = '서버 오류';
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       message = exception.message || '서버 내부 오류';
+      error = exception.name;
     }
 
-    this.logger.error(message);
+    this.logger.error(
+      `에러 상태 코드:${status}, 에러 종류:${error}, 에러 메시지:${message}, 경로:${request.url}`,
+    );
 
     response.status(status).json({
       statusCode: status,
