@@ -1,5 +1,6 @@
 import { format, transports } from 'winston';
 import { utilities as nestWinstonModuleUtilities } from 'nest-winston';
+import * as winstonDaily from 'winston-daily-rotate-file';
 
 export const getWinstonLogger = (nodeEnv: string, moduleName: string) => {
   const isLocalEnv = ['local', 'test', undefined].includes(nodeEnv);
@@ -15,12 +16,21 @@ export const getWinstonLogger = (nodeEnv: string, moduleName: string) => {
           ? getTextFormat(moduleName)
           : getJsonFormat(moduleName),
       }),
-      new transports.File({
-        filename: 'logs/application.log',
-        level,
-        format: getJsonFormat(moduleName),
-      }),
+      new winstonDaily(dailyOptions('info')),
+      new winstonDaily(dailyOptions('warn')),
+      new winstonDaily(dailyOptions('error')),
     ],
+  };
+};
+
+const dailyOptions = (level: string) => {
+  return {
+    level,
+    datePattern: 'YYYY-MM-DD',
+    dirname: `logs/${level}`,
+    filename: `%DATE%.${level}.log`,
+    maxFiles: 30,
+    zippedArchive: true,
   };
 };
 
