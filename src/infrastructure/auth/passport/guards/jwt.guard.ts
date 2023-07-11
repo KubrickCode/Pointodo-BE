@@ -1,4 +1,8 @@
 import {
+  AUTH_EXPIRED_TOKEN,
+  AUTH_INVALID_TOKEN,
+} from '@domain/auth/errors/auth.errors';
+import {
   Injectable,
   ExecutionContext,
   HttpException,
@@ -37,9 +41,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       switch (e.message) {
         case 'invalid token':
         case 'jwt malformed':
-          throw new UnauthorizedException('유효하지 않은 토큰입니다.');
+          throw new UnauthorizedException(AUTH_INVALID_TOKEN);
         case 'jwt expired':
-          throw new UnauthorizedException('토큰이 만료되었습니다.');
+          throw new UnauthorizedException(AUTH_EXPIRED_TOKEN);
         default:
           throw new HttpException('서버 오류입니다.', 500);
       }

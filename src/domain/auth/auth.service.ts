@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { UserEntity } from '@domain/user/entities/user.entity';
 import { Inject } from '@nestjs/common';
 import { ITokenService } from './interfaces/itoken.service';
@@ -7,7 +7,11 @@ import { IUserRepository } from '@domain/user/interfaces/iuser.repository';
 import { DomainResLoginDto } from './dto/login.dto';
 import { jwtExpiration } from 'config/jwt.config';
 import { DomainReqSocialLoginDto } from './dto/socialLogin.dto';
-import { AUTH_EXPIRED_TOKEN, AUTH_INVALID_TOKEN } from './errors/auth.errors';
+import {
+  AUTH_INVALID_TOKEN,
+  AUTH_EXPIRED_REFRESH_TOKEN,
+} from './errors/auth.errors';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +22,7 @@ export class AuthService {
     private readonly redisService: IRedisService,
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async login(user: UserEntity): Promise<DomainResLoginDto> {
@@ -43,10 +48,13 @@ export class AuthService {
     const redisToken = await this.redisService.get(
       `refresh_token:${decoded.id}`,
     );
+
     if (redisToken === null) {
-      throw new UnauthorizedException(AUTH_EXPIRED_TOKEN);
+      this.logger.error(AUTH_EXPIRED_REFRESH_TOKEN);
+      throw new UnauthorizedException(AUTH_EXPIRED_REFRESH_TOKEN);
     }
     if (token !== redisToken) {
+      this.logger.error(AUTH_INVALID_TOKEN);
       throw new UnauthorizedException(AUTH_INVALID_TOKEN);
     }
     const user = await this.userRepository.findByEmail(decoded.email);
