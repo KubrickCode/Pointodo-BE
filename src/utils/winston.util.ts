@@ -16,9 +16,10 @@ export const getWinstonLogger = (nodeEnv: string, moduleName: string) => {
           ? getTextFormat(moduleName)
           : getJsonFormat(moduleName),
       }),
-      new winstonDaily(dailyOptions('info')),
+
       new winstonDaily(dailyOptions('warn')),
       new winstonDaily(dailyOptions('error')),
+      new winstonDaily(dailyOptions('info')),
     ],
   };
 };

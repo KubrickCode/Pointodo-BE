@@ -13,6 +13,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ReqLoginDto, ResLoginDto } from './dto/login.dto';
 import { ResLogoutDto } from './dto/logout.dto';
@@ -22,6 +23,7 @@ import {
   ResSocialLoginDto,
 } from './dto/socialLogin.dto';
 import { authDocs } from './docs/auth.docs';
+import { getUserDocs } from '@app/user/docs/getUser.docs';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -54,6 +56,7 @@ export class AuthController {
   @ApiBearerAuth()
   @Post('logout')
   @ApiOkResponse({ type: ResLogoutDto })
+  @ApiUnauthorizedResponse(getUserDocs.unauthorizedResponse)
   async logout(@Req() req: Request, @Res() res: Response): Promise<void> {
     const result: ResLogoutDto = await this.authAppService.logout(req.user);
     res.clearCookie('refreshToken');
