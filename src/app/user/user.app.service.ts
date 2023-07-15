@@ -1,9 +1,12 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { UserService } from '@domain/user/user.service';
-import { ReqRegisterDto, ResRegisterDto } from './dto/register.dto';
+import {
+  ReqRegisterDto,
+  ResRegisterDto,
+} from '../../interface/dto/user/register.dto';
 import { DomainRegisterDto } from '@domain/user/dto/register.dto';
 import { plainToClass } from 'class-transformer';
-import { REGISTER_SUCCESS_MESSAGE } from './messages/user.messages';
+import { REGISTER_SUCCESS_MESSAGE } from '../../shared/messages/user.messages';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 
 @Injectable()

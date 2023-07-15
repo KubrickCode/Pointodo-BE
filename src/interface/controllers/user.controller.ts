@@ -1,9 +1,9 @@
 import { Body, Controller, Post, Get, Req, UseGuards } from '@nestjs/common';
-import { UserAppService } from './user.app.service';
-import { ReqRegisterDto, ResRegisterDto } from './dto/register.dto';
+import { UserAppService } from '../../app/user/user.app.service';
+import { ReqRegisterDto, ResRegisterDto } from '../dto/user/register.dto';
 import { Request } from 'express';
 import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
-import { ResGetUserDto } from './dto/getUser.dto';
+import { ResGetUserDto } from '../dto/user/getUser.dto';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -12,8 +12,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { registerDocs } from './docs/register.docs';
-import { getUserDocs } from './docs/getUser.docs';
+import { registerDocs } from '../docs/user/register.docs';
+import { getUserDocs } from '../docs/user/getUser.docs';
 
 @ApiTags('User')
 @Controller('user')

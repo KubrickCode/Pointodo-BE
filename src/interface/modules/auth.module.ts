@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { AuthAppService } from './auth.app.service';
+import { AuthController } from '../controllers/auth.controller';
+import { AuthAppService } from '../../app/auth/auth.app.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '@domain/auth/auth.service';
@@ -12,7 +12,7 @@ import { LocalStrategy } from '@infrastructure/auth/passport/strategies/local.st
 import { TokenService } from '@infrastructure/auth/token.service';
 import { JwtStrategy } from '@infrastructure/auth/passport/strategies/jwt.strategy';
 import { jwtConfig } from 'src/shared/config/jwt.config';
-import { RedisModule } from '@infrastructure/redis/redis.module';
+import { RedisModule } from 'src/interface/modules/redis.module';
 import { RedisService } from '@infrastructure/redis/redis.service';
 import { ValidationService } from '@domain/auth/validation.service';
 import { GoogleStrategy } from '@infrastructure/auth/passport/strategies/google.strategy';

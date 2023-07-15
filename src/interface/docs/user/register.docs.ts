@@ -1,4 +1,7 @@
-import { ResRegisterDto, ResRegisterDtoError } from '../dto/register.dto';
+import {
+  ResRegisterDto,
+  ResRegisterDtoError,
+} from '../../dto/user/register.dto';
 
 export const registerDocs = {
   operation: {

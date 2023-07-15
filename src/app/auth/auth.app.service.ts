@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from '@domain/user/entities/user.entity';
 import { AuthService } from '@domain/auth/auth.service';
-import { ResLogoutDto } from './dto/logout.dto';
-import { LOGOUT_SUCCESS_MESSAGE } from './messages/auth.messages';
+import { ResLogoutDto } from '../../interface/dto/auth/logout.dto';
+import { LOGOUT_SUCCESS_MESSAGE } from '../../shared/messages/auth.messages';
 import { DomainResLoginDto } from '@domain/auth/dto/login.dto';
 
 @Injectable()

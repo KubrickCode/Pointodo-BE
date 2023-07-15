@@ -1,5 +1,5 @@
 import { Controller, Post, Req, UseGuards, Res, Get } from '@nestjs/common';
-import { AuthAppService } from './auth.app.service';
+import { AuthAppService } from '../../app/auth/auth.app.service';
 import { LocalAuthGuard } from '@infrastructure/auth/passport/guards/local.guard';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
@@ -15,15 +15,15 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ReqLoginDto, ResLoginDto } from './dto/login.dto';
-import { ResLogoutDto } from './dto/logout.dto';
-import { ResRefreshDto } from './dto/refresh.dto';
+import { ReqLoginDto, ResLoginDto } from '../dto/auth/login.dto';
+import { ResLogoutDto } from '../dto/auth/logout.dto';
+import { ResRefreshDto } from '../dto/auth/refresh.dto';
 import {
   RedirectSocialLoginDto,
   ResSocialLoginDto,
-} from './dto/socialLogin.dto';
-import { authDocs } from './docs/auth.docs';
-import { getUserDocs } from '@app/user/docs/getUser.docs';
+} from '../dto/auth/socialLogin.dto';
+import { authDocs } from '../docs/auth/auth.docs';
+import { getUserDocs } from 'src/interface/docs/user/getUser.docs';
 
 @ApiTags('Auth')
 @Controller('auth')

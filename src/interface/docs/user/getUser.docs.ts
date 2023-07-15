@@ -1,5 +1,5 @@
-import { ResTokenUnauthorized } from '@app/dto/global.dto';
-import { ResGetUserDto } from '../dto/getUser.dto';
+import { ResTokenUnauthorized } from 'src/interface/dto/auth/tokenError.dto';
+import { ResGetUserDto } from '../../dto/user/getUser.dto';
 
 export const getUserDocs = {
   operation: {
