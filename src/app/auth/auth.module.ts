@@ -9,7 +9,7 @@ import { PasswordHasher } from '@infrastructure/user/passwordHasher';
 import { PrismaService } from '@infrastructure/services/prisma.service';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from '@infrastructure/auth/passport/strategies/local.strategy';
-import { TokenService } from '@infrastructure/auth/passport/token.service';
+import { TokenService } from '@infrastructure/auth/token.service';
 import { JwtStrategy } from '@infrastructure/auth/passport/strategies/jwt.strategy';
 import { jwtConfig } from 'config/jwt.config';
 import { RedisModule } from '@infrastructure/redis/redis.module';
