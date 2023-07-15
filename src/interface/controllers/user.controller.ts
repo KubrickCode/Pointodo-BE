@@ -46,6 +46,6 @@ export class UserController {
   @ApiOkResponse(getUserDocs.okResponse)
   @ApiUnauthorizedResponse(getUserDocs.unauthorizedResponse)
   async getUser(@Req() req: Request): Promise<ResGetUserDto> {
-    return this.userService.getUser(req.user.email);
+    return this.userService.getUser(req.user.id);
   }
 }

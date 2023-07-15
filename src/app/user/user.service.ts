@@ -52,8 +52,8 @@ export class UserService implements IUserService {
     return { message: REGISTER_SUCCESS_MESSAGE };
   }
 
-  async getUser(_email: string): Promise<ResGetUserDto> {
-    const user = await this.userRepository.findByEmail(_email);
+  async getUser(_id: string): Promise<ResGetUserDto> {
+    const user = await this.userRepository.findById(_id);
     if (user === null) {
       throw new NotFoundException(USER_NOT_FOUND);
     }

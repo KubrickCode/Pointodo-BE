@@ -9,6 +9,14 @@ import { v4 as uuidv4 } from 'uuid';
 export class UserRepository implements IUserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  async findById(id: string): Promise<User | null> {
+    const query = `
+    SELECT * FROM "User" WHERE id = $1::uuid
+    `;
+    const result = await this.prisma.$queryRawUnsafe<User>(query, id);
+    return result ? result[0] : null;
+  }
+
   async findByEmail(email: string): Promise<User | null> {
     const query = `
     SELECT * FROM "User" WHERE email = $1

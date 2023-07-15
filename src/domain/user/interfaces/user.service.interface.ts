@@ -6,5 +6,5 @@ import { ResGetUserDto } from 'src/interface/dto/user/getUser.dto';
 
 export interface IUserService {
   registerUser(user: ReqRegisterDto): Promise<ResRegisterDto>;
-  getUser(email: string): Promise<ResGetUserDto>;
+  getUser(id: string): Promise<ResGetUserDto>;
 }

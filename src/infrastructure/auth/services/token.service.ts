@@ -14,21 +14,19 @@ export class TokenService implements ITokenService {
   ) {}
 
   generateAccessToken(user: UserEntity): string {
-    const { id, email, role, provider, defaultBadgeId, createdAt } = user;
+    const { id } = user;
     const accessTokenExpiration = jwtConfig(
       this.configService,
     ).accessTokenExpiration;
-    const payload = { id, email, role, provider, defaultBadgeId, createdAt };
-    return this.jwtService.sign(payload, { expiresIn: accessTokenExpiration });
+    return this.jwtService.sign({ id }, { expiresIn: accessTokenExpiration });
   }
 
   generateRefreshToken(user: UserEntity): string {
-    const { id, email } = user;
+    const { id } = user;
     const refreshTokenExpiration = jwtConfig(
       this.configService,
     ).refreshTokenExpiration;
-    const payload = { id, email };
-    return this.jwtService.sign(payload, { expiresIn: refreshTokenExpiration });
+    return this.jwtService.sign({ id }, { expiresIn: refreshTokenExpiration });
   }
 
   decodeToken(token: string): DecodedAccessToken {

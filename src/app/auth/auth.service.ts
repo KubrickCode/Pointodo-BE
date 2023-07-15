@@ -73,7 +73,7 @@ export class AuthService implements IAuthService {
 
   async refresh(token: string): Promise<string> {
     const decoded = this.tokenService.decodeToken(token);
-    if (!decoded || !decoded.id || !decoded.email) {
+    if (!decoded || !decoded.id) {
       throw new UnauthorizedException(AUTH_INVALID_TOKEN);
     }
     const redisToken = await this.redisService.get(
@@ -88,7 +88,7 @@ export class AuthService implements IAuthService {
       this.logger.error(AUTH_INVALID_TOKEN);
       throw new UnauthorizedException(AUTH_INVALID_TOKEN);
     }
-    const user = await this.userRepository.findByEmail(decoded.email);
+    const user = await this.userRepository.findById(decoded.id);
     return this.tokenService.generateAccessToken(user);
   }
 
