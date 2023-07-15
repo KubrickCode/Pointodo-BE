@@ -19,6 +19,10 @@ import {
 } from '@domain/user/errors/user.errors';
 import { ResGetUserDto } from 'src/interface/dto/user/getUser.dto';
 import { IUserService } from '@domain/user/interfaces/user.service.interface';
+import { ICacheService } from '@domain/cache/interfaces/cache.service.interface';
+import { UserEntity } from '@domain/user/entities/user.entity';
+import { cacheConfig } from 'src/shared/config/cache.config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -28,6 +32,9 @@ export class UserService implements IUserService {
     private readonly userRepository: IUserRepository,
     @Inject('IPasswordHasher')
     private readonly passwordHasher: IPasswordHasher,
+    @Inject('ICacheService')
+    private readonly cacheRepository: ICacheService,
+    private readonly configService: ConfigService,
   ) {}
 
   async registerUser(newUser: ReqRegisterDto): Promise<ResRegisterDto> {
@@ -53,10 +60,22 @@ export class UserService implements IUserService {
   }
 
   async getUser(_id: string): Promise<ResGetUserDto> {
+    const cacheKey = `get_user:${_id}`;
+    const cachedUser = await this.cacheRepository.getFromCache<UserEntity>(
+      cacheKey,
+    );
+    if (cachedUser) {
+      return cachedUser;
+    }
     const user = await this.userRepository.findById(_id);
     if (user === null) {
       throw new NotFoundException(USER_NOT_FOUND);
     }
+    await this.cacheRepository.setCache(
+      cacheKey,
+      user,
+      cacheConfig(this.configService).cacheTTL,
+    );
     const { id, email, provider, role, defaultBadgeId, createdAt } = user;
     return { id, email, provider, role, defaultBadgeId, createdAt };
   }
