@@ -2,8 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
-import { corsOptions } from 'config/cors.config';
-import { swaggerConfig } from 'config/swagger.config';
+import { corsOptions } from 'src/shared/config/cors.config';
+import { swaggerConfig } from 'src/shared/config/swagger.config';
 import { SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 

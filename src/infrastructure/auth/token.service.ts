@@ -3,7 +3,7 @@ import { ITokenService } from '@domain/auth/interfaces/itoken.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { jwtConfig } from 'config/jwt.config';
+import { jwtConfig } from 'src/shared/config/jwt.config';
 import { DecodedAccessToken } from '@domain/auth/interfaces/decodedToken';
 
 @Injectable()

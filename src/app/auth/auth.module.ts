@@ -11,7 +11,7 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from '@infrastructure/auth/passport/strategies/local.strategy';
 import { TokenService } from '@infrastructure/auth/token.service';
 import { JwtStrategy } from '@infrastructure/auth/passport/strategies/jwt.strategy';
-import { jwtConfig } from 'config/jwt.config';
+import { jwtConfig } from 'src/shared/config/jwt.config';
 import { RedisModule } from '@infrastructure/redis/redis.module';
 import { RedisService } from '@infrastructure/redis/redis.service';
 import { ValidationService } from '@domain/auth/validation.service';

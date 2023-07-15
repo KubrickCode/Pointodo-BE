@@ -1,7 +1,7 @@
 import { IRedisService } from '@domain/redis/interfaces/iredis.service';
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { redisConfig } from 'config/redis.config';
+import { redisConfig } from 'src/shared/config/redis.config';
 import Redis from 'ioredis';
 
 @Injectable()

@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
 import { GoogleAuthGuard } from '@infrastructure/auth/passport/guards/google.guard';
 import { KakaoAuthGuard } from '@infrastructure/auth/passport/guards/kakao.guard';
-import { globalConfig } from 'config/global.config';
+import { globalConfig } from 'src/shared/config/global.config';
 import { ConfigService } from '@nestjs/config';
 import {
   ApiBearerAuth,
