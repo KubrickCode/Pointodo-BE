@@ -15,6 +15,7 @@ import { RedisModule } from 'src/interface/modules/redis.module';
 import { RedisService } from '@infrastructure/redis/redis.service';
 import { GoogleStrategy } from '@infrastructure/auth/passport/strategies/google.strategy';
 import { KakaoStrategy } from '@infrastructure/auth/passport/strategies/kakao.strategy';
+import { CacheService } from '@infrastructure/cache/cache.service';
 
 @Module({
   controllers: [AuthController],
@@ -44,6 +45,10 @@ import { KakaoStrategy } from '@infrastructure/auth/passport/strategies/kakao.st
     {
       provide: 'IAuthService',
       useClass: AuthService,
+    },
+    {
+      provide: 'ICacheService',
+      useClass: CacheService,
     },
   ],
   imports: [

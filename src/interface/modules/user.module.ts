@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PrismaService } from 'src/shared/services/prisma.service';
 import { PasswordHasher } from '@infrastructure/user/passwordHasher';
+import { CacheService } from '@infrastructure/cache/cache.service';
 
 @Module({
   controllers: [UserController],
@@ -22,6 +23,10 @@ import { PasswordHasher } from '@infrastructure/user/passwordHasher';
     {
       provide: 'IUserService',
       useClass: UserService,
+    },
+    {
+      provide: 'ICacheService',
+      useClass: CacheService,
     },
   ],
   imports: [
