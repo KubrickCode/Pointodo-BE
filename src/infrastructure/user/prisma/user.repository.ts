@@ -25,7 +25,7 @@ export class UserRepository implements IUserRepository {
     return result ? result[0] : null;
   }
 
-  async createUser(user: Partial<UserEntity>): Promise<UserEntity> {
+  async createUser(user: Partial<UserEntity>): Promise<User> {
     user.provider = Provider[user.provider] || Provider['Local'];
     user.role = Role[user.role] || Role['User'];
     const uuid = uuidv4();
