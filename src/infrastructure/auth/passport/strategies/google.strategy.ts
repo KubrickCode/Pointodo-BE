@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { AuthService } from '@domain/auth/auth.service';
+import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
 import { googleConfig } from 'src/shared/config/google.config';
 import { ConfigService } from '@nestjs/config';
 import { Profile } from 'passport';
@@ -10,7 +10,8 @@ import { DomainReqSocialLoginDto } from '@domain/auth/dto/socialLogin.dto';
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(
-    private readonly authService: AuthService,
+    @Inject('IAuthService')
+    private readonly authService: IAuthService,
     private configService: ConfigService,
   ) {
     super({

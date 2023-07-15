@@ -1,5 +1,5 @@
 import { UserEntity } from '../../user/entities/user.entity';
-import { DecodedAccessToken } from './decodedToken';
+import { DecodedAccessToken } from './decodedToken.interface';
 
 export interface ITokenService {
   generateAccessToken(payload: UserEntity): string;

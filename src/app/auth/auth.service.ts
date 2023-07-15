@@ -1,20 +1,27 @@
-import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserEntity } from '@domain/user/entities/user.entity';
-import { Inject } from '@nestjs/common';
-import { ITokenService } from './interfaces/itoken.service';
+import { ResLogoutDto } from '../../interface/dto/auth/logout.dto';
+import { LOGOUT_SUCCESS_MESSAGE } from '../../shared/messages/auth.messages';
+import { DomainResLoginDto } from '@domain/auth/dto/login.dto';
+import { ITokenService } from '@domain/auth/interfaces/token.service.interface';
 import { IRedisService } from '@domain/redis/interfaces/iredis.service';
 import { IUserRepository } from '@domain/user/interfaces/user.repository.interface';
-import { DomainResLoginDto } from './dto/login.dto';
-import { jwtExpiration } from 'src/shared/config/jwt.config';
-import { DomainReqSocialLoginDto } from './dto/socialLogin.dto';
-import {
-  AUTH_INVALID_TOKEN,
-  AUTH_EXPIRED_REFRESH_TOKEN,
-} from './errors/auth.errors';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { jwtExpiration } from 'src/shared/config/jwt.config';
+import {
+  AUTH_EXPIRED_REFRESH_TOKEN,
+  AUTH_INVALID_TOKEN,
+} from '@domain/auth/errors/auth.errors';
+import { DomainReqSocialLoginDto } from '@domain/auth/dto/socialLogin.dto';
+import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements IAuthService {
   constructor(
     @Inject('ITokenService')
     private readonly tokenService: ITokenService,
@@ -36,11 +43,12 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async logout(user: UserEntity): Promise<void> {
+  async logout(user: UserEntity): Promise<ResLogoutDto> {
     await this.redisService.delete(`refresh_token:${user.id}`);
+    return { message: LOGOUT_SUCCESS_MESSAGE };
   }
 
-  async refresh(token: string) {
+  async refresh(token: string): Promise<string> {
     const decoded = this.tokenService.decodeToken(token);
     if (!decoded || !decoded.id || !decoded.email) {
       throw new UnauthorizedException(AUTH_INVALID_TOKEN);

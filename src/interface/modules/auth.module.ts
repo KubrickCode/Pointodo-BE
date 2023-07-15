@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from '../controllers/auth.controller';
-import { AuthAppService } from '../../app/auth/auth.app.service';
+import { AuthService } from '../../app/auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { AuthService } from '@domain/auth/auth.service';
 import { UserRepository } from '@infrastructure/user/prisma/user.repository';
 import { PasswordHasher } from '@infrastructure/user/passwordHasher';
 import { PrismaService } from '@infrastructure/services/prisma.service';
@@ -21,8 +20,6 @@ import { KakaoStrategy } from '@infrastructure/auth/passport/strategies/kakao.st
 @Module({
   controllers: [AuthController],
   providers: [
-    AuthAppService,
-    AuthService,
     PrismaService,
     LocalStrategy,
     JwtStrategy,
@@ -45,6 +42,10 @@ import { KakaoStrategy } from '@infrastructure/auth/passport/strategies/kakao.st
     {
       provide: 'IRedisService',
       useClass: RedisService,
+    },
+    {
+      provide: 'IAuthService',
+      useClass: AuthService,
     },
   ],
   imports: [

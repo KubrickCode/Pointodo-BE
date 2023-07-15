@@ -1,5 +1,12 @@
-import { Controller, Post, Req, UseGuards, Res, Get } from '@nestjs/common';
-import { AuthAppService } from '../../app/auth/auth.app.service';
+import {
+  Controller,
+  Post,
+  Req,
+  UseGuards,
+  Res,
+  Get,
+  Inject,
+} from '@nestjs/common';
 import { LocalAuthGuard } from '@infrastructure/auth/passport/guards/local.guard';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
@@ -24,12 +31,14 @@ import {
 } from '../dto/auth/socialLogin.dto';
 import { authDocs } from '../docs/auth/auth.docs';
 import { getUserDocs } from 'src/interface/docs/user/getUser.docs';
+import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly authAppService: AuthAppService,
+    @Inject('IAuthService')
+    private readonly authService: IAuthService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -39,7 +48,7 @@ export class AuthController {
   @ApiOkResponse({ type: ResLoginDto })
   @ApiBody({ type: ReqLoginDto })
   async login(@Req() req: Request, @Res() res: Response): Promise<void> {
-    const { accessToken, refreshToken } = await this.authAppService.login(
+    const { accessToken, refreshToken } = await this.authService.login(
       req.user,
     );
     res.cookie('refreshToken', refreshToken, {
@@ -58,7 +67,7 @@ export class AuthController {
   @ApiOkResponse({ type: ResLogoutDto })
   @ApiUnauthorizedResponse(getUserDocs.unauthorizedResponse)
   async logout(@Req() req: Request, @Res() res: Response): Promise<void> {
-    const result: ResLogoutDto = await this.authAppService.logout(req.user);
+    const result: ResLogoutDto = await this.authService.logout(req.user);
     res.clearCookie('refreshToken');
     res.json(result);
   }
@@ -69,7 +78,7 @@ export class AuthController {
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
       const refreshToken = req.cookies['refreshToken'];
-      const accessToken = await this.authAppService.refresh(refreshToken);
+      const accessToken = await this.authService.refresh(refreshToken);
       const result: ResRefreshDto = { accessToken };
       res.json(result);
     } catch (error) {

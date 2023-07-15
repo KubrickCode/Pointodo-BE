@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-kakao';
-import { AuthService } from '@domain/auth/auth.service';
+import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
 import { Profile } from 'passport';
 import { DomainReqSocialLoginDto } from '@domain/auth/dto/socialLogin.dto';
 
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
-  constructor(private readonly authService: AuthService) {
+  constructor(
+    @Inject('IAuthService') private readonly authService: IAuthService,
+  ) {
     super({
       clientID: process.env.KAKAO_ID,
       callbackURL: process.env.KAKAO_CALLBACK,
