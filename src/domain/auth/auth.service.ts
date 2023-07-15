@@ -3,7 +3,7 @@ import { UserEntity } from '@domain/user/entities/user.entity';
 import { Inject } from '@nestjs/common';
 import { ITokenService } from './interfaces/itoken.service';
 import { IRedisService } from '@domain/redis/interfaces/iredis.service';
-import { IUserRepository } from '@domain/user/interfaces/iuser.repository';
+import { IUserRepository } from '@domain/user/interfaces/user.repository.interface';
 import { DomainResLoginDto } from './dto/login.dto';
 import { jwtExpiration } from 'src/shared/config/jwt.config';
 import { DomainReqSocialLoginDto } from './dto/socialLogin.dto';

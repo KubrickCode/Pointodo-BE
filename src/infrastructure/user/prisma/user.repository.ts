@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@infrastructure/services/prisma.service';
 import { Provider, Role, User } from '@prisma/client';
-import { IUserRepository } from '@domain/user/interfaces/iuser.repository';
+import { IUserRepository } from '@domain/user/interfaces/user.repository.interface';
 import { UserEntity } from '@domain/user/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 

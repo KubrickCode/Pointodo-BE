@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { UserController } from '../controllers/user.controller';
-import { UserAppService } from '../../app/user/user.app.service';
-import { UserService } from '@domain/user/user.service';
+import { UserService } from '../../app/user/user.service';
 import { UserRepository } from '@infrastructure/user/prisma/user.repository';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -11,8 +10,6 @@ import { PasswordHasher } from '@infrastructure/user/passwordHasher';
 @Module({
   controllers: [UserController],
   providers: [
-    UserAppService,
-    UserService,
     PrismaService,
     {
       provide: 'IUserRepository',
@@ -21,6 +18,10 @@ import { PasswordHasher } from '@infrastructure/user/passwordHasher';
     {
       provide: 'IPasswordHasher',
       useClass: PasswordHasher,
+    },
+    {
+      provide: 'IUserService',
+      useClass: UserService,
     },
   ],
   imports: [

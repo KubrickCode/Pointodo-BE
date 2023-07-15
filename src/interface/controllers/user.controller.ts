@@ -1,5 +1,12 @@
-import { Body, Controller, Post, Get, Req, UseGuards } from '@nestjs/common';
-import { UserAppService } from '../../app/user/user.app.service';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Req,
+  UseGuards,
+  Inject,
+} from '@nestjs/common';
 import { ReqRegisterDto, ResRegisterDto } from '../dto/user/register.dto';
 import { Request } from 'express';
 import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
@@ -14,18 +21,22 @@ import {
 } from '@nestjs/swagger';
 import { registerDocs } from '../docs/user/register.docs';
 import { getUserDocs } from '../docs/user/getUser.docs';
+import { IUserService } from '@domain/user/interfaces/user.service.interface';
 
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userAppService: UserAppService) {}
+  constructor(
+    @Inject('IUserService')
+    private readonly userService: IUserService,
+  ) {}
 
   @Post('register')
   @ApiOperation(registerDocs.operation)
   @ApiOkResponse(registerDocs.okResponse)
   @ApiBadRequestResponse(registerDocs.badRequest)
   async createUser(@Body() user: ReqRegisterDto): Promise<ResRegisterDto> {
-    return this.userAppService.registerUser(user);
+    return this.userService.registerUser(user);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -35,6 +46,6 @@ export class UserController {
   @ApiOkResponse(getUserDocs.okResponse)
   @ApiUnauthorizedResponse(getUserDocs.unauthorizedResponse)
   async getUser(@Req() req: Request): Promise<ResGetUserDto> {
-    return req.user;
+    return this.userService.getUser(req.user.email);
   }
 }

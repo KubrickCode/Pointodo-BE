@@ -4,9 +4,9 @@ import {
   Inject,
   NotFoundException,
 } from '@nestjs/common';
-import { IUserRepository } from '@domain/user/interfaces/iuser.repository';
+import { IUserRepository } from '@domain/user/interfaces/user.repository.interface';
 import { UserEntity } from '@domain/user/entities/user.entity';
-import { IPasswordHasher } from '@domain/user/interfaces/ipasswordHasher';
+import { IPasswordHasher } from '@domain/user/interfaces/passwordHasher.interface';
 
 @Injectable()
 export class ValidationService {
