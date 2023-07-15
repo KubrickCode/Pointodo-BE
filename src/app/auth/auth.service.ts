@@ -3,13 +3,14 @@ import {
   Inject,
   Logger,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { UserEntity } from '@domain/user/entities/user.entity';
 import { ResLogoutDto } from '../../interface/dto/auth/logout.dto';
 import { LOGOUT_SUCCESS_MESSAGE } from '../../shared/messages/auth.messages';
 import { DomainResLoginDto } from '@domain/auth/dto/login.dto';
 import { ITokenService } from '@domain/auth/interfaces/token.service.interface';
-import { IRedisService } from '@domain/redis/interfaces/iredis.service';
+import { IRedisService } from '@domain/redis/interfaces/redis.service.interface';
 import { IUserRepository } from '@domain/user/interfaces/user.repository.interface';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { jwtExpiration } from 'src/shared/config/jwt.config';
@@ -19,6 +20,7 @@ import {
 } from '@domain/auth/errors/auth.errors';
 import { DomainReqSocialLoginDto } from '@domain/auth/dto/socialLogin.dto';
 import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
+import { IPasswordHasher } from '@domain/user/interfaces/passwordHasher.interface';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -29,8 +31,29 @@ export class AuthService implements IAuthService {
     private readonly redisService: IRedisService,
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
+    @Inject('IPasswordHasher')
+    private readonly passwordHasher: IPasswordHasher,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  async validateUser(email: string, password: string): Promise<UserEntity> {
+    const user = await this.userRepository.findByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException('존재하지 않는 계정입니다');
+    }
+
+    const isCorrectPassword = await this.passwordHasher.comparePassword(
+      password,
+      user.password,
+    );
+
+    if (!isCorrectPassword) {
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다');
+    }
+
+    return user;
+  }
 
   async login(user: UserEntity): Promise<DomainResLoginDto> {
     const accessToken = this.tokenService.generateAccessToken(user);

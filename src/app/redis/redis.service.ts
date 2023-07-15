@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IRedisService } from './interfaces/iredis.service';
+import { IRedisService } from '../../domain/redis/interfaces/redis.service.interface';
 
 @Injectable()
-export class RedisService {
+export class RedisService implements IRedisService {
   constructor(
     @Inject('IRedisService')
     private readonly redisService: IRedisService,

@@ -1,4 +1,4 @@
-import { IRedisService } from '@domain/redis/interfaces/iredis.service';
+import { IRedisService } from '@domain/redis/interfaces/redis.service.interface';
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { redisConfig } from 'src/shared/config/redis.config';
