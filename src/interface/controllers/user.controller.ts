@@ -7,6 +7,7 @@ import {
   UseGuards,
   Inject,
   Patch,
+  Delete,
 } from '@nestjs/common';
 import { ReqRegisterDto, ResRegisterDto } from '../dto/user/register.dto';
 import { Request } from 'express';
@@ -25,6 +26,7 @@ import { getUserDocs } from '../docs/user/getUser.docs';
 import { IUserService } from '@domain/user/interfaces/user.service.interface';
 import { ReqChangePasswordDto } from '../dto/user/changePassword.dto';
 import { changePasswordDocs } from '../docs/user/changePassword.docs';
+import { deleteUserDocs } from '../docs/user/deleteUser.docs';
 
 @ApiTags('User')
 @Controller('user')
@@ -64,5 +66,15 @@ export class UserController {
     @Body() body: ReqChangePasswordDto,
   ) {
     return this.userService.changePassword(req.user.id, body.password);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation(deleteUserDocs.operation)
+  @ApiBearerAuth()
+  @ApiOkResponse(deleteUserDocs.okResponse)
+  @ApiUnauthorizedResponse(deleteUserDocs.unauthorizedResponse)
+  @Delete()
+  async deleteUser(@Req() req: Request) {
+    return this.userService.deleteUser(req.user.id);
   }
 }

@@ -11,6 +11,7 @@ import {
 } from '../../interface/dto/user/register.dto';
 import {
   CHANGE_PASSWORD_SUCCESS_MESSAGE,
+  DELETE_USER_SUCCESS_MESSAGE,
   REGISTER_SUCCESS_MESSAGE,
 } from '../../shared/messages/user.messages';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
@@ -27,6 +28,7 @@ import { UserEntity } from '@domain/user/entities/user.entity';
 import { cacheConfig } from 'src/shared/config/cache.config';
 import { ConfigService } from '@nestjs/config';
 import { ResChangePasswordDto } from 'src/interface/dto/user/changePassword.dto';
+import { ResDeleteUserDto } from 'src/interface/dto/user/deleteUser.dto';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -95,5 +97,14 @@ export class UserService implements IUserService {
       `비밀번호 변경 - 사용자 ID:${user.id}, 유저 이메일:${user.email}`,
     );
     return { message: CHANGE_PASSWORD_SUCCESS_MESSAGE };
+  }
+
+  async deleteUser(id: string): Promise<ResDeleteUserDto> {
+    const user = await this.userRepository.deleteUser(id);
+    this.logger.log(
+      'info',
+      `회원 탈퇴 - 사용자 ID:${user.id}, 유저 이메일:${user.email}`,
+    );
+    return { message: DELETE_USER_SUCCESS_MESSAGE };
   }
 }

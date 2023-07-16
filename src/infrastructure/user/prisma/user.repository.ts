@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class UserRepository implements IUserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findById(id: string): Promise<User | null> {
+  async findById(id: string): Promise<UserEntity | null> {
     const query = `
     SELECT * FROM "User" WHERE id = $1::uuid
     `;
@@ -17,7 +17,7 @@ export class UserRepository implements IUserRepository {
     return result ? result[0] : null;
   }
 
-  async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<UserEntity | null> {
     const query = `
     SELECT * FROM "User" WHERE email = $1
     `;
@@ -25,7 +25,7 @@ export class UserRepository implements IUserRepository {
     return result ? result[0] : null;
   }
 
-  async createUser(user: Partial<UserEntity>): Promise<User> {
+  async createUser(user: Partial<UserEntity>): Promise<UserEntity> {
     user.provider = Provider[user.provider] || Provider['Local'];
     user.role = Role[user.role] || Role['User'];
     const uuid = uuidv4();
@@ -40,12 +40,22 @@ export class UserRepository implements IUserRepository {
     return newUser[0];
   }
 
-  async changePassword(id: string, newPassword: string) {
+  async changePassword(id: string, newPassword: string): Promise<UserEntity> {
     const query = `
     UPDATE "User" SET password = $1 WHERE id = $2::uuid
     RETURNING *
     `;
     const values = [newPassword, id];
+    const user = await this.prisma.$queryRawUnsafe<User>(query, ...values);
+    return user[0];
+  }
+
+  async deleteUser(id: string): Promise<UserEntity> {
+    const query = `
+    DELETE FROM "User" WHERE id = $1::uuid
+    RETURNING *
+    `;
+    const values = [id];
     const user = await this.prisma.$queryRawUnsafe<User>(query, ...values);
     return user[0];
   }

@@ -5,4 +5,5 @@ export interface IUserRepository {
   findByEmail(email: string): Promise<UserEntity | null>;
   findById(id: string): Promise<UserEntity | null>;
   changePassword(id: string, newPassword: string): Promise<UserEntity>;
+  deleteUser(id: string): Promise<UserEntity>;
 }
