@@ -7,7 +7,10 @@ import {
 } from '@nestjs/common';
 import { UserEntity } from '@domain/user/entities/user.entity';
 import { ResLogoutDto } from '../../interface/dto/auth/logout.dto';
-import { LOGOUT_SUCCESS_MESSAGE } from '../../shared/messages/auth.messages';
+import {
+  CHECK_PASSWORD_MESSAGE,
+  LOGOUT_SUCCESS_MESSAGE,
+} from '../../shared/messages/auth.messages';
 import { DomainResLoginDto } from '@domain/auth/dto/login.dto';
 import { ITokenService } from '@domain/auth/interfaces/token.service.interface';
 import { IRedisService } from '@domain/redis/interfaces/redis.service.interface';
@@ -21,6 +24,7 @@ import {
 import { DomainReqSocialLoginDto } from '@domain/auth/dto/socialLogin.dto';
 import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
 import { IPasswordHasher } from '@domain/user/interfaces/passwordHasher.interface';
+import { ResCheckPasswordDto } from 'src/interface/dto/auth/checkPassword.dto';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -53,6 +57,21 @@ export class AuthService implements IAuthService {
     }
 
     return user;
+  }
+
+  async checkPassword(
+    id: string,
+    password: string,
+  ): Promise<ResCheckPasswordDto> {
+    const user = await this.userRepository.findById(id);
+    const isCorrectPassword = await this.passwordHasher.comparePassword(
+      password,
+      user.password,
+    );
+    if (!isCorrectPassword) {
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다');
+    }
+    return { message: CHECK_PASSWORD_MESSAGE };
   }
 
   async login(user: UserEntity): Promise<DomainResLoginDto> {

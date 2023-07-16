@@ -6,6 +6,7 @@ import {
   Res,
   Get,
   Inject,
+  Body,
 } from '@nestjs/common';
 import { LocalAuthGuard } from '@infrastructure/auth/passport/guards/local.guard';
 import { Request, Response } from 'express';
@@ -15,6 +16,7 @@ import { KakaoAuthGuard } from '@infrastructure/auth/passport/guards/kakao.guard
 import { globalConfig } from 'src/shared/config/global.config';
 import { ConfigService } from '@nestjs/config';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
   ApiOkResponse,
@@ -32,6 +34,9 @@ import {
 import { authDocs } from '../docs/auth/auth.docs';
 import { getUserDocs } from 'src/interface/docs/user/getUser.docs';
 import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
+import { ReqCheckPasswordDto } from '../dto/auth/checkPassword.dto';
+import { checkPasswordDocs } from '../docs/auth/checkPassword.docs';
+import { ResChangePasswordDto } from '../dto/user/changePassword.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -61,8 +66,8 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @ApiOperation(authDocs.logout)
   @ApiBearerAuth()
+  @ApiOperation(authDocs.logout)
   @Post('logout')
   @ApiOkResponse({ type: ResLogoutDto })
   @ApiUnauthorizedResponse(getUserDocs.unauthorizedResponse)
@@ -85,6 +90,20 @@ export class AuthController {
       res.clearCookie('refreshToken');
       res.send();
     }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation(checkPasswordDocs.operation)
+  @ApiOkResponse(checkPasswordDocs.okResponse)
+  @ApiUnauthorizedResponse(checkPasswordDocs.unauthorizedResponse)
+  @ApiBadRequestResponse(checkPasswordDocs.badRequest)
+  @Post('check-password')
+  async checkPassword(
+    @Req() req: Request,
+    @Body() body: ReqCheckPasswordDto,
+  ): Promise<ResChangePasswordDto> {
+    return await this.authService.checkPassword(req.user.id, body.password);
   }
 
   @UseGuards(GoogleAuthGuard)
