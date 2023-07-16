@@ -39,4 +39,14 @@ export class UserRepository implements IUserRepository {
     const newUser = await this.prisma.$queryRawUnsafe<User>(query, ...values);
     return newUser[0];
   }
+
+  async changePassword(id: string, newPassword: string) {
+    const query = `
+    UPDATE "User" SET password = $1 WHERE id = $2::uuid
+    RETURNING *
+    `;
+    const values = [newPassword, id];
+    const user = await this.prisma.$queryRawUnsafe<User>(query, ...values);
+    return user[0];
+  }
 }

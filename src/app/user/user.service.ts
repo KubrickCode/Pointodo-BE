@@ -9,7 +9,10 @@ import {
   ReqRegisterDto,
   ResRegisterDto,
 } from '../../interface/dto/user/register.dto';
-import { REGISTER_SUCCESS_MESSAGE } from '../../shared/messages/user.messages';
+import {
+  CHANGE_PASSWORD_SUCCESS_MESSAGE,
+  REGISTER_SUCCESS_MESSAGE,
+} from '../../shared/messages/user.messages';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { IUserRepository } from '@domain/user/interfaces/user.repository.interface';
 import { IPasswordHasher } from '@domain/user/interfaces/passwordHasher.interface';
@@ -23,6 +26,7 @@ import { ICacheService } from '@domain/cache/interfaces/cache.service.interface'
 import { UserEntity } from '@domain/user/entities/user.entity';
 import { cacheConfig } from 'src/shared/config/cache.config';
 import { ConfigService } from '@nestjs/config';
+import { ResChangePasswordDto } from 'src/interface/dto/user/changePassword.dto';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -78,5 +82,18 @@ export class UserService implements IUserService {
     );
     const { id, email, provider, role, defaultBadgeId, createdAt } = user;
     return { id, email, provider, role, defaultBadgeId, createdAt };
+  }
+
+  async changePassword(
+    id: string,
+    password: string,
+  ): Promise<ResChangePasswordDto> {
+    const newPassword = await this.passwordHasher.hashPassword(password);
+    const user = await this.userRepository.changePassword(id, newPassword);
+    this.logger.log(
+      'info',
+      `비밀번호 변경 - 사용자 ID:${user.id}, 유저 이메일:${user.email}`,
+    );
+    return { message: CHANGE_PASSWORD_SUCCESS_MESSAGE };
   }
 }
