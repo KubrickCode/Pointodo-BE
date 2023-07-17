@@ -51,7 +51,7 @@ export class UserController {
   @ApiOkResponse(getUserDocs.okResponse)
   @ApiUnauthorizedResponse(getUserDocs.unauthorizedResponse)
   async getUser(@Req() req: Request): Promise<ResGetUserDto> {
-    return this.userService.getUser(req.user.id);
+    return this.userService.getUser({ id: req.user.id });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -65,7 +65,10 @@ export class UserController {
     @Req() req: Request,
     @Body() body: ReqChangePasswordDto,
   ) {
-    return this.userService.changePassword(req.user.id, body.password);
+    return this.userService.changePassword({
+      id: req.user.id,
+      password: body.password,
+    });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -75,6 +78,6 @@ export class UserController {
   @ApiUnauthorizedResponse(deleteUserDocs.unauthorizedResponse)
   @Delete()
   async deleteUser(@Req() req: Request) {
-    return this.userService.deleteUser(req.user.id);
+    return this.userService.deleteUser({ id: req.user.id });
   }
 }

@@ -1,14 +1,22 @@
+import { ReqGetUserAppDto, ResGetUserAppDto } from '../dto/app/getUser.app.dto';
 import {
-  ReqRegisterDto,
-  ResRegisterDto,
-} from 'src/interface/dto/user/register.dto';
-import { ResGetUserDto } from 'src/interface/dto/user/getUser.dto';
-import { ResChangePasswordDto } from 'src/interface/dto/user/changePassword.dto';
-import { ResDeleteUserDto } from 'src/interface/dto/user/deleteUser.dto';
+  ReqRegisterAppDto,
+  ResRegisterAppDto,
+} from '../dto/app/register.app.dto';
+import {
+  ReqChangePasswordAppDto,
+  ResChangePasswordAppDto,
+} from '../dto/app/changePassword.app.dto';
+import {
+  ReqDeleteUserAppDto,
+  ResDeleteUserAppDto,
+} from '../dto/app/deleteUser.app.dto';
 
 export interface IUserService {
-  registerUser(user: ReqRegisterDto): Promise<ResRegisterDto>;
-  getUser(id: string): Promise<ResGetUserDto>;
-  changePassword(id: string, password: string): Promise<ResChangePasswordDto>;
-  deleteUser(id: string): Promise<ResDeleteUserDto>;
+  registerUser(user: ReqRegisterAppDto): Promise<ResRegisterAppDto>;
+  getUser(req: ReqGetUserAppDto): Promise<ResGetUserAppDto>;
+  changePassword(
+    req: ReqChangePasswordAppDto,
+  ): Promise<ResChangePasswordAppDto>;
+  deleteUser(req: ReqDeleteUserAppDto): Promise<ResDeleteUserAppDto>;
 }

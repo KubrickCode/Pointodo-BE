@@ -6,10 +6,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import {
-  ReqRegisterDto,
-  ResRegisterDto,
-} from '../../interface/dto/user/register.dto';
-import {
   CHANGE_PASSWORD_SUCCESS_MESSAGE,
   DELETE_USER_SUCCESS_MESSAGE,
   REGISTER_SUCCESS_MESSAGE,
@@ -21,14 +17,27 @@ import {
   USER_ALREADY_EXISTS,
   USER_NOT_FOUND,
 } from '@domain/user/errors/user.errors';
-import { ResGetUserDto } from 'src/interface/dto/user/getUser.dto';
 import { IUserService } from '@domain/user/interfaces/user.service.interface';
 import { ICacheService } from '@domain/cache/interfaces/cache.service.interface';
 import { UserEntity } from '@domain/user/entities/user.entity';
 import { cacheConfig } from 'src/shared/config/cache.config';
 import { ConfigService } from '@nestjs/config';
-import { ResChangePasswordDto } from 'src/interface/dto/user/changePassword.dto';
-import { ResDeleteUserDto } from 'src/interface/dto/user/deleteUser.dto';
+import {
+  ReqRegisterAppDto,
+  ResRegisterAppDto,
+} from '@domain/user/dto/app/register.app.dto';
+import {
+  ReqGetUserAppDto,
+  ResGetUserAppDto,
+} from '@domain/user/dto/app/getUser.app.dto';
+import {
+  ReqChangePasswordAppDto,
+  ResChangePasswordAppDto,
+} from '@domain/user/dto/app/changePassword.app.dto';
+import {
+  ReqDeleteUserAppDto,
+  ResDeleteUserAppDto,
+} from '@domain/user/dto/app/deleteUser.app.dto';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -43,7 +52,7 @@ export class UserService implements IUserService {
     private readonly configService: ConfigService,
   ) {}
 
-  async registerUser(newUser: ReqRegisterDto): Promise<ResRegisterDto> {
+  async registerUser(newUser: ReqRegisterAppDto): Promise<ResRegisterAppDto> {
     const { email, password } = newUser;
     const existingUser = await this.userRepository.findByEmail(email);
 
@@ -65,15 +74,15 @@ export class UserService implements IUserService {
     return { message: REGISTER_SUCCESS_MESSAGE };
   }
 
-  async getUser(_id: string): Promise<ResGetUserDto> {
-    const cacheKey = `get_user:${_id}`;
+  async getUser(req: ReqGetUserAppDto): Promise<ResGetUserAppDto> {
+    const cacheKey = `get_user:${req.id}`;
     const cachedUser = await this.cacheRepository.getFromCache<UserEntity>(
       cacheKey,
     );
     if (cachedUser) {
       return cachedUser;
     }
-    const user = await this.userRepository.findById(_id);
+    const user = await this.userRepository.findById(req.id);
     if (user === null) {
       throw new NotFoundException(USER_NOT_FOUND);
     }
@@ -87,11 +96,10 @@ export class UserService implements IUserService {
   }
 
   async changePassword(
-    id: string,
-    password: string,
-  ): Promise<ResChangePasswordDto> {
-    const newPassword = await this.passwordHasher.hashPassword(password);
-    const user = await this.userRepository.changePassword(id, newPassword);
+    req: ReqChangePasswordAppDto,
+  ): Promise<ResChangePasswordAppDto> {
+    const newPassword = await this.passwordHasher.hashPassword(req.password);
+    const user = await this.userRepository.changePassword(req.id, newPassword);
     this.logger.log(
       'info',
       `비밀번호 변경 - 사용자 ID:${user.id}, 유저 이메일:${user.email}`,
@@ -99,8 +107,8 @@ export class UserService implements IUserService {
     return { message: CHANGE_PASSWORD_SUCCESS_MESSAGE };
   }
 
-  async deleteUser(id: string): Promise<ResDeleteUserDto> {
-    const user = await this.userRepository.deleteUser(id);
+  async deleteUser(req: ReqDeleteUserAppDto): Promise<ResDeleteUserAppDto> {
+    const user = await this.userRepository.deleteUser(req.id);
     this.logger.log(
       'info',
       `회원 탈퇴 - 사용자 ID:${user.id}, 유저 이메일:${user.email}`,
