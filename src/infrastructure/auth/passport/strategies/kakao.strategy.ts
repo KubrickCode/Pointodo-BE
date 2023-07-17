@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-kakao';
 import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
 import { Profile } from 'passport';
-import { ReqSocialLoginDto } from 'src/interface/dto/auth/socialLogin.dto';
+import { ReqSocialLoginAppDto } from '@domain/auth/dto/app/socialLogin.app.dto';
 
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
@@ -23,7 +23,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     done: VerifyCallback,
   ): Promise<void> {
     const email = profile.id + '@kakao.com';
-    const socialUser: ReqSocialLoginDto = {
+    const socialUser: ReqSocialLoginAppDto = {
       email,
       provider: 'Kakao',
     };

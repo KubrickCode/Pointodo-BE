@@ -4,10 +4,12 @@ import {
   VALIDATE_EMAIL,
   VALIDATE_PASSWORD,
 } from 'src/shared/messages/auth.messages';
+import { Transform } from 'class-transformer';
 
 class ReqRegisterDto {
   @ApiProperty({ example: 'test@gmail.com', description: '이메일' })
   @IsEmail({}, { message: VALIDATE_EMAIL })
+  @Transform(({ value }) => value.toLowerCase())
   readonly email: string;
 
   @ApiProperty({

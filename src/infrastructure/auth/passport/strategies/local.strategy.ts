@@ -20,6 +20,9 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
     email: string,
     password: string,
   ): Promise<ResValidateUserAppDto> {
-    return await this.authService.validateUser({ email, password });
+    return await this.authService.validateUser({
+      email: email.toLowerCase(),
+      password,
+    });
   }
 }

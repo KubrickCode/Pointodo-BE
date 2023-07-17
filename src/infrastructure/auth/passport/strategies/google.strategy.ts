@@ -5,7 +5,7 @@ import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
 import { googleConfig } from 'src/shared/config/google.config';
 import { ConfigService } from '@nestjs/config';
 import { Profile } from 'passport';
-import { ReqSocialLoginDto } from 'src/interface/dto/auth/socialLogin.dto';
+import { ReqSocialLoginAppDto } from '@domain/auth/dto/app/socialLogin.app.dto';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -28,7 +28,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     profile: Profile,
     done: VerifyCallback,
   ): Promise<void> {
-    const socialUser: ReqSocialLoginDto = {
+    const socialUser: ReqSocialLoginAppDto = {
       email: profile.emails[0].value,
       provider: 'Google',
     };
