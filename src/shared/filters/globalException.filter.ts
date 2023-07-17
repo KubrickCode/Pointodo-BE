@@ -16,19 +16,21 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  catch(exception: unknown, host: ArgumentsHost): void {
+  catch(exception: HttpException, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    const exceptionResponse = exception.getResponse();
 
-    let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = '서버 내부 오류';
-    let error = '서버 오류';
+    const status = exception.getStatus() || HttpStatus.INTERNAL_SERVER_ERROR;
+    const error = exception.name || '서버 오류';
+    let message: string | Array<string> = '서버 내부 오류';
 
-    if (exception instanceof HttpException) {
-      status = exception.getStatus();
-      message = exception.message || '서버 내부 오류';
-      error = exception.name;
+    if (
+      typeof exceptionResponse === 'object' &&
+      'message' in exceptionResponse
+    ) {
+      message = exceptionResponse.message as string | Array<string>;
     }
 
     this.logger.error(
