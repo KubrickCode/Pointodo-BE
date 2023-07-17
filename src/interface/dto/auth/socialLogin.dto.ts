@@ -21,7 +21,7 @@ class RedirectSocialLoginDto {
     example: '/social-login',
     description: '클라이언트 리다이렉트 경로',
   })
-  redirectUri: string;
+  readonly redirectUri: string;
 }
 
 export { ResSocialLoginDto, RedirectSocialLoginDto, ReqSocialLoginDto };

@@ -4,7 +4,7 @@ import { IsString } from 'class-validator';
 class ReqLogoutAppDto {
   @ApiProperty({ description: '유저 고유 ID(UUID)' })
   @IsString()
-  id: string;
+  readonly id: string;
 }
 
 class ResLogoutAppDto {

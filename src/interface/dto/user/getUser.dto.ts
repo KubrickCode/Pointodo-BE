@@ -5,27 +5,27 @@ import { IsDate, IsEnum, IsInt, IsString } from 'class-validator';
 class ResGetUserDto {
   @ApiProperty({ description: '유저 고유 ID(UUID)' })
   @IsString()
-  id: string;
+  readonly id: string;
 
   @ApiProperty({ example: 'test@gmail.com', description: '이메일' })
   @IsString()
-  email: string;
+  readonly email: string;
 
   @ApiProperty({ example: 'Local | Google | Kakao', description: '공급 업체' })
   @IsEnum(Provider)
-  provider: Provider;
+  readonly provider: Provider;
 
   @ApiProperty({ example: 'User | Admin', description: '권한' })
   @IsEnum(Role)
-  role: Role;
+  readonly role: Role;
 
   @ApiProperty({ description: '뱃지ID' })
   @IsInt()
-  defaultBadgeId: number;
+  readonly defaultBadgeId: number;
 
   @IsDate()
   @ApiProperty({ description: '가입 날짜' })
-  createdAt: Date;
+  readonly createdAt: Date;
 }
 
 export { ResGetUserDto };

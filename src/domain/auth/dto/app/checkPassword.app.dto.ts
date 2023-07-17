@@ -5,7 +5,7 @@ import { VALIDATE_PASSWORD } from 'src/shared/messages/auth.messages';
 class ReqCheckPasswordAppDto {
   @ApiProperty({ description: '유저 고유 ID(UUID)' })
   @IsString()
-  id: string;
+  readonly id: string;
 
   @ApiProperty({
     example: 'test1234!@',
