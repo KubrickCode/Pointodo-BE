@@ -12,7 +12,6 @@ import {
   CHECK_PASSWORD_MESSAGE,
   LOGOUT_SUCCESS_MESSAGE,
 } from '../../shared/messages/auth.messages';
-import { DomainResLoginDto } from '@domain/auth/dto/login.dto';
 import { ITokenService } from '@domain/auth/interfaces/token.service.interface';
 import { IRedisService } from '@domain/redis/interfaces/redis.service.interface';
 import { IUserRepository } from '@domain/user/interfaces/user.repository.interface';
@@ -22,13 +21,13 @@ import {
   AUTH_EXPIRED_REFRESH_TOKEN,
   AUTH_INVALID_TOKEN,
 } from '@domain/auth/errors/auth.errors';
-import { DomainReqSocialLoginDto } from '@domain/auth/dto/socialLogin.dto';
 import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
 import { IPasswordHasher } from '@domain/user/interfaces/passwordHasher.interface';
 import { ResCheckPasswordDto } from 'src/interface/dto/auth/checkPassword.dto';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { ReqLoginDto } from 'src/interface/dto/auth/login.dto';
+import { ReqLoginDto, ResLoginDto } from 'src/interface/dto/auth/login.dto';
+import { ReqSocialLoginDto } from 'src/interface/dto/auth/socialLogin.dto';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -88,7 +87,7 @@ export class AuthService implements IAuthService {
     return { message: CHECK_PASSWORD_MESSAGE };
   }
 
-  async login(user: UserEntity): Promise<DomainResLoginDto> {
+  async login(user: UserEntity): Promise<ResLoginDto> {
     const accessToken = this.tokenService.generateAccessToken(user);
     const refreshToken = this.tokenService.generateRefreshToken(user);
     await this.redisService.set(
@@ -125,9 +124,7 @@ export class AuthService implements IAuthService {
     return this.tokenService.generateAccessToken(user);
   }
 
-  async socialLogin(
-    socialUser: DomainReqSocialLoginDto,
-  ): Promise<DomainResLoginDto> {
+  async socialLogin(socialUser: ReqSocialLoginDto): Promise<ResLoginDto> {
     const { email, provider } = socialUser;
     const user = await this.userRepository.findByEmail(email);
     if (user) {

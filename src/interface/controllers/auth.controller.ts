@@ -19,6 +19,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiCookieAuth,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -78,6 +79,7 @@ export class AuthController {
   }
 
   @Get('refresh')
+  @ApiCookieAuth('refreshToken')
   @ApiOperation(authDocs.refresh)
   @ApiOkResponse({ type: ResRefreshDto })
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
@@ -159,10 +161,10 @@ export class AuthController {
   @ApiOperation(authDocs.socialLogin)
   @ApiOkResponse({ type: ResSocialLoginDto })
   async socialLogin(@Req() req: Request, @Res() res: Response): Promise<void> {
-    res.clearCookie('accessToken');
     const result: ResSocialLoginDto = {
       accessToken: req.cookies['accessToken'],
     };
+    res.clearCookie('accessToken');
     res.json(result);
   }
 }

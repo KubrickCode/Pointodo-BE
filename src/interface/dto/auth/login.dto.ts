@@ -25,6 +25,10 @@ class ResLoginDto {
   @ApiProperty({ description: 'JWT 액세스 토큰' })
   @IsString()
   readonly accessToken: string;
+
+  @ApiProperty({ description: 'JWT 리프레시 토큰 - 쿠키 설정' })
+  @IsString()
+  readonly refreshToken?: string;
 }
 
 export { ReqLoginDto, ResLoginDto };
