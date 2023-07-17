@@ -1,14 +1,21 @@
-import { UserEntity } from '@domain/user/entities/user.entity';
-import { ResLogoutDto } from 'src/interface/dto/auth/logout.dto';
-import { ResCheckPasswordDto } from 'src/interface/dto/auth/checkPassword.dto';
-import { ResLoginDto } from 'src/interface/dto/auth/login.dto';
-import { ReqSocialLoginDto } from 'src/interface/dto/auth/socialLogin.dto';
+import {
+  ReqValidateUserAppDto,
+  ResValidateUserAppDto,
+} from '../dto/app/vaildateUser.app.dto';
+import {
+  ReqCheckPasswordAppDto,
+  ResCheckPasswordAppDto,
+} from '../dto/app/checkPassword.app.dto';
+import { ReqLoginAppDto, ResLoginAppDto } from '../dto/app/login.app.dto';
+import { ReqLogoutAppDto, ResLogoutAppDto } from '../dto/app/logout.app.dto';
+import { ReqRefreshAppDto, ResRefreshAppDto } from '../dto/app/refresh.app.dto';
+import { ReqSocialLoginAppDto } from '../dto/app/socialLogin.app.dto';
 
 export interface IAuthService {
-  validateUser(email: string, password: string): Promise<UserEntity>;
-  checkPassword(id: string, password: string): Promise<ResCheckPasswordDto>;
-  login(user: UserEntity): Promise<ResLoginDto>;
-  logout(user: UserEntity): Promise<ResLogoutDto>;
-  refresh(token: string): Promise<string>;
-  socialLogin(socialUser: ReqSocialLoginDto): Promise<ResLoginDto>;
+  validateUser(req: ReqValidateUserAppDto): Promise<ResValidateUserAppDto>;
+  checkPassword(req: ReqCheckPasswordAppDto): Promise<ResCheckPasswordAppDto>;
+  login(req: ReqLoginAppDto): Promise<ResLoginAppDto>;
+  logout(req: ReqLogoutAppDto): Promise<ResLogoutAppDto>;
+  refresh(req: ReqRefreshAppDto): Promise<ResRefreshAppDto>;
+  socialLogin(socialUser: ReqSocialLoginAppDto): Promise<ResLoginAppDto>;
 }

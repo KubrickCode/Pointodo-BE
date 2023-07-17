@@ -6,8 +6,6 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { UserEntity } from '@domain/user/entities/user.entity';
-import { ResLogoutDto } from '../../interface/dto/auth/logout.dto';
 import {
   CHECK_PASSWORD_MESSAGE,
   LOGOUT_SUCCESS_MESSAGE,
@@ -23,11 +21,29 @@ import {
 } from '@domain/auth/errors/auth.errors';
 import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
 import { IPasswordHasher } from '@domain/user/interfaces/passwordHasher.interface';
-import { ResCheckPasswordDto } from 'src/interface/dto/auth/checkPassword.dto';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { ReqLoginDto, ResLoginDto } from 'src/interface/dto/auth/login.dto';
-import { ReqSocialLoginDto } from 'src/interface/dto/auth/socialLogin.dto';
+import {
+  ReqValidateUserAppDto,
+  ResValidateUserAppDto,
+} from '@domain/auth/dto/app/vaildateUser.app.dto';
+import {
+  ReqCheckPasswordAppDto,
+  ResCheckPasswordAppDto,
+} from '@domain/auth/dto/app/checkPassword.app.dto';
+import {
+  ReqLoginAppDto,
+  ResLoginAppDto,
+} from '@domain/auth/dto/app/login.app.dto';
+import {
+  ReqLogoutAppDto,
+  ResLogoutAppDto,
+} from '@domain/auth/dto/app/logout.app.dto';
+import {
+  ReqRefreshAppDto,
+  ResRefreshAppDto,
+} from '@domain/auth/dto/app/refresh.app.dto';
+import { ReqSocialLoginAppDto } from '@domain/auth/dto/app/socialLogin.app.dto';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -43,8 +59,10 @@ export class AuthService implements IAuthService {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<UserEntity> {
-    const loginDto = plainToClass(ReqLoginDto, { email, password });
+  async validateUser(
+    req: ReqValidateUserAppDto,
+  ): Promise<ResValidateUserAppDto> {
+    const loginDto = plainToClass(ReqValidateUserAppDto, req);
     const validationErrors = await validate(loginDto);
 
     if (validationErrors.length > 0) {
@@ -54,14 +72,14 @@ export class AuthService implements IAuthService {
       throw new BadRequestException(message);
     }
 
-    const user = await this.userRepository.findByEmail(email);
+    const user = await this.userRepository.findByEmail(req.email);
 
     if (!user) {
       throw new NotFoundException('존재하지 않는 계정입니다');
     }
 
     const isCorrectPassword = await this.passwordHasher.comparePassword(
-      password,
+      req.password,
       user.password,
     );
 
@@ -73,12 +91,11 @@ export class AuthService implements IAuthService {
   }
 
   async checkPassword(
-    id: string,
-    password: string,
-  ): Promise<ResCheckPasswordDto> {
-    const user = await this.userRepository.findById(id);
+    req: ReqCheckPasswordAppDto,
+  ): Promise<ResCheckPasswordAppDto> {
+    const user = await this.userRepository.findById(req.id);
     const isCorrectPassword = await this.passwordHasher.comparePassword(
-      password,
+      req.password,
       user.password,
     );
     if (!isCorrectPassword) {
@@ -87,24 +104,24 @@ export class AuthService implements IAuthService {
     return { message: CHECK_PASSWORD_MESSAGE };
   }
 
-  async login(user: UserEntity): Promise<ResLoginDto> {
-    const accessToken = this.tokenService.generateAccessToken(user);
-    const refreshToken = this.tokenService.generateRefreshToken(user);
+  async login(req: ReqLoginAppDto): Promise<ResLoginAppDto> {
+    const accessToken = this.tokenService.generateAccessToken(req);
+    const refreshToken = this.tokenService.generateRefreshToken(req);
     await this.redisService.set(
-      `refresh_token:${user.id}`,
+      `refresh_token:${req.id}`,
       refreshToken,
       jwtExpiration.refreshTokenExpirationSeconds,
     );
     return { accessToken, refreshToken };
   }
 
-  async logout(user: UserEntity): Promise<ResLogoutDto> {
-    await this.redisService.delete(`refresh_token:${user.id}`);
+  async logout(req: ReqLogoutAppDto): Promise<ResLogoutAppDto> {
+    await this.redisService.delete(`refresh_token:${req.id}`);
     return { message: LOGOUT_SUCCESS_MESSAGE };
   }
 
-  async refresh(token: string): Promise<string> {
-    const decoded = this.tokenService.decodeToken(token);
+  async refresh(req: ReqRefreshAppDto): Promise<ResRefreshAppDto> {
+    const decoded = this.tokenService.decodeToken(req.refreshToken);
     if (!decoded || !decoded.id) {
       throw new UnauthorizedException(AUTH_INVALID_TOKEN);
     }
@@ -116,15 +133,16 @@ export class AuthService implements IAuthService {
       this.logger.error(AUTH_EXPIRED_REFRESH_TOKEN);
       throw new UnauthorizedException(AUTH_EXPIRED_REFRESH_TOKEN);
     }
-    if (token !== redisToken) {
+    if (req.refreshToken !== redisToken) {
       this.logger.error(AUTH_INVALID_TOKEN);
       throw new UnauthorizedException(AUTH_INVALID_TOKEN);
     }
     const user = await this.userRepository.findById(decoded.id);
-    return this.tokenService.generateAccessToken(user);
+    const accessToken = this.tokenService.generateAccessToken(user);
+    return { accessToken };
   }
 
-  async socialLogin(socialUser: ReqSocialLoginDto): Promise<ResLoginDto> {
+  async socialLogin(socialUser: ReqSocialLoginAppDto): Promise<ResLoginAppDto> {
     const { email, provider } = socialUser;
     const user = await this.userRepository.findByEmail(email);
     if (user) {

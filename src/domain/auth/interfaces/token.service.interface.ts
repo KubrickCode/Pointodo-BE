@@ -1,8 +1,11 @@
-import { UserEntity } from '../../user/entities/user.entity';
+import {
+  ReqGenerateAccessTokenAppDto,
+  ReqGenerateRefreshTokenAppDto,
+} from '../dto/app/tokenService.app.dto';
 import { DecodedAccessToken } from './decodedToken.interface';
 
 export interface ITokenService {
-  generateAccessToken(payload: UserEntity): string;
-  generateRefreshToken(payload: UserEntity): string;
+  generateAccessToken(payload: ReqGenerateAccessTokenAppDto): string;
+  generateRefreshToken(payload: ReqGenerateRefreshTokenAppDto): string;
   decodeToken(token: string): DecodedAccessToken;
 }

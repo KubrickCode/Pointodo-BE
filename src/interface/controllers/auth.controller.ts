@@ -85,8 +85,8 @@ export class AuthController {
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
       const refreshToken = req.cookies['refreshToken'];
-      const accessToken = await this.authService.refresh(refreshToken);
-      const result: ResRefreshDto = { accessToken };
+      const accessToken = await this.authService.refresh({ refreshToken });
+      const result: ResRefreshDto = accessToken;
       res.json(result);
     } catch (error) {
       res.clearCookie('refreshToken');
@@ -105,7 +105,10 @@ export class AuthController {
     @Req() req: Request,
     @Body() body: ReqCheckPasswordDto,
   ): Promise<ResChangePasswordDto> {
-    return await this.authService.checkPassword(req.user.id, body.password);
+    return await this.authService.checkPassword({
+      id: req.user.id,
+      password: body.password,
+    });
   }
 
   @UseGuards(GoogleAuthGuard)
