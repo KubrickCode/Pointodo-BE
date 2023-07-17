@@ -4,6 +4,7 @@ import {
   Logger,
   UnauthorizedException,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserEntity } from '@domain/user/entities/user.entity';
 import { ResLogoutDto } from '../../interface/dto/auth/logout.dto';
@@ -25,6 +26,9 @@ import { DomainReqSocialLoginDto } from '@domain/auth/dto/socialLogin.dto';
 import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
 import { IPasswordHasher } from '@domain/user/interfaces/passwordHasher.interface';
 import { ResCheckPasswordDto } from 'src/interface/dto/auth/checkPassword.dto';
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
+import { ReqLoginDto } from 'src/interface/dto/auth/login.dto';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -41,6 +45,16 @@ export class AuthService implements IAuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<UserEntity> {
+    const loginDto = plainToClass(ReqLoginDto, { email, password });
+    const validationErrors = await validate(loginDto);
+
+    if (validationErrors.length > 0) {
+      const message = validationErrors
+        .map((err) => Object.values(err.constraints))
+        .flat();
+      throw new BadRequestException(message);
+    }
+
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
