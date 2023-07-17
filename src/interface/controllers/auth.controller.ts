@@ -54,9 +54,9 @@ export class AuthController {
   @ApiOkResponse({ type: ResLoginDto })
   @ApiBody({ type: ReqLoginDto })
   async login(@Req() req: Request, @Res() res: Response): Promise<void> {
-    const { accessToken, refreshToken } = await this.authService.login(
-      req.user,
-    );
+    const { accessToken, refreshToken } = await this.authService.login({
+      id: req.user.id,
+    });
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
