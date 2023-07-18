@@ -52,7 +52,7 @@ export class UserService implements IUserService {
     private readonly configService: ConfigService,
   ) {}
 
-  async registerUser(newUser: ReqRegisterAppDto): Promise<ResRegisterAppDto> {
+  async register(newUser: ReqRegisterAppDto): Promise<ResRegisterAppDto> {
     const { email, password } = newUser;
     const existingUser = await this.userRepository.findByEmail(email);
 

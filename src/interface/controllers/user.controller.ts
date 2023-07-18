@@ -40,8 +40,8 @@ export class UserController {
   @ApiOperation(registerDocs.operation)
   @ApiOkResponse(registerDocs.okResponse)
   @ApiBadRequestResponse(registerDocs.badRequest)
-  async createUser(@Body() user: ReqRegisterDto): Promise<ResRegisterDto> {
-    return this.userService.registerUser(user);
+  async register(@Body() user: ReqRegisterDto): Promise<ResRegisterDto> {
+    return this.userService.register(user);
   }
 
   @UseGuards(JwtAuthGuard)

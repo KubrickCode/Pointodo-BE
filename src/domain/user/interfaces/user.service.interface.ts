@@ -13,7 +13,7 @@ import {
 } from '../dto/app/deleteUser.app.dto';
 
 export interface IUserService {
-  registerUser(user: ReqRegisterAppDto): Promise<ResRegisterAppDto>;
+  register(user: ReqRegisterAppDto): Promise<ResRegisterAppDto>;
   getUser(req: ReqGetUserAppDto): Promise<ResGetUserAppDto>;
   changePassword(
     req: ReqChangePasswordAppDto,
