@@ -29,8 +29,10 @@ describe('UserRepository (Integration)', () => {
 
       expect(retrievedUser).toMatchObject({
         id: createdUser.id,
-        email: user.email,
+        email: createdUser.email,
       });
+
+      await prisma.user.delete({ where: { id: createdUser.id } });
     });
   });
 });
