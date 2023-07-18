@@ -15,7 +15,7 @@ describe('createUser', () => {
   });
 
   it('로컬 유저 생성 성공', async () => {
-    const user = {
+    const user: Partial<UserEntity> = {
       email: 'test@test.test',
       password: 'test1234!@',
     };
