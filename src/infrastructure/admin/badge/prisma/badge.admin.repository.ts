@@ -63,6 +63,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     );
     return updatedBadgeType[0];
   }
+
   async delete(id: number): Promise<BadgeTypesEntity> {
     const query = `
       DELETE FROM "BadgeTypes"
