@@ -1,7 +1,7 @@
 import { PrismaService } from '@shared/services/prisma.service';
 import { BadgeAdminRepository } from '../prisma/badge.admin.repository';
 
-describe('createBadgeType', () => {
+describe('updateBadgeType', () => {
   let prisma: PrismaService;
   let badgeAdminRepository: BadgeAdminRepository;
 
@@ -14,27 +14,26 @@ describe('createBadgeType', () => {
     await prisma.$disconnect();
   });
 
-  it('뱃지 타입 생성 In DB', async () => {
+  it('뱃지 타입 업데이트 In DB', async () => {
     const badgeType = {
       id: 1,
-      name: '123',
-      description: '123',
-      icon: '123',
+      name: '321',
+      icon: '431',
     };
 
-    const createdBadgeType = await badgeAdminRepository.create(badgeType);
+    const updatedBadgeType = await badgeAdminRepository.update(badgeType);
 
     const retrievedBadgeType = await prisma.badgeTypes.findUnique({
-      where: { id: createdBadgeType.id },
+      where: { id: updatedBadgeType.id },
     });
 
     expect(retrievedBadgeType).toMatchObject({
-      id: createdBadgeType.id,
-      name: createdBadgeType.name,
-      description: createdBadgeType.description,
-      icon: createdBadgeType.icon,
+      id: updatedBadgeType.id,
+      name: updatedBadgeType.name,
+      description: updatedBadgeType.description,
+      icon: updatedBadgeType.icon,
     });
 
-    // await prisma.badgeTypes.delete({ where: { id: createdBadgeType.id } });
+    // await prisma.badgeTypes.delete({ where: { id: updatedBadgeType.id } });
   });
 });

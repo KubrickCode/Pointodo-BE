@@ -24,9 +24,56 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
   }
 
   async update(req: Partial<BadgeTypesEntity>): Promise<BadgeTypesEntity> {
-    return;
+    const { id, name, description, icon } = req;
+    const updateFields: string[] = [];
+    const values: (number | string)[] = [];
+    let placeholderIndex = 1;
+
+    if (name) {
+      updateFields.push(`name = $${placeholderIndex}`);
+      values.push(name);
+      placeholderIndex++;
+    }
+
+    if (description) {
+      updateFields.push(`description = $${placeholderIndex}`);
+      values.push(description);
+      placeholderIndex++;
+    }
+
+    if (icon) {
+      updateFields.push(`icon = $${placeholderIndex}`);
+      values.push(icon);
+      placeholderIndex++;
+    }
+
+    values.push(id);
+    placeholderIndex++;
+
+    const query = `
+    UPDATE "BadgeTypes"
+    SET ${updateFields.join(', ')}
+    WHERE id = $${placeholderIndex - 1}
+    RETURNING *
+  `;
+
+    const updatedBadgeType = await this.prisma.$queryRawUnsafe<BadgeTypes>(
+      query,
+      ...values,
+    );
+    return updatedBadgeType[0];
   }
   async delete(id: number): Promise<BadgeTypesEntity> {
-    return;
+    const query = `
+      DELETE FROM "BadgeTypes"
+      WHERE id = $1
+      RETURNING *
+    `;
+    const values = [id];
+    const newBadgeType = await this.prisma.$queryRawUnsafe<BadgeTypes>(
+      query,
+      ...values,
+    );
+    return newBadgeType[0];
   }
 }
