@@ -7,8 +7,10 @@ import {
   ReqUpdateBadgeTypeAppDto,
   ResUpdateBadgeTypeAppDto,
 } from '../dto/updateBadgeType.app.dto';
+import { BadgeTypesEntity } from '../entities/badgeTypes.entity';
 
 export interface IBadgeAdminService {
+  getAllBadgeTypes(): Promise<BadgeTypesEntity[]>;
   createBadgeType(
     req: ReqCreateBadgeTypeAppDto,
   ): Promise<ResCreateBadgeTypeAppDto>;

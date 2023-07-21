@@ -7,6 +7,7 @@ import {
   ReqUpdateBadgeTypeAppDto,
   ResUpdateBadgeTypeAppDto,
 } from '@domain/admin/badge/dto/updateBadgeType.app.dto';
+import { BadgeTypesEntity } from '@domain/admin/badge/entities/badgeTypes.entity';
 import { IBadgeAdminRepository } from '@domain/admin/badge/interfaces/badge.admin.repository.interface';
 import { IBadgeAdminService } from '@domain/admin/badge/interfaces/badge.admin.service.interface';
 import { Inject, Injectable, ConflictException } from '@nestjs/common';
@@ -22,6 +23,10 @@ export class BadgeAdminService implements IBadgeAdminService {
     @Inject('IBadgeAdminRepository')
     private readonly badgeAdminRepository: IBadgeAdminRepository,
   ) {}
+
+  async getAllBadgeTypes(): Promise<BadgeTypesEntity[]> {
+    return await this.badgeAdminRepository.getAllBadgeTypes();
+  }
 
   async createBadgeType(
     req: ReqCreateBadgeTypeAppDto,

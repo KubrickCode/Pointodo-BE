@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Patch,
+  Get,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
 import { ApiTags } from '@nestjs/swagger';
@@ -25,16 +26,22 @@ import {
   ReqDeleteBadgeTypeParamDto,
   ResDeleteBadgeTypeDto,
 } from '@interface/dto/admin/badge/deleteBadgeType.dto';
+import { ResGetAllBadgeTypesDto } from '@interface/dto/admin/badge/getAllBadgeTypes.dto';
 
 @ApiTags('Admin')
 @Controller('admin')
+@UseGuards(JwtAuthGuard, AdminAuthGuard)
 export class BadgeAdminController {
   constructor(
     @Inject('IBadgeAdminService')
     private readonly badgeAdminService: IBadgeAdminService,
   ) {}
 
-  @UseGuards(JwtAuthGuard, AdminAuthGuard)
+  @Get('/badge/all')
+  async getAllBadgeTypes(): Promise<ResGetAllBadgeTypesDto[]> {
+    return await this.badgeAdminService.getAllBadgeTypes();
+  }
+
   @Post('/badge/create')
   async createBadgeType(
     @Body() body: ReqCreateBadgeTypeDto,
@@ -42,7 +49,6 @@ export class BadgeAdminController {
     return await this.badgeAdminService.createBadgeType(body);
   }
 
-  @UseGuards(JwtAuthGuard, AdminAuthGuard)
   @Patch('/badge/update/:id')
   async updateBadgeType(
     @Body() body: ReqUpdateBadgeTypeDto,
@@ -54,7 +60,6 @@ export class BadgeAdminController {
     });
   }
 
-  @UseGuards(JwtAuthGuard, AdminAuthGuard)
   @Delete('/badge/delete/:id')
   async deleteBadgeType(
     @Param() param: ReqDeleteBadgeTypeParamDto,
