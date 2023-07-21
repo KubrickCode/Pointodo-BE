@@ -5,10 +5,38 @@ import { BadgeAdminController } from '@interface/controllers/admin/badge.admin.c
 import { JwtStrategy } from '@infrastructure/auth/passport/strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { jwtConfig } from '@shared/config/jwt.config';
-
+import { AuthService } from '@app/auth/auth.service';
+import { TokenService } from '@infrastructure/auth/services/token.service';
+import { RedisService } from '@infrastructure/redis/redis.service';
+import { UserRepository } from '@infrastructure/user/prisma/user.repository';
+import { PasswordHasher } from '@infrastructure/user/passwordHasher';
+import { PrismaService } from '@shared/services/prisma.service';
 @Module({
   controllers: [BadgeAdminController],
-  providers: [JwtStrategy],
+  providers: [
+    JwtStrategy,
+    PrismaService,
+    {
+      provide: 'IAuthService',
+      useClass: AuthService,
+    },
+    {
+      provide: 'ITokenService',
+      useClass: TokenService,
+    },
+    {
+      provide: 'IRedisService',
+      useClass: RedisService,
+    },
+    {
+      provide: 'IUserRepository',
+      useClass: UserRepository,
+    },
+    {
+      provide: 'IPasswordHasher',
+      useClass: PasswordHasher,
+    },
+  ],
   imports: [
     PassportModule,
     JwtModule.registerAsync({

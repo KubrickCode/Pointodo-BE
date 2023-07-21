@@ -24,8 +24,8 @@ import { AdminModule } from './admin.module';
     }),
     UserModule,
     AuthModule,
-    RedisCacheModule,
     AdminModule,
+    RedisCacheModule,
     WinstonModule.forRoot(getWinstonLogger(process.env.NODE_ENV, 'api')),
   ],
 })

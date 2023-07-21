@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import {
   CHECK_PASSWORD_MESSAGE,
@@ -17,6 +18,7 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { jwtExpiration } from 'src/shared/config/jwt.config';
 import {
   AUTH_EXPIRED_REFRESH_TOKEN,
+  AUTH_INVALID_ADMIN,
   AUTH_INVALID_TOKEN,
 } from '@domain/auth/errors/auth.errors';
 import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
@@ -44,6 +46,10 @@ import {
   ResRefreshAppDto,
 } from '@domain/auth/dto/app/refresh.app.dto';
 import { ReqSocialLoginAppDto } from '@domain/auth/dto/app/socialLogin.app.dto';
+import {
+  ReqValidateAdminAppDto,
+  ResValidateAdminAppDto,
+} from '@domain/auth/dto/app/validateAdmin.app.dto';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -152,5 +158,16 @@ export class AuthService implements IAuthService {
       const newUser = await this.userRepository.createUser(user);
       return await this.login(newUser);
     }
+  }
+
+  async validateAdmin(
+    req: ReqValidateAdminAppDto,
+  ): Promise<ResValidateAdminAppDto> {
+    const { id } = req;
+    const user = await this.userRepository.findById(id);
+    if (user.role !== 'Admin') {
+      throw new ForbiddenException(AUTH_INVALID_ADMIN);
+    }
+    return { validation: true };
   }
 }
