@@ -6,12 +6,10 @@ import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '@infrastructure/user/prisma/user.repository';
 import { PasswordHasher } from '@infrastructure/user/passwordHasher';
 import { PrismaService } from 'src/shared/services/prisma.service';
-import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from '@infrastructure/auth/passport/strategies/local.strategy';
 import { TokenService } from '@infrastructure/auth/services/token.service';
 import { JwtStrategy } from '@infrastructure/auth/passport/strategies/jwt.strategy';
 import { jwtConfig } from 'src/shared/config/jwt.config';
-import { RedisModule } from 'src/interface/modules/redis.module';
 import { RedisService } from '@infrastructure/redis/redis.service';
 import { GoogleStrategy } from '@infrastructure/auth/passport/strategies/google.strategy';
 import { KakaoStrategy } from '@infrastructure/auth/passport/strategies/kakao.strategy';
@@ -25,7 +23,6 @@ import { CacheService } from '@infrastructure/cache/cache.service';
     JwtStrategy,
     GoogleStrategy,
     KakaoStrategy,
-    RedisService,
     {
       provide: 'IUserRepository',
       useClass: UserRepository,
@@ -52,8 +49,6 @@ import { CacheService } from '@infrastructure/cache/cache.service';
     },
   ],
   imports: [
-    PassportModule,
-    RedisModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: jwtConfig(configService).accessTokenSecret,
