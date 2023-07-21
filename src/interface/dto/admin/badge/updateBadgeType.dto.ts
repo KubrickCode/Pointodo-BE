@@ -1,18 +1,29 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsInt, IsOptional, IsString } from 'class-validator';
+
+class ReqUpdateBadgeTypeParamDto {
+  @ApiProperty({ description: '뱃지 타입 고유 ID' })
+  @Type(() => Number)
+  @IsInt()
+  readonly id: number;
+}
 
 class ReqUpdateBadgeTypeDto {
   @ApiProperty({ description: '뱃지 타입 이름' })
+  @IsOptional()
   @IsString()
-  readonly name?: string;
+  readonly name: string;
 
   @ApiProperty({ description: '뱃지 타입 설명' })
+  @IsOptional()
   @IsString()
-  readonly description?: string;
+  readonly description: string;
 
   @ApiProperty({ description: '뱃지 타입 아이콘' })
+  @IsOptional()
   @IsString()
-  readonly icon?: string;
+  readonly icon: string;
 }
 
 class ResUpdateBadgeTypeDto {
@@ -24,4 +35,8 @@ class ResUpdateBadgeTypeDto {
   readonly message: string;
 }
 
-export { ReqUpdateBadgeTypeDto, ResUpdateBadgeTypeDto };
+export {
+  ReqUpdateBadgeTypeParamDto,
+  ReqUpdateBadgeTypeDto,
+  ResUpdateBadgeTypeDto,
+};
