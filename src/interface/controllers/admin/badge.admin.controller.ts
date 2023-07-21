@@ -29,7 +29,7 @@ import {
 import { ResGetAllBadgeTypesDto } from '@interface/dto/admin/badge/getAllBadgeTypes.dto';
 
 @ApiTags('Admin')
-@Controller('admin')
+@Controller('/admin/badge')
 @UseGuards(JwtAuthGuard, AdminAuthGuard)
 export class BadgeAdminController {
   constructor(
@@ -37,19 +37,19 @@ export class BadgeAdminController {
     private readonly badgeAdminService: IBadgeAdminService,
   ) {}
 
-  @Get('/badge/all')
+  @Get('/all')
   async getAllBadgeTypes(): Promise<ResGetAllBadgeTypesDto[]> {
     return await this.badgeAdminService.getAllBadgeTypes();
   }
 
-  @Post('/badge/create')
+  @Post('/create')
   async createBadgeType(
     @Body() body: ReqCreateBadgeTypeDto,
   ): Promise<ResCreateBadgeTypeDto> {
     return await this.badgeAdminService.createBadgeType(body);
   }
 
-  @Patch('/badge/update/:id')
+  @Patch('/update/:id')
   async updateBadgeType(
     @Body() body: ReqUpdateBadgeTypeDto,
     @Param() param: ReqUpdateBadgeTypeParamDto,
@@ -60,7 +60,7 @@ export class BadgeAdminController {
     });
   }
 
-  @Delete('/badge/delete/:id')
+  @Delete('/delete/:id')
   async deleteBadgeType(
     @Param() param: ReqDeleteBadgeTypeParamDto,
   ): Promise<ResDeleteBadgeTypeDto> {
