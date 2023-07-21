@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PrismaService } from 'src/shared/services/prisma.service';
 import { PasswordHasher } from '@infrastructure/user/passwordHasher';
 import { CacheService } from '@infrastructure/cache/cache.service';
+import { jwtConfig } from '@shared/config/jwt.config';
 
 @Module({
   controllers: [UserController],
@@ -32,8 +33,10 @@ import { CacheService } from '@infrastructure/cache/cache.service';
   imports: [
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'),
-        signOptions: { expiresIn: '1h' },
+        secret: jwtConfig(configService).accessTokenSecret,
+        signOptions: {
+          expiresIn: jwtConfig(configService).accessTokenExpiration,
+        },
       }),
       inject: [ConfigService],
     }),

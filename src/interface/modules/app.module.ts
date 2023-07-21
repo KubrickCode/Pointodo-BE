@@ -8,6 +8,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { GlobalExceptionFilter } from '../../shared/filters/globalException.filter';
 import { RequestLoggingMiddleware } from 'src/shared/middlewares/request-logging.middleware';
 import { RedisCacheModule } from './cache.module';
+import { AdminModule } from './admin.module';
 
 @Module({
   providers: [
@@ -24,6 +25,7 @@ import { RedisCacheModule } from './cache.module';
     UserModule,
     AuthModule,
     RedisCacheModule,
+    AdminModule,
     WinstonModule.forRoot(getWinstonLogger(process.env.NODE_ENV, 'api')),
   ],
 })
