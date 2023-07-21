@@ -8,6 +8,19 @@ import { PrismaService } from '@shared/services/prisma.service';
 export class BadgeAdminRepository implements IBadgeAdminRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  async getByName(name: string) {
+    const query = `
+    SELECT * FROM "BadgeTypes"
+    WHERE name = $1
+    `;
+    const values = [name];
+    const badgeTypes = await this.prisma.$queryRawUnsafe<BadgeTypes>(
+      query,
+      ...values,
+    );
+    return badgeTypes[0];
+  }
+
   async create(req: Partial<BadgeTypesEntity>): Promise<BadgeTypesEntity> {
     const { id, name, description, icon } = req;
     const query = `

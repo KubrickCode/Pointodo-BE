@@ -20,9 +20,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    const exceptionResponse = exception.getResponse();
 
-    const status = exception.getStatus() || HttpStatus.INTERNAL_SERVER_ERROR;
+    const exceptionResponse = exception.getResponse && exception.getResponse();
+    const status =
+      (exception.getStatus && exception.getStatus()) ||
+      HttpStatus.INTERNAL_SERVER_ERROR;
     const error = exception.name || '서버 오류';
     let message: string | Array<string> = '서버 내부 오류';
 
