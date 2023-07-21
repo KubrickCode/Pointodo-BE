@@ -8,17 +8,19 @@ import { PrismaService } from '@shared/services/prisma.service';
 export class BadgeAdminRepository implements IBadgeAdminRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getByName(name: string) {
+  async isExist(req: Partial<BadgeTypesEntity>): Promise<boolean> {
+    const { id, name } = req;
     const query = `
     SELECT * FROM "BadgeTypes"
-    WHERE name = $1
+    WHERE id = $1 OR name = $2
     `;
-    const values = [name];
-    const badgeTypes = await this.prisma.$queryRawUnsafe<BadgeTypes>(
+    const values = [id, name];
+    const isExist = await this.prisma.$queryRawUnsafe<BadgeTypes | null>(
       query,
       ...values,
     );
-    return badgeTypes[0];
+    if (!isExist[0]) return false;
+    return true;
   }
 
   async create(req: Partial<BadgeTypesEntity>): Promise<BadgeTypesEntity> {
@@ -27,8 +29,10 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
       INSERT INTO "BadgeTypes" (id, name, description, icon)
       VALUES ($1, $2, $3, $4)
       RETURNING *
-    `;
+      `;
+
     const values = [id, name, description, icon];
+
     const newBadgeType = await this.prisma.$queryRawUnsafe<BadgeTypes>(
       query,
       ...values,
@@ -37,10 +41,16 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
   }
 
   async update(req: Partial<BadgeTypesEntity>): Promise<BadgeTypesEntity> {
-    const { id, name, description, icon } = req;
+    const { id, newId, name, description, icon } = req;
     const updateFields: string[] = [];
     const values: (number | string)[] = [];
     let placeholderIndex = 1;
+
+    if (newId) {
+      updateFields.push(`id = $${placeholderIndex}`);
+      values.push(newId);
+      placeholderIndex++;
+    }
 
     if (name) {
       updateFields.push(`name = $${placeholderIndex}`);

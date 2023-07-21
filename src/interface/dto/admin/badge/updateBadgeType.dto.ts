@@ -10,6 +10,11 @@ class ReqUpdateBadgeTypeParamDto {
 }
 
 class ReqUpdateBadgeTypeDto {
+  @ApiProperty({ description: '새 뱃지 ID' })
+  @IsOptional()
+  @IsInt()
+  readonly newId: number;
+
   @ApiProperty({ description: '뱃지 타입 이름' })
   @IsOptional()
   @IsString()
