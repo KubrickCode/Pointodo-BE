@@ -27,7 +27,7 @@ describe('deleteBadgeType', () => {
       id: deletedBadgeType.id,
       name: deletedBadgeType.name,
       description: deletedBadgeType.description,
-      icon: deletedBadgeType.icon,
+      iconLink: deletedBadgeType.iconLink,
     });
   });
 });

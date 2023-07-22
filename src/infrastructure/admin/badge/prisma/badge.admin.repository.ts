@@ -33,7 +33,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
   async create(req: Partial<BadgeTypesEntity>): Promise<BadgeTypesEntity> {
     const { id, name, description, iconLink } = req;
     const query = `
-      INSERT INTO "BadgeTypes" (id, name, description, icon)
+      INSERT INTO "BadgeTypes" (id, name, description, "iconLink")
       VALUES ($1, $2, $3, $4)
       RETURNING *
       `;
@@ -72,7 +72,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     }
 
     if (iconLink) {
-      updateFields.push(`iconLink = $${placeholderIndex}`);
+      updateFields.push(`"iconLink" = $${placeholderIndex}`);
       values.push(iconLink);
       placeholderIndex++;
     }

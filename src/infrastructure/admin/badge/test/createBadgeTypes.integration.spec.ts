@@ -16,10 +16,10 @@ describe('createBadgeType', () => {
 
   it('뱃지 타입 생성 In DB', async () => {
     const badgeType = {
-      id: 1,
+      id: 0,
       name: '123',
       description: '123',
-      icon: '123',
+      iconLink: '123',
     };
 
     const createdBadgeType = await badgeAdminRepository.create(badgeType);
@@ -32,7 +32,7 @@ describe('createBadgeType', () => {
       id: createdBadgeType.id,
       name: createdBadgeType.name,
       description: createdBadgeType.description,
-      icon: createdBadgeType.icon,
+      iconLink: createdBadgeType.iconLink,
     });
 
     // await prisma.badgeTypes.delete({ where: { id: createdBadgeType.id } });

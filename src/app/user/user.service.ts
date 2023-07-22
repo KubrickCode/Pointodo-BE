@@ -66,6 +66,7 @@ export class UserService implements IUserService {
       email,
       password: hashedPassword,
     };
+
     const createdUser = await this.userRepository.createUser(user);
     this.logger.log(
       'info',

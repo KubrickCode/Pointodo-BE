@@ -18,7 +18,7 @@ describe('updateBadgeType', () => {
     const badgeType = {
       id: 1,
       name: '321',
-      icon: '431',
+      iconLink: '431',
     };
 
     const updatedBadgeType = await badgeAdminRepository.update(badgeType);
@@ -31,7 +31,7 @@ describe('updateBadgeType', () => {
       id: updatedBadgeType.id,
       name: updatedBadgeType.name,
       description: updatedBadgeType.description,
-      icon: updatedBadgeType.icon,
+      iconLink: updatedBadgeType.iconLink,
     });
 
     // await prisma.badgeTypes.delete({ where: { id: updatedBadgeType.id } });

@@ -30,6 +30,8 @@ export class UserRepository implements IUserRepository {
     user.role = Role[user.role] || Role['User'];
     const uuid = uuidv4();
 
+    console.log(uuid);
+
     const query = `
       INSERT INTO "User" (id, email, password, provider, role)
       VALUES ($1::uuid, $2, $3, $4::"Provider", $5::"Role")
