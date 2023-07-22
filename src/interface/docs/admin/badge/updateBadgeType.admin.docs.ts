@@ -1,4 +1,7 @@
-import { ResUpdateBadgeTypeDto } from '@interface/dto/admin/badge/updateBadgeType.dto';
+import {
+  ResUpdateBadgeTypeConflict,
+  ResUpdateBadgeTypeDto,
+} from '@interface/dto/admin/badge/updateBadgeType.dto';
 
 export const updateBadgeTypeDocs = {
   operation: {
@@ -10,5 +13,9 @@ export const updateBadgeTypeDocs = {
   okResponse: {
     type: ResUpdateBadgeTypeDto,
     description: '뱃지 타입 업데이트 성공',
+  },
+  conflict: {
+    type: ResUpdateBadgeTypeConflict,
+    description: '뱃지 타입 중복 에러',
   },
 };

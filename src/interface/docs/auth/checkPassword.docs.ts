@@ -1,4 +1,7 @@
-import { ResCheckPasswordDto } from 'src/interface/dto/auth/checkPassword.dto';
+import {
+  ResCheckPasswordDto,
+  ResInvalidCheckPassword,
+} from 'src/interface/dto/auth/checkPassword.dto';
 
 export const checkPasswordDocs = {
   operation: {
@@ -8,4 +11,8 @@ export const checkPasswordDocs = {
   `,
   },
   okResponse: { type: ResCheckPasswordDto, description: '비밀번호 검증 성공' },
+  invalidCheckPassword: {
+    type: ResInvalidCheckPassword,
+    description: '비밀번호 검증 실패',
+  },
 };

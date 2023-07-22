@@ -22,6 +22,7 @@ import {
   ApiBody,
   ApiCookieAuth,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -40,6 +41,7 @@ import { ReqCheckPasswordDto } from '../dto/auth/checkPassword.dto';
 import { checkPasswordDocs } from '../docs/auth/checkPassword.docs';
 import { ResChangePasswordDto } from '../dto/user/changePassword.dto';
 import { globalDocs } from '@interface/docs/global/global.docs';
+import { loginDocs } from '@interface/docs/auth/login.docs';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -53,9 +55,11 @@ export class AuthController {
   @Post('login')
   @HttpCode(201)
   @UseGuards(LocalAuthGuard)
-  @ApiOperation(authDocs.login)
-  @ApiCreatedResponse({ type: ResLoginDto })
+  @ApiOperation(loginDocs.operation)
+  @ApiCreatedResponse(loginDocs.okResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
+  @ApiNotFoundResponse(loginDocs.invalidEmail)
+  @ApiUnauthorizedResponse(loginDocs.invalidPassword)
   @ApiBody({ type: ReqLoginDto })
   async login(@Req() req: Request, @Res() res: Response): Promise<void> {
     const { accessToken, refreshToken } = await this.authService.login({
@@ -90,7 +94,7 @@ export class AuthController {
   @ApiCreatedResponse({ type: ResRefreshDto })
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
-      const refreshToken = req.cookies['refreshToken'];
+      const { refreshToken } = req.cookies;
       const accessToken = await this.authService.refresh({ refreshToken });
       const result: ResRefreshDto = accessToken;
       res.json(result);
@@ -106,7 +110,7 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation(checkPasswordDocs.operation)
   @ApiOkResponse(checkPasswordDocs.okResponse)
-  @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
+  @ApiUnauthorizedResponse(checkPasswordDocs.invalidCheckPassword)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   async checkPassword(
     @Req() req: Request,

@@ -1,4 +1,7 @@
-import { ResRegisterDto } from '../../dto/user/register.dto';
+import {
+  ResRegisterDto,
+  ResRegisterExistUserError,
+} from '../../dto/user/register.dto';
 
 export const registerDocs = {
   operation: {
@@ -8,4 +11,8 @@ export const registerDocs = {
   `,
   },
   okResponse: { type: ResRegisterDto, description: '회원가입 성공' },
+  existUser: {
+    type: ResRegisterExistUserError,
+    description: '이미 존재하는 계정 에러',
+  },
 };

@@ -14,6 +14,8 @@ import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiConflictResponse,
+  ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -40,10 +42,12 @@ import { getAllBadgeTypesDocs } from '@interface/docs/admin/badge/getAllBadgeTyp
 import { createBadgeTypeDocs } from '@interface/docs/admin/badge/createBadgeType.admin.docs';
 import { updateBadgeTypeDocs } from '@interface/docs/admin/badge/updateBadgeType.admin.docs';
 import { deleteBadgeTypeDocs } from '@interface/docs/admin/badge/deleteBadgeType.admin.docs';
+import { adminDocs } from '@interface/docs/admin/admin.docs';
 
 @ApiTags('Admin - Badge')
 @ApiBearerAuth()
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
+@ApiForbiddenResponse(adminDocs.forbidden)
 @Controller('/admin/badge')
 @UseGuards(JwtAuthGuard, AdminAuthGuard)
 export class BadgeAdminController {
@@ -65,6 +69,7 @@ export class BadgeAdminController {
   @ApiOperation(createBadgeTypeDocs.operation)
   @ApiOkResponse(createBadgeTypeDocs.okResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
+  @ApiConflictResponse(createBadgeTypeDocs.conflict)
   async createBadgeType(
     @Body() body: ReqCreateBadgeTypeDto,
   ): Promise<ResCreateBadgeTypeDto> {
@@ -76,6 +81,7 @@ export class BadgeAdminController {
   @ApiOperation(updateBadgeTypeDocs.operation)
   @ApiOkResponse(updateBadgeTypeDocs.okResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
+  @ApiConflictResponse(updateBadgeTypeDocs.conflict)
   async updateBadgeType(
     @Body() body: ReqUpdateBadgeTypeDto,
     @Param() param: ReqUpdateBadgeTypeParamDto,

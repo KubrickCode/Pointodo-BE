@@ -1,4 +1,7 @@
-import { ResCreateBadgeTypeDto } from '@interface/dto/admin/badge/createBadgeType.dto';
+import {
+  ResCreateBadgeTypeConflict,
+  ResCreateBadgeTypeDto,
+} from '@interface/dto/admin/badge/createBadgeType.dto';
 
 export const createBadgeTypeDocs = {
   operation: {
@@ -10,5 +13,9 @@ export const createBadgeTypeDocs = {
   okResponse: {
     type: ResCreateBadgeTypeDto,
     description: '뱃지 타입 생성 성공',
+  },
+  conflict: {
+    type: ResCreateBadgeTypeConflict,
+    description: '뱃지 타입 중복 에러',
   },
 };

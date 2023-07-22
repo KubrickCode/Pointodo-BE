@@ -17,6 +17,7 @@ import { ResGetUserDto } from '../dto/user/getUser.dto';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
@@ -44,6 +45,7 @@ export class UserController {
   @ApiOperation(registerDocs.operation)
   @ApiCreatedResponse(registerDocs.okResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
+  @ApiConflictResponse(registerDocs.existUser)
   async register(@Body() user: ReqRegisterDto): Promise<ResRegisterDto> {
     return this.userService.register(user);
   }

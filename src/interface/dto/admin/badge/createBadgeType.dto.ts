@@ -25,4 +25,28 @@ class ResCreateBadgeTypeDto {
   readonly message: string;
 }
 
-export { ReqCreateBadgeTypeDto, ResCreateBadgeTypeDto };
+class ResCreateBadgeTypeConflict {
+  @ApiProperty({ example: 409, description: '에러 상태 코드' })
+  @IsString()
+  readonly statusCode: number;
+
+  @ApiProperty({
+    example: '이미 존재하는 ID 혹은 뱃지 이름',
+    description: '에러 메시지',
+  })
+  @IsString()
+  readonly message: string;
+
+  @ApiProperty({
+    example: '/api/admin/badge/create',
+    description: '요청 경로',
+  })
+  @IsString()
+  readonly path: string;
+}
+
+export {
+  ReqCreateBadgeTypeDto,
+  ResCreateBadgeTypeDto,
+  ResCreateBadgeTypeConflict,
+};
