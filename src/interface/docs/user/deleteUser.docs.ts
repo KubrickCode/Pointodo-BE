@@ -1,4 +1,3 @@
-import { ResTokenUnauthorized } from 'src/interface/dto/auth/tokenError.dto';
 import { ResDeleteUserDto } from 'src/interface/dto/user/deleteUser.dto';
 
 export const deleteUserDocs = {
@@ -9,8 +8,4 @@ export const deleteUserDocs = {
   `,
   },
   okResponse: { type: ResDeleteUserDto, description: '회원 탈퇴 성공' },
-  unauthorizedResponse: {
-    type: ResTokenUnauthorized,
-    description: '토큰 인증 실패',
-  },
 };

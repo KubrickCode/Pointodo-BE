@@ -40,7 +40,7 @@ import { createBadgeTypeDocs } from '@interface/docs/admin/badge/createBadgeType
 import { updateBadgeTypeDocs } from '@interface/docs/admin/badge/updateBadgeType.admin.docs';
 import { deleteBadgeTypeDocs } from '@interface/docs/admin/badge/deleteBadgeType.admin.docs';
 
-@ApiTags('Admin')
+@ApiTags('Admin - Badge')
 @ApiBearerAuth()
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 @Controller('/admin/badge')

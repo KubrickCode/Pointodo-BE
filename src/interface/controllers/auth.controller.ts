@@ -33,11 +33,11 @@ import {
   ResSocialLoginDto,
 } from '../dto/auth/socialLogin.dto';
 import { authDocs } from '../docs/auth/auth.docs';
-import { getUserDocs } from 'src/interface/docs/user/getUser.docs';
 import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
 import { ReqCheckPasswordDto } from '../dto/auth/checkPassword.dto';
 import { checkPasswordDocs } from '../docs/auth/checkPassword.docs';
 import { ResChangePasswordDto } from '../dto/user/changePassword.dto';
+import { globalDocs } from '@interface/docs/global/global.docs';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -48,10 +48,11 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
+  @UseGuards(LocalAuthGuard)
   @ApiOperation(authDocs.login)
   @ApiOkResponse({ type: ResLoginDto })
+  @ApiBadRequestResponse(globalDocs.invalidationResponse)
   @ApiBody({ type: ReqLoginDto })
   async login(@Req() req: Request, @Res() res: Response): Promise<void> {
     const { accessToken, refreshToken } = await this.authService.login({
@@ -66,12 +67,12 @@ export class AuthController {
     res.json(result);
   }
 
+  @Post('logout')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation(authDocs.logout)
-  @Post('logout')
   @ApiOkResponse({ type: ResLogoutDto })
-  @ApiUnauthorizedResponse(getUserDocs.unauthorizedResponse)
+  @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
   async logout(@Req() req: Request, @Res() res: Response): Promise<void> {
     const result: ResLogoutDto = await this.authService.logout(req.user);
     res.clearCookie('refreshToken');
@@ -94,13 +95,13 @@ export class AuthController {
     }
   }
 
+  @Post('check-password')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation(checkPasswordDocs.operation)
   @ApiOkResponse(checkPasswordDocs.okResponse)
-  @ApiUnauthorizedResponse(checkPasswordDocs.unauthorizedResponse)
-  @ApiBadRequestResponse(checkPasswordDocs.badRequest)
-  @Post('check-password')
+  @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
+  @ApiBadRequestResponse(globalDocs.invalidationResponse)
   async checkPassword(
     @Req() req: Request,
     @Body() body: ReqCheckPasswordDto,
@@ -111,8 +112,8 @@ export class AuthController {
     });
   }
 
-  @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
   @ApiOperation(authDocs.google)
   @ApiOkResponse({ type: RedirectSocialLoginDto })
   async googleCallback(
@@ -134,8 +135,8 @@ export class AuthController {
     );
   }
 
-  @UseGuards(KakaoAuthGuard)
   @Get('kakao/callback')
+  @UseGuards(KakaoAuthGuard)
   @ApiOperation(authDocs.kakao)
   @ApiOkResponse({ type: RedirectSocialLoginDto })
   async kakaoCallback(

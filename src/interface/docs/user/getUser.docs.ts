@@ -1,4 +1,3 @@
-import { ResTokenUnauthorized } from 'src/interface/dto/auth/tokenError.dto';
 import { ResGetUserDto } from '../../dto/user/getUser.dto';
 
 export const getUserDocs = {
@@ -9,8 +8,4 @@ export const getUserDocs = {
   `,
   },
   okResponse: { type: ResGetUserDto, description: '유저 정보 요청 성공' },
-  unauthorizedResponse: {
-    type: ResTokenUnauthorized,
-    description: '토큰 인증 실패',
-  },
 };

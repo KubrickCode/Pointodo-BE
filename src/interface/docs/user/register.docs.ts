@@ -1,7 +1,4 @@
-import {
-  ResRegisterDto,
-  ResRegisterDtoError,
-} from '../../dto/user/register.dto';
+import { ResRegisterDto } from '../../dto/user/register.dto';
 
 export const registerDocs = {
   operation: {
@@ -11,8 +8,4 @@ export const registerDocs = {
   `,
   },
   okResponse: { type: ResRegisterDto, description: '회원가입 성공' },
-  badRequest: {
-    type: ResRegisterDtoError,
-    description: '필드 유효성 검사 실패',
-  },
 };
