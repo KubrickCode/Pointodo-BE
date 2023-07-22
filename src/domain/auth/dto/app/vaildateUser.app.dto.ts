@@ -11,7 +11,7 @@ import {
 import {
   VALIDATE_EMAIL,
   VALIDATE_PASSWORD,
-} from 'src/shared/messages/auth.messages';
+} from '@shared/messages/auth.messages';
 
 class ReqValidateUserAppDto {
   @ApiProperty({ example: 'test@gmail.com', description: '이메일' })

@@ -3,7 +3,7 @@ import { IsEmail, IsString, Matches } from 'class-validator';
 import {
   VALIDATE_EMAIL,
   VALIDATE_PASSWORD,
-} from 'src/shared/messages/auth.messages';
+} from '@shared/messages/auth.messages';
 import { Transform } from 'class-transformer';
 
 class ReqRegisterDto {

@@ -1,7 +1,7 @@
 import {
   ResCheckPasswordDto,
   ResInvalidCheckPassword,
-} from 'src/interface/dto/auth/checkPassword.dto';
+} from '@interface/dto/auth/checkPassword.dto';
 
 export const checkPasswordDocs = {
   operation: {

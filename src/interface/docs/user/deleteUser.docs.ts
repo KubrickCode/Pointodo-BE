@@ -1,4 +1,4 @@
-import { ResDeleteUserDto } from 'src/interface/dto/user/deleteUser.dto';
+import { ResDeleteUserDto } from '@interface/dto/user/deleteUser.dto';
 
 export const deleteUserDocs = {
   operation: {

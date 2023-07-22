@@ -1,5 +1,5 @@
 import { ResInvalidation } from '@interface/dto/global/global.dto';
-import { ResTokenUnauthorized } from 'src/interface/dto/auth/tokenError.dto';
+import { ResTokenUnauthorized } from '@interface/dto/auth/tokenError.dto';
 
 export const globalDocs = {
   invalidationResponse: {

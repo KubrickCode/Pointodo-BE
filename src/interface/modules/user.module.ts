@@ -4,7 +4,7 @@ import { UserService } from '../../app/user/user.service';
 import { UserRepository } from '@infrastructure/user/prisma/user.repository';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { PrismaService } from 'src/shared/services/prisma.service';
+import { PrismaService } from '@shared/services/prisma.service';
 import { PasswordHasher } from '@infrastructure/user/passwordHasher';
 import { CacheService } from '@infrastructure/cache/cache.service';
 import { jwtConfig } from '@shared/config/jwt.config';

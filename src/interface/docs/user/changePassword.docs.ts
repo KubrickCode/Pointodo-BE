@@ -1,4 +1,4 @@
-import { ResChangePasswordDto } from 'src/interface/dto/user/changePassword.dto';
+import { ResChangePasswordDto } from '@interface/dto/user/changePassword.dto';
 
 export const changePasswordDocs = {
   operation: {

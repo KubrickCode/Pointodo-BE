@@ -10,12 +10,12 @@ import {
 import {
   CHECK_PASSWORD_MESSAGE,
   LOGOUT_SUCCESS_MESSAGE,
-} from '../../shared/messages/auth.messages';
+} from '@shared/messages/auth.messages';
 import { ITokenService } from '@domain/auth/interfaces/token.service.interface';
 import { IRedisService } from '@domain/redis/interfaces/redis.service.interface';
 import { IUserRepository } from '@domain/user/interfaces/user.repository.interface';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { jwtExpiration } from 'src/shared/config/jwt.config';
+import { jwtExpiration } from '@shared/config/jwt.config';
 import {
   AUTH_EXPIRED_REFRESH_TOKEN,
   AUTH_INVALID_ADMIN,
