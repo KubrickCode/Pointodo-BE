@@ -8,6 +8,7 @@ import {
   Delete,
   Patch,
   Get,
+  HttpCode,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
 import {
@@ -52,6 +53,7 @@ export class BadgeAdminController {
   ) {}
 
   @Get('/all')
+  @HttpCode(200)
   @ApiOperation(getAllBadgeTypesDocs.operation)
   @ApiOkResponse(getAllBadgeTypesDocs.okResponse)
   async getAllBadgeTypes(): Promise<ResGetAllBadgeTypesDto[]> {
@@ -59,6 +61,7 @@ export class BadgeAdminController {
   }
 
   @Post('/create')
+  @HttpCode(201)
   @ApiOperation(createBadgeTypeDocs.operation)
   @ApiOkResponse(createBadgeTypeDocs.okResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
@@ -69,6 +72,7 @@ export class BadgeAdminController {
   }
 
   @Patch('/update/:id')
+  @HttpCode(201)
   @ApiOperation(updateBadgeTypeDocs.operation)
   @ApiOkResponse(updateBadgeTypeDocs.okResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
@@ -83,6 +87,7 @@ export class BadgeAdminController {
   }
 
   @Delete('/delete/:id')
+  @HttpCode(200)
   @ApiOperation(deleteBadgeTypeDocs.operation)
   @ApiOkResponse(deleteBadgeTypeDocs.okResponse)
   async deleteBadgeType(

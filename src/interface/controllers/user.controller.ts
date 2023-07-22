@@ -8,6 +8,7 @@ import {
   Inject,
   Patch,
   Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { ReqRegisterDto, ResRegisterDto } from '../dto/user/register.dto';
 import { Request } from 'express';
@@ -16,6 +17,7 @@ import { ResGetUserDto } from '../dto/user/getUser.dto';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -38,14 +40,16 @@ export class UserController {
   ) {}
 
   @Post('register')
+  @HttpCode(201)
   @ApiOperation(registerDocs.operation)
-  @ApiOkResponse(registerDocs.okResponse)
+  @ApiCreatedResponse(registerDocs.okResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   async register(@Body() user: ReqRegisterDto): Promise<ResRegisterDto> {
     return this.userService.register(user);
   }
 
   @Get()
+  @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @ApiOperation(getUserDocs.operation)
   @ApiBearerAuth()
@@ -56,6 +60,7 @@ export class UserController {
   }
 
   @Patch('password')
+  @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @ApiOperation(changePasswordDocs.operation)
   @ApiBearerAuth()
@@ -73,6 +78,7 @@ export class UserController {
   }
 
   @Delete()
+  @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @ApiOperation(deleteUserDocs.operation)
   @ApiBearerAuth()

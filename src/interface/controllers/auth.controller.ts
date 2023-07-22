@@ -7,6 +7,7 @@ import {
   Get,
   Inject,
   Body,
+  HttpCode,
 } from '@nestjs/common';
 import { LocalAuthGuard } from '@infrastructure/auth/passport/guards/local.guard';
 import { Request, Response } from 'express';
@@ -20,6 +21,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiCookieAuth,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -49,9 +51,10 @@ export class AuthController {
   ) {}
 
   @Post('login')
+  @HttpCode(201)
   @UseGuards(LocalAuthGuard)
   @ApiOperation(authDocs.login)
-  @ApiOkResponse({ type: ResLoginDto })
+  @ApiCreatedResponse({ type: ResLoginDto })
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   @ApiBody({ type: ReqLoginDto })
   async login(@Req() req: Request, @Res() res: Response): Promise<void> {
@@ -68,6 +71,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation(authDocs.logout)
@@ -80,9 +84,10 @@ export class AuthController {
   }
 
   @Get('refresh')
+  @HttpCode(201)
   @ApiCookieAuth('refreshToken')
   @ApiOperation(authDocs.refresh)
-  @ApiOkResponse({ type: ResRefreshDto })
+  @ApiCreatedResponse({ type: ResRefreshDto })
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
       const refreshToken = req.cookies['refreshToken'];
@@ -96,6 +101,7 @@ export class AuthController {
   }
 
   @Post('check-password')
+  @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation(checkPasswordDocs.operation)
@@ -113,9 +119,10 @@ export class AuthController {
   }
 
   @Get('google/callback')
+  @HttpCode(201)
   @UseGuards(GoogleAuthGuard)
   @ApiOperation(authDocs.google)
-  @ApiOkResponse({ type: RedirectSocialLoginDto })
+  @ApiCreatedResponse({ type: RedirectSocialLoginDto })
   async googleCallback(
     @Req() req: Request,
     @Res() res: Response,
@@ -136,9 +143,10 @@ export class AuthController {
   }
 
   @Get('kakao/callback')
+  @HttpCode(201)
   @UseGuards(KakaoAuthGuard)
   @ApiOperation(authDocs.kakao)
-  @ApiOkResponse({ type: RedirectSocialLoginDto })
+  @ApiCreatedResponse({ type: RedirectSocialLoginDto })
   async kakaoCallback(
     @Req() req: Request,
     @Res() res: Response,
@@ -162,8 +170,9 @@ export class AuthController {
   }
 
   @Get('social-login')
+  @HttpCode(201)
   @ApiOperation(authDocs.socialLogin)
-  @ApiOkResponse({ type: ResSocialLoginDto })
+  @ApiCreatedResponse({ type: ResSocialLoginDto })
   async socialLogin(@Req() req: Request, @Res() res: Response): Promise<void> {
     const result: ResSocialLoginDto = {
       accessToken: req.cookies['accessToken'],
