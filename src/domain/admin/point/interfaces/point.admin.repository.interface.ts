@@ -1,7 +1,7 @@
 import { PointTransactionTypesEntity } from '../entities/pointTransactionTypes.entity';
 
-export interface IBadgeAdminRepository {
-  getAllBadgeTypes(): Promise<PointTransactionTypesEntity[]>;
+export interface IPointAdminRepository {
+  getAllPointTransactionTypes(): Promise<PointTransactionTypesEntity[]>;
   isExist(req: Partial<PointTransactionTypesEntity>): Promise<boolean>;
   create(
     req: PointTransactionTypesEntity,
