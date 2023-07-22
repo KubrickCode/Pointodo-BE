@@ -36,8 +36,13 @@ import {
 import { ResGetAllBadgeTypesDto } from '@interface/dto/admin/badge/getAllBadgeTypes.dto';
 import { globalDocs } from '@interface/docs/global/global.docs';
 import { getAllBadgeTypesDocs } from '@interface/docs/admin/badge/getAllBadgeTypes.admin.docs';
+import { createBadgeTypeDocs } from '@interface/docs/admin/badge/createBadgeType.admin.docs';
+import { updateBadgeTypeDocs } from '@interface/docs/admin/badge/updateBadgeType.admin.docs';
+import { deleteBadgeTypeDocs } from '@interface/docs/admin/badge/deleteBadgeType.admin.docs';
 
 @ApiTags('Admin')
+@ApiBearerAuth()
+@ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 @Controller('/admin/badge')
 @UseGuards(JwtAuthGuard, AdminAuthGuard)
 export class BadgeAdminController {
@@ -48,15 +53,15 @@ export class BadgeAdminController {
 
   @Get('/all')
   @ApiOperation(getAllBadgeTypesDocs.operation)
-  @ApiBearerAuth()
   @ApiOkResponse(getAllBadgeTypesDocs.okResponse)
-  @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
-  @ApiBadRequestResponse(globalDocs.invalidationResponse)
   async getAllBadgeTypes(): Promise<ResGetAllBadgeTypesDto[]> {
     return await this.badgeAdminService.getAllBadgeTypes();
   }
 
   @Post('/create')
+  @ApiOperation(createBadgeTypeDocs.operation)
+  @ApiOkResponse(createBadgeTypeDocs.okResponse)
+  @ApiBadRequestResponse(globalDocs.invalidationResponse)
   async createBadgeType(
     @Body() body: ReqCreateBadgeTypeDto,
   ): Promise<ResCreateBadgeTypeDto> {
@@ -64,6 +69,9 @@ export class BadgeAdminController {
   }
 
   @Patch('/update/:id')
+  @ApiOperation(updateBadgeTypeDocs.operation)
+  @ApiOkResponse(updateBadgeTypeDocs.okResponse)
+  @ApiBadRequestResponse(globalDocs.invalidationResponse)
   async updateBadgeType(
     @Body() body: ReqUpdateBadgeTypeDto,
     @Param() param: ReqUpdateBadgeTypeParamDto,
@@ -75,6 +83,8 @@ export class BadgeAdminController {
   }
 
   @Delete('/delete/:id')
+  @ApiOperation(deleteBadgeTypeDocs.operation)
+  @ApiOkResponse(deleteBadgeTypeDocs.okResponse)
   async deleteBadgeType(
     @Param() param: ReqDeleteBadgeTypeParamDto,
   ): Promise<ResDeleteBadgeTypeDto> {
