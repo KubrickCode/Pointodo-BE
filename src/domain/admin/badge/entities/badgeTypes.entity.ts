@@ -5,5 +5,5 @@ export class BadgeTypesEntity implements BadgeTypes {
   newId?: number;
   name: string;
   description: string;
-  icon: string;
+  iconLink: string;
 }

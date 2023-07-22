@@ -31,14 +31,14 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
   }
 
   async create(req: Partial<BadgeTypesEntity>): Promise<BadgeTypesEntity> {
-    const { id, name, description, icon } = req;
+    const { id, name, description, iconLink } = req;
     const query = `
       INSERT INTO "BadgeTypes" (id, name, description, icon)
       VALUES ($1, $2, $3, $4)
       RETURNING *
       `;
 
-    const values = [id, name, description, icon];
+    const values = [id, name, description, iconLink];
 
     const newBadgeType = await this.prisma.$queryRawUnsafe<BadgeTypes>(
       query,
@@ -48,7 +48,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
   }
 
   async update(req: Partial<BadgeTypesEntity>): Promise<BadgeTypesEntity> {
-    const { id, newId, name, description, icon } = req;
+    const { id, newId, name, description, iconLink } = req;
     const updateFields: string[] = [];
     const values: (number | string)[] = [];
     let placeholderIndex = 1;
@@ -71,9 +71,9 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
       placeholderIndex++;
     }
 
-    if (icon) {
-      updateFields.push(`icon = $${placeholderIndex}`);
-      values.push(icon);
+    if (iconLink) {
+      updateFields.push(`iconLink = $${placeholderIndex}`);
+      values.push(iconLink);
       placeholderIndex++;
     }
 

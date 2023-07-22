@@ -24,7 +24,7 @@ class ReqUpdateBadgeTypeAppDto {
   @ApiProperty({ description: '뱃지 타입 아이콘' })
   @IsOptional()
   @IsString()
-  readonly icon: string;
+  readonly iconLink: string;
 }
 
 class ResUpdateBadgeTypeAppDto {

@@ -16,7 +16,7 @@ class ReqCreateBadgeTypeAppDto {
 
   @ApiProperty({ description: '뱃지 타입 아이콘' })
   @IsString()
-  readonly icon: string;
+  readonly iconLink: string;
 }
 
 class ResCreateBadgeTypeAppDto {
