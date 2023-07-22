@@ -10,7 +10,14 @@ import {
   Get,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { AdminAuthGuard } from '@infrastructure/auth/passport/guards/admin.guard';
 import { IBadgeAdminService } from '@domain/admin/badge/interfaces/badge.admin.service.interface';
 import {
@@ -27,6 +34,8 @@ import {
   ResDeleteBadgeTypeDto,
 } from '@interface/dto/admin/badge/deleteBadgeType.dto';
 import { ResGetAllBadgeTypesDto } from '@interface/dto/admin/badge/getAllBadgeTypes.dto';
+import { globalDocs } from '@interface/docs/global/global.docs';
+import { getAllBadgeTypesDocs } from '@interface/docs/admin/badge/getAllBadgeTypes.admin.docs';
 
 @ApiTags('Admin')
 @Controller('/admin/badge')
@@ -38,6 +47,11 @@ export class BadgeAdminController {
   ) {}
 
   @Get('/all')
+  @ApiOperation(getAllBadgeTypesDocs.operation)
+  @ApiBearerAuth()
+  @ApiOkResponse(getAllBadgeTypesDocs.okResponse)
+  @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
+  @ApiBadRequestResponse(globalDocs.invalidationResponse)
   async getAllBadgeTypes(): Promise<ResGetAllBadgeTypesDto[]> {
     return await this.badgeAdminService.getAllBadgeTypes();
   }

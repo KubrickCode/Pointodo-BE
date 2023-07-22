@@ -6,9 +6,19 @@ class ResTokenUnauthorized {
   @IsInt()
   readonly statusCode: number;
 
-  @ApiProperty({ example: 'Unauthorized', description: '에러 메시지' })
+  @ApiProperty({
+    example: '만료된 토큰입니다 | 유효하지 않은 토큰입니다',
+    description: '에러 메시지',
+  })
   @IsString()
   readonly message: string;
+
+  @ApiProperty({
+    example: '/api/example',
+    description: '요청 경로',
+  })
+  @IsString()
+  readonly path: string;
 }
 
 export { ResTokenUnauthorized };
