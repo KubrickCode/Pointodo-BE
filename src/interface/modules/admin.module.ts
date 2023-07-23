@@ -14,8 +14,15 @@ import { BadgeAdminRepository } from '@infrastructure/admin/badge/prisma/badge.a
 import { PointAdminController } from '@interface/controllers/admin/point.admin.controller';
 import { PointAdminService } from '@app/admin/point/point.admin.service';
 import { PointAdminRepository } from '@infrastructure/admin/point/prisma/point.admin.repository';
+import { TaskAdminController } from '@interface/controllers/admin/task.admin.controller';
+import { TaskAdminService } from '@app/admin/task/task.admin.service';
+import { TaskAdminRepository } from '@infrastructure/admin/task/prisma/task.admin.repository';
 @Module({
-  controllers: [BadgeAdminController, PointAdminController],
+  controllers: [
+    BadgeAdminController,
+    PointAdminController,
+    TaskAdminController,
+  ],
   providers: [
     PrismaService,
     {
@@ -53,6 +60,14 @@ import { PointAdminRepository } from '@infrastructure/admin/point/prisma/point.a
     {
       provide: 'IPointAdminRepository',
       useClass: PointAdminRepository,
+    },
+    {
+      provide: 'ITaskAdminService',
+      useClass: TaskAdminService,
+    },
+    {
+      provide: 'ITaskAdminRepository',
+      useClass: TaskAdminRepository,
     },
   ],
   imports: [
