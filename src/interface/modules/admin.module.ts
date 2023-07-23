@@ -11,8 +11,11 @@ import { PasswordHasher } from '@infrastructure/user/passwordHasher';
 import { PrismaService } from '@shared/services/prisma.service';
 import { BadgeAdminService } from '@app/admin/badge/badge.admin.service';
 import { BadgeAdminRepository } from '@infrastructure/admin/badge/prisma/badge.admin.repository';
+import { PointAdminController } from '@interface/controllers/admin/point.admin.controller';
+import { PointAdminService } from '@app/admin/point/point.admin.service';
+import { PointAdminRepository } from '@infrastructure/admin/point/prisma/point.admin.repository';
 @Module({
-  controllers: [BadgeAdminController],
+  controllers: [BadgeAdminController, PointAdminController],
   providers: [
     PrismaService,
     {
@@ -42,6 +45,14 @@ import { BadgeAdminRepository } from '@infrastructure/admin/badge/prisma/badge.a
     {
       provide: 'IBadgeAdminRepository',
       useClass: BadgeAdminRepository,
+    },
+    {
+      provide: 'IPointAdminService',
+      useClass: PointAdminService,
+    },
+    {
+      provide: 'IPointAdminRepository',
+      useClass: PointAdminRepository,
     },
   ],
   imports: [
