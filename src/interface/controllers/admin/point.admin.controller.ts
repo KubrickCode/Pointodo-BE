@@ -25,6 +25,14 @@ import { AdminAuthGuard } from '@infrastructure/auth/passport/guards/admin.guard
 import { globalDocs } from '@interface/docs/global/global.docs';
 import { adminDocs } from '@interface/docs/admin/admin.docs';
 import { IPointAdminService } from '@domain/admin/point/interfaces/point.admin.service.interface';
+import {
+  ReqDeletePointTransactionTypeParamDto,
+  ResDeletePointTransactionTypeDto,
+} from '@interface/dto/admin/point/deletePointTransactionType.dto';
+import { getAllPointTransactionTypesDocs } from '@interface/docs/admin/point/getAllPointTransactionTypes.admin.docs';
+import { createPointTransactionTypeDocs } from '@interface/docs/admin/point/createPointTransactionType.admin.docs';
+import { updatePointTransactionTypeDocs } from '@interface/docs/admin/point/updatePointTransactionType.admin.docs';
+import { deletePointTransactionTypeDocs } from '@interface/docs/admin/point/deletePointTransactionType.admin.docs';
 import { ResGetAllPointTransactionTypesDto } from '@interface/dto/admin/point/getAllPointTransactionTypes.dto';
 import {
   ReqCreatePointTransactionTypeDto,
@@ -35,14 +43,6 @@ import {
   ReqUpdatePointTransactionTypeParamDto,
   ResUpdatePointTransactionTypeDto,
 } from '@interface/dto/admin/point/updatePointTransactionType.dto';
-import {
-  ReqDeletePointTransactionTypeParamDto,
-  ResDeletePointTransactionTypeDto,
-} from '@interface/dto/admin/point/deletePointTransactionType.dto';
-import { getAllPointTransactionTypesDocs } from '@interface/docs/admin/point/getAllPointTransactionTypes.admin.docs';
-import { createPointTransactionTypeDocs } from '@interface/docs/admin/point/createPointTransactionType.admin.docs';
-import { updatePointTransactionTypeDocs } from '@interface/docs/admin/point/updatePointTransactionType.admin.docs';
-import { deletePointTransactionTypeDocs } from '@interface/docs/admin/point/deletePointTransactionType.admin.docs';
 
 @ApiTags('Admin - Point')
 @ApiBearerAuth()
