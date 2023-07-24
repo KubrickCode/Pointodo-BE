@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
@@ -11,11 +11,13 @@ class ReqUpdateTaskTypeParamDto {
 
 class ReqUpdateTaskTypeDto {
   @ApiProperty({ description: '새 작업 타입 ID' })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsInt()
   readonly newId: number;
 
   @ApiProperty({ description: '작업 타입 이름' })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   readonly name: string;
