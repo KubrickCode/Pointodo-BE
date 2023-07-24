@@ -1,0 +1,25 @@
+import { PrismaService } from '@shared/services/prisma.service';
+import { BadgeAdminRepository } from '../../prisma/badge.admin.repository';
+import { initialBadgeTypes } from './initialTypes';
+
+describe('createInitialBadgeTypes', () => {
+  let prisma: PrismaService;
+  let badgeAdminRepository: BadgeAdminRepository;
+
+  beforeAll(async () => {
+    prisma = new PrismaService();
+    badgeAdminRepository = new BadgeAdminRepository(prisma);
+    await prisma.user.deleteMany();
+    await prisma.badgeTypes.deleteMany();
+  });
+
+  afterAll(async () => {
+    await prisma.$disconnect();
+  });
+
+  it('초기 뱃지 타입 생성 In DB', async () => {
+    initialBadgeTypes.forEach((item) => {
+      badgeAdminRepository.create(item);
+    });
+  });
+});
