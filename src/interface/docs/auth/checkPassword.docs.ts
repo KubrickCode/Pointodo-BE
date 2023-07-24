@@ -1,6 +1,7 @@
-import { ResCheckPasswordDto } from 'src/interface/dto/auth/checkPassword.dto';
-import { ResTokenUnauthorized } from 'src/interface/dto/auth/tokenError.dto';
-import { ResChangePasswordDtoError } from 'src/interface/dto/user/changePassword.dto';
+import {
+  ResCheckPasswordDto,
+  ResInvalidCheckPassword,
+} from '@interface/dto/auth/checkPassword.dto';
 
 export const checkPasswordDocs = {
   operation: {
@@ -10,12 +11,8 @@ export const checkPasswordDocs = {
   `,
   },
   okResponse: { type: ResCheckPasswordDto, description: '비밀번호 검증 성공' },
-  badRequest: {
-    type: ResChangePasswordDtoError,
-    description: '필드 유효성 검사 실패',
-  },
-  unauthorizedResponse: {
-    type: ResTokenUnauthorized,
-    description: '토큰 인증 실패',
+  invalidCheckPassword: {
+    type: ResInvalidCheckPassword,
+    description: '비밀번호 검증 실패',
   },
 };

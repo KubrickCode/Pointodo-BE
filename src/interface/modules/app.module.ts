@@ -1,13 +1,14 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { UserModule } from 'src/interface/modules/user.module';
-import { AuthModule } from 'src/interface/modules/auth.module';
-import { getWinstonLogger } from '../../shared/utils/winston.util';
+import { UserModule } from '@interface/modules/user.module';
+import { AuthModule } from '@interface/modules/auth.module';
+import { getWinstonLogger } from '@shared/utils/winston.util';
 import { WinstonModule } from 'nest-winston';
 import { APP_FILTER } from '@nestjs/core';
-import { GlobalExceptionFilter } from '../../shared/filters/globalException.filter';
-import { RequestLoggingMiddleware } from 'src/shared/middlewares/request-logging.middleware';
+import { GlobalExceptionFilter } from '@shared/filters/globalException.filter';
+import { RequestLoggingMiddleware } from '@shared/middlewares/request-logging.middleware';
 import { RedisCacheModule } from './cache.module';
+import { AdminModule } from './admin.module';
 
 @Module({
   providers: [
@@ -23,6 +24,7 @@ import { RedisCacheModule } from './cache.module';
     }),
     UserModule,
     AuthModule,
+    AdminModule,
     RedisCacheModule,
     WinstonModule.forRoot(getWinstonLogger(process.env.NODE_ENV, 'api')),
   ],

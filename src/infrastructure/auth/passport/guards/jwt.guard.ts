@@ -11,7 +11,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
-import { jwtConfig } from 'src/shared/config/jwt.config';
+import { jwtConfig } from '@shared/config/jwt.config';
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(

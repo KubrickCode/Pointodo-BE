@@ -20,10 +20,20 @@ model User {
 
 model BadgeTypes {
   id                Int           @id @db.SmallInt
-  name              String        @db.VarChar(20)
+  name              String        @unique @db.VarChar(20)
   description       String        @db.VarChar(100)
-  icon              String        @db.VarChar(20)
+  iconLink          String        @db.VarChar(1000)
   user              User[]
+}
+
+model PointTransactionTypes {
+  id                Int           @id @db.SmallInt
+  name              String        @unique @db.VarChar(100)
+}
+
+model TaskTypes {
+  id                Int           @id @db.SmallInt
+  name              String        @unique @db.VarChar(20)
 }
 
 enum Provider {

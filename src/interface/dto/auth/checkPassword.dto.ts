@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, Matches } from 'class-validator';
-import { VALIDATE_PASSWORD } from 'src/shared/messages/auth.messages';
+import { VALIDATE_PASSWORD } from '@shared/messages/auth.messages';
 
 class ReqCheckPasswordDto {
   @ApiProperty({
@@ -20,4 +20,24 @@ class ResCheckPasswordDto {
   readonly message: string;
 }
 
-export { ReqCheckPasswordDto, ResCheckPasswordDto };
+class ResInvalidCheckPassword {
+  @ApiProperty({ example: 401, description: '에러 상태 코드' })
+  @IsString()
+  readonly statusCode: number;
+
+  @ApiProperty({
+    example: '비밀번호가 일치하지 않습니다',
+    description: '에러 메시지',
+  })
+  @IsString()
+  readonly message: string;
+
+  @ApiProperty({
+    example: '/api/auth/check-password',
+    description: '요청 경로',
+  })
+  @IsString()
+  readonly path: string;
+}
+
+export { ReqCheckPasswordDto, ResCheckPasswordDto, ResInvalidCheckPassword };

@@ -1,8 +1,4 @@
-import { ResTokenUnauthorized } from 'src/interface/dto/auth/tokenError.dto';
-import {
-  ResChangePasswordDto,
-  ResChangePasswordDtoError,
-} from 'src/interface/dto/user/changePassword.dto';
+import { ResChangePasswordDto } from '@interface/dto/user/changePassword.dto';
 
 export const changePasswordDocs = {
   operation: {
@@ -12,12 +8,4 @@ export const changePasswordDocs = {
   `,
   },
   okResponse: { type: ResChangePasswordDto, description: '비밀번호 변경 성공' },
-  badRequest: {
-    type: ResChangePasswordDtoError,
-    description: '필드 유효성 검사 실패',
-  },
-  unauthorizedResponse: {
-    type: ResTokenUnauthorized,
-    description: '토큰 인증 실패',
-  },
 };

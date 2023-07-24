@@ -9,7 +9,7 @@ import {
   CHANGE_PASSWORD_SUCCESS_MESSAGE,
   DELETE_USER_SUCCESS_MESSAGE,
   REGISTER_SUCCESS_MESSAGE,
-} from '../../shared/messages/user.messages';
+} from '@shared/messages/user.messages';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { IUserRepository } from '@domain/user/interfaces/user.repository.interface';
 import { IPasswordHasher } from '@domain/user/interfaces/passwordHasher.interface';
@@ -20,7 +20,7 @@ import {
 import { IUserService } from '@domain/user/interfaces/user.service.interface';
 import { ICacheService } from '@domain/cache/interfaces/cache.service.interface';
 import { UserEntity } from '@domain/user/entities/user.entity';
-import { cacheConfig } from 'src/shared/config/cache.config';
+import { cacheConfig } from '@shared/config/cache.config';
 import { ConfigService } from '@nestjs/config';
 import {
   ReqRegisterAppDto,
@@ -66,6 +66,7 @@ export class UserService implements IUserService {
       email,
       password: hashedPassword,
     };
+
     const createdUser = await this.userRepository.createUser(user);
     this.logger.log(
       'info',

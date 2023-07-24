@@ -3,7 +3,7 @@ import { IsEmail, IsString, Matches } from 'class-validator';
 import {
   VALIDATE_EMAIL,
   VALIDATE_PASSWORD,
-} from 'src/shared/messages/auth.messages';
+} from '@shared/messages/auth.messages';
 import { Transform } from 'class-transformer';
 
 class ReqRegisterDto {
@@ -29,18 +29,21 @@ class ResRegisterDto {
   readonly message: string;
 }
 
-class ResRegisterDtoError {
-  @ApiProperty({ example: 400, description: '에러 상태 코드' })
+class ResRegisterExistUserError {
+  @ApiProperty({ example: 409, description: '에러 상태 코드' })
   @IsString()
-  readonly statusCode: string;
+  readonly statusCode: number;
 
-  @ApiProperty({ example: '에러 메시지', description: '에러 메시지' })
+  @ApiProperty({
+    example: '이미 존재하는 계정입니다.',
+    description: '에러 메시지',
+  })
   @IsString()
   readonly message: string[];
 
-  @ApiProperty({ example: 'Bad Request', description: '에러 종류' })
+  @ApiProperty({ example: '/api/user/register', description: '요청 경로' })
   @IsString()
-  readonly error: string;
+  readonly path: string;
 }
 
-export { ReqRegisterDto, ResRegisterDto, ResRegisterDtoError };
+export { ReqRegisterDto, ResRegisterDto, ResRegisterExistUserError };

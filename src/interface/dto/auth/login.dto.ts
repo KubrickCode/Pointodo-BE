@@ -3,7 +3,7 @@ import { IsEmail, IsString, Matches } from 'class-validator';
 import {
   VALIDATE_EMAIL,
   VALIDATE_PASSWORD,
-} from 'src/shared/messages/auth.messages';
+} from '@shared/messages/auth.messages';
 
 class ReqLoginDto {
   @ApiProperty({ example: 'test@gmail.com', description: '이메일' })
@@ -31,4 +31,38 @@ class ResLoginDto {
   readonly refreshToken?: string;
 }
 
-export { ReqLoginDto, ResLoginDto };
+class ResNotFoundUser {
+  @ApiProperty({ example: 404, description: '에러 상태 코드' })
+  @IsString()
+  readonly statusCode: number;
+
+  @ApiProperty({
+    example: '존재하지 않는 계정입니다',
+    description: '에러 메시지',
+  })
+  @IsString()
+  readonly message: string;
+
+  @ApiProperty({ example: '/api/auth/login', description: '요청 경로' })
+  @IsString()
+  readonly path: string;
+}
+
+class ResInvalidPassword {
+  @ApiProperty({ example: 401, description: '에러 상태 코드' })
+  @IsString()
+  readonly statusCode: number;
+
+  @ApiProperty({
+    example: '비밀번호가 일치하지 않습니다',
+    description: '에러 메시지',
+  })
+  @IsString()
+  readonly message: string;
+
+  @ApiProperty({ example: '/api/auth/login', description: '요청 경로' })
+  @IsString()
+  readonly path: string;
+}
+
+export { ReqLoginDto, ResLoginDto, ResNotFoundUser, ResInvalidPassword };

@@ -3,7 +3,7 @@ import { Module, Global } from '@nestjs/common';
 import * as redisStore from 'cache-manager-ioredis';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
-import { cacheConfig } from 'src/shared/config/cache.config';
+import { cacheConfig } from '@shared/config/cache.config';
 
 @Global()
 @Module({

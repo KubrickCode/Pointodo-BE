@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { DecodedAccessToken } from '@domain/auth/interfaces/decodedToken.interface';
 import { ConfigService } from '@nestjs/config';
-import { jwtConfig } from 'src/shared/config/jwt.config';
+import { jwtConfig } from '@shared/config/jwt.config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

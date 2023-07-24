@@ -1,6 +1,6 @@
 import {
   ResRegisterDto,
-  ResRegisterDtoError,
+  ResRegisterExistUserError,
 } from '../../dto/user/register.dto';
 
 export const registerDocs = {
@@ -11,8 +11,8 @@ export const registerDocs = {
   `,
   },
   okResponse: { type: ResRegisterDto, description: '회원가입 성공' },
-  badRequest: {
-    type: ResRegisterDtoError,
-    description: '필드 유효성 검사 실패',
+  existUser: {
+    type: ResRegisterExistUserError,
+    description: '이미 존재하는 계정 에러',
   },
 };

@@ -7,19 +7,22 @@ import {
   Get,
   Inject,
   Body,
+  HttpCode,
 } from '@nestjs/common';
 import { LocalAuthGuard } from '@infrastructure/auth/passport/guards/local.guard';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from '@infrastructure/auth/passport/guards/jwt.guard';
 import { GoogleAuthGuard } from '@infrastructure/auth/passport/guards/google.guard';
 import { KakaoAuthGuard } from '@infrastructure/auth/passport/guards/kakao.guard';
-import { globalConfig } from 'src/shared/config/global.config';
+import { globalConfig } from '@shared/config/global.config';
 import { ConfigService } from '@nestjs/config';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
   ApiCookieAuth,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -33,11 +36,12 @@ import {
   ResSocialLoginDto,
 } from '../dto/auth/socialLogin.dto';
 import { authDocs } from '../docs/auth/auth.docs';
-import { getUserDocs } from 'src/interface/docs/user/getUser.docs';
 import { IAuthService } from '@domain/auth/interfaces/auth.service.interface';
 import { ReqCheckPasswordDto } from '../dto/auth/checkPassword.dto';
 import { checkPasswordDocs } from '../docs/auth/checkPassword.docs';
 import { ResChangePasswordDto } from '../dto/user/changePassword.dto';
+import { globalDocs } from '@interface/docs/global/global.docs';
+import { loginDocs } from '@interface/docs/auth/login.docs';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -48,10 +52,14 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
-  @ApiOperation(authDocs.login)
-  @ApiOkResponse({ type: ResLoginDto })
+  @HttpCode(201)
+  @UseGuards(LocalAuthGuard)
+  @ApiOperation(loginDocs.operation)
+  @ApiCreatedResponse(loginDocs.okResponse)
+  @ApiBadRequestResponse(globalDocs.invalidationResponse)
+  @ApiNotFoundResponse(loginDocs.invalidEmail)
+  @ApiUnauthorizedResponse(loginDocs.invalidPassword)
   @ApiBody({ type: ReqLoginDto })
   async login(@Req() req: Request, @Res() res: Response): Promise<void> {
     const { accessToken, refreshToken } = await this.authService.login({
@@ -66,12 +74,13 @@ export class AuthController {
     res.json(result);
   }
 
+  @Post('logout')
+  @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation(authDocs.logout)
-  @Post('logout')
   @ApiOkResponse({ type: ResLogoutDto })
-  @ApiUnauthorizedResponse(getUserDocs.unauthorizedResponse)
+  @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
   async logout(@Req() req: Request, @Res() res: Response): Promise<void> {
     const result: ResLogoutDto = await this.authService.logout(req.user);
     res.clearCookie('refreshToken');
@@ -79,12 +88,13 @@ export class AuthController {
   }
 
   @Get('refresh')
+  @HttpCode(201)
   @ApiCookieAuth('refreshToken')
   @ApiOperation(authDocs.refresh)
-  @ApiOkResponse({ type: ResRefreshDto })
+  @ApiCreatedResponse({ type: ResRefreshDto })
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
-      const refreshToken = req.cookies['refreshToken'];
+      const { refreshToken } = req.cookies;
       const accessToken = await this.authService.refresh({ refreshToken });
       const result: ResRefreshDto = accessToken;
       res.json(result);
@@ -94,13 +104,14 @@ export class AuthController {
     }
   }
 
+  @Post('check-password')
+  @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation(checkPasswordDocs.operation)
   @ApiOkResponse(checkPasswordDocs.okResponse)
-  @ApiUnauthorizedResponse(checkPasswordDocs.unauthorizedResponse)
-  @ApiBadRequestResponse(checkPasswordDocs.badRequest)
-  @Post('check-password')
+  @ApiUnauthorizedResponse(checkPasswordDocs.invalidCheckPassword)
+  @ApiBadRequestResponse(globalDocs.invalidationResponse)
   async checkPassword(
     @Req() req: Request,
     @Body() body: ReqCheckPasswordDto,
@@ -111,10 +122,11 @@ export class AuthController {
     });
   }
 
-  @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
+  @HttpCode(201)
+  @UseGuards(GoogleAuthGuard)
   @ApiOperation(authDocs.google)
-  @ApiOkResponse({ type: RedirectSocialLoginDto })
+  @ApiCreatedResponse({ type: RedirectSocialLoginDto })
   async googleCallback(
     @Req() req: Request,
     @Res() res: Response,
@@ -134,10 +146,11 @@ export class AuthController {
     );
   }
 
-  @UseGuards(KakaoAuthGuard)
   @Get('kakao/callback')
+  @HttpCode(201)
+  @UseGuards(KakaoAuthGuard)
   @ApiOperation(authDocs.kakao)
-  @ApiOkResponse({ type: RedirectSocialLoginDto })
+  @ApiCreatedResponse({ type: RedirectSocialLoginDto })
   async kakaoCallback(
     @Req() req: Request,
     @Res() res: Response,
@@ -161,8 +174,9 @@ export class AuthController {
   }
 
   @Get('social-login')
+  @HttpCode(201)
   @ApiOperation(authDocs.socialLogin)
-  @ApiOkResponse({ type: ResSocialLoginDto })
+  @ApiCreatedResponse({ type: ResSocialLoginDto })
   async socialLogin(@Req() req: Request, @Res() res: Response): Promise<void> {
     const result: ResSocialLoginDto = {
       accessToken: req.cookies['accessToken'],
