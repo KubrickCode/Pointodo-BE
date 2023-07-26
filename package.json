@@ -102,11 +102,12 @@
     "testEnvironment": "node",
     "moduleNameMapper": {
       "@src/(.*)": "<rootDir>",
-      "@app/(.*)": "<rootDir>/app/$1",
-      "@domain/(.*)": "<rootDir>/domain/$1",
-      "@infrastructure/(.*)": "<rootDir>/infrastructure/$1",
-      "@interface/(.*)": "<rootDir>/interface/$1",
-      "@shared/(.*)": "<rootDir>/shared/$1"
+      "@shared/(.*)": "<rootDir>/shared/$1",
+      "@user/(.*)": "<rootDir>/user/$1",
+      "@auth/(.*)": "<rootDir>/auth/$1",
+      "@admin/(.*)": "<rootDir>/admin/$1",
+      "@redis/(.*)": "<rootDir>/redis/$1",
+      "@cache/(.*)": "<rootDir>/cache/$1"
     }
   }
 }

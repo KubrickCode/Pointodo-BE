@@ -19,11 +19,12 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@src/*": ["src"],
-      "@app/*": ["src/app/*"],
-      "@domain/*": ["src/domain/*"],
-      "@infrastructure/*": ["src/infrastructure/*"],
-      "@interface/*": ["src/interface/*"],
-      "@shared/*": ["src/shared/*"]
+      "@shared/*": ["src/shared/*"],
+      "@user/*": ["src/user/*"],
+      "@auth/*": ["src/auth/*"],
+      "@admin/*": ["src/admin/*"],
+      "@redis/*": ["src/redis/*"],
+      "@cache/*": ["src/cache/*"]
     }
   }
 }
