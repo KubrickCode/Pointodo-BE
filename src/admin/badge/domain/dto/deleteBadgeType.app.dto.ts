@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
-class ResDeleteBadgeTypeAppDto {
+export class ResDeleteBadgeTypeAppDto {
   @ApiProperty({
     example: '뱃지 타입 삭제 성공',
     description: '성공 메시지',
@@ -9,5 +9,3 @@ class ResDeleteBadgeTypeAppDto {
   @IsString()
   readonly message: string;
 }
-
-export { ResDeleteBadgeTypeAppDto };

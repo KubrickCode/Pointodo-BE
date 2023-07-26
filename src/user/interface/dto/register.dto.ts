@@ -6,7 +6,7 @@ import {
 } from '@shared/messages/auth.messages';
 import { Transform } from 'class-transformer';
 
-class ReqRegisterDto {
+export class ReqRegisterDto {
   @ApiProperty({ example: 'test@gmail.com', description: '이메일' })
   @IsEmail({}, { message: VALIDATE_EMAIL })
   @Transform(({ value }) => value.toLowerCase())
@@ -23,13 +23,13 @@ class ReqRegisterDto {
   readonly password: string;
 }
 
-class ResRegisterDto {
+export class ResRegisterDto {
   @ApiProperty({ example: '회원가입 성공', description: '성공 메시지' })
   @IsString()
   readonly message: string;
 }
 
-class ResRegisterExistUserError {
+export class ResRegisterExistUserError {
   @ApiProperty({ example: 409, description: '에러 상태 코드' })
   @IsString()
   readonly statusCode: number;
@@ -45,5 +45,3 @@ class ResRegisterExistUserError {
   @IsString()
   readonly path: string;
 }
-
-export { ReqRegisterDto, ResRegisterDto, ResRegisterExistUserError };

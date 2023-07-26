@@ -1,13 +1,11 @@
-interface DecodedAccessToken {
+export interface DecodedAccessToken {
   id: string;
   iat?: number;
   exp?: number;
 }
 
-interface DecodedRefreshToken {
+export interface DecodedRefreshToken {
   id: string;
   iat?: number;
   exp?: number;
 }
-
-export { DecodedAccessToken, DecodedRefreshToken };

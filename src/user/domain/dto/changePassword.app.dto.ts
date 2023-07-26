@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, Matches } from 'class-validator';
 import { VALIDATE_PASSWORD } from '@shared/messages/auth.messages';
 
-class ReqChangePasswordAppDto {
+export class ReqChangePasswordAppDto {
   @ApiProperty({ description: '유저 고유 ID(UUID)' })
   @IsString()
   readonly id: string;
@@ -18,10 +18,8 @@ class ReqChangePasswordAppDto {
   readonly password: string;
 }
 
-class ResChangePasswordAppDto {
+export class ResChangePasswordAppDto {
   @ApiProperty({ example: '비밀번호 변경 성공', description: '성공 메시지' })
   @IsString()
   readonly message: string;
 }
-
-export { ReqChangePasswordAppDto, ResChangePasswordAppDto };

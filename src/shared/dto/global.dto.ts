@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
-class ResInvalidation {
+export class ResInvalidation {
   @ApiProperty({ example: 400, description: '에러 상태 코드' })
   @IsString()
   readonly statusCode: number;
@@ -17,5 +17,3 @@ class ResInvalidation {
   @IsString()
   readonly path: string;
 }
-
-export { ResInvalidation };

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsString } from 'class-validator';
 
-class ReqCreateTaskTypeDto {
+export class ReqCreateTaskTypeDto {
   @ApiProperty({ description: '작업 타입 고유 ID(SMALL INT)' })
   @IsInt()
   readonly id: number;
@@ -11,7 +11,7 @@ class ReqCreateTaskTypeDto {
   readonly name: string;
 }
 
-class ResCreateTaskTypeDto {
+export class ResCreateTaskTypeDto {
   @ApiProperty({
     example: '작업 타입 생성 성공',
     description: '성공 메시지',
@@ -20,7 +20,7 @@ class ResCreateTaskTypeDto {
   readonly message: string;
 }
 
-class ResCreateTaskTypeConflict {
+export class ResCreateTaskTypeConflict {
   @ApiProperty({ example: 409, description: '에러 상태 코드' })
   @IsString()
   readonly statusCode: number;
@@ -39,9 +39,3 @@ class ResCreateTaskTypeConflict {
   @IsString()
   readonly path: string;
 }
-
-export {
-  ReqCreateTaskTypeDto,
-  ResCreateTaskTypeDto,
-  ResCreateTaskTypeConflict,
-};

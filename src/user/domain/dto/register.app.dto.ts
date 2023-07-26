@@ -5,7 +5,7 @@ import {
   VALIDATE_PASSWORD,
 } from '@shared/messages/auth.messages';
 
-class ReqRegisterAppDto {
+export class ReqRegisterAppDto {
   @ApiProperty({ example: 'test@gmail.com', description: '이메일' })
   @IsEmail({}, { message: VALIDATE_EMAIL })
   readonly email: string;
@@ -21,10 +21,8 @@ class ReqRegisterAppDto {
   readonly password: string;
 }
 
-class ResRegisterAppDto {
+export class ResRegisterAppDto {
   @ApiProperty({ example: '회원가입 성공', description: '성공 메시지' })
   @IsString()
   readonly message: string;
 }
-
-export { ReqRegisterAppDto, ResRegisterAppDto };

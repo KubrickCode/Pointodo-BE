@@ -2,14 +2,14 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
-class ReqUpdateTaskTypeParamDto {
+export class ReqUpdateTaskTypeParamDto {
   @ApiProperty({ description: '작업 타입 고유 ID' })
   @Type(() => Number)
   @IsInt()
   readonly id: number;
 }
 
-class ReqUpdateTaskTypeDto {
+export class ReqUpdateTaskTypeDto {
   @ApiProperty({ description: '새 작업 타입 ID' })
   @ApiPropertyOptional()
   @IsOptional()
@@ -23,7 +23,7 @@ class ReqUpdateTaskTypeDto {
   readonly name: string;
 }
 
-class ResUpdateTaskTypeDto {
+export class ResUpdateTaskTypeDto {
   @ApiProperty({
     example: '작업 타입 업데이트 성공',
     description: '성공 메시지',
@@ -32,7 +32,7 @@ class ResUpdateTaskTypeDto {
   readonly message: string;
 }
 
-class ResUpdateTaskTypeConflict {
+export class ResUpdateTaskTypeConflict {
   @ApiProperty({ example: 409, description: '에러 상태 코드' })
   @IsString()
   readonly statusCode: number;
@@ -51,10 +51,3 @@ class ResUpdateTaskTypeConflict {
   @IsString()
   readonly path: string;
 }
-
-export {
-  ReqUpdateTaskTypeParamDto,
-  ReqUpdateTaskTypeDto,
-  ResUpdateTaskTypeDto,
-  ResUpdateTaskTypeConflict,
-};

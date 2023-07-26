@@ -2,13 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Provider, Role } from '@prisma/client';
 import { IsDate, IsEnum, IsInt, IsString } from 'class-validator';
 
-class ReqGetUserAppDto {
+export class ReqGetUserAppDto {
   @ApiProperty({ description: '유저 고유 ID(UUID)' })
   @IsString()
   readonly id: string;
 }
 
-class ResGetUserAppDto {
+export class ResGetUserAppDto {
   @ApiProperty({ description: '유저 고유 ID(UUID)' })
   @IsString()
   readonly id: string;
@@ -33,5 +33,3 @@ class ResGetUserAppDto {
   @ApiProperty({ description: '가입 날짜' })
   readonly createdAt: Date;
 }
-
-export { ReqGetUserAppDto, ResGetUserAppDto };

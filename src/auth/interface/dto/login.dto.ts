@@ -5,7 +5,7 @@ import {
   VALIDATE_PASSWORD,
 } from '@shared/messages/auth.messages';
 
-class ReqLoginDto {
+export class ReqLoginDto {
   @ApiProperty({ example: 'test@gmail.com', description: '이메일' })
   @IsEmail({}, { message: VALIDATE_EMAIL })
   readonly email: string;
@@ -21,7 +21,7 @@ class ReqLoginDto {
   readonly password: string;
 }
 
-class ResLoginDto {
+export class ResLoginDto {
   @ApiProperty({ description: 'JWT 액세스 토큰' })
   @IsString()
   readonly accessToken: string;
@@ -31,7 +31,7 @@ class ResLoginDto {
   readonly refreshToken?: string;
 }
 
-class ResNotFoundUser {
+export class ResNotFoundUser {
   @ApiProperty({ example: 404, description: '에러 상태 코드' })
   @IsString()
   readonly statusCode: number;
@@ -48,7 +48,7 @@ class ResNotFoundUser {
   readonly path: string;
 }
 
-class ResInvalidPassword {
+export class ResInvalidPassword {
   @ApiProperty({ example: 401, description: '에러 상태 코드' })
   @IsString()
   readonly statusCode: number;
@@ -64,5 +64,3 @@ class ResInvalidPassword {
   @IsString()
   readonly path: string;
 }
-
-export { ReqLoginDto, ResLoginDto, ResNotFoundUser, ResInvalidPassword };

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
-class ReqUpdatePointTransactionTypeAppDto {
+export class ReqUpdatePointTransactionTypeAppDto {
   @ApiProperty({ description: '포인트 거래 타입 고유 ID(SMALL INT)' })
   @IsInt()
   readonly id: number;
@@ -19,7 +19,7 @@ class ReqUpdatePointTransactionTypeAppDto {
   readonly name: string;
 }
 
-class ResUpdatePointTransactionTypeAppDto {
+export class ResUpdatePointTransactionTypeAppDto {
   @ApiProperty({
     example: '포인트 거래 타입 업데이트 성공',
     description: '성공 메시지',
@@ -27,8 +27,3 @@ class ResUpdatePointTransactionTypeAppDto {
   @IsString()
   readonly message: string;
 }
-
-export {
-  ReqUpdatePointTransactionTypeAppDto,
-  ResUpdatePointTransactionTypeAppDto,
-};

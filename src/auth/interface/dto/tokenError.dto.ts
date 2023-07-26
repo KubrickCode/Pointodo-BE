@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsString } from 'class-validator';
 
-class ResTokenUnauthorized {
+export class ResTokenUnauthorized {
   @ApiProperty({ example: 401, description: '에러 상태 코드' })
   @IsInt()
   readonly statusCode: number;
@@ -20,5 +20,3 @@ class ResTokenUnauthorized {
   @IsString()
   readonly path: string;
 }
-
-export { ResTokenUnauthorized };

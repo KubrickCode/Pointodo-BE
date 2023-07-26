@@ -2,14 +2,14 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
-class ReqUpdatePointTransactionTypeParamDto {
+export class ReqUpdatePointTransactionTypeParamDto {
   @ApiProperty({ description: '포인트 거래 타입 고유 ID' })
   @Type(() => Number)
   @IsInt()
   readonly id: number;
 }
 
-class ReqUpdatePointTransactionTypeDto {
+export class ReqUpdatePointTransactionTypeDto {
   @ApiProperty({ description: '새 포인트 거래 타입 ID' })
   @ApiPropertyOptional()
   @IsOptional()
@@ -23,7 +23,7 @@ class ReqUpdatePointTransactionTypeDto {
   readonly name: string;
 }
 
-class ResUpdatePointTransactionTypeDto {
+export class ResUpdatePointTransactionTypeDto {
   @ApiProperty({
     example: '포인트 거래 타입 업데이트 성공',
     description: '성공 메시지',
@@ -32,7 +32,7 @@ class ResUpdatePointTransactionTypeDto {
   readonly message: string;
 }
 
-class ResUpdatePointTransactionTypeConflict {
+export class ResUpdatePointTransactionTypeConflict {
   @ApiProperty({ example: 409, description: '에러 상태 코드' })
   @IsString()
   readonly statusCode: number;
@@ -51,10 +51,3 @@ class ResUpdatePointTransactionTypeConflict {
   @IsString()
   readonly path: string;
 }
-
-export {
-  ReqUpdatePointTransactionTypeParamDto,
-  ReqUpdatePointTransactionTypeDto,
-  ResUpdatePointTransactionTypeDto,
-  ResUpdatePointTransactionTypeConflict,
-};

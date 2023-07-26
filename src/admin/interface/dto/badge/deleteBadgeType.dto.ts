@@ -2,14 +2,14 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsInt, IsString } from 'class-validator';
 
-class ReqDeleteBadgeTypeParamDto {
+export class ReqDeleteBadgeTypeParamDto {
   @ApiProperty({ description: '뱃지 타입 고유 ID' })
   @Type(() => Number)
   @IsInt()
   readonly id: number;
 }
 
-class ResDeleteBadgeTypeDto {
+export class ResDeleteBadgeTypeDto {
   @ApiProperty({
     example: '뱃지 타입 삭제 성공',
     description: '성공 메시지',
@@ -17,5 +17,3 @@ class ResDeleteBadgeTypeDto {
   @IsString()
   readonly message: string;
 }
-
-export { ReqDeleteBadgeTypeParamDto, ResDeleteBadgeTypeDto };

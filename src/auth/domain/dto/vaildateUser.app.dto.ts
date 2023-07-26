@@ -13,7 +13,7 @@ import {
   VALIDATE_PASSWORD,
 } from '@shared/messages/auth.messages';
 
-class ReqValidateUserAppDto {
+export class ReqValidateUserAppDto {
   @ApiProperty({ example: 'test@gmail.com', description: '이메일' })
   @IsEmail({}, { message: VALIDATE_EMAIL })
   readonly email: string;
@@ -29,7 +29,7 @@ class ReqValidateUserAppDto {
   readonly password: string;
 }
 
-class ResValidateUserAppDto {
+export class ResValidateUserAppDto {
   @ApiProperty({ description: '유저 고유 ID(UUID)' })
   @IsString()
   readonly id: string;
@@ -54,5 +54,3 @@ class ResValidateUserAppDto {
   @ApiProperty({ description: '가입 날짜' })
   readonly createdAt: Date;
 }
-
-export { ReqValidateUserAppDto, ResValidateUserAppDto };

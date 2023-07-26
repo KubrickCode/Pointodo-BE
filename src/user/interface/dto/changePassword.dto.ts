@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, Matches } from 'class-validator';
 import { VALIDATE_PASSWORD } from '@shared/messages/auth.messages';
 
-class ReqChangePasswordDto {
+export class ReqChangePasswordDto {
   @ApiProperty({
     example: 'test1234!@',
     description: '비밀번호(6~20자 영문, 숫자, 특수문자 혼합)',
@@ -14,13 +14,13 @@ class ReqChangePasswordDto {
   readonly password: string;
 }
 
-class ResChangePasswordDto {
+export class ResChangePasswordDto {
   @ApiProperty({ example: '비밀번호 변경 성공', description: '성공 메시지' })
   @IsString()
   readonly message: string;
 }
 
-class ResChangePasswordDtoError {
+export class ResChangePasswordDtoError {
   @ApiProperty({ example: 400, description: '에러 상태 코드' })
   @IsString()
   readonly statusCode: string;
@@ -33,9 +33,3 @@ class ResChangePasswordDtoError {
   @IsString()
   readonly error: string;
 }
-
-export {
-  ReqChangePasswordDto,
-  ResChangePasswordDto,
-  ResChangePasswordDtoError,
-};

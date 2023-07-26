@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsString } from 'class-validator';
 
-class ReqCreateBadgeTypeAppDto {
+export class ReqCreateBadgeTypeAppDto {
   @ApiProperty({ description: '뱃지 타입 고유 ID(SMALL INT)' })
   @IsInt()
   readonly id: number;
@@ -19,10 +19,8 @@ class ReqCreateBadgeTypeAppDto {
   readonly iconLink: string;
 }
 
-class ResCreateBadgeTypeAppDto {
+export class ResCreateBadgeTypeAppDto {
   @ApiProperty({ example: '뱃지 타입 생성 성공', description: '성공 메시지' })
   @IsString()
   readonly message: string;
 }
-
-export { ReqCreateBadgeTypeAppDto, ResCreateBadgeTypeAppDto };

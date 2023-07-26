@@ -2,13 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Provider } from '@prisma/client';
 import { IsString } from 'class-validator';
 
-class ResSocialLoginDto {
+export class ResSocialLoginDto {
   @ApiProperty({ description: 'JWT 액세스 토큰' })
   @IsString()
   readonly accessToken: string;
 }
 
-class ReqSocialLoginDto {
+export class ReqSocialLoginDto {
   @IsString()
   readonly email: string;
 
@@ -16,7 +16,7 @@ class ReqSocialLoginDto {
   readonly provider: Provider;
 }
 
-class RedirectSocialLoginDto {
+export class RedirectSocialLoginDto {
   @ApiProperty({
     example: '/social-login',
     description: '클라이언트 리다이렉트 경로',
@@ -24,5 +24,3 @@ class RedirectSocialLoginDto {
   @IsString()
   readonly redirectUri: string;
 }
-
-export { ResSocialLoginDto, RedirectSocialLoginDto, ReqSocialLoginDto };

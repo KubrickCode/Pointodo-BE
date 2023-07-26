@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsString } from 'class-validator';
 
-class ResGetAllPointTransactionTypesDto {
+export class ResGetAllPointTransactionTypesDto {
   @ApiProperty({ description: '포인트 거래 타입 고유 ID(SMALL INT)' })
   @IsInt()
   readonly id: number;
@@ -10,5 +10,3 @@ class ResGetAllPointTransactionTypesDto {
   @IsString()
   readonly name: string;
 }
-
-export { ResGetAllPointTransactionTypesDto };
