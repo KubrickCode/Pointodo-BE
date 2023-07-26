@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, Matches } from 'class-validator';
-import { VALIDATE_PASSWORD } from '@shared/messages/auth.messages';
+import { VALIDATE_PASSWORD } from '@shared/messages/auth/auth.messages';
 
 export class ReqChangePasswordDto {
   @ApiProperty({

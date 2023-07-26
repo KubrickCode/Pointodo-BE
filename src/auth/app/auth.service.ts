@@ -10,7 +10,7 @@ import {
 import {
   CHECK_PASSWORD_MESSAGE,
   LOGOUT_SUCCESS_MESSAGE,
-} from '@shared/messages/auth.messages';
+} from '@shared/messages/auth/auth.messages';
 import { ITokenService } from '@auth/domain/interfaces/token.service.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
@@ -20,7 +20,7 @@ import {
   AUTH_EXPIRED_REFRESH_TOKEN,
   AUTH_INVALID_ADMIN,
   AUTH_INVALID_TOKEN,
-} from '@auth/domain/errors/auth.errors';
+} from '@shared/messages/auth/auth.errors';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
 import { IPasswordHasher } from '@user/domain/interfaces/passwordHasher.interface';
 import { plainToClass } from 'class-transformer';

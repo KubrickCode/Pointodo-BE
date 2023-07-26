@@ -1,4 +1,4 @@
-import { AUTH_INVALID_ADMIN } from '@auth/domain/errors/auth.errors';
+import { AUTH_INVALID_ADMIN } from '@shared/messages/auth/auth.errors';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
 import {
   CanActivate,

@@ -9,14 +9,14 @@ import {
   CHANGE_PASSWORD_SUCCESS_MESSAGE,
   DELETE_USER_SUCCESS_MESSAGE,
   REGISTER_SUCCESS_MESSAGE,
-} from '@shared/messages/user.messages';
+} from '@shared/messages/user/user.messages';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import { IPasswordHasher } from '@user/domain/interfaces/passwordHasher.interface';
 import {
   USER_ALREADY_EXISTS,
   USER_NOT_FOUND,
-} from '@user/domain/errors/user.errors';
+} from '@shared/messages/user/user.errors';
 import { IUserService } from '@user/domain/interfaces/user.service.interface';
 import { ICacheService } from 'src/cache/domain/interfaces/cache.service.interface';
 import { UserEntity } from '@user/domain/entities/user.entity';

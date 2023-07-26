@@ -1,7 +1,7 @@
 import {
   AUTH_EXPIRED_TOKEN,
   AUTH_INVALID_TOKEN,
-} from '@auth/domain/errors/auth.errors';
+} from '@shared/messages/auth/auth.errors';
 import {
   Injectable,
   ExecutionContext,

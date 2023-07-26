@@ -3,7 +3,7 @@ import {
   ResRegisterAppDto,
 } from '@user/domain/dto/register.app.dto';
 import { IUserService } from '@user/domain/interfaces/user.service.interface';
-import { REGISTER_SUCCESS_MESSAGE } from '@shared/messages/user.messages';
+import { REGISTER_SUCCESS_MESSAGE } from '@shared/messages/user/user.messages';
 
 describe('Register', () => {
   let userService: IUserService;
