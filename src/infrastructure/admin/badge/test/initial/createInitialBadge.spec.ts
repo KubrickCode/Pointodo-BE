@@ -1,6 +1,6 @@
 import { PrismaService } from '@shared/services/prisma.service';
 import { BadgeAdminRepository } from '../../prisma/badge.admin.repository';
-import { initialBadgeTypes } from './initialTypes';
+import { initialBadgeTypes } from './initialBadgeTypes';
 
 describe('createInitialBadgeTypes', () => {
   let prisma: PrismaService;
