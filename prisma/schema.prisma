@@ -11,8 +11,8 @@ model User {
   id                String        @id @default(uuid()) @db.Uuid 
   email             String        @unique @db.VarChar(255)
   password          String?       @db.VarChar(255)
-  provider          Provider      @default(Local)
-  role              Role          @default(User)
+  provider          Provider      @default(LOCAL)
+  role              Role          @default(USER)
   defaultBadge      BadgeTypes    @relation(fields: [defaultBadgeId], references: [id])
   defaultBadgeId    Int           @default(0)
   createdAt         DateTime      @default(now())
@@ -37,12 +37,12 @@ model TaskTypes {
 }
 
 enum Provider {
-  Local
-  Google
-  Kakao
+  LOCAL
+  GOOGLE
+  KAKAO
 }
 
 enum Role {
-  User
-  Admin
+  USER
+  ADMIN
 }

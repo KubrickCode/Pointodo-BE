@@ -30,7 +30,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   ): Promise<void> {
     const socialUser: ReqSocialLoginAppDto = {
       email: profile.emails[0].value,
-      provider: 'Google',
+      provider: 'GOOGLE',
     };
     const token = await this.authService.socialLogin(socialUser);
     done(null, token);

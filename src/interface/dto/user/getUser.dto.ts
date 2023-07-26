@@ -11,11 +11,11 @@ class ResGetUserDto {
   @IsString()
   readonly email: string;
 
-  @ApiProperty({ example: 'Local | Google | Kakao', description: '공급 업체' })
+  @ApiProperty({ example: 'LOCAL | GOOGLE | KAKAO', description: '공급 업체' })
   @IsEnum(Provider)
   readonly provider: Provider;
 
-  @ApiProperty({ example: 'User | Admin', description: '권한' })
+  @ApiProperty({ example: 'USER | ADMIN', description: '권한' })
   @IsEnum(Role)
   readonly role: Role;
 

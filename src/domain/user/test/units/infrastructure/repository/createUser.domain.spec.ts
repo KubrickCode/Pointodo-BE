@@ -25,8 +25,8 @@ describe('createUser', () => {
       email: user.email,
       password: 'hashedPassword',
       defaultBadgeId: 0,
-      provider: 'Local',
-      role: 'User',
+      provider: 'LOCAL',
+      role: 'USER',
       createdAt: new Date(),
     };
 

@@ -25,7 +25,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     const email = profile.id + '@kakao.com';
     const socialUser: ReqSocialLoginAppDto = {
       email,
-      provider: 'Kakao',
+      provider: 'KAKAO',
     };
     const token = await this.authService.socialLogin(socialUser);
     done(null, token);

@@ -165,7 +165,7 @@ export class AuthService implements IAuthService {
   ): Promise<ResValidateAdminAppDto> {
     const { id } = req;
     const user = await this.userRepository.findById(id);
-    if (user.role !== 'Admin') {
+    if (user.role !== 'ADMIN') {
       throw new ForbiddenException(AUTH_INVALID_ADMIN);
     }
     return { validation: true };
