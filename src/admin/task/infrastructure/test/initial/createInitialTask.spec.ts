@@ -1,4 +1,4 @@
-import { PrismaService } from '@shared/services/prisma.service';
+import { PrismaService } from '@shared/service/prisma.service';
 import { TaskAdminRepository } from '../../prisma/task.admin.repository';
 import { initialTaskTypes } from './initialTaskTypes';
 

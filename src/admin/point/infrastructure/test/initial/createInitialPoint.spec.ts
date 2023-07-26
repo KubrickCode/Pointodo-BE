@@ -1,4 +1,4 @@
-import { PrismaService } from '@shared/services/prisma.service';
+import { PrismaService } from '@shared/service/prisma.service';
 import { PointAdminRepository } from '../../prisma/point.admin.repository';
 import { initialPointTransactionTypes } from './initialPointTransactionTypes';
 

@@ -1,4 +1,4 @@
-import { PrismaService } from '@shared/services/prisma.service';
+import { PrismaService } from '@shared/service/prisma.service';
 import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 
 describe('createUser', () => {

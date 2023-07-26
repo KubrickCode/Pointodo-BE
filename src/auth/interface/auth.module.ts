@@ -5,7 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 import { PasswordHasher } from '@user/infrastructure/passwordHasher';
-import { PrismaService } from '@shared/services/prisma.service';
+import { PrismaService } from '@shared/service/prisma.service';
 import { LocalStrategy } from '@auth/infrastructure/passport/strategies/local.strategy';
 import { TokenService } from '@auth/infrastructure/token.service';
 import { JwtStrategy } from '@auth/infrastructure/passport/strategies/jwt.strategy';

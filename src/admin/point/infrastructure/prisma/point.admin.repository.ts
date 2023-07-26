@@ -2,7 +2,7 @@ import { PointTransactionTypesEntity } from '@admin/point/domain/entities/pointT
 import { IPointAdminRepository } from '@admin/point/domain/interfaces/point.admin.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { PointTransactionTypes } from '@prisma/client';
-import { PrismaService } from '@shared/services/prisma.service';
+import { PrismaService } from '@shared/service/prisma.service';
 
 @Injectable()
 export class PointAdminRepository implements IPointAdminRepository {

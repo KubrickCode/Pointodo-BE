@@ -1,4 +1,4 @@
-import { PrismaService } from '@shared/services/prisma.service';
+import { PrismaService } from '@shared/service/prisma.service';
 import { BadgeAdminRepository } from '../../prisma/badge.admin.repository';
 import { initialBadgeTypes } from './initialBadgeTypes';
 

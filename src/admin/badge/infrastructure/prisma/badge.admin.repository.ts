@@ -2,7 +2,7 @@ import { BadgeTypesEntity } from '@admin/badge/domain/entities/badgeTypes.entity
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { BadgeTypes } from '@prisma/client';
-import { PrismaService } from '@shared/services/prisma.service';
+import { PrismaService } from '@shared/service/prisma.service';
 
 @Injectable()
 export class BadgeAdminRepository implements IBadgeAdminRepository {

@@ -54,6 +54,7 @@ export class UserService implements IUserService {
 
   async register(newUser: ReqRegisterAppDto): Promise<ResRegisterAppDto> {
     const { email, password } = newUser;
+
     const existingUser = await this.userRepository.findByEmail(email);
 
     if (existingUser) {

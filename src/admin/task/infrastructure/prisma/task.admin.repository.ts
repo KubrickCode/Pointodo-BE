@@ -2,7 +2,7 @@ import { TaskTypesEntity } from '@admin/task/domain/entities/taskTypes.entity';
 import { ITaskAdminRepository } from '@admin/task/domain/interfaces/task.admin.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { TaskTypes } from '@prisma/client';
-import { PrismaService } from '@shared/services/prisma.service';
+import { PrismaService } from '@shared/service/prisma.service';
 
 @Injectable()
 export class TaskAdminRepository implements ITaskAdminRepository {

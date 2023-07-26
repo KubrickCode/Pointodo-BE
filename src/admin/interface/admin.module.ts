@@ -8,7 +8,7 @@ import { TokenService } from '@auth/infrastructure/token.service';
 import { RedisService } from '@redis/infrastructure/redis.service';
 import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 import { PasswordHasher } from '@user/infrastructure/passwordHasher';
-import { PrismaService } from '@shared/services/prisma.service';
+import { PrismaService } from '@shared/service/prisma.service';
 import { BadgeAdminService } from '@admin/badge/app/badge.admin.service';
 import { BadgeAdminRepository } from '@admin/badge/infrastructure/prisma/badge.admin.repository';
 import { PointAdminController } from '@admin/interface/point.admin.controller';
