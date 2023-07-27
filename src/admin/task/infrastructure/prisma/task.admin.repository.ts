@@ -89,10 +89,10 @@ export class TaskAdminRepository implements ITaskAdminRepository {
       RETURNING *
     `;
     const values = [id];
-    const newBadgeType = await this.prisma.$queryRawUnsafe<TaskTypes>(
+    const deletedBadgeType = await this.prisma.$queryRawUnsafe<TaskTypes>(
       query,
       ...values,
     );
-    return newBadgeType[0];
+    return deletedBadgeType[0];
   }
 }

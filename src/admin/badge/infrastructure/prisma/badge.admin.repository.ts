@@ -101,10 +101,10 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
       RETURNING *
     `;
     const values = [id];
-    const newBadgeType = await this.prisma.$queryRawUnsafe<BadgeTypes>(
+    const deletedBadgeType = await this.prisma.$queryRawUnsafe<BadgeTypes>(
       query,
       ...values,
     );
-    return newBadgeType[0];
+    return deletedBadgeType[0];
   }
 }

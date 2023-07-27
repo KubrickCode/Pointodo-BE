@@ -96,11 +96,11 @@ export class PointAdminRepository implements IPointAdminRepository {
       RETURNING *
     `;
     const values = [id];
-    const newBadgeType =
+    const deletedBadgeType =
       await this.prisma.$queryRawUnsafe<PointTransactionTypes>(
         query,
         ...values,
       );
-    return newBadgeType[0];
+    return deletedBadgeType[0];
   }
 }
