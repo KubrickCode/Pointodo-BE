@@ -9,6 +9,7 @@ import { GlobalExceptionFilter } from '@shared/filters/globalException.filter';
 import { RequestLoggingMiddleware } from '@shared/middlewares/request-logging.middleware';
 import { RedisCacheModule } from '@cache/interface/cache.module';
 import { AdminModule } from '@admin/interface/admin.module';
+import { BadgeModule } from './badge/interface/badge.module';
 
 @Module({
   providers: [
@@ -27,6 +28,7 @@ import { AdminModule } from '@admin/interface/admin.module';
     AdminModule,
     RedisCacheModule,
     WinstonModule.forRoot(getWinstonLogger(process.env.NODE_ENV, 'api')),
+    BadgeModule,
   ],
 })
 export class AppModule implements NestModule {
