@@ -10,6 +10,7 @@ import { RequestLoggingMiddleware } from '@shared/middlewares/request-logging.mi
 import { RedisCacheModule } from '@cache/interface/cache.module';
 import { AdminModule } from '@admin/interface/admin.module';
 import { BadgeModule } from './badge/interface/badge.module';
+import { TaskModule } from './task/interface/task.module';
 
 @Module({
   providers: [
@@ -29,6 +30,7 @@ import { BadgeModule } from './badge/interface/badge.module';
     RedisCacheModule,
     WinstonModule.forRoot(getWinstonLogger(process.env.NODE_ENV, 'api')),
     BadgeModule,
+    TaskModule,
   ],
 })
 export class AppModule implements NestModule {
