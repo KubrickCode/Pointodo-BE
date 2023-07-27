@@ -1,6 +1,6 @@
 import { TasksLogs } from '@prisma/client';
 
-export class TasksLogsEntity implements TasksLogs {
+export class TaskEntity implements TasksLogs {
   id: number;
   userId: string;
   taskTypesId: number;

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { TasksLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
-import { TasksLogsEntity } from 'src/task/domain/entities/tasksLogs.entity';
-import { ITasksLogsRepository } from 'src/task/domain/interfaces/tasksLogs.repository.interface';
+import { TaskEntity } from 'src/task/domain/entities/task.entity';
+import { ITaskRepository } from 'src/task/domain/interfaces/task.repository.interface';
 
 @Injectable()
-export class TasksLogsRepository implements ITasksLogsRepository {
+export class TaskRepository implements ITaskRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createTaskLog(req: Partial<TasksLogsEntity>): Promise<TasksLogsEntity> {
+  async createTask(req: Partial<TaskEntity>): Promise<TaskEntity> {
     const { userId, taskTypesId, name, description } = req;
     const query = `
       INSERT INTO "TasksLogs" ("userId", "taskTypesId", name, description)
@@ -23,7 +23,7 @@ export class TasksLogsRepository implements ITasksLogsRepository {
     return newTasksLogs[0];
   }
 
-  async updateTaskLog(req: Partial<TasksLogsEntity>): Promise<TasksLogsEntity> {
+  async updateTask(req: Partial<TaskEntity>): Promise<TaskEntity> {
     const { id, name, description, completion, importance } = req;
     const updateFields: string[] = [];
     const values: (number | string)[] = [];
@@ -70,7 +70,7 @@ export class TasksLogsRepository implements ITasksLogsRepository {
     return updatedTaskLog[0];
   }
 
-  async deleteTaskLog(id: number): Promise<TasksLogsEntity> {
+  async deleteTask(id: number): Promise<TaskEntity> {
     const query = `
       DELETE FROM "TasksLogs"
       WHERE id = $1
