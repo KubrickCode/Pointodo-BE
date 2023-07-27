@@ -38,6 +38,7 @@ import {
   ReqDeleteUserAppDto,
   ResDeleteUserAppDto,
 } from '@user/domain/dto/deleteUser.app.dto';
+import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -45,6 +46,8 @@ export class UserService implements IUserService {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
+    @Inject('IBadgeProgressRepository')
+    private readonly badgeProgressRepository: IBadgeProgressRepository,
     @Inject('IPasswordHasher')
     private readonly passwordHasher: IPasswordHasher,
     @Inject('ICacheService')
@@ -69,6 +72,16 @@ export class UserService implements IUserService {
     };
 
     const createdUser = await this.userRepository.createUser(user);
+
+    const badgeProgressPromises = Array.from({ length: 9 }, (_, i) =>
+      this.badgeProgressRepository.createBadgeProgress({
+        userId: createdUser.id,
+        badgeId: i + 1,
+      }),
+    );
+
+    await Promise.all(badgeProgressPromises);
+
     this.logger.log(
       'info',
       `가입 이메일:${createdUser.email}, 사용자 ID:${createdUser.id}, 가입 일시:${createdUser.createdAt}, 공급 업체:${createdUser.provider}`,

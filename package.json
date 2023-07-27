@@ -107,7 +107,8 @@
       "@auth/(.*)": "<rootDir>/auth/$1",
       "@admin/(.*)": "<rootDir>/admin/$1",
       "@redis/(.*)": "<rootDir>/redis/$1",
-      "@cache/(.*)": "<rootDir>/cache/$1"
+      "@cache/(.*)": "<rootDir>/cache/$1",
+      "@badge/(.*)": "<rootDir>/badge/$1"
     }
   }
 }

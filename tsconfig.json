@@ -24,7 +24,8 @@
       "@auth/*": ["src/auth/*"],
       "@admin/*": ["src/admin/*"],
       "@redis/*": ["src/redis/*"],
-      "@cache/*": ["src/cache/*"]
+      "@cache/*": ["src/cache/*"],
+      "@badge/*": ["src/badge/*"]
     }
   }
 }

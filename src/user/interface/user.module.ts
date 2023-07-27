@@ -8,6 +8,7 @@ import { PrismaService } from '@shared/service/prisma.service';
 import { PasswordHasher } from '@user/infrastructure/passwordHasher';
 import { CacheService } from '@cache/infrastructure/cache.service';
 import { jwtConfig } from '@shared/config/jwt.config';
+import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgress.repository';
 
 @Module({
   controllers: [UserController],
@@ -28,6 +29,10 @@ import { jwtConfig } from '@shared/config/jwt.config';
     {
       provide: 'ICacheService',
       useClass: CacheService,
+    },
+    {
+      provide: 'IBadgeProgressRepository',
+      useClass: BadgeProgressRepository,
     },
   ],
   imports: [
