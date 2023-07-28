@@ -26,7 +26,7 @@ import {
 @Injectable()
 export class TaskService implements ITaskService {
   constructor(
-    @Inject('ITasksLogsRepository')
+    @Inject('ITaskRepository')
     private readonly taskRepository: ITaskRepository,
   ) {}
 

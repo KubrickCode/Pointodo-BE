@@ -1,36 +1,66 @@
-import { Controller, Inject, Get, Post, Patch, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  UseGuards,
+  Req,
+  Param,
+  Body,
+} from '@nestjs/common';
 import { ITaskService } from '../domain/interfaces/task.service.interface';
+import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
+import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { globalDocs } from '@shared/docs/global.docs';
+import { Request } from 'express';
+import {
+  ReqGetTasksLogsParamDto,
+  ResGetTasksLogsDto,
+} from './dto/getTasksLogs.dto';
+import { ReqCreateTaskDto, ResCreateTaskDto } from './dto/createTask.dto';
+import { ReqUpdateTaskDto, ResUpdateTaskDto } from './dto/updateTask.dto';
+import { ReqDeleteTaskParamDto, ResDeleteTaskDto } from './dto/deleteTask.dto';
 
 @Controller('task')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+@ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 export class TaskController {
   constructor(
     @Inject('ITaskService')
     private readonly taskService: ITaskService,
   ) {}
 
-  // @Get()
-  // async getTasksLogs(
-  //   req: ReqGetTasksLogsAppDto,
-  // ): Promise<ResGetTasksLogsAppDto[]> {
-  //   const { userId, taskTypesId } = req;
-  //   return await this.taskService.getTasksLogs(userId, taskTypesId);
-  // }
+  @Get('/:id')
+  async getTasksLogs(
+    @Req() req: Request,
+    @Param() param: ReqGetTasksLogsParamDto,
+  ): Promise<ResGetTasksLogsDto[]> {
+    const userId = req.user.id;
+    const { taskTypesId } = param;
+    return await this.taskService.getTasksLogs({ userId, taskTypesId });
+  }
 
-  // @Post()
-  // async createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto> {
-  //   await this.taskService.createTask(req);
-  //   return { message: CREATE_TASK_SUCCESS_MESSAGE };
-  // }
+  @Post('create')
+  async createTask(
+    @Req() req: Request,
+    @Body() body: ReqCreateTaskDto,
+  ): Promise<ResCreateTaskDto> {
+    const userId = req.user.id;
+    return await this.taskService.createTask({ userId, ...body });
+  }
 
-  // @Patch()
-  // async updateTask(req: ReqUpdateTaskAppDto): Promise<ResUpdateTaskAppDto> {
-  //   await this.taskService.updateTask(req);
-  //   return { message: UPDATE_TASK_SUCCESS_MESSAGE };
-  // }
+  @Patch('update')
+  async updateTask(@Body() body: ReqUpdateTaskDto): Promise<ResUpdateTaskDto> {
+    return await this.taskService.updateTask(body);
+  }
 
-  // @Delete()
-  // async deleteTask(req: ReqDeleteTaskAppDto): Promise<ResDeleteTaskAppDto> {
-  //   await this.taskService.deleteTask(req.id);
-  //   return { message: DELETE_TASK_SUCCESS_MESSAGE };
-  // }
+  @Delete('/:id')
+  async deleteTask(
+    @Param() param: ReqDeleteTaskParamDto,
+  ): Promise<ResDeleteTaskDto> {
+    return await this.taskService.deleteTask({ id: param.id });
+  }
 }
