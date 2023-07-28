@@ -8,6 +8,23 @@ import { ITaskRepository } from 'src/task/domain/interfaces/task.repository.inte
 export class TaskRepository implements ITaskRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  async getTasksLogs(
+    userId: string,
+    taskTypesId: number,
+  ): Promise<TaskEntity[]> {
+    const query = `
+      SELECT * FROM "TasksLogs"
+      WHERE "userId" = $1::uuid
+      AND "taskTypesId" = $2
+    `;
+    const values = [userId, taskTypesId];
+    const tasksLogs = await this.prisma.$queryRawUnsafe<TasksLogs[]>(
+      query,
+      ...values,
+    );
+    return tasksLogs;
+  }
+
   async createTask(req: Partial<TaskEntity>): Promise<TaskEntity> {
     const { userId, taskTypesId, name, description } = req;
     const query = `

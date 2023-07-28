@@ -18,6 +18,10 @@ import {
   ReqDeleteTaskAppDto,
   ResDeleteTaskAppDto,
 } from '../domain/dto/deleteTask.app.dto';
+import {
+  ReqGetTasksLogsAppDto,
+  ResGetTasksLogsAppDto,
+} from '../domain/dto/getTasksLogs.app.dto';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -25,6 +29,13 @@ export class TaskService implements ITaskService {
     @Inject('ITasksLogsRepository')
     private readonly taskRepository: ITaskRepository,
   ) {}
+
+  async getTasksLogs(
+    req: ReqGetTasksLogsAppDto,
+  ): Promise<ResGetTasksLogsAppDto[]> {
+    const { userId, taskTypesId } = req;
+    return await this.taskRepository.getTasksLogs(userId, taskTypesId);
+  }
 
   async createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto> {
     await this.taskRepository.createTask(req);
