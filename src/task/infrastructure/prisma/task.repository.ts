@@ -41,7 +41,7 @@ export class TaskRepository implements ITaskRepository {
   }
 
   async updateTask(req: Partial<TaskEntity>): Promise<TaskEntity> {
-    const { id, name, description, completion, importance } = req;
+    const { id, name, description, importance } = req;
     const updateFields: string[] = [];
     const values: (number | string)[] = [];
     let placeholderIndex = 1;
@@ -58,13 +58,7 @@ export class TaskRepository implements ITaskRepository {
       placeholderIndex++;
     }
 
-    if (completion !== undefined) {
-      updateFields.push(`completion = $${placeholderIndex}`);
-      values.push(completion);
-      placeholderIndex++;
-    }
-
-    if (importance) {
+    if (importance !== undefined) {
       updateFields.push(`importance = $${placeholderIndex}`);
       values.push(importance);
       placeholderIndex++;

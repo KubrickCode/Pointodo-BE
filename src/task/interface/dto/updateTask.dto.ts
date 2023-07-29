@@ -16,11 +16,6 @@ export class ReqUpdateTaskDto {
   @IsOptional()
   readonly description: string;
 
-  @ApiProperty({ description: '작업 완료 여부' })
-  @IsInt()
-  @IsOptional()
-  readonly completion: number;
-
   @ApiProperty({ description: '작업 중요도' })
   @IsInt()
   @IsOptional()
