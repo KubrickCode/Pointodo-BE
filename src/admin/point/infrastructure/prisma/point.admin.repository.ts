@@ -59,7 +59,7 @@ export class PointAdminRepository implements IPointAdminRepository {
     const values: (number | string)[] = [];
     let placeholderIndex = 1;
 
-    if (newId) {
+    if (newId !== undefined) {
       updateFields.push(`id = $${placeholderIndex}`);
       values.push(newId);
       placeholderIndex++;
