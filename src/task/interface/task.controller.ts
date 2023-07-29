@@ -33,7 +33,7 @@ export class TaskController {
     private readonly taskService: ITaskService,
   ) {}
 
-  @Get('/:id')
+  @Get('/:taskTypesId')
   async getTasksLogs(
     @Req() req: Request,
     @Param() param: ReqGetTasksLogsParamDto,

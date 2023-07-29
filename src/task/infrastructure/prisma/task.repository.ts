@@ -58,7 +58,7 @@ export class TaskRepository implements ITaskRepository {
       placeholderIndex++;
     }
 
-    if (completion) {
+    if (completion !== undefined) {
       updateFields.push(`completion = $${placeholderIndex}`);
       values.push(completion);
       placeholderIndex++;
