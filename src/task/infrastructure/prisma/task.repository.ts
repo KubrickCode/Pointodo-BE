@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TasksLogs } from '@prisma/client';
+import { PointsLogs, TasksLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
 import { TaskEntity } from 'src/task/domain/entities/task.entity';
 import { ITaskRepository } from 'src/task/domain/interfaces/task.repository.interface';
@@ -68,11 +68,11 @@ export class TaskRepository implements ITaskRepository {
     placeholderIndex++;
 
     const query = `
-    UPDATE "TasksLogs"
-    SET ${updateFields.join(', ')}
-    WHERE id = $${placeholderIndex - 1}
-    RETURNING *
-  `;
+      UPDATE "TasksLogs"
+      SET ${updateFields.join(', ')}
+      WHERE id = $${placeholderIndex - 1}
+      RETURNING *
+    `;
 
     const updatedTaskLog = await this.prisma.$queryRawUnsafe<TasksLogs>(
       query,
@@ -93,5 +93,44 @@ export class TaskRepository implements ITaskRepository {
       ...values,
     );
     return deletedTaskLog[0];
+  }
+
+  async completeTask(req: Partial<TaskEntity>): Promise<TaskEntity> {
+    return await this.prisma.$transaction(async (tx) => {
+      const completeQuery = `
+        UPDATE "TasksLogs"
+        SET completion = $1
+        WHERE id = $2
+        RETURNING *
+      `;
+      const completeValues = [req.id];
+      return await tx.$queryRawUnsafe<TasksLogs>(
+        completeQuery,
+        ...completeValues,
+      );
+
+      const createPointLogQuery = `
+        INSERT INTO "PointsLogs" ("userId", "pointTransactionTypesId", "taskTypesId", points)
+        VALUES ($1::uuid, 0, $2, $3)
+        RETURNING *
+      `;
+
+      let points: number;
+
+      if (req.taskTypesId === 0) points = 1;
+      if (req.taskTypesId === 1) points = 3;
+      if (req.taskTypesId === 2) points = 5;
+
+      const createPointLogValues = [req.userId, req.taskTypesId, points];
+
+      await tx.$queryRawUnsafe<PointsLogs>(
+        createPointLogQuery,
+        ...createPointLogValues,
+      );
+
+      if (req.taskTypesId === 0) points = 1;
+      if (req.taskTypesId === 1) points = 3;
+      if (req.taskTypesId === 2) points = 5;
+    });
   }
 }

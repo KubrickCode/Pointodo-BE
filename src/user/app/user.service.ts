@@ -73,10 +73,10 @@ export class UserService implements IUserService {
 
     const createdUser = await this.userRepository.createUser(user);
 
-    const badgeProgressPromises = Array.from({ length: 9 }, (_, i) =>
+    const badgeProgressPromises = Array.from({ length: 7 }, (_, i) =>
       this.badgeProgressRepository.createBadgeProgress({
         userId: createdUser.id,
-        badgeId: i + 1,
+        badgeId: i + 3,
       }),
     );
 

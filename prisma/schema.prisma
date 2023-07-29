@@ -60,16 +60,19 @@ model PointsLogs {
   id                        Int                     @id @default(autoincrement())
   userId                    String                  @db.Uuid      
   pointTransactionTypesId   Int         
+  taskTypesId               Int
   points                    Int                     @db.SmallInt
   occurredAt                DateTime                @default(now())
   user                      User                    @relation(fields: [userId], references: [id])
   pointTransactionTypes     PointTransactionTypes   @relation(fields: [pointTransactionTypesId], references: [id])
+  taskTypes                 TaskTypes               @relation(fields: [taskTypesId], references: [id])
 }
 
 model TaskTypes {
   id                Int           @id @db.SmallInt
   name              String        @unique @db.VarChar(20)
   taskLogs          TasksLogs[]
+  pointLogs         PointsLogs[]
 }
 
 model TasksLogs {
