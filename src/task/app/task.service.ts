@@ -22,12 +22,15 @@ import {
   ReqGetTasksLogsAppDto,
   ResGetTasksLogsAppDto,
 } from '../domain/dto/getTasksLogs.app.dto';
+import { ITransaction } from '@shared/interfaces/transaction.interface';
 
 @Injectable()
 export class TaskService implements ITaskService {
   constructor(
     @Inject('ITaskRepository')
     private readonly taskRepository: ITaskRepository,
+    @Inject('ITransaction')
+    private readonly transaction: ITransaction,
   ) {}
 
   async getTasksLogs(
@@ -38,8 +41,14 @@ export class TaskService implements ITaskService {
   }
 
   async createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto> {
-    await this.taskRepository.createTask(req);
-    return { message: CREATE_TASK_SUCCESS_MESSAGE };
+    try {
+      await this.transaction.beginTransaction();
+      await this.taskRepository.createTask(req);
+      await this.transaction.commitTransaction();
+      return { message: CREATE_TASK_SUCCESS_MESSAGE };
+    } catch (error) {
+      await this.transaction.rollbackTransaction();
+    }
   }
   async updateTask(req: ReqUpdateTaskAppDto): Promise<ResUpdateTaskAppDto> {
     await this.taskRepository.updateTask(req);

@@ -41,6 +41,7 @@
     "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
     "ioredis": "^5.3.2",
+    "js-joda": "^1.11.0",
     "jsonwebtoken": "^9.0.1",
     "nest-winston": "^1.9.3",
     "passport": "^0.6.0",
