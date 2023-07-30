@@ -50,21 +50,14 @@ model BadgeProgress {
   badge             BadgeTypes    @relation(fields: [badgeType], references: [name])
 }
 
-model PointTransactionTypes {
-  id                Int             @id @default(autoincrement())
-  name              String          @unique @db.VarChar(100)
-  pointsLogs        PointsLogs[]
-}
-
 model PointsLogs {
   id                        Int                     @id @default(autoincrement())
   userId                    String                  @db.Uuid      
-  pointTransactionType      String         
+  transactionType           PointTransactionType         
   taskType                  String
   points                    Int                     @db.SmallInt
   occurredAt                DateTime                @default(now())
   user                      User                    @relation(fields: [userId], references: [id])
-  pointTransactionTypeName  PointTransactionTypes   @relation(fields: [pointTransactionType], references: [name])
   taskTypeName              TaskTypes               @relation(fields: [taskType], references: [name])
 }
 
@@ -97,4 +90,9 @@ enum Provider {
 enum Role {
   USER
   ADMIN
+}
+
+enum PointTransactionType {
+  EARNED
+  SPENT
 }
