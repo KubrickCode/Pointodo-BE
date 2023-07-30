@@ -33,10 +33,14 @@ export class BadgeAdminService implements IBadgeAdminService {
   async createBadgeType(
     req: ReqCreateBadgeTypeAppDto,
   ): Promise<ResCreateBadgeTypeAppDto> {
-    const { id, name } = req;
-    const isExist = await this.badgeAdminRepository.isExist({ id, name });
-    if (isExist) throw new ConflictException('이미 존재하는 ID 혹은 뱃지 이름');
-    const createdBadgeType = await this.badgeAdminRepository.create(req);
+    const { name, description, iconLink } = req;
+    const isExist = await this.badgeAdminRepository.isExist(name);
+    if (isExist) throw new ConflictException('이미 존재하는 뱃지 이름');
+    const createdBadgeType = await this.badgeAdminRepository.create(
+      name,
+      description,
+      iconLink,
+    );
     this.logger.log(
       'info',
       `생성 뱃지 타입 ID:${createdBadgeType.id}, 뱃지명:${createdBadgeType.name}, 설명:${createdBadgeType.description}, 아이콘 링크:${createdBadgeType.iconLink}`,
@@ -47,11 +51,7 @@ export class BadgeAdminService implements IBadgeAdminService {
   async updateBadgeType(
     req: ReqUpdateBadgeTypeAppDto,
   ): Promise<ResUpdateBadgeTypeAppDto> {
-    const { newId, name } = req;
-    const isExist = await this.badgeAdminRepository.isExist({
-      id: newId,
-      name,
-    });
+    const isExist = await this.badgeAdminRepository.isExist(req.name);
     if (isExist) throw new ConflictException('이미 존재하는 ID 혹은 뱃지 이름');
     const updatedBadgeType = await this.badgeAdminRepository.update(req);
     this.logger.log(
