@@ -11,7 +11,7 @@ export class PointRepository implements IPointRepository {
   async isContinuous(userId: string, yesterday: string): Promise<boolean> {
     const isContinuousQuery = `
         SELECT COUNT(*) FROM "PointsLogs"
-        WHERE "userId" = $1::uuid AND DATE("occurredAt") = DATE($2) AND "pointTransactionTypesId" = 0
+        WHERE "userId" = $1::uuid AND DATE("occurredAt") = DATE($2) AND "transactionType" = 'EARNED'
       `;
 
     const isContinuousValues = [userId, yesterday];
@@ -30,8 +30,8 @@ export class PointRepository implements IPointRepository {
     points: number,
   ): Promise<PointEntity> {
     const createPointLogQuery = `
-        INSERT INTO "PointsLogs" ("userId", "pointTransactionTypesId", "taskType", points)
-        VALUES ($1::uuid, 0, $2, $3)
+        INSERT INTO "PointsLogs" ("userId", "transactionType", "taskType", points)
+        VALUES ($1::uuid, 'EARNED', $2, $3)
         RETURNING *
       `;
 
@@ -48,7 +48,7 @@ export class PointRepository implements IPointRepository {
   async countTasksPerDate(userId: string, date: string): Promise<number> {
     const countTasksQuery = `
         SELECT COUNT(*) FROM "PointsLogs"
-        WHERE "userId" = $1::uuid AND DATE("occurredAt") >= DATE($2) AND "pointTransactionTypesId" = 0
+        WHERE "userId" = $1::uuid AND DATE("occurredAt") >= DATE($2) AND "transactionType" = 'EARNED'
       `;
 
     const countTasksValues = [userId, date];

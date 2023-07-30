@@ -72,10 +72,12 @@ export class TaskService implements ITaskService {
       await this.transaction.beginTransaction();
       await this.taskRepository.completeTask(req.id);
       const { taskType } = await this.taskRepository.getTaskLogById(req.id);
+
       const isContinuous = await this.pointRepository.isContinuous(
         req.userId,
         HandleDateTime.getYesterday,
       );
+
       let points: number;
       if (taskType === '매일 작업') points = isContinuous ? 2 : 1;
       if (taskType === '기한 작업') points = isContinuous ? 4 : 3;

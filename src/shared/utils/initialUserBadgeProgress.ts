@@ -1,6 +1,4 @@
 export const initialUserBadgeProgress = [
-  '일관성 뱃지1',
-  '일관성 뱃지2',
   '일관성 뱃지3',
   '다양성 뱃지1',
   '다양성 뱃지2',

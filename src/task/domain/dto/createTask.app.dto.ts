@@ -6,9 +6,9 @@ export class ReqCreateTaskAppDto {
   @IsString()
   readonly userId: string;
 
-  @ApiProperty({ description: '작업 유형 ID(INT)' })
+  @ApiProperty({ description: '작업 유형' })
   @IsInt()
-  readonly taskTypesId: number;
+  readonly taskType: string;
 
   @ApiProperty({ description: '작업 이름' })
   @IsString()

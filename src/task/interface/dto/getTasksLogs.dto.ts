@@ -1,11 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsDate, IsIn, IsInt, IsString } from 'class-validator';
+import { IsDate, IsInt, IsString } from 'class-validator';
 
 export class ReqGetTasksLogsParamDto {
   @ApiProperty({ description: '작업 유형' })
   @IsString()
-  @IsIn(['daily', 'deadline', 'free'])
   @Transform(({ value }) => {
     switch (value) {
       case 'daily':
