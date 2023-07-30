@@ -85,7 +85,12 @@ export class TaskService implements ITaskService {
       if (taskType === '매일 작업') points = isContinuous ? 2 : 1;
       if (taskType === '기한 작업') points = isContinuous ? 4 : 3;
       if (taskType === '무기한 작업') points = isContinuous ? 6 : 5;
-      await this.pointRepository.createPointLog(req.userId, taskType, points);
+      await this.pointRepository.createPointLog(
+        req.userId,
+        'EARNED',
+        taskType,
+        points,
+      );
       const updatedConsistency =
         await this.badgeProgressRepository.updateConsistency(
           req.userId,

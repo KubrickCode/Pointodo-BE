@@ -4,6 +4,7 @@ export interface IPointRepository {
   isContinuous(userId: string, yesterday: string): Promise<boolean>;
   createPointLog(
     userId: string,
+    transactionType: string,
     taskType: string,
     points: number,
   ): Promise<PointEntity>;

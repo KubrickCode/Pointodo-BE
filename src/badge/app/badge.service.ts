@@ -23,9 +23,10 @@ export class BadgeService implements IBadgeService {
     const { userId, badgeType } = req;
     const price = await this.badgeAdminRepository.getBadgePrice(badgeType);
     const currentPoint = await this.pointRepository.calculateUserPoints(userId);
-    if (currentPoint - price < 0) throw new Error('포인트 부족');
+    // if (currentPoint - price < 0) throw new Error('포인트 부족');
     await this.pointRepository.createPointLog(
       userId,
+      'SPENT',
       `${badgeType} 구매`,
       -price,
     );
