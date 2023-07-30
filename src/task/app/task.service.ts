@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
+  COMPLETE_TASK_SUCCESS_MESSAGE,
   CREATE_TASK_SUCCESS_MESSAGE,
   DELETE_TASK_SUCCESS_MESSAGE,
   UPDATE_TASK_SUCCESS_MESSAGE,
@@ -26,6 +27,10 @@ import { ITransaction } from '@shared/interfaces/transaction.interface';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
 import { HandleDateTime } from '@shared/utils/handleDateTime';
+import {
+  ReqCompleteTaskAppDto,
+  ResCompleteTaskAppDto,
+} from '@task/domain/dto/completeTask.app.dto';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -60,7 +65,9 @@ export class TaskService implements ITaskService {
     return { message: DELETE_TASK_SUCCESS_MESSAGE };
   }
 
-  async completeTask(req: any): Promise<any> {
+  async completeTask(
+    req: ReqCompleteTaskAppDto,
+  ): Promise<ResCompleteTaskAppDto> {
     try {
       await this.transaction.beginTransaction();
       await this.taskRepository.completeTask(req.id);
@@ -128,6 +135,8 @@ export class TaskService implements ITaskService {
       );
 
       await this.transaction.commitTransaction();
+
+      return { message: COMPLETE_TASK_SUCCESS_MESSAGE };
     } catch (error) {
       await this.transaction.rollbackTransaction();
       throw error;

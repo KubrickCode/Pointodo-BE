@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { IsDate, IsInt, IsString } from 'class-validator';
 
 export class ReqGetTasksLogsParamDto {
-  @ApiProperty({ description: '작업 유형 ID(UUID)' })
+  @ApiProperty({ description: '작업 유형 ID(SMALLINT)' })
   @Type(() => Number)
   @IsInt()
   readonly taskTypesId: number;
@@ -18,7 +18,7 @@ export class ResGetTasksLogsDto {
   @IsString()
   readonly userId: string;
 
-  @ApiProperty({ description: '작업 유형 ID(UUID)' })
+  @ApiProperty({ description: '작업 유형 ID(SMALLINT)' })
   @IsInt()
   readonly taskTypesId: number;
 

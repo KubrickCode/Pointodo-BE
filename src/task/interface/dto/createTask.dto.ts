@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqCreateTaskDto {
-  @ApiProperty({ description: '작업 유형 ID(UUID)' })
+  @ApiProperty({ description: '작업 유형 ID(SMALLINT)' })
   @IsInt()
   readonly taskTypesId: number;
 
