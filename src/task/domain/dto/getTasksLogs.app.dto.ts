@@ -14,7 +14,7 @@ export class ReqGetTasksLogsAppDto {
 export class ResGetTasksLogsAppDto {
   @ApiProperty({ description: '작업 고유 ID(INT)' })
   @IsInt()
-  id: number;
+  readonly id: number;
 
   @ApiProperty({ description: '작업 유저 ID(UUID)' })
   @IsString()
@@ -34,13 +34,13 @@ export class ResGetTasksLogsAppDto {
 
   @ApiProperty({ description: '작업 완료 여부' })
   @IsInt()
-  completion: number;
+  readonly completion: number;
 
   @ApiProperty({ description: '작업 중요도' })
   @IsInt()
-  importance: number;
+  readonly importance: number;
 
   @ApiProperty({ description: '작업 생성 시간' })
   @IsDate()
-  occurredAt: Date;
+  readonly occurredAt: Date;
 }

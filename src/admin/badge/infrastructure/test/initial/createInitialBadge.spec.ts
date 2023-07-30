@@ -23,6 +23,7 @@ describe('createInitialBadgeTypes', () => {
         item.name,
         item.description,
         item.iconLink,
+        item.price,
       );
     }
   });

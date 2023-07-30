@@ -5,4 +5,5 @@ export class BadgeTypesEntity implements BadgeTypes {
   name: string;
   description: string;
   iconLink: string;
+  price: number | null;
 }

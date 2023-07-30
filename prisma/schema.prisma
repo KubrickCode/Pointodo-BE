@@ -26,6 +26,7 @@ model BadgeTypes {
   id                Int               @id @default(autoincrement())
   name              String            @unique @db.VarChar(20)
   description       String            @db.VarChar(100)
+  price             Int?              @db.Integer               
   iconLink          String            @db.VarChar(1000)
   user              User[]
   userBadgeLog      UserBadgesLogs[]

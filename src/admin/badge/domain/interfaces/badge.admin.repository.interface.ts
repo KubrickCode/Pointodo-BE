@@ -7,6 +7,7 @@ export interface IBadgeAdminRepository {
     name: string,
     description: string,
     iconLink: string,
+    price?: number,
   ): Promise<BadgeTypesEntity>;
   update(req: Partial<BadgeTypesEntity>): Promise<BadgeTypesEntity>;
   delete(id: number): Promise<BadgeTypesEntity>;

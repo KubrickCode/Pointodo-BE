@@ -25,6 +25,7 @@ CREATE TABLE "BadgeTypes" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(20) NOT NULL,
     "description" VARCHAR(100) NOT NULL,
+    "price" INTEGER,
     "iconLink" VARCHAR(1000) NOT NULL,
 
     CONSTRAINT "BadgeTypes_pkey" PRIMARY KEY ("id")
