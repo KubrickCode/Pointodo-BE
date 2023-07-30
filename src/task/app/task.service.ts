@@ -41,14 +41,8 @@ export class TaskService implements ITaskService {
   }
 
   async createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto> {
-    try {
-      await this.transaction.beginTransaction();
-      await this.taskRepository.createTask(req);
-      await this.transaction.commitTransaction();
-      return { message: CREATE_TASK_SUCCESS_MESSAGE };
-    } catch (error) {
-      await this.transaction.rollbackTransaction();
-    }
+    await this.taskRepository.createTask(req);
+    return { message: CREATE_TASK_SUCCESS_MESSAGE };
   }
   async updateTask(req: ReqUpdateTaskAppDto): Promise<ResUpdateTaskAppDto> {
     await this.taskRepository.updateTask(req);
