@@ -37,14 +37,14 @@ export class TaskController {
     private readonly taskService: ITaskService,
   ) {}
 
-  @Get('/:taskTypesId')
+  @Get('/:taskType')
   async getTasksLogs(
     @Req() req: Request,
     @Param() param: ReqGetTasksLogsParamDto,
   ): Promise<ResGetTasksLogsDto[]> {
     const userId = req.user.id;
-    const { taskTypesId } = param;
-    return await this.taskService.getTasksLogs({ userId, taskTypesId });
+    const { taskType } = param;
+    return await this.taskService.getTasksLogs({ userId, taskType });
   }
 
   @Post('create')

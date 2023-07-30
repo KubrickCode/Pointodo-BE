@@ -1,12 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsDate, IsInt, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsDate, IsIn, IsInt, IsString } from 'class-validator';
 
 export class ReqGetTasksLogsParamDto {
-  @ApiProperty({ description: '작업 유형 ID(INT)' })
-  @Type(() => Number)
-  @IsInt()
-  readonly taskTypesId: number;
+  @ApiProperty({ description: '작업 유형' })
+  @IsString()
+  @IsIn(['daily', 'deadline', 'free'])
+  @Transform(({ value }) => {
+    switch (value) {
+      case 'daily':
+        return '매일 작업';
+      case 'deadline':
+        return '기한 작업';
+      case 'free':
+        return '무기한 작업';
+      default:
+        return value;
+    }
+  })
+  readonly taskType: string;
 }
 
 export class ResGetTasksLogsDto {
@@ -18,9 +30,9 @@ export class ResGetTasksLogsDto {
   @IsString()
   readonly userId: string;
 
-  @ApiProperty({ description: '작업 유형 ID(INT)' })
+  @ApiProperty({ description: '작업 유형' })
   @IsInt()
-  readonly taskTypesId: number;
+  readonly taskType: string;
 
   @ApiProperty({ description: '작업 이름' })
   @IsString()

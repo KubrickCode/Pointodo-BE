@@ -39,6 +39,7 @@ import {
   ResDeleteUserAppDto,
 } from '@user/domain/dto/deleteUser.app.dto';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
+import { initialUserBadgeProgress } from '@shared/utils/initialUserBadgeProgress';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -73,10 +74,10 @@ export class UserService implements IUserService {
 
     const createdUser = await this.userRepository.createUser(user);
 
-    const badgeProgressPromises = Array.from({ length: 7 }, (_, i) =>
+    const badgeProgressPromises = initialUserBadgeProgress.map((badgeType) =>
       this.badgeProgressRepository.createBadgeProgress({
         userId: createdUser.id,
-        badgeId: i + 3,
+        badgeType,
       }),
     );
 
@@ -106,8 +107,8 @@ export class UserService implements IUserService {
       user,
       cacheConfig(this.configService).cacheTTL,
     );
-    const { id, email, provider, role, defaultBadgeId, createdAt } = user;
-    return { id, email, provider, role, defaultBadgeId, createdAt };
+    const { id, email, provider, role, defaultBadge, createdAt } = user;
+    return { id, email, provider, role, defaultBadge, createdAt };
   }
 
   async changePassword(

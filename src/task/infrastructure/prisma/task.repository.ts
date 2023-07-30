@@ -8,16 +8,13 @@ import { ITaskRepository } from '@task/domain/interfaces/task.repository.interfa
 export class TaskRepository implements ITaskRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getTasksLogs(
-    userId: string,
-    taskTypesId: number,
-  ): Promise<TaskEntity[]> {
+  async getTasksLogs(userId: string, taskType: string): Promise<TaskEntity[]> {
     const query = `
       SELECT * FROM "TasksLogs"
       WHERE "userId" = $1::uuid
-      AND "taskTypesId" = $2
+      AND "taskType" = $2
     `;
-    const values = [userId, taskTypesId];
+    const values = [userId, taskType];
     const tasksLogs = await this.prisma.$queryRawUnsafe<TasksLogs[]>(
       query,
       ...values,
@@ -39,13 +36,13 @@ export class TaskRepository implements ITaskRepository {
   }
 
   async createTask(req: Partial<TaskEntity>): Promise<TaskEntity> {
-    const { userId, taskTypesId, name, description } = req;
+    const { userId, taskType, name, description } = req;
     const query = `
-      INSERT INTO "TasksLogs" ("userId", "taskTypesId", name, description)
+      INSERT INTO "TasksLogs" ("userId", "taskType", name, description)
       VALUES ($1::uuid, $2, $3, $4)
       RETURNING *
     `;
-    const values = [userId, taskTypesId, name, description];
+    const values = [userId, taskType, name, description];
     const newTasksLogs = await this.prisma.$queryRawUnsafe<TasksLogs>(
       query,
       ...values,

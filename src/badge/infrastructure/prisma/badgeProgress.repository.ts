@@ -11,13 +11,13 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
   async createBadgeProgress(
     req: Partial<BadgeProgressEntity>,
   ): Promise<BadgeProgressEntity> {
-    const { userId, badgeId } = req;
+    const { userId, badgeType } = req;
     const query = `
-      INSERT INTO "BadgeProgress" ("userId", "badgeId")
+      INSERT INTO "BadgeProgress" ("userId", "badgeType")
       VALUES ($1::uuid, $2)
       RETURNING *
     `;
-    const values = [userId, badgeId];
+    const values = [userId, badgeType];
     const newBadgeProgress = await this.prisma.$queryRawUnsafe<BadgeProgress>(
       query,
       ...values,

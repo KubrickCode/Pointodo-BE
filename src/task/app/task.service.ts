@@ -48,8 +48,8 @@ export class TaskService implements ITaskService {
   async getTasksLogs(
     req: ReqGetTasksLogsAppDto,
   ): Promise<ResGetTasksLogsAppDto[]> {
-    const { userId, taskTypesId } = req;
-    return await this.taskRepository.getTasksLogs(userId, taskTypesId);
+    const { userId, taskType } = req;
+    return await this.taskRepository.getTasksLogs(userId, taskType);
   }
 
   async createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto> {
@@ -71,37 +71,33 @@ export class TaskService implements ITaskService {
     try {
       await this.transaction.beginTransaction();
       await this.taskRepository.completeTask(req.id);
-      const { taskTypesId } = await this.taskRepository.getTaskLogById(req.id);
+      const { taskType } = await this.taskRepository.getTaskLogById(req.id);
       const isContinuous = await this.pointRepository.isContinuous(
         req.userId,
         HandleDateTime.getYesterday,
       );
       let points: number;
-      if (taskTypesId === 0) points = isContinuous ? 2 : 1;
-      if (taskTypesId === 1) points = isContinuous ? 4 : 3;
-      if (taskTypesId === 2) points = isContinuous ? 6 : 5;
-      await this.pointRepository.createPointLog(
-        req.userId,
-        taskTypesId,
-        points,
-      );
+      if (taskType === '매일 작업') points = isContinuous ? 2 : 1;
+      if (taskType === '기한 작업') points = isContinuous ? 4 : 3;
+      if (taskType === '무기한 작업') points = isContinuous ? 6 : 5;
+      await this.pointRepository.createPointLog(req.userId, taskType, points);
       await this.badgeProgressRepository.updateConsistency(
         req.userId,
         isContinuous,
       );
-      let diversutyBadgeId: number;
-      if (taskTypesId === 0) {
-        diversutyBadgeId = 4;
+      let diversityBadgeId: number;
+      if (taskType === '매일 작업') {
+        diversityBadgeId = 4;
       }
-      if (taskTypesId === 1) {
-        diversutyBadgeId = 5;
+      if (taskType === '기한 작업') {
+        diversityBadgeId = 5;
       }
-      if (taskTypesId === 2) {
-        diversutyBadgeId = 6;
+      if (taskType === '무기한 작업') {
+        diversityBadgeId = 6;
       }
       await this.badgeProgressRepository.updateDiversity(
         req.userId,
-        diversutyBadgeId,
+        diversityBadgeId,
       );
 
       const todayTasksCount = await this.pointRepository.countTasksPerDate(

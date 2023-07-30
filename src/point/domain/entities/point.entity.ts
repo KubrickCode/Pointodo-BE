@@ -1,10 +1,10 @@
-import { PointsLogs } from '@prisma/client';
+import { PointTransactionType, PointsLogs } from '@prisma/client';
 
 export class PointEntity implements PointsLogs {
   id: number;
   userId: string;
-  pointTransactionTypesId: number;
-  taskTypesId: number;
+  taskType: string;
+  transactionType: PointTransactionType;
   points: number;
   occurredAt: Date;
 }

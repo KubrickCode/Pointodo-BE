@@ -6,6 +6,6 @@ export class UserEntity implements User {
   password: string | null;
   provider: Provider;
   role: Role;
-  defaultBadgeId: number;
+  defaultBadge: string;
   createdAt: Date;
 }

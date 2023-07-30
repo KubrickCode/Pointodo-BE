@@ -26,16 +26,16 @@ export class PointRepository implements IPointRepository {
 
   async createPointLog(
     userId: string,
-    taskTypesId: number,
+    taskType: string,
     points: number,
   ): Promise<PointEntity> {
     const createPointLogQuery = `
-        INSERT INTO "PointsLogs" ("userId", "pointTransactionTypesId", "taskTypesId", points)
+        INSERT INTO "PointsLogs" ("userId", "pointTransactionTypesId", "taskType", points)
         VALUES ($1::uuid, 0, $2, $3)
         RETURNING *
       `;
 
-    const createPointLogValues = [userId, taskTypesId, points];
+    const createPointLogValues = [userId, taskType, points];
 
     const createdPointLog = await this.prisma.$queryRawUnsafe<PointsLogs>(
       createPointLogQuery,
