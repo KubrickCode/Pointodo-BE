@@ -109,7 +109,9 @@
       "@admin/(.*)": "<rootDir>/admin/$1",
       "@redis/(.*)": "<rootDir>/redis/$1",
       "@cache/(.*)": "<rootDir>/cache/$1",
-      "@badge/(.*)": "<rootDir>/badge/$1"
+      "@badge/(.*)": "<rootDir>/badge/$1",
+      "@point/(.*)": "<rootDir>/point/$1",
+      "@task/(.*)": "<rootDir>/task/$1"
     }
   }
 }

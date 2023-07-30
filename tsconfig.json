@@ -25,7 +25,9 @@
       "@admin/*": ["src/admin/*"],
       "@redis/*": ["src/redis/*"],
       "@cache/*": ["src/cache/*"],
-      "@badge/*": ["src/badge/*"]
+      "@badge/*": ["src/badge/*"],
+      "@point/*": ["src/point/*"],
+      "@task/*": ["src/task/*"]
     }
   }
 }

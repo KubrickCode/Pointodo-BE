@@ -7,6 +7,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { jwtConfig } from '@shared/config/jwt.config';
 import { PrismaTransaction } from '@shared/service/transaction.service';
+import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgress.repository';
+import { PointRepository } from '@point/infrastructure/prisma/point.repository';
 
 @Module({
   providers: [
@@ -20,11 +22,16 @@ import { PrismaTransaction } from '@shared/service/transaction.service';
       useClass: TaskRepository,
     },
     {
+      provide: 'IBadgeProgressRepository',
+      useClass: BadgeProgressRepository,
+    },
+    {
+      provide: 'IPointRepository',
+      useClass: PointRepository,
+    },
+    {
       provide: 'ITransaction',
-      useFactory: (prismaService: PrismaService) => {
-        return new PrismaTransaction(prismaService);
-      },
-      inject: [PrismaService],
+      useClass: PrismaTransaction,
     },
   ],
   controllers: [TaskController],

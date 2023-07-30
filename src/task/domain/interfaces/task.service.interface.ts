@@ -20,4 +20,5 @@ export interface ITaskService {
   createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto>;
   updateTask(req: ReqUpdateTaskAppDto): Promise<ResUpdateTaskAppDto>;
   deleteTask(req: ReqDeleteTaskAppDto): Promise<ResDeleteTaskAppDto>;
+  completeTask(req: any): Promise<any>;
 }
