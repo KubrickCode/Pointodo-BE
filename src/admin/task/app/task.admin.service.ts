@@ -34,10 +34,9 @@ export class TaskAdminService implements ITaskAdminService {
   async createTaskType(
     req: ReqCreateTaskTypeAppDto,
   ): Promise<ResCreateTaskTypeAppDto> {
-    const { id, name } = req;
-    const isExist = await this.taskAdminRepository.isExist({ id, name });
+    const isExist = await this.taskAdminRepository.isExist(req.name);
     if (isExist) throw new ConflictException('이미 존재하는 ID 혹은 작업 이름');
-    const createdTaskType = await this.taskAdminRepository.create(req);
+    const createdTaskType = await this.taskAdminRepository.create(req.name);
     this.logger.log(
       'info',
       `생성 작업 타입 ID:${createdTaskType.id}, 작업명:${createdTaskType.name}`,
@@ -48,13 +47,12 @@ export class TaskAdminService implements ITaskAdminService {
   async updateTaskType(
     req: ReqUpdateTaskTypeAppDto,
   ): Promise<ResUpdateTaskTypeAppDto> {
-    const { newId, name } = req;
-    const isExist = await this.taskAdminRepository.isExist({
-      id: newId,
-      name,
-    });
+    const isExist = await this.taskAdminRepository.isExist(req.name);
     if (isExist) throw new ConflictException('이미 존재하는 ID 혹은 작업 이름');
-    const updatedTaskType = await this.taskAdminRepository.update(req);
+    const updatedTaskType = await this.taskAdminRepository.update(
+      req.id,
+      req.name,
+    );
     this.logger.log(
       'info',
       `업데이트 작업 타입 ID:${updatedTaskType.id}, 작업명:${updatedTaskType.name}`,

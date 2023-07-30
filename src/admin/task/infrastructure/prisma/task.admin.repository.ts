@@ -15,13 +15,12 @@ export class TaskAdminRepository implements ITaskAdminRepository {
     return await this.prisma.$queryRawUnsafe<TaskTypes[]>(query);
   }
 
-  async isExist(req: Partial<TaskTypesEntity>): Promise<boolean> {
-    const { id, name } = req;
+  async isExist(name: string): Promise<boolean> {
     const query = `
     SELECT * FROM "TaskTypes"
-    WHERE id = $1 OR name = $2
+    WHERE name = $1
     `;
-    const values = [id, name];
+    const values = [name];
     const isExist = await this.prisma.$queryRawUnsafe<TaskTypes | null>(
       query,
       ...values,
@@ -30,15 +29,14 @@ export class TaskAdminRepository implements ITaskAdminRepository {
     return true;
   }
 
-  async create(req: Partial<TaskTypesEntity>): Promise<TaskTypesEntity> {
-    const { id, name } = req;
+  async create(name: string): Promise<TaskTypesEntity> {
     const query = `
-      INSERT INTO "TaskTypes" (id, name)
-      VALUES ($1, $2)
+      INSERT INTO "TaskTypes" (name)
+      VALUES ($1)
       RETURNING *
       `;
 
-    const values = [id, name];
+    const values = [name];
 
     const newBadgeType = await this.prisma.$queryRawUnsafe<TaskTypes>(
       query,
@@ -47,33 +45,15 @@ export class TaskAdminRepository implements ITaskAdminRepository {
     return newBadgeType[0];
   }
 
-  async update(req: Partial<TaskTypesEntity>): Promise<TaskTypesEntity> {
-    const { id, newId, name } = req;
-    const updateFields: string[] = [];
-    const values: (number | string)[] = [];
-    let placeholderIndex = 1;
-
-    if (newId !== undefined) {
-      updateFields.push(`id = $${placeholderIndex}`);
-      values.push(newId);
-      placeholderIndex++;
-    }
-
-    if (name) {
-      updateFields.push(`name = $${placeholderIndex}`);
-      values.push(name);
-      placeholderIndex++;
-    }
-
-    values.push(id);
-    placeholderIndex++;
-
+  async update(id: number, name: string): Promise<TaskTypesEntity> {
     const query = `
     UPDATE "TaskTypes"
-    SET ${updateFields.join(', ')}
-    WHERE id = $${placeholderIndex - 1}
+    SET name = $1
+    WHERE id = $2
     RETURNING *
   `;
+
+    const values = [name, id];
 
     const updatedBadgeType = await this.prisma.$queryRawUnsafe<TaskTypes>(
       query,
