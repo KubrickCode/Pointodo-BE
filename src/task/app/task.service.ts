@@ -37,7 +37,7 @@ export class TaskService implements ITaskService {
   constructor(
     @Inject('ITaskRepository')
     private readonly taskRepository: ITaskRepository,
-    @Inject('ITaskRepository')
+    @Inject('IBadgeProgressRepository')
     private readonly badgeProgressRepository: IBadgeProgressRepository,
     @Inject('IPointRepository')
     private readonly pointRepository: IPointRepository,
@@ -71,33 +71,32 @@ export class TaskService implements ITaskService {
     try {
       await this.transaction.beginTransaction();
       await this.taskRepository.completeTask(req.id);
+      const { taskTypesId } = await this.taskRepository.getTaskLogById(req.id);
       const isContinuous = await this.pointRepository.isContinuous(
         req.userId,
         HandleDateTime.getYesterday,
       );
       let points: number;
-      if (req.taskTypesId === 0) points = isContinuous ? 2 : 1;
-      if (req.taskTypesId === 1) points = isContinuous ? 4 : 3;
-      if (req.taskTypesId === 2) points = isContinuous ? 6 : 5;
+      if (taskTypesId === 0) points = isContinuous ? 2 : 1;
+      if (taskTypesId === 1) points = isContinuous ? 4 : 3;
+      if (taskTypesId === 2) points = isContinuous ? 6 : 5;
       await this.pointRepository.createPointLog(
         req.userId,
-        req.taskTypesId,
+        taskTypesId,
         points,
       );
-
       await this.badgeProgressRepository.updateConsistency(
         req.userId,
         isContinuous,
       );
-
       let diversutyBadgeId: number;
-      if (req.taskTypesId === 0) {
+      if (taskTypesId === 0) {
         diversutyBadgeId = 4;
       }
-      if (req.taskTypesId === 1) {
+      if (taskTypesId === 1) {
         diversutyBadgeId = 5;
       }
-      if (req.taskTypesId === 2) {
+      if (taskTypesId === 2) {
         diversutyBadgeId = 6;
       }
       await this.badgeProgressRepository.updateDiversity(
@@ -111,11 +110,11 @@ export class TaskService implements ITaskService {
       );
       const weeklyTasksCount = await this.pointRepository.countTasksPerDate(
         req.userId,
-        HandleDateTime.getToday,
+        HandleDateTime.getWeekAgo,
       );
       const monthTasksCount = await this.pointRepository.countTasksPerDate(
         req.userId,
-        HandleDateTime.getToday,
+        HandleDateTime.getAMonthAgo,
       );
 
       await this.badgeProgressRepository.updateProductivity(

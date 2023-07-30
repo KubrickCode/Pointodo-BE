@@ -31,7 +31,10 @@ import { PointRepository } from '@point/infrastructure/prisma/point.repository';
     },
     {
       provide: 'ITransaction',
-      useClass: PrismaTransaction,
+      useFactory: (prismaService: PrismaService) => {
+        return new PrismaTransaction(prismaService);
+      },
+      inject: [PrismaService],
     },
   ],
   controllers: [TaskController],

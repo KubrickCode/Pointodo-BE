@@ -6,7 +6,7 @@ export class ReqGetTasksLogsAppDto {
   @IsString()
   readonly userId: string;
 
-  @ApiProperty({ description: '작업 유형 ID(SMALLINT)' })
+  @ApiProperty({ description: '작업 유형 ID(INT)' })
   @IsInt()
   readonly taskTypesId: number;
 }
@@ -20,7 +20,7 @@ export class ResGetTasksLogsAppDto {
   @IsString()
   readonly userId: string;
 
-  @ApiProperty({ description: '작업 유형 ID(SMALLINT)' })
+  @ApiProperty({ description: '작업 유형 ID(INT)' })
   @IsInt()
   readonly taskTypesId: number;
 

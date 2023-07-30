@@ -25,6 +25,19 @@ export class TaskRepository implements ITaskRepository {
     return tasksLogs;
   }
 
+  async getTaskLogById(id: number): Promise<TaskEntity> {
+    const query = `
+      SELECT * FROM "TasksLogs"
+      WHERE id = $1
+    `;
+    const values = [id];
+    const taskLog = await this.prisma.$queryRawUnsafe<TasksLogs>(
+      query,
+      ...values,
+    );
+    return taskLog[0];
+  }
+
   async createTask(req: Partial<TaskEntity>): Promise<TaskEntity> {
     const { userId, taskTypesId, name, description } = req;
     const query = `

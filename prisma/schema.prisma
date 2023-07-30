@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   id                String            @id @default(uuid()) @db.Uuid 
-  defaultBadgeId    Int               @default(0)
+  defaultBadge      String            @default("기본 뱃지")
   email             String            @unique @db.VarChar(255)
   password          String?           @db.VarChar(255)
   provider          Provider          @default(LOCAL)
@@ -19,11 +19,11 @@ model User {
   badgeProgress     BadgeProgress[]
   pointsLogs        PointsLogs[]
   taskLogs          TasksLogs[]
-  defaultBadge      BadgeTypes        @relation(fields: [defaultBadgeId], references: [id])
+  defaultBadgeName  BadgeTypes        @relation(fields: [defaultBadge], references: [name])
 }
 
 model BadgeTypes {
-  id                Int               @id @db.SmallInt
+  id                Int               @id @default(autoincrement())
   name              String            @unique @db.VarChar(20)
   description       String            @db.VarChar(100)
   iconLink          String            @db.VarChar(1000)
@@ -35,23 +35,23 @@ model BadgeTypes {
 model UserBadgesLogs {
   id                Int           @id @default(autoincrement())
   userId            String        @db.Uuid
-  badgeId           Int
+  badgeType         String
   user              User          @relation(fields: [userId], references: [id])
-  badge             BadgeTypes    @relation(fields: [badgeId], references: [id])
+  badge             BadgeTypes    @relation(fields: [badgeType], references: [name])
 }
 
 model BadgeProgress {
   id                Int           @id @default(autoincrement())
   userId            String        @db.Uuid
-  badgeId           Int
+  badgeType         String
   progress          Int           @db.SmallInt @default(0)
   occurredAt        DateTime      @default(now())
   user              User          @relation(fields: [userId], references: [id])
-  badge             BadgeTypes    @relation(fields: [badgeId], references: [id])
+  badge             BadgeTypes    @relation(fields: [badgeType], references: [name])
 }
 
 model PointTransactionTypes {
-  id                Int             @id @db.SmallInt
+  id                Int             @id @default(autoincrement())
   name              String          @unique @db.VarChar(100)
   pointsLogs        PointsLogs[]
 }
@@ -59,17 +59,17 @@ model PointTransactionTypes {
 model PointsLogs {
   id                        Int                     @id @default(autoincrement())
   userId                    String                  @db.Uuid      
-  pointTransactionTypesId   Int         
-  taskTypesId               Int
+  pointTransactionType      String         
+  taskType                  String
   points                    Int                     @db.SmallInt
   occurredAt                DateTime                @default(now())
   user                      User                    @relation(fields: [userId], references: [id])
-  pointTransactionTypes     PointTransactionTypes   @relation(fields: [pointTransactionTypesId], references: [id])
-  taskTypes                 TaskTypes               @relation(fields: [taskTypesId], references: [id])
+  pointTransactionTypeName  PointTransactionTypes   @relation(fields: [pointTransactionType], references: [name])
+  taskTypeName              TaskTypes               @relation(fields: [taskType], references: [name])
 }
 
 model TaskTypes {
-  id                Int           @id @db.SmallInt
+  id                Int           @id @default(autoincrement())
   name              String        @unique @db.VarChar(20)
   taskLogs          TasksLogs[]
   pointLogs         PointsLogs[]
@@ -78,14 +78,14 @@ model TaskTypes {
 model TasksLogs {
   id                Int           @id @default(autoincrement())
   userId            String        @db.Uuid
-  taskTypesId       Int
+  taskType          String
   name              String        @db.VarChar(20)
   description       String?       @db.VarChar(500)
   completion        Int           @db.SmallInt @default(0)
   importance        Int           @db.SmallInt @default(3)
   occurredAt        DateTime      @default(now())
   user              User          @relation(fields: [userId], references: [id])
-  taskType          TaskTypes     @relation(fields: [taskTypesId], references: [id])
+  taskTypeName      TaskTypes     @relation(fields: [taskType], references: [name])
 }
 
 enum Provider {

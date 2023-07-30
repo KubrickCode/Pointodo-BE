@@ -22,6 +22,10 @@ import {
 import { ReqCreateTaskDto, ResCreateTaskDto } from './dto/createTask.dto';
 import { ReqUpdateTaskDto, ResUpdateTaskDto } from './dto/updateTask.dto';
 import { ReqDeleteTaskParamDto, ResDeleteTaskDto } from './dto/deleteTask.dto';
+import {
+  ReqCompleteTaskParamDto,
+  ResCompleteTaskDto,
+} from './dto/completeTask.dto';
 
 @Controller('task')
 @UseGuards(JwtAuthGuard)
@@ -62,5 +66,15 @@ export class TaskController {
     @Param() param: ReqDeleteTaskParamDto,
   ): Promise<ResDeleteTaskDto> {
     return await this.taskService.deleteTask({ id: param.id });
+  }
+
+  @Patch('/complete/:id')
+  async completeTask(
+    @Req() req: Request,
+    @Param() param: ReqCompleteTaskParamDto,
+  ): Promise<ResCompleteTaskDto> {
+    const userId = req.user.id;
+    const id = param.id;
+    return await this.taskService.completeTask({ userId, id });
   }
 }
