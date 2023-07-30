@@ -12,12 +12,12 @@ export interface IBadgeProgressRepository {
 
   updateDiversity(
     userId: string,
-    badgeId: number,
+    badgeType: string,
   ): Promise<BadgeProgressEntity>;
 
   updateProductivity(
     progress: number,
     userId: string,
-    badgeId: number,
+    badgeType: string,
   ): Promise<BadgeProgressEntity>;
 }

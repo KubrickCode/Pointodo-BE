@@ -85,19 +85,19 @@ export class TaskService implements ITaskService {
         req.userId,
         isContinuous,
       );
-      let diversityBadgeId: number;
+      let diversityBadgeType: string;
       if (taskType === '매일 작업') {
-        diversityBadgeId = 4;
+        diversityBadgeType = '다양성 뱃지1';
       }
       if (taskType === '기한 작업') {
-        diversityBadgeId = 5;
+        diversityBadgeType = '다양성 뱃지2';
       }
       if (taskType === '무기한 작업') {
-        diversityBadgeId = 6;
+        diversityBadgeType = '다양성 뱃지3';
       }
       await this.badgeProgressRepository.updateDiversity(
         req.userId,
-        diversityBadgeId,
+        diversityBadgeType,
       );
 
       const todayTasksCount = await this.pointRepository.countTasksPerDate(
@@ -116,17 +116,17 @@ export class TaskService implements ITaskService {
       await this.badgeProgressRepository.updateProductivity(
         todayTasksCount,
         req.userId,
-        7,
+        '생산성 뱃지1',
       );
       await this.badgeProgressRepository.updateProductivity(
         weeklyTasksCount,
         req.userId,
-        8,
+        '생산성 뱃지2',
       );
       await this.badgeProgressRepository.updateProductivity(
         monthTasksCount,
         req.userId,
-        9,
+        '생산성 뱃지3',
       );
 
       await this.transaction.commitTransaction();

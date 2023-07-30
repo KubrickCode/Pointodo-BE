@@ -32,7 +32,7 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
     const consistencyQuery = `
         UPDATE "BadgeProgress"
         SET progress = ${isContinuous ? 'progress + 1' : '1'}
-        WHERE "userId" = $1::uuid AND "badgeId" = 3
+        WHERE "userId" = $1::uuid AND "badgeType" = '일관성 뱃지3'
         RETURNING *
       `;
 
@@ -49,15 +49,15 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
 
   async updateDiversity(
     userId: string,
-    badgeId: number,
+    badgeType: string,
   ): Promise<BadgeProgressEntity> {
     const diversityQuery = `
           UPDATE "BadgeProgress"
           SET progress = progress + 1
-          WHERE "userId" = $1::uuid AND "badgeId" = $2
+          WHERE "userId" = $1::uuid AND "badgeType" = $2
         `;
 
-    const diversityValues = [userId, badgeId];
+    const diversityValues = [userId, badgeType];
 
     const updatedBadgeProgress =
       await this.prisma.$queryRawUnsafe<BadgeProgress>(
@@ -71,15 +71,15 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
   async updateProductivity(
     progress: number,
     userId: string,
-    badgeId: number,
+    badgeType: string,
   ): Promise<BadgeProgressEntity> {
     const productivityQuery = `
         UPDATE "BadgeProgress"
         SET progress = $1
-        WHERE "userId" = $2::uuid AND "badgeId" = $3
+        WHERE "userId" = $2::uuid AND "badgeType" = $3
       `;
 
-    const productivityValues = [progress, userId, badgeId];
+    const productivityValues = [progress, userId, badgeType];
     const updatedBadgeProgress = await this.prisma.$queryRawUnsafe<any>(
       productivityQuery,
       ...productivityValues,

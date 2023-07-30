@@ -18,8 +18,8 @@ describe('createInitialTaskTypes', () => {
   });
 
   it('초기 뱃지 타입 생성 In DB', async () => {
-    initialTaskTypes.forEach((item) => {
-      taskAdminRepository.create(item);
-    });
+    for (const item of initialTaskTypes) {
+      await taskAdminRepository.create(item);
+    }
   });
 });
