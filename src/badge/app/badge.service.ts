@@ -19,8 +19,17 @@ export class BadgeService implements IBadgeService {
     private readonly badgeAdminRepository: IBadgeAdminRepository,
   ) {}
 
-  buyBadge(req: ReqBuyBadgeAppDto): Promise<ResBuyBadgeAppDto> {
+  async buyBadge(req: ReqBuyBadgeAppDto): Promise<ResBuyBadgeAppDto> {
     const { userId, badgeType } = req;
-    return;
+    const price = await this.badgeAdminRepository.getBadgePrice(badgeType);
+    const currentPoint = await this.pointRepository.calculateUserPoints(userId);
+    if (currentPoint - price < 0) throw new Error('포인트 부족');
+    await this.pointRepository.createPointLog(
+      userId,
+      `${badgeType} 구매`,
+      -price,
+    );
+    await this.userBadgeRepository.createUserBadgeLog(userId, badgeType);
+    return { message: '뱃지 구매 성공' };
   }
 }

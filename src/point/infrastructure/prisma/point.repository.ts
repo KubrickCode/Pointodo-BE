@@ -59,4 +59,20 @@ export class PointRepository implements IPointRepository {
 
     return Number(tasksCount[0].count);
   }
+
+  async calculateUserPoints(userId: string): Promise<number> {
+    const totalPointsQuery = `
+        SELECT SUM(points) FROM "PointsLogs"
+        WHERE "userId" = $1::uuid
+      `;
+
+    const totalPoints = await this.prisma.$queryRawUnsafe<number>(
+      totalPointsQuery,
+      userId,
+    );
+
+    const userTotalPoints = Number(totalPoints[0].sum) || 0;
+
+    return userTotalPoints;
+  }
 }
