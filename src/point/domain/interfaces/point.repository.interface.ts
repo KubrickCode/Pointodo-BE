@@ -7,4 +7,6 @@ export interface IPointRepository {
     taskTypesId: number,
     points: number,
   ): Promise<PointEntity>;
+
+  countTasksPerDate(userId: string, date: string): Promise<number>;
 }

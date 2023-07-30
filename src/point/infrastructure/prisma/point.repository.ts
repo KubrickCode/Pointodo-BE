@@ -44,4 +44,19 @@ export class PointRepository implements IPointRepository {
 
     return createdPointLog[0];
   }
+
+  async countTasksPerDate(userId: string, date: string): Promise<number> {
+    const countTasksQuery = `
+        SELECT COUNT(*) FROM "PointsLogs"
+        WHERE "userId" = $1::uuid AND DATE("occurredAt") >= DATE($2) AND "pointTransactionTypesId" = 0
+      `;
+
+    const countTasksValues = [userId, date];
+    const tasksCount = await this.prisma.$queryRawUnsafe<number>(
+      countTasksQuery,
+      ...countTasksValues,
+    );
+
+    return Number(tasksCount[0].count);
+  }
 }

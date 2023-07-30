@@ -4,6 +4,20 @@ export interface IBadgeProgressRepository {
   createBadgeProgress(
     req: Partial<BadgeProgressEntity>,
   ): Promise<BadgeProgressEntity>;
-  // updateBadgeProgress(id: number): Promise<BadgeProgressEntity>;
-  // deleteBadgeProgress(id: number): Promise<BadgeProgressEntity>;
+
+  updateConsistency(
+    userId: string,
+    isContinuous: boolean,
+  ): Promise<BadgeProgressEntity>;
+
+  updateDiversity(
+    userId: string,
+    badgeId: number,
+  ): Promise<BadgeProgressEntity>;
+
+  updateProductivity(
+    progress: number,
+    userId: string,
+    badgeId: number,
+  ): Promise<BadgeProgressEntity>;
 }
