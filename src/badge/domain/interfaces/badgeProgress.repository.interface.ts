@@ -5,19 +5,13 @@ export interface IBadgeProgressRepository {
     req: Partial<BadgeProgressEntity>,
   ): Promise<BadgeProgressEntity>;
 
-  updateConsistency(
-    userId: string,
-    isContinuous: boolean,
-  ): Promise<BadgeProgressEntity>;
+  updateConsistency(userId: string, isContinuous: boolean): Promise<number>;
 
-  updateDiversity(
-    userId: string,
-    badgeType: string,
-  ): Promise<BadgeProgressEntity>;
+  updateDiversity(userId: string, badgeType: string): Promise<number>;
 
   updateProductivity(
     progress: number,
     userId: string,
     badgeType: string,
-  ): Promise<BadgeProgressEntity>;
+  ): Promise<number>;
 }

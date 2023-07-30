@@ -9,6 +9,7 @@ import { jwtConfig } from '@shared/config/jwt.config';
 import { PrismaTransaction } from '@shared/service/transaction.service';
 import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgress.repository';
 import { PointRepository } from '@point/infrastructure/prisma/point.repository';
+import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repository';
 
 @Module({
   providers: [
@@ -28,6 +29,10 @@ import { PointRepository } from '@point/infrastructure/prisma/point.repository';
     {
       provide: 'IPointRepository',
       useClass: PointRepository,
+    },
+    {
+      provide: 'IUserBadgeRepository',
+      useClass: UserBadgeRepository,
     },
     {
       provide: 'ITransaction',

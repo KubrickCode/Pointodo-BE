@@ -28,12 +28,12 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
   async updateConsistency(
     userId: string,
     isContinuous: boolean,
-  ): Promise<BadgeProgressEntity> {
+  ): Promise<number> {
     const consistencyQuery = `
         UPDATE "BadgeProgress"
         SET progress = ${isContinuous ? 'progress + 1' : '1'}
         WHERE "userId" = $1::uuid AND "badgeType" = '일관성 뱃지3'
-        RETURNING *
+        RETURNING progress
       `;
 
     const consistencyValues = [userId];
@@ -44,17 +44,15 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
         ...consistencyValues,
       );
 
-    return updatedBadgeProgress[0];
+    return updatedBadgeProgress[0].progress;
   }
 
-  async updateDiversity(
-    userId: string,
-    badgeType: string,
-  ): Promise<BadgeProgressEntity> {
+  async updateDiversity(userId: string, badgeType: string): Promise<number> {
     const diversityQuery = `
           UPDATE "BadgeProgress"
           SET progress = progress + 1
           WHERE "userId" = $1::uuid AND "badgeType" = $2
+          RETURNING progress
         `;
 
     const diversityValues = [userId, badgeType];
@@ -65,18 +63,19 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
         ...diversityValues,
       );
 
-    return updatedBadgeProgress[0];
+    return updatedBadgeProgress[0].progress;
   }
 
   async updateProductivity(
     progress: number,
     userId: string,
     badgeType: string,
-  ): Promise<BadgeProgressEntity> {
+  ): Promise<number> {
     const productivityQuery = `
         UPDATE "BadgeProgress"
         SET progress = $1
         WHERE "userId" = $2::uuid AND "badgeType" = $3
+        RETURNING progress
       `;
 
     const productivityValues = [progress, userId, badgeType];
@@ -85,6 +84,6 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
       ...productivityValues,
     );
 
-    return updatedBadgeProgress[0];
+    return updatedBadgeProgress[0].progress;
   }
 }

@@ -31,6 +31,7 @@ import {
   ReqCompleteTaskAppDto,
   ResCompleteTaskAppDto,
 } from '@task/domain/dto/completeTask.app.dto';
+import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -43,6 +44,8 @@ export class TaskService implements ITaskService {
     private readonly pointRepository: IPointRepository,
     @Inject('ITransaction')
     private readonly transaction: ITransaction,
+    @Inject('IUserBadgeRepository')
+    private readonly userBadgeRepository: IUserBadgeRepository,
   ) {}
 
   async getTasksLogs(
@@ -83,10 +86,31 @@ export class TaskService implements ITaskService {
       if (taskType === '기한 작업') points = isContinuous ? 4 : 3;
       if (taskType === '무기한 작업') points = isContinuous ? 6 : 5;
       await this.pointRepository.createPointLog(req.userId, taskType, points);
-      await this.badgeProgressRepository.updateConsistency(
-        req.userId,
-        isContinuous,
-      );
+      const updatedConsistency =
+        await this.badgeProgressRepository.updateConsistency(
+          req.userId,
+          isContinuous,
+        );
+
+      if (updatedConsistency === 7) {
+        await this.userBadgeRepository.createUserBadgeLog(
+          req.userId,
+          '일관성 뱃지1',
+        );
+      }
+      if (updatedConsistency === 30) {
+        await this.userBadgeRepository.createUserBadgeLog(
+          req.userId,
+          '일관성 뱃지2',
+        );
+      }
+      if (updatedConsistency === 365) {
+        await this.userBadgeRepository.createUserBadgeLog(
+          req.userId,
+          '일관성 뱃지3',
+        );
+      }
+
       let diversityBadgeType: string;
       if (taskType === '매일 작업') {
         diversityBadgeType = '다양성 뱃지1';
@@ -97,10 +121,32 @@ export class TaskService implements ITaskService {
       if (taskType === '무기한 작업') {
         diversityBadgeType = '다양성 뱃지3';
       }
-      await this.badgeProgressRepository.updateDiversity(
-        req.userId,
-        diversityBadgeType,
-      );
+      const updatedDiversity =
+        await this.badgeProgressRepository.updateDiversity(
+          req.userId,
+          diversityBadgeType,
+        );
+
+      if (updatedDiversity === 100) {
+        if (taskType === '매일 작업') {
+          await this.userBadgeRepository.createUserBadgeLog(
+            req.userId,
+            '다양성 뱃지3',
+          );
+        }
+        if (taskType === '기한 작업') {
+          await this.userBadgeRepository.createUserBadgeLog(
+            req.userId,
+            '다양성 뱃지3',
+          );
+        }
+        if (taskType === '무기한 작업') {
+          await this.userBadgeRepository.createUserBadgeLog(
+            req.userId,
+            '다양성 뱃지3',
+          );
+        }
+      }
 
       const todayTasksCount = await this.pointRepository.countTasksPerDate(
         req.userId,
@@ -114,6 +160,25 @@ export class TaskService implements ITaskService {
         req.userId,
         HandleDateTime.getAMonthAgo,
       );
+
+      if (todayTasksCount === 10) {
+        await this.userBadgeRepository.createUserBadgeLog(
+          req.userId,
+          '생산성 뱃지3',
+        );
+      }
+      if (weeklyTasksCount === 100) {
+        await this.userBadgeRepository.createUserBadgeLog(
+          req.userId,
+          '생산성 뱃지3',
+        );
+      }
+      if (monthTasksCount === 500) {
+        await this.userBadgeRepository.createUserBadgeLog(
+          req.userId,
+          '생산성 뱃지3',
+        );
+      }
 
       await this.badgeProgressRepository.updateProductivity(
         todayTasksCount,
