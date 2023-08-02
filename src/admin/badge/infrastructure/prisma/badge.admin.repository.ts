@@ -63,8 +63,12 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     return newBadgeType[0];
   }
 
-  async update(req: Partial<BadgeTypesEntity>): Promise<BadgeTypesEntity> {
-    const { id, name, description, iconLink } = req;
+  async update(
+    id: number,
+    name?: string,
+    description?: string,
+    iconLink?: string,
+  ): Promise<BadgeTypesEntity> {
     const updateFields: string[] = [];
     const values: (number | string)[] = [];
     let placeholderIndex = 1;

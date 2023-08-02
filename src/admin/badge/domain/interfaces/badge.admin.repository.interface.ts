@@ -10,6 +10,11 @@ export interface IBadgeAdminRepository {
     iconLink: string,
     price?: number,
   ): Promise<BadgeTypesEntity>;
-  update(req: Partial<BadgeTypesEntity>): Promise<BadgeTypesEntity>;
+  update(
+    id: number,
+    name?: string,
+    description?: string,
+    iconLink?: string,
+  ): Promise<BadgeTypesEntity>;
   delete(id: number): Promise<BadgeTypesEntity>;
 }

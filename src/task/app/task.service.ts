@@ -63,11 +63,13 @@ export class TaskService implements ITaskService {
   }
 
   async createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto> {
-    await this.taskRepository.createTask(req);
+    const { userId, taskType, name, description } = req;
+    await this.taskRepository.createTask(userId, taskType, name, description);
     return { message: CREATE_TASK_SUCCESS_MESSAGE };
   }
   async updateTask(req: ReqUpdateTaskAppDto): Promise<ResUpdateTaskAppDto> {
-    await this.taskRepository.updateTask(req);
+    const { id, name, description, importance } = req;
+    await this.taskRepository.updateTask(id, name, description, importance);
     return { message: UPDATE_TASK_SUCCESS_MESSAGE };
   }
   async deleteTask(req: ReqDeleteTaskAppDto): Promise<ResDeleteTaskAppDto> {

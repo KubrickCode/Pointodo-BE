@@ -23,9 +23,9 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
   }
 
   async createBadgeProgress(
-    req: Partial<BadgeProgressEntity>,
+    userId: string,
+    badgeType: string,
   ): Promise<BadgeProgressEntity> {
-    const { userId, badgeType } = req;
     const query = `
       INSERT INTO "BadgeProgress" ("userId", "badgeType")
       VALUES ($1::uuid, $2)

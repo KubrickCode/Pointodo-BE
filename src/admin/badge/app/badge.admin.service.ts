@@ -52,9 +52,15 @@ export class BadgeAdminService implements IBadgeAdminService {
   async updateBadgeType(
     req: ReqUpdateBadgeTypeAppDto,
   ): Promise<ResUpdateBadgeTypeAppDto> {
-    const isExist = await this.badgeAdminRepository.isExist(req.name);
+    const { id, name, description, iconLink } = req;
+    const isExist = await this.badgeAdminRepository.isExist(name);
     if (isExist) throw new ConflictException(CONFLICT_BADGE_NAME);
-    const updatedBadgeType = await this.badgeAdminRepository.update(req);
+    const updatedBadgeType = await this.badgeAdminRepository.update(
+      id,
+      name,
+      description,
+      iconLink,
+    );
     this.logger.log(
       'info',
       `업데이트 뱃지 타입 ID:${updatedBadgeType.id}, 뱃지명:${updatedBadgeType.name}, 설명:${updatedBadgeType.description}, 아이콘 링크:${updatedBadgeType.iconLink}`,

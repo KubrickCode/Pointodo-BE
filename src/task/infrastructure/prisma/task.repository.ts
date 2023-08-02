@@ -35,8 +35,12 @@ export class TaskRepository implements ITaskRepository {
     return taskLog[0];
   }
 
-  async createTask(req: Partial<TaskEntity>): Promise<TaskEntity> {
-    const { userId, taskType, name, description } = req;
+  async createTask(
+    userId: string,
+    taskType: string,
+    name: string,
+    description: string,
+  ): Promise<TaskEntity> {
     const query = `
       INSERT INTO "TasksLogs" ("userId", "taskType", name, description)
       VALUES ($1::uuid, $2, $3, $4)
@@ -50,8 +54,12 @@ export class TaskRepository implements ITaskRepository {
     return newTasksLogs[0];
   }
 
-  async updateTask(req: Partial<TaskEntity>): Promise<TaskEntity> {
-    const { id, name, description, importance } = req;
+  async updateTask(
+    id: number,
+    name: string,
+    description: string,
+    importance: number,
+  ): Promise<TaskEntity> {
     const updateFields: string[] = [];
     const values: (number | string)[] = [];
     let placeholderIndex = 1;

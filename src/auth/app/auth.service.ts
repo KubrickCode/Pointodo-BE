@@ -151,8 +151,11 @@ export class AuthService implements IAuthService {
     if (user) {
       return await this.login(user);
     } else {
-      const user = { email, provider };
-      const newUser = await this.userRepository.createUser(user);
+      const newUser = await this.userRepository.createUser(
+        email,
+        null,
+        provider,
+      );
       return await this.login(newUser);
     }
   }

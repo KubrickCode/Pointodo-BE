@@ -6,7 +6,8 @@ export interface IBadgeProgressRepository {
   ): Promise<Array<Pick<BadgeProgressEntity, 'badgeType' | 'progress'>>>;
 
   createBadgeProgress(
-    req: Partial<BadgeProgressEntity>,
+    userId: string,
+    badgeType: string,
   ): Promise<BadgeProgressEntity>;
 
   updateConsistency(userId: string, isContinuous: boolean): Promise<number>;

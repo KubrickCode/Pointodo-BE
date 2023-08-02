@@ -65,18 +65,16 @@ export class UserService implements IUserService {
 
     const hashedPassword = await PasswordHasher.hashPassword(password);
 
-    const user = {
+    const createdUser = await this.userRepository.createUser(
       email,
-      password: hashedPassword,
-    };
-
-    const createdUser = await this.userRepository.createUser(user);
+      hashedPassword,
+    );
 
     for (const badgeType of initialUserBadgeProgress) {
-      await this.badgeProgressRepository.createBadgeProgress({
-        userId: createdUser.id,
+      await this.badgeProgressRepository.createBadgeProgress(
+        createdUser.id,
         badgeType,
-      });
+      );
     }
 
     this.logger.log(

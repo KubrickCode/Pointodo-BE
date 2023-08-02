@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
-import { Provider, Role, User } from '@prisma/client';
+import { Provider, User } from '@prisma/client';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import { UserEntity } from '@user/domain/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,19 +25,20 @@ export class UserRepository implements IUserRepository {
     return result ? result[0] : null;
   }
 
-  async createUser(user: Partial<UserEntity>): Promise<UserEntity> {
-    user.provider = Provider[user.provider] || Provider['LOCAL'];
-    user.role = Role[user.role] || Role['USER'];
+  async createUser(
+    email: string,
+    password?: string,
+    provider?: string,
+  ): Promise<UserEntity> {
+    provider = Provider[provider] || Provider['LOCAL'];
     const uuid = uuidv4();
 
-    console.log(uuid);
-
     const query = `
-      INSERT INTO "User" (id, email, password, provider, role)
-      VALUES ($1::uuid, $2, $3, $4::"Provider", $5::"Role")
+      INSERT INTO "User" (id, email, password, provider)
+      VALUES ($1::uuid, $2, $3, $4::"Provider")
       RETURNING *
     `;
-    const values = [uuid, user.email, user.password, user.provider, user.role];
+    const values = [uuid, email, password, provider];
     const newUser = await this.prisma.$queryRawUnsafe<User>(query, ...values);
     return newUser[0];
   }
