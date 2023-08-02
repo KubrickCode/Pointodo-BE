@@ -103,8 +103,8 @@ export class UserService implements IUserService {
       user,
       cacheConfig(this.configService).cacheTTL,
     );
-    const { id, email, provider, role, defaultBadge, createdAt } = user;
-    return { id, email, provider, role, defaultBadge, createdAt };
+    const { id, email, provider, role, selectedBadge, createdAt } = user;
+    return { id, email, provider, role, selectedBadge, createdAt };
   }
 
   async changePassword(

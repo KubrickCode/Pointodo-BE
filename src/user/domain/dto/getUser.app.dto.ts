@@ -25,9 +25,9 @@ export class ResGetUserAppDto {
   @IsEnum(Role)
   readonly role: Role;
 
-  @ApiProperty({ description: '기본 뱃지' })
+  @ApiProperty({ description: '선택 뱃지' })
   @IsString()
-  readonly defaultBadge: string;
+  readonly selectedBadge: string;
 
   @IsDate()
   @ApiProperty({ description: '가입 날짜' })

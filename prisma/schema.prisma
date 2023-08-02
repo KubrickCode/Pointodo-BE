@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   id                String            @id @default(uuid()) @db.Uuid 
-  defaultBadge      String            @default("기본 뱃지")
+  selectedBadge      String            @default("기본 뱃지")
   email             String            @unique @db.VarChar(255)
   password          String?           @db.VarChar(255)
   provider          Provider          @default(LOCAL)
@@ -19,7 +19,7 @@ model User {
   badgeProgress     BadgeProgress[]
   pointsLogs        PointsLogs[]
   taskLogs          TasksLogs[]
-  defaultBadgeName  BadgeTypes        @relation(fields: [defaultBadge], references: [name])
+  selectedBadgeName  BadgeTypes        @relation(fields: [selectedBadge], references: [name])
 }
 
 model BadgeTypes {
