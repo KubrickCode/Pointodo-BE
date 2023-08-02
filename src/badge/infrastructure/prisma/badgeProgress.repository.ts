@@ -8,6 +8,20 @@ import { BadgeProgress } from '@prisma/client';
 export class BadgeProgressRepository implements IBadgeProgressRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  async getAllBadgeProgress(
+    userId: string,
+  ): Promise<Array<Pick<BadgeProgressEntity, 'badgeType' | 'progress'>>> {
+    const query = `
+    SELECT "badgeType", progress FROM "BadgeProgress"
+    WHERE "userId" = $1::uuid
+    `;
+    const values = [userId];
+    const badgeProgressList = await this.prisma.$queryRawUnsafe<
+      Array<Pick<BadgeProgress, 'badgeType' | 'progress'>>
+    >(query, ...values);
+    return badgeProgressList;
+  }
+
   async createBadgeProgress(
     req: Partial<BadgeProgressEntity>,
   ): Promise<BadgeProgressEntity> {

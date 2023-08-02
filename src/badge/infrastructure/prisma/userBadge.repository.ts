@@ -27,7 +27,7 @@ export class UserBadgeRepository implements IUserBadgeRepository {
 
   async getUserBadgeList(
     userId: string,
-  ): Promise<Array<{ badgeType: string }>> {
+  ): Promise<Array<Pick<UserBadgeEntity, 'badgeType'>>> {
     const query = `
       SELECT "badgeType" FROM "UserBadgesLogs"
       WHERE "userId" = $1::uuid

@@ -1,6 +1,10 @@
 import { BadgeProgressEntity } from '../entities/badgeProgress.entity';
 
 export interface IBadgeProgressRepository {
+  getAllBadgeProgress(
+    userId: string,
+  ): Promise<Array<Pick<BadgeProgressEntity, 'badgeType' | 'progress'>>>;
+
   createBadgeProgress(
     req: Partial<BadgeProgressEntity>,
   ): Promise<BadgeProgressEntity>;
