@@ -20,6 +20,7 @@ import {
 } from './dto/changeSelectedBadge.dto';
 import { ResGetUserBadgeListDto } from './dto/getUserBadgeList.dto';
 import { ResGetAllBadgeProgressDto } from './dto/getAllBadgeProgress.dto';
+import { ValidateBadgeTypePipe } from '@shared/pipes/validateBadgeType.pipe';
 
 @Controller('badge')
 @UseGuards(JwtAuthGuard)
@@ -32,7 +33,10 @@ export class BadgeController {
   ) {}
 
   @Post('buy')
-  async buyBadge(@Req() req: Request, @Body() body: ReqBuyBadgeDto) {
+  async buyBadge(
+    @Req() req: Request,
+    @Body(ValidateBadgeTypePipe) body: ReqBuyBadgeDto,
+  ) {
     return await this.badgeService.buyBadge({
       userId: req.user.id,
       badgeType: body.badgeType,
@@ -56,7 +60,7 @@ export class BadgeController {
   @Patch('selected')
   async changeSelectedBadge(
     @Req() req: Request,
-    @Body() body: ReqChangeSelectedBadgeDto,
+    @Body(ValidateBadgeTypePipe) body: ReqChangeSelectedBadgeDto,
   ): Promise<ResChangeSelectedBadgeDto> {
     return await this.badgeService.changeSelectedBadge({
       userId: req.user.id,
