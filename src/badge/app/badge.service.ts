@@ -27,6 +27,7 @@ import {
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
 import { ITransaction } from '@shared/interfaces/transaction.interface';
 import {
+  ALREADY_EXIST_USER_BADGE,
   BUY_BADGE_CONFLICT_POINT,
   BUY_BADGE_LESS_POINT,
   NOT_EXIST_USER_BADGE,
@@ -74,6 +75,16 @@ export class BadgeService implements IBadgeService {
       await this.userBadgeRepository.createUserBadgeLog(userId, badgeType);
 
       const afterPoint = await this.pointRepository.calculateUserPoints(userId);
+      const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
+        userId,
+      );
+
+      const filteredBadgeList = userBadgeList.filter(
+        (item) => item.badgeType === badgeType,
+      );
+
+      if (filteredBadgeList.length > 1)
+        throw new BadRequestException(ALREADY_EXIST_USER_BADGE);
 
       if (afterPoint - price < 0)
         throw new ConflictException(BUY_BADGE_CONFLICT_POINT);
