@@ -6,4 +6,5 @@ export interface IUserRepository {
   findById(id: string): Promise<UserEntity | null>;
   changePassword(id: string, newPassword: string): Promise<UserEntity>;
   deleteUser(id: string): Promise<UserEntity>;
+  changeSelectedBadge(userId: string, badgeType: string): Promise<UserEntity>;
 }

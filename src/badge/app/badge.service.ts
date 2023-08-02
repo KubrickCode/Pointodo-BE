@@ -3,6 +3,10 @@ import {
   ReqBuyBadgeAppDto,
   ResBuyBadgeAppDto,
 } from '@badge/domain/dto/buyBadge.app.dto';
+import {
+  ReqChangeSelectedBadgeAppDto,
+  ResChangeSelectedBadgeAppDto,
+} from '@badge/domain/dto/changeSelectedBadge.app.dto';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
@@ -12,7 +16,11 @@ import {
   BUY_BADGE_CONFLICT_POINT,
   BUY_BADGE_LESS_POINT,
 } from '@shared/messages/badge/badge.errors';
-import { BUY_BADGE_SUCCESS_MESSAGE } from '@shared/messages/badge/badge.messages';
+import {
+  BUY_BADGE_SUCCESS_MESSAGE,
+  CHANGE_USER_BADGE_MESSAGE,
+} from '@shared/messages/badge/badge.messages';
+import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 
 @Injectable()
 export class BadgeService implements IBadgeService {
@@ -23,6 +31,8 @@ export class BadgeService implements IBadgeService {
     private readonly userBadgeRepository: IUserBadgeRepository,
     @Inject('IBadgeAdminRepository')
     private readonly badgeAdminRepository: IBadgeAdminRepository,
+    @Inject('IUserRepository')
+    private readonly userRepository: IUserRepository,
     @Inject('ITransaction')
     private readonly transaction: ITransaction,
   ) {}
@@ -57,5 +67,13 @@ export class BadgeService implements IBadgeService {
       await this.transaction.rollbackTransaction();
       throw error;
     }
+  }
+
+  async changeSelectedBadge(
+    req: ReqChangeSelectedBadgeAppDto,
+  ): Promise<ResChangeSelectedBadgeAppDto> {
+    const { userId, badgeType } = req;
+    await this.userRepository.changeSelectedBadge(userId, badgeType);
+    return { message: CHANGE_USER_BADGE_MESSAGE };
   }
 }

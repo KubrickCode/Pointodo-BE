@@ -9,6 +9,7 @@ import { PrismaTransaction } from '@shared/service/transaction.service';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConfig } from '@shared/config/jwt.config';
 import { ConfigService } from '@nestjs/config';
+import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 
 @Module({
   controllers: [BadgeController],
@@ -21,6 +22,10 @@ import { ConfigService } from '@nestjs/config';
     {
       provide: 'IPointRepository',
       useClass: PointRepository,
+    },
+    {
+      provide: 'IUserRepository',
+      useClass: UserRepository,
     },
     {
       provide: 'IUserBadgeRepository',
