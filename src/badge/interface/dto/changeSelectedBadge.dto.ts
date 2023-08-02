@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CHANGE_USER_BADGE_MESSAGE } from '@shared/messages/badge/badge.messages';
 import { IsString } from 'class-validator';
 
 export class ReqChangeSelectedBadgeDto {
@@ -9,7 +10,7 @@ export class ReqChangeSelectedBadgeDto {
 
 export class ResChangeSelectedBadgeDto {
   @ApiProperty({
-    example: '선택 뱃지 변경 성공',
+    example: CHANGE_USER_BADGE_MESSAGE,
     description: '성공 메시지',
   })
   @IsString()

@@ -28,8 +28,8 @@ import { IPointRepository } from '@point/domain/interfaces/point.repository.inte
 import { ITransaction } from '@shared/interfaces/transaction.interface';
 import {
   ALREADY_EXIST_USER_BADGE,
-  BUY_BADGE_CONFLICT_POINT,
-  BUY_BADGE_LESS_POINT,
+  BUY_BADGE_CONFLICT_POINTS,
+  BUY_BADGE_LESS_POINTS,
   NOT_EXIST_USER_BADGE,
 } from '@shared/messages/badge/badge.errors';
 import {
@@ -64,7 +64,7 @@ export class BadgeService implements IBadgeService {
         userId,
       );
       if (currentPoint - price < 0)
-        throw new ConflictException(BUY_BADGE_LESS_POINT);
+        throw new ConflictException(BUY_BADGE_LESS_POINTS);
 
       await this.pointRepository.createPointLog(
         userId,
@@ -84,10 +84,10 @@ export class BadgeService implements IBadgeService {
       );
 
       if (filteredBadgeList.length > 1)
-        throw new BadRequestException(ALREADY_EXIST_USER_BADGE);
+        throw new ConflictException(ALREADY_EXIST_USER_BADGE);
 
       if (afterPoint - price < 0)
-        throw new ConflictException(BUY_BADGE_CONFLICT_POINT);
+        throw new ConflictException(BUY_BADGE_CONFLICT_POINTS);
 
       await this.transaction.commitTransaction();
       return { message: BUY_BADGE_SUCCESS_MESSAGE };
