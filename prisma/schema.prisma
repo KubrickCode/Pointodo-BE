@@ -60,6 +60,8 @@ model PointsLogs {
   occurredAt                DateTime                @default(now())
   user                      User                    @relation(fields: [userId], references: [id])
   taskTypeName              TaskTypes               @relation(fields: [taskType], references: [name])
+
+  @@index([userId, occurredAt, transactionType])
 }
 
 model TaskTypes {
@@ -80,6 +82,8 @@ model TasksLogs {
   occurredAt        DateTime      @default(now())
   user              User          @relation(fields: [userId], references: [id])
   taskTypeName      TaskTypes     @relation(fields: [taskType], references: [name])
+
+  @@index([userId])
 }
 
 enum Provider {

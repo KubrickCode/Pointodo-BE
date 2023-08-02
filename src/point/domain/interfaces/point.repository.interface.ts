@@ -1,6 +1,7 @@
 import { PointEntity } from '../entities/point.entity';
 
 export interface IPointRepository {
+  getAllPointsLogs(userId: string): Promise<PointEntity[]>;
   isContinuous(userId: string, yesterday: string): Promise<boolean>;
   createPointLog(
     userId: string,

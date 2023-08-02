@@ -8,6 +8,22 @@ import { IPointRepository } from 'src/point/domain/interfaces/point.repository.i
 export class PointRepository implements IPointRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  async getAllPointsLogs(userId: string): Promise<PointEntity[]> {
+    const query = `
+    SELECT * FROM "PointsLogs"
+    WHERE "userId" = $1
+    `;
+
+    const values = [userId];
+
+    const pointsLogs = await this.prisma.$queryRawUnsafe<PointsLogs[]>(
+      query,
+      ...values,
+    );
+
+    return pointsLogs;
+  }
+
   async isContinuous(userId: string, yesterday: string): Promise<boolean> {
     const isContinuousQuery = `
         SELECT COUNT(*) FROM "PointsLogs"
