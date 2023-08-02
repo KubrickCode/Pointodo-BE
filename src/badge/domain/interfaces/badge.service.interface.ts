@@ -4,6 +4,10 @@ import {
   ResChangeSelectedBadgeAppDto,
 } from '../dto/changeSelectedBadge.app.dto';
 import {
+  ReqGetAllBadgeProgressAppDto,
+  ResGetAllBadgeProgressAppDto,
+} from '../dto/getAllBadgeProgress.app.dto';
+import {
   ReqGetUserBadgeListAppDto,
   ResGetUserBadgeListAppDto,
 } from '../dto/getUserBadgeList.app.dto';
@@ -16,4 +20,7 @@ export interface IBadgeService {
   changeSelectedBadge(
     req: ReqChangeSelectedBadgeAppDto,
   ): Promise<ResChangeSelectedBadgeAppDto>;
+  getAllBadgeProgress(
+    req: ReqGetAllBadgeProgressAppDto,
+  ): Promise<ResGetAllBadgeProgressAppDto[]>;
 }

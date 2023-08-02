@@ -8,10 +8,15 @@ import {
   ResChangeSelectedBadgeAppDto,
 } from '@badge/domain/dto/changeSelectedBadge.app.dto';
 import {
+  ReqGetAllBadgeProgressAppDto,
+  ResGetAllBadgeProgressAppDto,
+} from '@badge/domain/dto/getAllBadgeProgress.app.dto';
+import {
   ReqGetUserBadgeListAppDto,
   ResGetUserBadgeListAppDto,
 } from '@badge/domain/dto/getUserBadgeList.app.dto';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
+import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import {
   ConflictException,
@@ -43,6 +48,8 @@ export class BadgeService implements IBadgeService {
     private readonly badgeAdminRepository: IBadgeAdminRepository,
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
+    @Inject('IBadgeProgressRepository')
+    private readonly badgeProgressRepository: IBadgeProgressRepository,
     @Inject('ITransaction')
     private readonly transaction: ITransaction,
   ) {}
@@ -100,5 +107,11 @@ export class BadgeService implements IBadgeService {
 
     await this.userRepository.changeSelectedBadge(userId, badgeType);
     return { message: CHANGE_USER_BADGE_MESSAGE };
+  }
+
+  async getAllBadgeProgress(
+    req: ReqGetAllBadgeProgressAppDto,
+  ): Promise<ResGetAllBadgeProgressAppDto[]> {
+    return await this.badgeProgressRepository.getAllBadgeProgress(req.userId);
   }
 }
