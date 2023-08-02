@@ -8,6 +8,11 @@ import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.reposit
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
 import { ITransaction } from '@shared/interfaces/transaction.interface';
+import {
+  BUY_BADGE_CONFLICT_POINT,
+  BUY_BADGE_LESS_POINT,
+} from '@shared/messages/badge/badge.errors';
+import { BUY_BADGE_SUCCESS_MESSAGE } from '@shared/messages/badge/badge.messages';
 
 @Injectable()
 export class BadgeService implements IBadgeService {
@@ -23,14 +28,15 @@ export class BadgeService implements IBadgeService {
   ) {}
 
   async buyBadge(req: ReqBuyBadgeAppDto): Promise<ResBuyBadgeAppDto> {
-    await this.transaction.beginTransaction('READ COMMITTED');
+    await this.transaction.beginTransaction();
     try {
       const { userId, badgeType } = req;
       const price = await this.badgeAdminRepository.getBadgePrice(badgeType);
       const currentPoint = await this.pointRepository.calculateUserPoints(
         userId,
       );
-      if (currentPoint - price < 0) throw new ConflictException('포인트 부족');
+      if (currentPoint - price < 0)
+        throw new ConflictException(BUY_BADGE_LESS_POINT);
 
       await this.pointRepository.createPointLog(
         userId,
@@ -42,10 +48,11 @@ export class BadgeService implements IBadgeService {
 
       const afterPoint = await this.pointRepository.calculateUserPoints(userId);
 
-      if (afterPoint - price < 0) throw new ConflictException('포인트 충돌');
+      if (afterPoint - price < 0)
+        throw new ConflictException(BUY_BADGE_CONFLICT_POINT);
 
       await this.transaction.commitTransaction();
-      return { message: '뱃지 구매 성공' };
+      return { message: BUY_BADGE_SUCCESS_MESSAGE };
     } catch (error) {
       await this.transaction.rollbackTransaction();
       throw error;

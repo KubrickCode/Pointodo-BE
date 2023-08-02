@@ -37,6 +37,7 @@ import { completeConsistency } from './utils/completeConsistency';
 import { setDiversityBadgeType } from './utils/setDiversityBadgeType';
 import { completeDiversity } from './utils/completeDiversity';
 import { completeProductivity } from './utils/completeProductivity';
+import { COMPLETE_TASK_CONFLICT } from '@shared/messages/task/task.errors';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -81,7 +82,11 @@ export class TaskService implements ITaskService {
 
       await this.taskRepository.completeTask(req.id);
 
-      const { taskType } = await this.taskRepository.getTaskLogById(req.id);
+      const { taskType, completion } = await this.taskRepository.getTaskLogById(
+        req.id,
+      );
+
+      if (completion !== 1) throw new ConflictException(COMPLETE_TASK_CONFLICT);
 
       const isContinuous = await this.pointRepository.isContinuous(
         req.userId,
@@ -127,8 +132,10 @@ export class TaskService implements ITaskService {
         this.badgeProgressRepository.updateProductivity,
       );
 
-      const { completion } = await this.taskRepository.getTaskLogById(req.id);
-      if (completion !== 1) throw new ConflictException('작업 완료 충돌');
+      const { completion: updatedCompletion } =
+        await this.taskRepository.getTaskLogById(req.id);
+      if (updatedCompletion !== 1)
+        throw new ConflictException(COMPLETE_TASK_CONFLICT);
 
       await this.transaction.commitTransaction();
 
