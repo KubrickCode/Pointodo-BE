@@ -27,14 +27,14 @@ export class UserBadgeRepository implements IUserBadgeRepository {
 
   async getUserBadgeList(
     userId: string,
-  ): Promise<Pick<UserBadgeEntity, 'badgeType'>[]> {
+  ): Promise<Array<{ badgeType: string }>> {
     const query = `
       SELECT "badgeType" FROM "UserBadgesLogs"
-      WHERE userId = $1::uuid
+      WHERE "userId" = $1::uuid
     `;
     const values = [userId];
     const userBadgeList = await this.prisma.$queryRawUnsafe<
-      Pick<UserBadgesLogs, 'badgeType'>[]
+      Array<{ badgeType: string }>
     >(query, ...values);
     return userBadgeList;
   }

@@ -7,14 +7,24 @@ import {
   ReqChangeSelectedBadgeAppDto,
   ResChangeSelectedBadgeAppDto,
 } from '@badge/domain/dto/changeSelectedBadge.app.dto';
+import {
+  ReqGetUserBadgeListAppDto,
+  ResGetUserBadgeListAppDto,
+} from '@badge/domain/dto/getUserBadgeList.app.dto';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
-import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  BadRequestException,
+} from '@nestjs/common';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
 import { ITransaction } from '@shared/interfaces/transaction.interface';
 import {
   BUY_BADGE_CONFLICT_POINT,
   BUY_BADGE_LESS_POINT,
+  NOT_EXIST_USER_BADGE,
 } from '@shared/messages/badge/badge.errors';
 import {
   BUY_BADGE_SUCCESS_MESSAGE,
@@ -69,10 +79,25 @@ export class BadgeService implements IBadgeService {
     }
   }
 
+  async getUserBadgeList(
+    req: ReqGetUserBadgeListAppDto,
+  ): Promise<ResGetUserBadgeListAppDto[]> {
+    return await this.userBadgeRepository.getUserBadgeList(req.userId);
+  }
+
   async changeSelectedBadge(
     req: ReqChangeSelectedBadgeAppDto,
   ): Promise<ResChangeSelectedBadgeAppDto> {
     const { userId, badgeType } = req;
+    const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
+      userId,
+    );
+
+    const badgeTypeList = userBadgeList.map((item) => item.badgeType);
+
+    if (!badgeTypeList.includes(badgeType))
+      throw new BadRequestException(NOT_EXIST_USER_BADGE);
+
     await this.userRepository.changeSelectedBadge(userId, badgeType);
     return { message: CHANGE_USER_BADGE_MESSAGE };
   }

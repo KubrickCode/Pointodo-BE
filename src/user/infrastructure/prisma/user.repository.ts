@@ -67,7 +67,7 @@ export class UserRepository implements IUserRepository {
     badgeType: string,
   ): Promise<UserEntity> {
     const query = `
-    UPDATE "User" SET selectedBadge = $1 WHERE id = $2::uuid
+    UPDATE "User" SET "selectedBadge" = $1 WHERE id = $2::uuid
     RETURNING *
     `;
     const values = [badgeType, userId];

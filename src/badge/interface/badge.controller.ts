@@ -6,6 +6,7 @@ import {
   Req,
   Body,
   Patch,
+  Get,
 } from '@nestjs/common';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
@@ -17,7 +18,7 @@ import {
   ReqChangeSelectedBadgeDto,
   ResChangeSelectedBadgeDto,
 } from './dto/changeSelectedBadge.dto';
-import { VerifyBadgePipe } from './pipes/verifyBadge.pipe';
+import { ResGetUserBadgeListDto } from './dto/getUserBadgeList.dto';
 
 @Controller('badge')
 @UseGuards(JwtAuthGuard)
@@ -37,10 +38,17 @@ export class BadgeController {
     });
   }
 
+  @Get('list')
+  async getUserBadgeList(
+    @Req() req: Request,
+  ): Promise<ResGetUserBadgeListDto[]> {
+    return await this.badgeService.getUserBadgeList({ userId: req.user.id });
+  }
+
   @Patch('selected')
   async changeSelectedBadge(
     @Req() req: Request,
-    @Body(VerifyBadgePipe) body: ReqChangeSelectedBadgeDto,
+    @Body() body: ReqChangeSelectedBadgeDto,
   ): Promise<ResChangeSelectedBadgeDto> {
     return await this.badgeService.changeSelectedBadge({
       userId: req.user.id,
