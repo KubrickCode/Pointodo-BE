@@ -7,7 +7,6 @@ import { AuthService } from '@auth/app/auth.service';
 import { TokenService } from '@auth/infrastructure/token.service';
 import { RedisService } from '@redis/infrastructure/redis.service';
 import { UserRepository } from '@user/infrastructure/prisma/user.repository';
-import { PasswordHasher } from '@user/infrastructure/passwordHasher';
 import { PrismaService } from '@shared/service/prisma.service';
 import { BadgeAdminService } from '@admin/badge/app/badge.admin.service';
 import { BadgeAdminRepository } from '@admin/badge/infrastructure/prisma/badge.admin.repository';
@@ -33,10 +32,6 @@ import { TaskAdminRepository } from '@admin/task/infrastructure/prisma/task.admi
     {
       provide: 'IUserRepository',
       useClass: UserRepository,
-    },
-    {
-      provide: 'IPasswordHasher',
-      useClass: PasswordHasher,
     },
     {
       provide: 'IBadgeAdminService',

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import {
   COMPLETE_TASK_SUCCESS_MESSAGE,
   CREATE_TASK_SUCCESS_MESSAGE,
@@ -32,6 +32,11 @@ import {
   ResCompleteTaskAppDto,
 } from '@task/domain/dto/completeTask.app.dto';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
+import { setTaskPoints } from './utils/setTaskPoints';
+import { completeConsistency } from './utils/completeConsistency';
+import { setDiversityBadgeType } from './utils/setDiversityBadgeType';
+import { completeDiversity } from './utils/completeDiversity';
+import { completeProductivity } from './utils/completeProductivity';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -73,7 +78,9 @@ export class TaskService implements ITaskService {
   ): Promise<ResCompleteTaskAppDto> {
     try {
       await this.transaction.beginTransaction();
+
       await this.taskRepository.completeTask(req.id);
+
       const { taskType } = await this.taskRepository.getTaskLogById(req.id);
 
       const isContinuous = await this.pointRepository.isContinuous(
@@ -81,125 +88,47 @@ export class TaskService implements ITaskService {
         HandleDateTime.getYesterday,
       );
 
-      let points: number;
-      if (taskType === '매일 작업') points = isContinuous ? 2 : 1;
-      if (taskType === '기한 작업') points = isContinuous ? 4 : 3;
-      if (taskType === '무기한 작업') points = isContinuous ? 6 : 5;
       await this.pointRepository.createPointLog(
         req.userId,
         'EARNED',
         taskType,
-        points,
+        setTaskPoints(taskType, isContinuous),
       );
+
       const updatedConsistency =
         await this.badgeProgressRepository.updateConsistency(
           req.userId,
           isContinuous,
         );
 
-      if (updatedConsistency === 7) {
-        await this.userBadgeRepository.createUserBadgeLog(
-          req.userId,
-          '일관성 뱃지1',
-        );
-      }
-      if (updatedConsistency === 30) {
-        await this.userBadgeRepository.createUserBadgeLog(
-          req.userId,
-          '일관성 뱃지2',
-        );
-      }
-      if (updatedConsistency === 365) {
-        await this.userBadgeRepository.createUserBadgeLog(
-          req.userId,
-          '일관성 뱃지3',
-        );
-      }
+      await completeConsistency(
+        updatedConsistency,
+        req.userId,
+        this.userBadgeRepository.createUserBadgeLog,
+      );
 
-      let diversityBadgeType: string;
-      if (taskType === '매일 작업') {
-        diversityBadgeType = '다양성 뱃지1';
-      }
-      if (taskType === '기한 작업') {
-        diversityBadgeType = '다양성 뱃지2';
-      }
-      if (taskType === '무기한 작업') {
-        diversityBadgeType = '다양성 뱃지3';
-      }
       const updatedDiversity =
         await this.badgeProgressRepository.updateDiversity(
           req.userId,
-          diversityBadgeType,
+          setDiversityBadgeType(taskType),
         );
 
-      if (updatedDiversity === 100) {
-        if (taskType === '매일 작업') {
-          await this.userBadgeRepository.createUserBadgeLog(
-            req.userId,
-            '다양성 뱃지3',
-          );
-        }
-        if (taskType === '기한 작업') {
-          await this.userBadgeRepository.createUserBadgeLog(
-            req.userId,
-            '다양성 뱃지3',
-          );
-        }
-        if (taskType === '무기한 작업') {
-          await this.userBadgeRepository.createUserBadgeLog(
-            req.userId,
-            '다양성 뱃지3',
-          );
-        }
-      }
-
-      const todayTasksCount = await this.pointRepository.countTasksPerDate(
+      await completeDiversity(
+        updatedDiversity,
+        taskType,
         req.userId,
-        HandleDateTime.getToday,
-      );
-      const weeklyTasksCount = await this.pointRepository.countTasksPerDate(
-        req.userId,
-        HandleDateTime.getWeekAgo,
-      );
-      const monthTasksCount = await this.pointRepository.countTasksPerDate(
-        req.userId,
-        HandleDateTime.getAMonthAgo,
+        this.userBadgeRepository.createUserBadgeLog,
       );
 
-      if (todayTasksCount === 10) {
-        await this.userBadgeRepository.createUserBadgeLog(
-          req.userId,
-          '생산성 뱃지3',
-        );
-      }
-      if (weeklyTasksCount === 100) {
-        await this.userBadgeRepository.createUserBadgeLog(
-          req.userId,
-          '생산성 뱃지3',
-        );
-      }
-      if (monthTasksCount === 500) {
-        await this.userBadgeRepository.createUserBadgeLog(
-          req.userId,
-          '생산성 뱃지3',
-        );
-      }
+      await completeProductivity(
+        req.userId,
+        this.pointRepository.countTasksPerDate,
+        this.userBadgeRepository.createUserBadgeLog,
+        this.badgeProgressRepository.updateProductivity,
+      );
 
-      await this.badgeProgressRepository.updateProductivity(
-        todayTasksCount,
-        req.userId,
-        '생산성 뱃지1',
-      );
-      await this.badgeProgressRepository.updateProductivity(
-        weeklyTasksCount,
-        req.userId,
-        '생산성 뱃지2',
-      );
-      await this.badgeProgressRepository.updateProductivity(
-        monthTasksCount,
-        req.userId,
-        '생산성 뱃지3',
-      );
+      const { completion } = await this.taskRepository.getTaskLogById(req.id);
+      if (completion !== 1) throw new ConflictException('작업 완료 충돌');
 
       await this.transaction.commitTransaction();
 

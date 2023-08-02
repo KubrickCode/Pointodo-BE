@@ -108,7 +108,7 @@ export class TaskRepository implements ITaskRepository {
   async completeTask(id: number): Promise<TaskEntity> {
     const completeQuery = `
         UPDATE "TasksLogs"
-        SET completion = 1
+        SET completion = completion + 1
         WHERE id = $1
         RETURNING *
       `;

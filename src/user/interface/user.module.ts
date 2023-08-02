@@ -5,7 +5,6 @@ import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PrismaService } from '@shared/service/prisma.service';
-import { PasswordHasher } from '@user/infrastructure/passwordHasher';
 import { CacheService } from '@cache/infrastructure/cache.service';
 import { jwtConfig } from '@shared/config/jwt.config';
 import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgress.repository';
@@ -17,10 +16,6 @@ import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgr
     {
       provide: 'IUserRepository',
       useClass: UserRepository,
-    },
-    {
-      provide: 'IPasswordHasher',
-      useClass: PasswordHasher,
     },
     {
       provide: 'IUserService',

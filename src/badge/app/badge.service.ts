@@ -23,9 +23,8 @@ export class BadgeService implements IBadgeService {
   ) {}
 
   async buyBadge(req: ReqBuyBadgeAppDto): Promise<ResBuyBadgeAppDto> {
+    await this.transaction.beginTransaction('READ COMMITTED');
     try {
-      await this.transaction.beginTransaction('SERIALIZABLE');
-
       const { userId, badgeType } = req;
       const price = await this.badgeAdminRepository.getBadgePrice(badgeType);
       const currentPoint = await this.pointRepository.calculateUserPoints(
@@ -40,6 +39,10 @@ export class BadgeService implements IBadgeService {
         -price,
       );
       await this.userBadgeRepository.createUserBadgeLog(userId, badgeType);
+
+      const afterPoint = await this.pointRepository.calculateUserPoints(userId);
+
+      if (afterPoint - price < 0) throw new ConflictException('포인트 충돌');
 
       await this.transaction.commitTransaction();
       return { message: '뱃지 구매 성공' };

@@ -22,7 +22,6 @@ import {
   AUTH_INVALID_TOKEN,
 } from '@shared/messages/auth/auth.errors';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
-import { IPasswordHasher } from '@user/domain/interfaces/passwordHasher.interface';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import {
@@ -47,6 +46,7 @@ import {
   ReqValidateAdminAppDto,
   ResValidateAdminAppDto,
 } from '@auth/domain/dto/validateAdmin.app.dto';
+import { PasswordHasher } from '@shared/utils/passwordHasher';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -57,8 +57,6 @@ export class AuthService implements IAuthService {
     private readonly redisService: IRedisService,
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
-    @Inject('IPasswordHasher')
-    private readonly passwordHasher: IPasswordHasher,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -81,7 +79,7 @@ export class AuthService implements IAuthService {
       throw new NotFoundException('존재하지 않는 계정입니다');
     }
 
-    const isCorrectPassword = await this.passwordHasher.comparePassword(
+    const isCorrectPassword = await PasswordHasher.comparePassword(
       req.password,
       user.password,
     );
@@ -97,7 +95,7 @@ export class AuthService implements IAuthService {
     req: ReqCheckPasswordAppDto,
   ): Promise<ResCheckPasswordAppDto> {
     const user = await this.userRepository.findById(req.id);
-    const isCorrectPassword = await this.passwordHasher.comparePassword(
+    const isCorrectPassword = await PasswordHasher.comparePassword(
       req.password,
       user.password,
     );

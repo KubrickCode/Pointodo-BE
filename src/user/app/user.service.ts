@@ -12,7 +12,6 @@ import {
 } from '@shared/messages/user/user.messages';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
-import { IPasswordHasher } from '@user/domain/interfaces/passwordHasher.interface';
 import {
   USER_ALREADY_EXISTS,
   USER_NOT_FOUND,
@@ -40,6 +39,7 @@ import {
 } from '@user/domain/dto/deleteUser.app.dto';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 import { initialUserBadgeProgress } from '@shared/utils/initialUserBadgeProgress';
+import { PasswordHasher } from '@shared/utils/passwordHasher';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -49,8 +49,6 @@ export class UserService implements IUserService {
     private readonly userRepository: IUserRepository,
     @Inject('IBadgeProgressRepository')
     private readonly badgeProgressRepository: IBadgeProgressRepository,
-    @Inject('IPasswordHasher')
-    private readonly passwordHasher: IPasswordHasher,
     @Inject('ICacheService')
     private readonly cacheRepository: ICacheService,
     private readonly configService: ConfigService,
@@ -65,7 +63,7 @@ export class UserService implements IUserService {
       throw new ConflictException(USER_ALREADY_EXISTS);
     }
 
-    const hashedPassword = await this.passwordHasher.hashPassword(password);
+    const hashedPassword = await PasswordHasher.hashPassword(password);
 
     const user = {
       email,
@@ -112,7 +110,7 @@ export class UserService implements IUserService {
   async changePassword(
     req: ReqChangePasswordAppDto,
   ): Promise<ResChangePasswordAppDto> {
-    const newPassword = await this.passwordHasher.hashPassword(req.password);
+    const newPassword = await PasswordHasher.hashPassword(req.password);
     const user = await this.userRepository.changePassword(req.id, newPassword);
     this.logger.log(
       'info',
