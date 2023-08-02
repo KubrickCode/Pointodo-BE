@@ -18,6 +18,7 @@ import {
   UPDATE_TASK_TYPE_SUCCESS_MESSAGE,
 } from '@shared/messages/admin/task.admin.message';
 import { TaskTypesEntity } from '@admin/task/domain/entities/taskTypes.entity';
+import { CONFLICT_TASK_TYPE_NAME } from '@shared/messages/admin/task.admin.errors';
 
 @Injectable()
 export class TaskAdminService implements ITaskAdminService {
@@ -35,7 +36,7 @@ export class TaskAdminService implements ITaskAdminService {
     req: ReqCreateTaskTypeAppDto,
   ): Promise<ResCreateTaskTypeAppDto> {
     const isExist = await this.taskAdminRepository.isExist(req.name);
-    if (isExist) throw new ConflictException('이미 존재하는 ID 혹은 작업 이름');
+    if (isExist) throw new ConflictException(CONFLICT_TASK_TYPE_NAME);
     const createdTaskType = await this.taskAdminRepository.create(req.name);
     this.logger.log(
       'info',
@@ -48,7 +49,7 @@ export class TaskAdminService implements ITaskAdminService {
     req: ReqUpdateTaskTypeAppDto,
   ): Promise<ResUpdateTaskTypeAppDto> {
     const isExist = await this.taskAdminRepository.isExist(req.name);
-    if (isExist) throw new ConflictException('이미 존재하는 ID 혹은 작업 이름');
+    if (isExist) throw new ConflictException(CONFLICT_TASK_TYPE_NAME);
     const updatedTaskType = await this.taskAdminRepository.update(
       req.id,
       req.name,

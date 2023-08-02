@@ -1,4 +1,5 @@
 import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
+import { DIVERSITY_GOAL } from '@shared/constants/task.constant';
 
 export const completeDiversity = async (
   updatedDiversity: number,
@@ -9,7 +10,7 @@ export const completeDiversity = async (
     badgeType: string,
   ) => Promise<UserBadgeEntity>,
 ) => {
-  if (updatedDiversity === 100) {
+  if (updatedDiversity === DIVERSITY_GOAL) {
     if (taskType === '매일 작업') {
       await createUserBadgeLog(userId, '다양성 뱃지3');
     }

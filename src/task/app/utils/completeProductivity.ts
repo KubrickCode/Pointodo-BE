@@ -1,4 +1,9 @@
 import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
+import {
+  PRODUCTIVITY_GOAL_FOR_A_MONTH_AGO,
+  PRODUCTIVITY_GOAL_FOR_A_WEEK_AGO,
+  PRODUCTIVITY_GOAL_FOR_TODAY,
+} from '@shared/constants/task.constant';
 import { HandleDateTime } from '@shared/utils/handleDateTime';
 
 export const completeProductivity = async (
@@ -31,13 +36,13 @@ export const completeProductivity = async (
   await updateProductivity(weeklyTasksCount, userId, '생산성 뱃지2');
   await updateProductivity(monthTasksCount, userId, '생산성 뱃지3');
 
-  if (todayTasksCount === 10) {
+  if (todayTasksCount === PRODUCTIVITY_GOAL_FOR_TODAY) {
     await createUserBadgeLog(userId, '생산성 뱃지1');
   }
-  if (weeklyTasksCount === 100) {
+  if (weeklyTasksCount === PRODUCTIVITY_GOAL_FOR_A_WEEK_AGO) {
     await createUserBadgeLog(userId, '생산성 뱃지2');
   }
-  if (monthTasksCount === 500) {
+  if (monthTasksCount === PRODUCTIVITY_GOAL_FOR_A_MONTH_AGO) {
     await createUserBadgeLog(userId, '생산성 뱃지3');
   }
 };

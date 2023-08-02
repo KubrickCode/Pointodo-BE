@@ -38,6 +38,7 @@ import { setDiversityBadgeType } from './utils/setDiversityBadgeType';
 import { completeDiversity } from './utils/completeDiversity';
 import { completeProductivity } from './utils/completeProductivity';
 import { COMPLETE_TASK_CONFLICT } from '@shared/messages/task/task.errors';
+import { IS_COMPLETED } from '@shared/constants/task.constant';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -86,7 +87,8 @@ export class TaskService implements ITaskService {
         req.id,
       );
 
-      if (completion !== 1) throw new ConflictException(COMPLETE_TASK_CONFLICT);
+      if (completion !== IS_COMPLETED)
+        throw new ConflictException(COMPLETE_TASK_CONFLICT);
 
       const isContinuous = await this.pointRepository.isContinuous(
         req.userId,
@@ -134,7 +136,7 @@ export class TaskService implements ITaskService {
 
       const { completion: updatedCompletion } =
         await this.taskRepository.getTaskLogById(req.id);
-      if (updatedCompletion !== 1)
+      if (updatedCompletion !== IS_COMPLETED)
         throw new ConflictException(COMPLETE_TASK_CONFLICT);
 
       await this.transaction.commitTransaction();

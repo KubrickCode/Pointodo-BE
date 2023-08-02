@@ -19,6 +19,7 @@ import { jwtExpiration } from '@shared/config/jwt.config';
 import {
   AUTH_EXPIRED_REFRESH_TOKEN,
   AUTH_INVALID_ADMIN,
+  AUTH_INVALID_PASSWORD,
   AUTH_INVALID_TOKEN,
 } from '@shared/messages/auth/auth.errors';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
@@ -47,6 +48,7 @@ import {
   ResValidateAdminAppDto,
 } from '@auth/domain/dto/validateAdmin.app.dto';
 import { PasswordHasher } from '@shared/utils/passwordHasher';
+import { USER_NOT_FOUND } from '@shared/messages/user/user.errors';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -76,7 +78,7 @@ export class AuthService implements IAuthService {
     const user = await this.userRepository.findByEmail(req.email);
 
     if (!user) {
-      throw new NotFoundException('존재하지 않는 계정입니다');
+      throw new NotFoundException(USER_NOT_FOUND);
     }
 
     const isCorrectPassword = await PasswordHasher.comparePassword(
@@ -85,7 +87,7 @@ export class AuthService implements IAuthService {
     );
 
     if (!isCorrectPassword) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다');
+      throw new UnauthorizedException(AUTH_INVALID_PASSWORD);
     }
 
     return user;
@@ -100,7 +102,7 @@ export class AuthService implements IAuthService {
       user.password,
     );
     if (!isCorrectPassword) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다');
+      throw new UnauthorizedException(AUTH_INVALID_PASSWORD);
     }
     return { message: CHECK_PASSWORD_MESSAGE };
   }
