@@ -5,4 +5,8 @@ export interface IUserBadgeRepository {
     userId: string,
     badgeType: string,
   ): Promise<UserBadgeEntity>;
+
+  getUserBadgeList(
+    userId: string,
+  ): Promise<Pick<UserBadgeEntity, 'badgeType'>[]>;
 }
