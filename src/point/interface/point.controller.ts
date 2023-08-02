@@ -3,10 +3,18 @@ import { IPointService } from '@point/domain/interfaces/point.service.interface'
 import { ResGetAllPointsLogsDto } from './dto/getAllPointsLogs.dto';
 import { Request } from 'express';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
-import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { globalDocs } from '@shared/docs/global.docs';
+import { getAllPointsLogsDocs } from './docs/getAllPointsLogs.docs';
 
 @Controller('point')
+@ApiTags('Point')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
@@ -17,6 +25,8 @@ export class PointController {
   ) {}
 
   @Get('logs')
+  @ApiOperation(getAllPointsLogsDocs.operation)
+  @ApiOkResponse(getAllPointsLogsDocs.okResponse)
   async getAllPointsLogs(
     @Req() req: Request,
   ): Promise<ResGetAllPointsLogsDto[]> {
