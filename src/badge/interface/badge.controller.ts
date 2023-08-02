@@ -19,6 +19,7 @@ import {
   ResChangeSelectedBadgeDto,
 } from './dto/changeSelectedBadge.dto';
 import { ResGetUserBadgeListDto } from './dto/getUserBadgeList.dto';
+import { ResGetAllBadgeProgressDto } from './dto/getAllBadgeProgress.dto';
 
 @Controller('badge')
 @UseGuards(JwtAuthGuard)
@@ -43,6 +44,13 @@ export class BadgeController {
     @Req() req: Request,
   ): Promise<ResGetUserBadgeListDto[]> {
     return await this.badgeService.getUserBadgeList({ userId: req.user.id });
+  }
+
+  @Get('progress')
+  async getAllBadgeProgress(
+    @Req() req: Request,
+  ): Promise<ResGetAllBadgeProgressDto[]> {
+    return await this.badgeService.getAllBadgeProgress({ userId: req.user.id });
   }
 
   @Patch('selected')
