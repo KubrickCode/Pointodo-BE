@@ -61,4 +61,6 @@ export class UserRepository implements IUserRepository {
     const user = await this.prisma.$queryRawUnsafe<User>(query, ...values);
     return user[0];
   }
+
+  changeSelectedBadge;
 }
