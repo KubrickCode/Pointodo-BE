@@ -12,7 +12,16 @@ import {
 } from '@nestjs/common';
 import { ITaskService } from '../domain/interfaces/task.service.interface';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
-import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { globalDocs } from '@shared/docs/global.docs';
 import { Request } from 'express';
 import {
@@ -26,8 +35,14 @@ import {
   ReqCompleteTaskParamDto,
   ResCompleteTaskDto,
 } from './dto/completeTask.dto';
+import { getTasksLogsDocs } from './docs/getTasksLogs.docs';
+import { createTaskDocs } from './docs/createTask.docs';
+import { updateTaskDocs } from './docs/updateTask.docs';
+import { deleteTaskDocs } from './docs/deleteTask.docs';
+import { completeTaskDocs } from './docs/completeTask.docs';
 
 @Controller('task')
+@ApiTags('Task')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
@@ -38,6 +53,8 @@ export class TaskController {
   ) {}
 
   @Get('/:taskType')
+  @ApiOperation(getTasksLogsDocs.operation)
+  @ApiOkResponse(getTasksLogsDocs.okResponse)
   async getTasksLogs(
     @Req() req: Request,
     @Param() param: ReqGetTasksLogsParamDto,
@@ -48,6 +65,9 @@ export class TaskController {
   }
 
   @Post('create')
+  @ApiOperation(createTaskDocs.operation)
+  @ApiCreatedResponse(createTaskDocs.okResponse)
+  @ApiBadRequestResponse(globalDocs.invalidationResponse)
   async createTask(
     @Req() req: Request,
     @Body() body: ReqCreateTaskDto,
@@ -57,11 +77,16 @@ export class TaskController {
   }
 
   @Patch('update')
+  @ApiOperation(updateTaskDocs.operation)
+  @ApiOkResponse(updateTaskDocs.okResponse)
+  @ApiBadRequestResponse(globalDocs.invalidationResponse)
   async updateTask(@Body() body: ReqUpdateTaskDto): Promise<ResUpdateTaskDto> {
     return await this.taskService.updateTask(body);
   }
 
   @Delete('/:id')
+  @ApiOperation(deleteTaskDocs.operation)
+  @ApiOkResponse(deleteTaskDocs.okResponse)
   async deleteTask(
     @Param() param: ReqDeleteTaskParamDto,
   ): Promise<ResDeleteTaskDto> {
@@ -69,6 +94,9 @@ export class TaskController {
   }
 
   @Patch('/complete/:id')
+  @ApiOperation(completeTaskDocs.operation)
+  @ApiOkResponse(completeTaskDocs.okResponse)
+  @ApiConflictResponse(completeTaskDocs.conflictError)
   async completeTask(
     @Req() req: Request,
     @Param() param: ReqCompleteTaskParamDto,

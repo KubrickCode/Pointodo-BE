@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UPDATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqUpdateTaskDto {
@@ -24,7 +25,7 @@ export class ReqUpdateTaskDto {
 
 export class ResUpdateTaskDto {
   @ApiProperty({
-    example: '작업 업데이트 성공',
+    example: UPDATE_TASK_SUCCESS_MESSAGE,
     description: '성공 메시지',
   })
   @IsString()

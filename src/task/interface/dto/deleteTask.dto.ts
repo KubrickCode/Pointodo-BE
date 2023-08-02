@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { DELETE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
 import { Type } from 'class-transformer';
 import { IsInt, IsString } from 'class-validator';
 
@@ -11,7 +12,7 @@ export class ReqDeleteTaskParamDto {
 
 export class ResDeleteTaskDto {
   @ApiProperty({
-    example: '작업 삭제 성공',
+    example: DELETE_TASK_SUCCESS_MESSAGE,
     description: '성공 메시지',
   })
   @IsString()
