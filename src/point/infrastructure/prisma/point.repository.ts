@@ -11,7 +11,7 @@ export class PointRepository implements IPointRepository {
   async getAllPointsLogs(userId: string): Promise<PointEntity[]> {
     const query = `
     SELECT * FROM "PointsLogs"
-    WHERE "userId" = $1
+    WHERE "userId" = $1::uuid
     `;
 
     const values = [userId];
