@@ -62,5 +62,16 @@ export class UserRepository implements IUserRepository {
     return user[0];
   }
 
-  changeSelectedBadge;
+  async changeSelectedBadge(
+    userId: string,
+    badgeType: string,
+  ): Promise<UserEntity> {
+    const query = `
+    UPDATE "User" SET selectedBadge = $1 WHERE id = $2::uuid
+    RETURNING *
+    `;
+    const values = [badgeType, userId];
+    const user = await this.prisma.$queryRawUnsafe<User>(query, ...values);
+    return user[0];
+  }
 }
