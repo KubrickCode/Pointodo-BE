@@ -40,6 +40,7 @@ import {
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 import { initialUserBadgeProgress } from '@shared/utils/initialUserBadgeProgress';
 import { PasswordHasher } from '@shared/utils/passwordHasher';
+import { ITransaction } from '@shared/interfaces/transaction.interface';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -52,36 +53,45 @@ export class UserService implements IUserService {
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
+    @Inject('ITransaction')
+    private readonly transaction: ITransaction,
   ) {}
 
   async register(newUser: ReqRegisterAppDto): Promise<ResRegisterAppDto> {
-    const { email, password } = newUser;
+    await this.transaction.beginTransaction();
+    try {
+      const { email, password } = newUser;
 
-    const existingUser = await this.userRepository.findByEmail(email);
+      const existingUser = await this.userRepository.findByEmail(email);
 
-    if (existingUser) {
-      throw new ConflictException(USER_ALREADY_EXISTS);
-    }
+      if (existingUser) {
+        throw new ConflictException(USER_ALREADY_EXISTS);
+      }
 
-    const hashedPassword = await PasswordHasher.hashPassword(password);
+      const hashedPassword = await PasswordHasher.hashPassword(password);
 
-    const createdUser = await this.userRepository.createUser(
-      email,
-      hashedPassword,
-    );
-
-    for (const badgeType of initialUserBadgeProgress) {
-      await this.badgeProgressRepository.createBadgeProgress(
-        createdUser.id,
-        badgeType,
+      const createdUser = await this.userRepository.createUser(
+        email,
+        hashedPassword,
       );
-    }
 
-    this.logger.log(
-      'info',
-      `가입 이메일:${createdUser.email}, 사용자 ID:${createdUser.id}, 가입 일시:${createdUser.createdAt}, 공급 업체:${createdUser.provider}`,
-    );
-    return { message: REGISTER_SUCCESS_MESSAGE };
+      for (const badgeType of initialUserBadgeProgress) {
+        await this.badgeProgressRepository.createBadgeProgress(
+          createdUser.id,
+          badgeType,
+        );
+      }
+
+      this.logger.log(
+        'info',
+        `가입 이메일:${createdUser.email}, 사용자 ID:${createdUser.id}, 가입 일시:${createdUser.createdAt}, 공급 업체:${createdUser.provider}`,
+      );
+      await this.transaction.commitTransaction();
+      return { message: REGISTER_SUCCESS_MESSAGE };
+    } catch (error) {
+      await this.transaction.rollbackTransaction();
+      throw error;
+    }
   }
 
   async getUser(req: ReqGetUserAppDto): Promise<ResGetUserAppDto> {
