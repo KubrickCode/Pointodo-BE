@@ -11,6 +11,7 @@ import { jwtConfig } from '@shared/config/jwt.config';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgress.repository';
+import { CacheService } from '@cache/infrastructure/cache.service';
 
 @Module({
   controllers: [BadgeController],
@@ -39,6 +40,10 @@ import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgr
     {
       provide: 'IBadgeProgressRepository',
       useClass: BadgeProgressRepository,
+    },
+    {
+      provide: 'ICacheService',
+      useClass: CacheService,
     },
     {
       provide: 'ITransaction',

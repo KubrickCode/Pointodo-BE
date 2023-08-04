@@ -50,7 +50,7 @@ export class UserService implements IUserService {
     @Inject('IBadgeProgressRepository')
     private readonly badgeProgressRepository: IBadgeProgressRepository,
     @Inject('ICacheService')
-    private readonly cacheRepository: ICacheService,
+    private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -86,7 +86,7 @@ export class UserService implements IUserService {
 
   async getUser(req: ReqGetUserAppDto): Promise<ResGetUserAppDto> {
     const cacheKey = `user:${req.id}`;
-    const cachedUser = await this.cacheRepository.getFromCache<UserEntity>(
+    const cachedUser = await this.cacheService.getFromCache<UserEntity>(
       cacheKey,
     );
     if (cachedUser) return cachedUser;
@@ -96,7 +96,7 @@ export class UserService implements IUserService {
       throw new NotFoundException(USER_NOT_FOUND);
     }
 
-    await this.cacheRepository.setCache(
+    await this.cacheService.setCache(
       cacheKey,
       user,
       cacheConfig(this.configService).cacheTTL,
@@ -115,7 +115,7 @@ export class UserService implements IUserService {
 
   async deleteUser(req: ReqDeleteUserAppDto): Promise<ResDeleteUserAppDto> {
     const user = await this.userRepository.deleteUser(req.id);
-    await this.cacheRepository.deleteCache(`user:${req.id}`);
+    await this.cacheService.deleteCache(`user:${req.id}`);
     this.logger.log(
       'info',
       `회원 탈퇴 - 사용자 ID:${user.id}, 유저 이메일:${user.email}`,

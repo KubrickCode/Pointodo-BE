@@ -39,6 +39,8 @@ import { completeDiversity } from './utils/completeDiversity';
 import { completeProductivity } from './utils/completeProductivity';
 import { COMPLETE_TASK_CONFLICT } from '@shared/messages/task/task.errors';
 import { IS_COMPLETED } from '@shared/constants/task.constant';
+import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -53,6 +55,9 @@ export class TaskService implements ITaskService {
     private readonly transaction: ITransaction,
     @Inject('IUserBadgeRepository')
     private readonly userBadgeRepository: IUserBadgeRepository,
+    @Inject('ICacheService')
+    private readonly cacheService: ICacheService,
+    private readonly configService: ConfigService,
   ) {}
 
   async getTasksLogs(
@@ -103,6 +108,9 @@ export class TaskService implements ITaskService {
         taskType,
         setTaskPoints(taskType, isContinuous),
       );
+
+      await this.cacheService.deleteCache(`userBadgeProgress:${req.userId}`);
+      await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
 
       const updatedConsistency =
         await this.badgeProgressRepository.updateConsistency(

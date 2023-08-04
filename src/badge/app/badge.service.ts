@@ -15,16 +15,21 @@ import {
   ReqGetUserBadgeListAppDto,
   ResGetUserBadgeListAppDto,
 } from '@badge/domain/dto/getUserBadgeList.app.dto';
+import { BadgeProgressEntity } from '@badge/domain/entities/badgeProgress.entity';
+import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
+import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import {
   ConflictException,
   Inject,
   Injectable,
   BadRequestException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
+import { cacheConfig } from '@shared/config/cache.config';
 import { ITransaction } from '@shared/interfaces/transaction.interface';
 import {
   ALREADY_EXIST_USER_BADGE,
@@ -53,6 +58,9 @@ export class BadgeService implements IBadgeService {
     private readonly badgeProgressRepository: IBadgeProgressRepository,
     @Inject('ITransaction')
     private readonly transaction: ITransaction,
+    @Inject('ICacheService')
+    private readonly cacheService: ICacheService,
+    private readonly configService: ConfigService,
   ) {}
 
   async buyBadge(req: ReqBuyBadgeAppDto): Promise<ResBuyBadgeAppDto> {
@@ -72,6 +80,7 @@ export class BadgeService implements IBadgeService {
         `${badgeType} 구매`,
         -price,
       );
+      await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
       await this.userBadgeRepository.createUserBadgeLog(userId, badgeType);
 
       const afterPoint = await this.pointRepository.calculateUserPoints(userId);
@@ -86,7 +95,7 @@ export class BadgeService implements IBadgeService {
       if (filteredBadgeList.length > 1)
         throw new ConflictException(ALREADY_EXIST_USER_BADGE);
 
-      if (afterPoint - price < 0)
+      if (afterPoint < 0)
         throw new ConflictException(BUY_BADGE_CONFLICT_POINTS);
 
       await this.transaction.commitTransaction();
@@ -100,7 +109,23 @@ export class BadgeService implements IBadgeService {
   async getUserBadgeList(
     req: ReqGetUserBadgeListAppDto,
   ): Promise<ResGetUserBadgeListAppDto[]> {
-    return await this.userBadgeRepository.getUserBadgeList(req.userId);
+    const cacheKey = `userBadgeList:${req.userId}`;
+    const cachedBadgeList = await this.cacheService.getFromCache<
+      UserBadgeEntity[]
+    >(cacheKey);
+    if (cachedBadgeList) {
+      return cachedBadgeList;
+    }
+
+    const result = await this.userBadgeRepository.getUserBadgeList(req.userId);
+
+    await this.cacheService.setCache(
+      cacheKey,
+      result,
+      cacheConfig(this.configService).cacheTTL,
+    );
+
+    return result;
   }
 
   async changeSelectedBadge(
@@ -123,6 +148,21 @@ export class BadgeService implements IBadgeService {
   async getAllBadgeProgress(
     req: ReqGetAllBadgeProgressAppDto,
   ): Promise<ResGetAllBadgeProgressAppDto[]> {
-    return await this.badgeProgressRepository.getAllBadgeProgress(req.userId);
+    const cacheKey = `userBadgeProgress:${req.userId}`;
+    const cachedBadgeProgress = await this.cacheService.getFromCache<
+      BadgeProgressEntity[]
+    >(cacheKey);
+    if (cachedBadgeProgress) {
+      return cachedBadgeProgress;
+    }
+    const result = await this.badgeProgressRepository.getAllBadgeProgress(
+      req.userId,
+    );
+    await this.cacheService.setCache(
+      cacheKey,
+      result,
+      cacheConfig(this.configService).cacheTTL,
+    );
+    return result;
   }
 }
