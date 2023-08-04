@@ -81,6 +81,8 @@ export class BadgeService implements IBadgeService {
         -price,
       );
       await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
+      await this.cacheService.deleteCache(`userPointsLogs:${req.userId}`);
+      await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
       await this.userBadgeRepository.createUserBadgeLog(userId, badgeType);
 
       const afterPoint = await this.pointRepository.calculateUserPoints(userId);
