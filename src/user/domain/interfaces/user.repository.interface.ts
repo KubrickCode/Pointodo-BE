@@ -8,7 +8,8 @@ export interface IUserRepository {
   ): Promise<UserEntity>;
   findByEmail(email: string): Promise<UserEntity | null>;
   findById(id: string): Promise<UserEntity | null>;
-  changePassword(id: string, newPassword: string): Promise<UserEntity>;
+  findPasswordById(email: string): Promise<string>;
+  changePassword(id: string, newPassword: string): Promise<void>;
   deleteUser(id: string): Promise<UserEntity>;
   changeSelectedBadge(userId: string, badgeType: string): Promise<UserEntity>;
 }

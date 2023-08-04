@@ -81,9 +81,11 @@ export class AuthService implements IAuthService {
       throw new NotFoundException(USER_NOT_FOUND);
     }
 
+    const userPassword = await this.userRepository.findPasswordById(user.id);
+
     const isCorrectPassword = await PasswordHasher.comparePassword(
       req.password,
-      user.password,
+      userPassword,
     );
 
     if (!isCorrectPassword) {
@@ -96,10 +98,10 @@ export class AuthService implements IAuthService {
   async checkPassword(
     req: ReqCheckPasswordAppDto,
   ): Promise<ResCheckPasswordAppDto> {
-    const user = await this.userRepository.findById(req.id);
+    const userPassword = await this.userRepository.findPasswordById(req.id);
     const isCorrectPassword = await PasswordHasher.comparePassword(
       req.password,
-      user.password,
+      userPassword,
     );
     if (!isCorrectPassword) {
       throw new UnauthorizedException(AUTH_INVALID_PASSWORD);
