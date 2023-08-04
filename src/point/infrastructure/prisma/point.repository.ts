@@ -69,7 +69,8 @@ export class PointRepository implements IPointRepository {
       `;
 
     const countTasksValues = [userId, date];
-    const tasksCount = await this.prisma.$queryRawUnsafe<number>(
+
+    const tasksCount = await this.prisma.$queryRawUnsafe<[{ count: number }]>(
       countTasksQuery,
       ...countTasksValues,
     );

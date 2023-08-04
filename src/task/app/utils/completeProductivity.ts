@@ -25,7 +25,7 @@ export const completeProductivity = async (
   );
   const weeklyTasksCount = await countTasksPerDate(
     userId,
-    HandleDateTime.getWeekAgo,
+    HandleDateTime.getAWeekAgo,
   );
   const monthTasksCount = await countTasksPerDate(
     userId,

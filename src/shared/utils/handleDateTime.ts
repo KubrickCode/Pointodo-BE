@@ -6,6 +6,6 @@ export class HandleDateTime {
 
   static getToday = this.today.format(this.DATE_FORMATTER);
   static getYesterday = this.today.minusDays(1).format(this.DATE_FORMATTER);
-  static getWeekAgo = this.today.minusWeeks(1).format(this.DATE_FORMATTER);
+  static getAWeekAgo = this.today.minusWeeks(1).format(this.DATE_FORMATTER);
   static getAMonthAgo = this.today.minusMonths(1).format(this.DATE_FORMATTER);
 }

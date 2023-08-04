@@ -120,9 +120,9 @@ export class TaskService implements ITaskService {
   async completeTask(
     req: ReqCompleteTaskAppDto,
   ): Promise<ResCompleteTaskAppDto> {
-    try {
-      await this.transaction.beginTransaction();
+    await this.transaction.beginTransaction();
 
+    try {
       await this.taskRepository.completeTask(req.id);
 
       const { taskType, completion } = await this.taskRepository.getTaskLogById(
@@ -161,7 +161,9 @@ export class TaskService implements ITaskService {
       await completeConsistency(
         updatedConsistency,
         req.userId,
-        this.userBadgeRepository.createUserBadgeLog,
+        this.userBadgeRepository.createUserBadgeLog.bind(
+          this.userBadgeRepository,
+        ),
       );
 
       const updatedDiversity =
@@ -174,15 +176,23 @@ export class TaskService implements ITaskService {
         updatedDiversity,
         taskType,
         req.userId,
-        this.userBadgeRepository.createUserBadgeLog,
+        this.userBadgeRepository.createUserBadgeLog.bind(
+          this.userBadgeRepository,
+        ),
       );
 
       await completeProductivity(
         req.userId,
-        this.pointRepository.countTasksPerDate,
-        this.userBadgeRepository.createUserBadgeLog,
-        this.badgeProgressRepository.updateProductivity,
+        this.pointRepository.countTasksPerDate.bind(this.pointRepository),
+        this.userBadgeRepository.createUserBadgeLog.bind(
+          this.userBadgeRepository,
+        ),
+        this.badgeProgressRepository.updateProductivity.bind(
+          this.badgeProgressRepository,
+        ),
       );
+
+      console.log('hi');
 
       const { completion: updatedCompletion } =
         await this.taskRepository.getTaskLogById(req.id);

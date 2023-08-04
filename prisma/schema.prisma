@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   id                String            @id @default(uuid()) @db.Uuid 
-  selectedBadge      String            @default("기본 뱃지")
+  selectedBadge     String            @default("기본 뱃지")
   email             String            @unique @db.VarChar(255)
   password          String?           @db.VarChar(255)
   provider          Provider          @default(LOCAL)
