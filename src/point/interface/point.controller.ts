@@ -12,6 +12,8 @@ import {
 } from '@nestjs/swagger';
 import { globalDocs } from '@shared/docs/global.docs';
 import { getAllPointsLogsDocs } from './docs/getAllPointsLogs.docs';
+import { ResGetCurrentPointsDto } from './dto/getCurrentPoints.dto';
+import { getCurrentPointsDocs } from './docs/getCurrentPoints.docs';
 
 @Controller('point')
 @ApiTags('Point')
@@ -31,5 +33,12 @@ export class PointController {
     @Req() req: Request,
   ): Promise<ResGetAllPointsLogsDto[]> {
     return await this.pointService.getAllPointsLogs({ userId: req.user.id });
+  }
+
+  @Get('current')
+  @ApiOperation(getCurrentPointsDocs.operation)
+  @ApiOkResponse(getCurrentPointsDocs.okResponse)
+  async getCurrentPoints(@Req() req: Request): Promise<ResGetCurrentPointsDto> {
+    return await this.pointService.getCurrentPoints({ userId: req.user.id });
   }
 }
