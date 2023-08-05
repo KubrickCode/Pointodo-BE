@@ -1,12 +1,8 @@
 import { TaskEntity } from '../entities/task.entity';
-import { Prisma } from '@prisma/client';
 
 export interface ITaskRepository {
   getTasksLogs(userId: string, taskType: string): Promise<TaskEntity[]>;
-  getTaskLogById(
-    id: number,
-    tx?: Prisma.TransactionClient,
-  ): Promise<TaskEntity>;
+  getTaskLogById(id: number): Promise<TaskEntity>;
   createTask(
     userId: string,
     taskType: string,

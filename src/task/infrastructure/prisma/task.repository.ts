@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, TasksLogs } from '@prisma/client';
+import { TasksLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
 import { TaskEntity } from '@task/domain/entities/task.entity';
 import { ITaskRepository } from '@task/domain/interfaces/task.repository.interface';
@@ -22,17 +22,16 @@ export class TaskRepository implements ITaskRepository {
     return tasksLogs;
   }
 
-  async getTaskLogById(
-    id: number,
-    tx?: Prisma.TransactionClient,
-  ): Promise<TaskEntity> {
-    const prisma = tx ? tx : this.prisma;
+  async getTaskLogById(id: number): Promise<TaskEntity> {
     const query = `
       SELECT * FROM "TasksLogs"
       WHERE id = $1
     `;
     const values = [id];
-    const taskLog = await prisma.$queryRawUnsafe<TasksLogs>(query, ...values);
+    const taskLog = await this.prisma.$queryRawUnsafe<TasksLogs>(
+      query,
+      ...values,
+    );
     return taskLog[0];
   }
 

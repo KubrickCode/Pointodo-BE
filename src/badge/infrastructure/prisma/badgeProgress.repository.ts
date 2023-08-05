@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
 import { BadgeProgressEntity } from '@badge/domain/entities/badgeProgress.entity';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
-import { BadgeProgress, Prisma } from '@prisma/client';
+import { BadgeProgress } from '@prisma/client';
 
 @Injectable()
 export class BadgeProgressRepository implements IBadgeProgressRepository {
@@ -42,9 +42,7 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
   async updateConsistency(
     userId: string,
     isContinuous: boolean,
-    tx?: Prisma.TransactionClient,
   ): Promise<number> {
-    const prisma = tx ? tx : this.prisma;
     const consistencyQuery = `
         INSERT INTO "BadgeProgress"("userId", "badgeType", progress)
         VALUES ($1::uuid, '일관성 뱃지3', 1)
@@ -56,10 +54,11 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
 
     const consistencyValues = [userId];
 
-    const updatedBadgeProgress = await prisma.$queryRawUnsafe<BadgeProgress>(
-      consistencyQuery,
-      ...consistencyValues,
-    );
+    const updatedBadgeProgress =
+      await this.prisma.$queryRawUnsafe<BadgeProgress>(
+        consistencyQuery,
+        ...consistencyValues,
+      );
 
     return updatedBadgeProgress[0].progress;
   }
