@@ -6,7 +6,6 @@ import { PrismaService } from '@shared/service/prisma.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { jwtConfig } from '@shared/config/jwt.config';
-import { PrismaTransaction } from '@shared/service/transaction.service';
 import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgress.repository';
 import { PointRepository } from '@point/infrastructure/prisma/point.repository';
 import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repository';
@@ -38,13 +37,6 @@ import { CacheService } from '@cache/infrastructure/cache.service';
     {
       provide: 'ICacheService',
       useClass: CacheService,
-    },
-    {
-      provide: 'ITransaction',
-      useFactory: (prismaService: PrismaService) => {
-        return new PrismaTransaction(prismaService);
-      },
-      inject: [PrismaService],
     },
   ],
   controllers: [TaskController],

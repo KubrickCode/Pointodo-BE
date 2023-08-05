@@ -30,7 +30,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
 import { cacheConfig } from '@shared/config/cache.config';
-import { ITransaction } from '@shared/interfaces/transaction.interface';
 import {
   ALREADY_EXIST_USER_BADGE,
   BUY_BADGE_CONFLICT_POINTS,
@@ -56,58 +55,46 @@ export class BadgeService implements IBadgeService {
     private readonly userRepository: IUserRepository,
     @Inject('IBadgeProgressRepository')
     private readonly badgeProgressRepository: IBadgeProgressRepository,
-    @Inject('ITransaction')
-    private readonly transaction: ITransaction,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
   ) {}
 
   async buyBadge(req: ReqBuyBadgeAppDto): Promise<ResBuyBadgeAppDto> {
-    await this.transaction.beginTransaction();
-    try {
-      const { userId, badgeType } = req;
-      const price = await this.badgeAdminRepository.getBadgePrice(badgeType);
-      const currentPoint = await this.pointRepository.calculateUserPoints(
-        userId,
-      );
-      if (currentPoint - price < 0)
-        throw new ConflictException(BUY_BADGE_LESS_POINTS);
+    const { userId, badgeType } = req;
+    const price = await this.badgeAdminRepository.getBadgePrice(badgeType);
+    const currentPoint = await this.pointRepository.calculateUserPoints(userId);
+    if (currentPoint - price < 0)
+      throw new ConflictException(BUY_BADGE_LESS_POINTS);
 
-      await this.pointRepository.createPointLog(
-        userId,
-        'SPENT',
-        `${badgeType} 구매`,
-        -price,
-      );
+    await this.pointRepository.createPointLog(
+      userId,
+      'SPENT',
+      `${badgeType} 구매`,
+      -price,
+    );
 
-      await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
-      await this.cacheService.deleteCache(`userPointsLogs:${req.userId}`);
-      await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
+    await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
+    await this.cacheService.deleteCache(`userPointsLogs:${req.userId}`);
+    await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
 
-      await this.userBadgeRepository.createUserBadgeLog(userId, badgeType);
+    await this.userBadgeRepository.createUserBadgeLog(userId, badgeType);
 
-      const afterPoint = await this.pointRepository.calculateUserPoints(userId);
-      const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
-        userId,
-      );
+    const afterPoint = await this.pointRepository.calculateUserPoints(userId);
+    const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
+      userId,
+    );
 
-      const filteredBadgeList = userBadgeList.filter(
-        (item) => item.badgeType === badgeType,
-      );
+    const filteredBadgeList = userBadgeList.filter(
+      (item) => item.badgeType === badgeType,
+    );
 
-      if (filteredBadgeList.length > 1)
-        throw new ConflictException(ALREADY_EXIST_USER_BADGE);
+    if (filteredBadgeList.length > 1)
+      throw new ConflictException(ALREADY_EXIST_USER_BADGE);
 
-      if (afterPoint < 0)
-        throw new ConflictException(BUY_BADGE_CONFLICT_POINTS);
+    if (afterPoint < 0) throw new ConflictException(BUY_BADGE_CONFLICT_POINTS);
 
-      await this.transaction.commitTransaction();
-      return { message: BUY_BADGE_SUCCESS_MESSAGE };
-    } catch (error) {
-      await this.transaction.rollbackTransaction();
-      throw error;
-    }
+    return { message: BUY_BADGE_SUCCESS_MESSAGE };
   }
 
   async getUserBadgeList(

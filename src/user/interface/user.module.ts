@@ -8,7 +8,6 @@ import { PrismaService } from '@shared/service/prisma.service';
 import { CacheService } from '@cache/infrastructure/cache.service';
 import { jwtConfig } from '@shared/config/jwt.config';
 import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgress.repository';
-import { PrismaTransaction } from '@shared/service/transaction.service';
 
 @Module({
   controllers: [UserController],
@@ -29,13 +28,6 @@ import { PrismaTransaction } from '@shared/service/transaction.service';
     {
       provide: 'IBadgeProgressRepository',
       useClass: BadgeProgressRepository,
-    },
-    {
-      provide: 'ITransaction',
-      useFactory: (prismaService: PrismaService) => {
-        return new PrismaTransaction(prismaService);
-      },
-      inject: [PrismaService],
     },
   ],
   imports: [

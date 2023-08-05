@@ -23,7 +23,6 @@ import {
   ReqGetTasksLogsAppDto,
   ResGetTasksLogsAppDto,
 } from '../domain/dto/getTasksLogs.app.dto';
-import { ITransaction } from '@shared/interfaces/transaction.interface';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
 import { HandleDateTime } from '@shared/utils/handleDateTime';
@@ -43,7 +42,6 @@ import { ICacheService } from '@cache/domain/interfaces/cache.service.interface'
 import { ConfigService } from '@nestjs/config';
 import { TaskEntity } from '@task/domain/entities/task.entity';
 import { cacheConfig } from '@shared/config/cache.config';
-import { PrismaService } from '@shared/service/prisma.service';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -54,14 +52,11 @@ export class TaskService implements ITaskService {
     private readonly badgeProgressRepository: IBadgeProgressRepository,
     @Inject('IPointRepository')
     private readonly pointRepository: IPointRepository,
-    @Inject('ITransaction')
-    private readonly transaction: ITransaction,
     @Inject('IUserBadgeRepository')
     private readonly userBadgeRepository: IUserBadgeRepository,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
-    private readonly prisma: PrismaService,
   ) {}
 
   async getTasksLogs(
