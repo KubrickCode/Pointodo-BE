@@ -1,23 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { TasksLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
-import { TaskEntity } from 'src/task/domain/entities/task.entity';
-import { ITaskRepository } from 'src/task/domain/interfaces/task.repository.interface';
+import { TaskEntity } from '@task/domain/entities/task.entity';
+import { ITaskRepository } from '@task/domain/interfaces/task.repository.interface';
 
 @Injectable()
 export class TaskRepository implements ITaskRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getTasksLogs(
-    userId: string,
-    taskTypesId: number,
-  ): Promise<TaskEntity[]> {
+  async getTasksLogs(userId: string, taskType: string): Promise<TaskEntity[]> {
     const query = `
       SELECT * FROM "TasksLogs"
       WHERE "userId" = $1::uuid
-      AND "taskTypesId" = $2
+      AND "taskType" = $2
     `;
-    const values = [userId, taskTypesId];
+    const values = [userId, taskType];
     const tasksLogs = await this.prisma.$queryRawUnsafe<TasksLogs[]>(
       query,
       ...values,
@@ -25,14 +22,31 @@ export class TaskRepository implements ITaskRepository {
     return tasksLogs;
   }
 
-  async createTask(req: Partial<TaskEntity>): Promise<TaskEntity> {
-    const { userId, taskTypesId, name, description } = req;
+  async getTaskLogById(id: number): Promise<TaskEntity> {
     const query = `
-      INSERT INTO "TasksLogs" ("userId", "taskTypesId", name, description)
+      SELECT * FROM "TasksLogs"
+      WHERE id = $1
+    `;
+    const values = [id];
+    const taskLog = await this.prisma.$queryRawUnsafe<TasksLogs>(
+      query,
+      ...values,
+    );
+    return taskLog[0];
+  }
+
+  async createTask(
+    userId: string,
+    taskType: string,
+    name: string,
+    description: string,
+  ): Promise<TaskEntity> {
+    const query = `
+      INSERT INTO "TasksLogs" ("userId", "taskType", name, description)
       VALUES ($1::uuid, $2, $3, $4)
       RETURNING *
     `;
-    const values = [userId, taskTypesId, name, description];
+    const values = [userId, taskType, name, description];
     const newTasksLogs = await this.prisma.$queryRawUnsafe<TasksLogs>(
       query,
       ...values,
@@ -40,8 +54,12 @@ export class TaskRepository implements ITaskRepository {
     return newTasksLogs[0];
   }
 
-  async updateTask(req: Partial<TaskEntity>): Promise<TaskEntity> {
-    const { id, name, description, completion, importance } = req;
+  async updateTask(
+    id: number,
+    name: string,
+    description: string,
+    importance: number,
+  ): Promise<TaskEntity> {
     const updateFields: string[] = [];
     const values: (number | string)[] = [];
     let placeholderIndex = 1;
@@ -58,13 +76,7 @@ export class TaskRepository implements ITaskRepository {
       placeholderIndex++;
     }
 
-    if (completion !== undefined) {
-      updateFields.push(`completion = $${placeholderIndex}`);
-      values.push(completion);
-      placeholderIndex++;
-    }
-
-    if (importance) {
+    if (importance !== undefined) {
       updateFields.push(`importance = $${placeholderIndex}`);
       values.push(importance);
       placeholderIndex++;
@@ -74,11 +86,11 @@ export class TaskRepository implements ITaskRepository {
     placeholderIndex++;
 
     const query = `
-    UPDATE "TasksLogs"
-    SET ${updateFields.join(', ')}
-    WHERE id = $${placeholderIndex - 1}
-    RETURNING *
-  `;
+      UPDATE "TasksLogs"
+      SET ${updateFields.join(', ')}
+      WHERE id = $${placeholderIndex - 1}
+      RETURNING *
+    `;
 
     const updatedTaskLog = await this.prisma.$queryRawUnsafe<TasksLogs>(
       query,
@@ -99,5 +111,21 @@ export class TaskRepository implements ITaskRepository {
       ...values,
     );
     return deletedTaskLog[0];
+  }
+
+  async completeTask(id: number, isRollback?: boolean): Promise<TaskEntity> {
+    const completeQuery = `
+        UPDATE "TasksLogs"
+        SET completion = completion ${isRollback ? '- 1' : '+ 1'}
+        WHERE id = $1
+        RETURNING *
+      `;
+    const completeValues = [id];
+    const completedTaskLog = await this.prisma.$queryRawUnsafe<TasksLogs>(
+      completeQuery,
+      ...completeValues,
+    );
+
+    return completedTaskLog[0];
   }
 }

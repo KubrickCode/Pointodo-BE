@@ -45,7 +45,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         case 'jwt expired':
           throw new UnauthorizedException(AUTH_EXPIRED_TOKEN);
         default:
-          throw new HttpException('서버 오류입니다.', 500);
+          throw new HttpException('서버 오류', 500);
       }
     }
   }

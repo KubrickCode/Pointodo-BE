@@ -6,12 +6,6 @@ export class ReqUpdateBadgeTypeAppDto {
   @IsInt()
   readonly id: number;
 
-  @ApiProperty({ description: '새 뱃지 ID' })
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsInt()
-  readonly newId: number;
-
   @ApiProperty({ description: '뱃지 타입 이름' })
   @ApiPropertyOptional()
   @IsOptional()

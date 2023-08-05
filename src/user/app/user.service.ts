@@ -12,7 +12,6 @@ import {
 } from '@shared/messages/user/user.messages';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
-import { IPasswordHasher } from '@user/domain/interfaces/passwordHasher.interface';
 import {
   USER_ALREADY_EXISTS,
   USER_NOT_FOUND,
@@ -38,7 +37,7 @@ import {
   ReqDeleteUserAppDto,
   ResDeleteUserAppDto,
 } from '@user/domain/dto/deleteUser.app.dto';
-import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
+import { PasswordHasher } from '@shared/utils/passwordHasher';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -46,12 +45,8 @@ export class UserService implements IUserService {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
-    @Inject('IBadgeProgressRepository')
-    private readonly badgeProgressRepository: IBadgeProgressRepository,
-    @Inject('IPasswordHasher')
-    private readonly passwordHasher: IPasswordHasher,
     @Inject('ICacheService')
-    private readonly cacheRepository: ICacheService,
+    private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -64,23 +59,12 @@ export class UserService implements IUserService {
       throw new ConflictException(USER_ALREADY_EXISTS);
     }
 
-    const hashedPassword = await this.passwordHasher.hashPassword(password);
+    const hashedPassword = await PasswordHasher.hashPassword(password);
 
-    const user = {
+    const createdUser = await this.userRepository.createUser(
       email,
-      password: hashedPassword,
-    };
-
-    const createdUser = await this.userRepository.createUser(user);
-
-    const badgeProgressPromises = Array.from({ length: 9 }, (_, i) =>
-      this.badgeProgressRepository.createBadgeProgress({
-        userId: createdUser.id,
-        badgeId: i + 1,
-      }),
+      hashedPassword,
     );
-
-    await Promise.all(badgeProgressPromises);
 
     this.logger.log(
       'info',
@@ -90,40 +74,37 @@ export class UserService implements IUserService {
   }
 
   async getUser(req: ReqGetUserAppDto): Promise<ResGetUserAppDto> {
-    const cacheKey = `get_user:${req.id}`;
-    const cachedUser = await this.cacheRepository.getFromCache<UserEntity>(
+    const cacheKey = `user:${req.id}`;
+    const cachedUser = await this.cacheService.getFromCache<UserEntity>(
       cacheKey,
     );
-    if (cachedUser) {
-      return cachedUser;
-    }
+    if (cachedUser) return cachedUser;
+
     const user = await this.userRepository.findById(req.id);
     if (user === null) {
       throw new NotFoundException(USER_NOT_FOUND);
     }
-    await this.cacheRepository.setCache(
+
+    await this.cacheService.setCache(
       cacheKey,
       user,
       cacheConfig(this.configService).cacheTTL,
     );
-    const { id, email, provider, role, defaultBadgeId, createdAt } = user;
-    return { id, email, provider, role, defaultBadgeId, createdAt };
+    return user;
   }
 
   async changePassword(
     req: ReqChangePasswordAppDto,
   ): Promise<ResChangePasswordAppDto> {
-    const newPassword = await this.passwordHasher.hashPassword(req.password);
-    const user = await this.userRepository.changePassword(req.id, newPassword);
-    this.logger.log(
-      'info',
-      `비밀번호 변경 - 사용자 ID:${user.id}, 유저 이메일:${user.email}`,
-    );
+    const newPassword = await PasswordHasher.hashPassword(req.password);
+    await this.userRepository.changePassword(req.id, newPassword);
+    this.logger.log('info', `비밀번호 변경 - 사용자 ID:${req.id}`);
     return { message: CHANGE_PASSWORD_SUCCESS_MESSAGE };
   }
 
   async deleteUser(req: ReqDeleteUserAppDto): Promise<ResDeleteUserAppDto> {
     const user = await this.userRepository.deleteUser(req.id);
+    await this.cacheService.deleteCache(`user:${req.id}`);
     this.logger.log(
       'info',
       `회원 탈퇴 - 사용자 ID:${user.id}, 유저 이메일:${user.email}`,

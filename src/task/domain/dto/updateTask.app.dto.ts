@@ -4,7 +4,7 @@ import { IsInt, IsOptional, IsString } from 'class-validator';
 export class ReqUpdateTaskAppDto {
   @ApiProperty({ description: '작업 고유 ID(INT)' })
   @IsInt()
-  id: number;
+  readonly id: number;
 
   @ApiProperty({ description: '작업 이름' })
   @IsString()
@@ -15,11 +15,6 @@ export class ReqUpdateTaskAppDto {
   @IsString()
   @IsOptional()
   readonly description: string;
-
-  @ApiProperty({ description: '작업 완료 여부' })
-  @IsInt()
-  @IsOptional()
-  readonly completion: number;
 
   @ApiProperty({ description: '작업 중요도' })
   @IsInt()

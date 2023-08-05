@@ -3,7 +3,7 @@ import { TasksLogs } from '@prisma/client';
 export class TaskEntity implements TasksLogs {
   id: number;
   userId: string;
-  taskTypesId: number;
+  taskType: string;
   name: string;
   description: string | null;
   completion: number;

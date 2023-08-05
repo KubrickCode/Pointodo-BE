@@ -1,9 +1,22 @@
 import { BadgeProgressEntity } from '../entities/badgeProgress.entity';
 
 export interface IBadgeProgressRepository {
+  getAllBadgeProgress(
+    userId: string,
+  ): Promise<Array<Pick<BadgeProgressEntity, 'badgeType' | 'progress'>>>;
+
   createBadgeProgress(
-    req: Partial<BadgeProgressEntity>,
+    userId: string,
+    badgeType: string,
   ): Promise<BadgeProgressEntity>;
-  // updateBadgeProgress(id: number): Promise<BadgeProgressEntity>;
-  // deleteBadgeProgress(id: number): Promise<BadgeProgressEntity>;
+
+  updateConsistency(userId: string, isContinuous: boolean): Promise<number>;
+
+  updateDiversity(userId: string, badgeType: string): Promise<number>;
+
+  updateProductivity(
+    progress: number,
+    userId: string,
+    badgeType: string,
+  ): Promise<number>;
 }

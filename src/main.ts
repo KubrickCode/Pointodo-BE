@@ -17,7 +17,7 @@ const bootstrap = async () => {
   app.use(cookieParser());
   app.enableCors(corsOptions(configService));
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 
   await app.listen(3000);
 };

@@ -6,12 +6,6 @@ export class ReqUpdateTaskTypeAppDto {
   @IsInt()
   readonly id: number;
 
-  @ApiProperty({ description: '새 작업 ID' })
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsInt()
-  readonly newId: number;
-
   @ApiProperty({ description: '작업 타입 이름' })
   @ApiPropertyOptional()
   @IsOptional()

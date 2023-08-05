@@ -1,26 +1,37 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import { IsDate, IsInt, IsString } from 'class-validator';
 
 export class ReqGetTasksLogsParamDto {
-  @ApiProperty({ description: '작업 유형 ID(UUID)' })
-  @Type(() => Number)
-  @IsInt()
-  readonly taskTypesId: number;
+  @ApiProperty({ description: '작업 유형' })
+  @IsString()
+  @Transform(({ value }) => {
+    switch (value) {
+      case 'daily':
+        return '매일 작업';
+      case 'deadline':
+        return '기한 작업';
+      case 'free':
+        return '무기한 작업';
+      default:
+        return value;
+    }
+  })
+  readonly taskType: string;
 }
 
 export class ResGetTasksLogsDto {
   @ApiProperty({ description: '작업 고유 ID(INT)' })
   @IsInt()
-  id: number;
+  readonly id: number;
 
   @ApiProperty({ description: '작업 유저 ID(UUID)' })
   @IsString()
   readonly userId: string;
 
-  @ApiProperty({ description: '작업 유형 ID(UUID)' })
+  @ApiProperty({ description: '작업 유형' })
   @IsInt()
-  readonly taskTypesId: number;
+  readonly taskType: string;
 
   @ApiProperty({ description: '작업 이름' })
   @IsString()
@@ -32,13 +43,13 @@ export class ResGetTasksLogsDto {
 
   @ApiProperty({ description: '작업 완료 여부' })
   @IsInt()
-  completion: number;
+  readonly completion: number;
 
   @ApiProperty({ description: '작업 중요도' })
   @IsInt()
-  importance: number;
+  readonly importance: number;
 
   @ApiProperty({ description: '작업 생성 시간' })
   @IsDate()
-  occurredAt: Date;
+  readonly occurredAt: Date;
 }

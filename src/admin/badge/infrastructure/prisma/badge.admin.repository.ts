@@ -15,13 +15,25 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     return await this.prisma.$queryRawUnsafe<BadgeTypes[]>(query);
   }
 
-  async isExist(req: Partial<BadgeTypesEntity>): Promise<boolean> {
-    const { id, name } = req;
+  async getBadgePrice(name: string): Promise<number> {
+    const query = `
+    SELECT price FROM "BadgeTypes"
+    WHERE name = $1
+    `;
+    const values = [name];
+    const result = await this.prisma.$queryRawUnsafe<[{ price: number }]>(
+      query,
+      ...values,
+    );
+    return result[0].price;
+  }
+
+  async isExist(name: string): Promise<boolean> {
     const query = `
     SELECT * FROM "BadgeTypes"
-    WHERE id = $1 OR name = $2
+    WHERE name = $1
     `;
-    const values = [id, name];
+    const values = [name];
     const isExist = await this.prisma.$queryRawUnsafe<BadgeTypes | null>(
       query,
       ...values,
@@ -30,15 +42,19 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     return true;
   }
 
-  async create(req: Partial<BadgeTypesEntity>): Promise<BadgeTypesEntity> {
-    const { id, name, description, iconLink } = req;
+  async create(
+    name: string,
+    description: string,
+    iconLink: string,
+    price?: number,
+  ): Promise<BadgeTypesEntity> {
     const query = `
-      INSERT INTO "BadgeTypes" (id, name, description, "iconLink")
+      INSERT INTO "BadgeTypes" (name, description, "iconLink", price)
       VALUES ($1, $2, $3, $4)
       RETURNING *
       `;
 
-    const values = [id, name, description, iconLink];
+    const values = [name, description, iconLink, price];
 
     const newBadgeType = await this.prisma.$queryRawUnsafe<BadgeTypes>(
       query,
@@ -47,17 +63,15 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     return newBadgeType[0];
   }
 
-  async update(req: Partial<BadgeTypesEntity>): Promise<BadgeTypesEntity> {
-    const { id, newId, name, description, iconLink } = req;
+  async update(
+    id: number,
+    name?: string,
+    description?: string,
+    iconLink?: string,
+  ): Promise<BadgeTypesEntity> {
     const updateFields: string[] = [];
     const values: (number | string)[] = [];
     let placeholderIndex = 1;
-
-    if (newId !== undefined) {
-      updateFields.push(`id = $${placeholderIndex}`);
-      values.push(newId);
-      placeholderIndex++;
-    }
 
     if (name) {
       updateFields.push(`name = $${placeholderIndex}`);

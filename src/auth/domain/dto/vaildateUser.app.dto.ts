@@ -1,13 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Provider, Role } from '@prisma/client';
-import {
-  IsDate,
-  IsEmail,
-  IsEnum,
-  IsInt,
-  IsString,
-  Matches,
-} from 'class-validator';
+import { IsDate, IsEmail, IsEnum, IsString, Matches } from 'class-validator';
 import {
   VALIDATE_EMAIL,
   VALIDATE_PASSWORD,
@@ -46,9 +39,9 @@ export class ResValidateUserAppDto {
   @IsEnum(Role)
   readonly role: Role;
 
-  @ApiProperty({ description: '뱃지ID' })
-  @IsInt()
-  readonly defaultBadgeId: number;
+  @ApiProperty({ description: '선택 뱃지' })
+  @IsString()
+  readonly selectedBadge: string;
 
   @IsDate()
   @ApiProperty({ description: '가입 날짜' })

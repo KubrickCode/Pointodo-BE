@@ -32,8 +32,8 @@ import { changePasswordDocs } from './docs/changePassword.docs';
 import { deleteUserDocs } from './docs/deleteUser.docs';
 import { globalDocs } from '@shared/docs/global.docs';
 
-@ApiTags('User')
 @Controller('user')
+@ApiTags('User')
 export class UserController {
   constructor(
     @Inject('IUserService')

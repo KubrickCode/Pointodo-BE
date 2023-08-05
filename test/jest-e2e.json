@@ -14,6 +14,8 @@
     "@admin/(.*)": "<rootDir>/src/admin/$1",
     "@redis/(.*)": "<rootDir>/src/redis/$1",
     "@cache/(.*)": "<rootDir>/src/cache/$1",
-    "@badge/(.*)": "<rootDir>/src/badge/$1"
+    "@badge/(.*)": "<rootDir>/src/badge/$1",
+    "@point/(.*)": "<rootDir>/src/point/$1",
+    "@task/(.*)": "<rootDir>/src/task/$1"
   }
 }

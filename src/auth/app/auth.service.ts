@@ -19,10 +19,10 @@ import { jwtExpiration } from '@shared/config/jwt.config';
 import {
   AUTH_EXPIRED_REFRESH_TOKEN,
   AUTH_INVALID_ADMIN,
+  AUTH_INVALID_PASSWORD,
   AUTH_INVALID_TOKEN,
 } from '@shared/messages/auth/auth.errors';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
-import { IPasswordHasher } from '@user/domain/interfaces/passwordHasher.interface';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import {
@@ -47,6 +47,8 @@ import {
   ReqValidateAdminAppDto,
   ResValidateAdminAppDto,
 } from '@auth/domain/dto/validateAdmin.app.dto';
+import { PasswordHasher } from '@shared/utils/passwordHasher';
+import { USER_NOT_FOUND } from '@shared/messages/user/user.errors';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -57,8 +59,6 @@ export class AuthService implements IAuthService {
     private readonly redisService: IRedisService,
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
-    @Inject('IPasswordHasher')
-    private readonly passwordHasher: IPasswordHasher,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -78,16 +78,18 @@ export class AuthService implements IAuthService {
     const user = await this.userRepository.findByEmail(req.email);
 
     if (!user) {
-      throw new NotFoundException('존재하지 않는 계정입니다');
+      throw new NotFoundException(USER_NOT_FOUND);
     }
 
-    const isCorrectPassword = await this.passwordHasher.comparePassword(
+    const userPassword = await this.userRepository.findPasswordById(user.id);
+
+    const isCorrectPassword = await PasswordHasher.comparePassword(
       req.password,
-      user.password,
+      userPassword,
     );
 
     if (!isCorrectPassword) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다');
+      throw new UnauthorizedException(AUTH_INVALID_PASSWORD);
     }
 
     return user;
@@ -96,13 +98,13 @@ export class AuthService implements IAuthService {
   async checkPassword(
     req: ReqCheckPasswordAppDto,
   ): Promise<ResCheckPasswordAppDto> {
-    const user = await this.userRepository.findById(req.id);
-    const isCorrectPassword = await this.passwordHasher.comparePassword(
+    const userPassword = await this.userRepository.findPasswordById(req.id);
+    const isCorrectPassword = await PasswordHasher.comparePassword(
       req.password,
-      user.password,
+      userPassword,
     );
     if (!isCorrectPassword) {
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다');
+      throw new UnauthorizedException(AUTH_INVALID_PASSWORD);
     }
     return { message: CHECK_PASSWORD_MESSAGE };
   }
@@ -151,8 +153,11 @@ export class AuthService implements IAuthService {
     if (user) {
       return await this.login(user);
     } else {
-      const user = { email, provider };
-      const newUser = await this.userRepository.createUser(user);
+      const newUser = await this.userRepository.createUser(
+        email,
+        null,
+        provider,
+      );
       return await this.login(newUser);
     }
   }

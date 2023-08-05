@@ -6,6 +6,10 @@ import { PrismaService } from '@shared/service/prisma.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { jwtConfig } from '@shared/config/jwt.config';
+import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgress.repository';
+import { PointRepository } from '@point/infrastructure/prisma/point.repository';
+import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repository';
+import { CacheService } from '@cache/infrastructure/cache.service';
 
 @Module({
   providers: [
@@ -17,6 +21,22 @@ import { jwtConfig } from '@shared/config/jwt.config';
     {
       provide: 'ITaskRepository',
       useClass: TaskRepository,
+    },
+    {
+      provide: 'IBadgeProgressRepository',
+      useClass: BadgeProgressRepository,
+    },
+    {
+      provide: 'IPointRepository',
+      useClass: PointRepository,
+    },
+    {
+      provide: 'IUserBadgeRepository',
+      useClass: UserBadgeRepository,
+    },
+    {
+      provide: 'ICacheService',
+      useClass: CacheService,
     },
   ],
   controllers: [TaskController],

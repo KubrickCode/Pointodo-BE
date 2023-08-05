@@ -18,8 +18,13 @@ describe('createInitialBadgeTypes', () => {
   });
 
   it('초기 뱃지 타입 생성 In DB', async () => {
-    initialBadgeTypes.forEach((item) => {
-      badgeAdminRepository.create(item);
-    });
+    for (const item of initialBadgeTypes) {
+      await badgeAdminRepository.create(
+        item.name,
+        item.description,
+        item.iconLink,
+        item.price,
+      );
+    }
   });
 });

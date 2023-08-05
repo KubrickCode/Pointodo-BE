@@ -7,22 +7,14 @@ import { AuthService } from '@auth/app/auth.service';
 import { TokenService } from '@auth/infrastructure/token.service';
 import { RedisService } from '@redis/infrastructure/redis.service';
 import { UserRepository } from '@user/infrastructure/prisma/user.repository';
-import { PasswordHasher } from '@user/infrastructure/passwordHasher';
 import { PrismaService } from '@shared/service/prisma.service';
 import { BadgeAdminService } from '@admin/badge/app/badge.admin.service';
 import { BadgeAdminRepository } from '@admin/badge/infrastructure/prisma/badge.admin.repository';
-import { PointAdminController } from '@admin/interface/point.admin.controller';
-import { PointAdminService } from '@admin/point/app/point.admin.service';
-import { PointAdminRepository } from '@admin/point/infrastructure/prisma/point.admin.repository';
 import { TaskAdminController } from '@admin/interface/task.admin.controller';
 import { TaskAdminService } from '@admin/task/app/task.admin.service';
 import { TaskAdminRepository } from '@admin/task/infrastructure/prisma/task.admin.repository';
 @Module({
-  controllers: [
-    BadgeAdminController,
-    PointAdminController,
-    TaskAdminController,
-  ],
+  controllers: [BadgeAdminController, TaskAdminController],
   providers: [
     PrismaService,
     {
@@ -42,24 +34,12 @@ import { TaskAdminRepository } from '@admin/task/infrastructure/prisma/task.admi
       useClass: UserRepository,
     },
     {
-      provide: 'IPasswordHasher',
-      useClass: PasswordHasher,
-    },
-    {
       provide: 'IBadgeAdminService',
       useClass: BadgeAdminService,
     },
     {
       provide: 'IBadgeAdminRepository',
       useClass: BadgeAdminRepository,
-    },
-    {
-      provide: 'IPointAdminService',
-      useClass: PointAdminService,
-    },
-    {
-      provide: 'IPointAdminRepository',
-      useClass: PointAdminRepository,
     },
     {
       provide: 'ITaskAdminService',

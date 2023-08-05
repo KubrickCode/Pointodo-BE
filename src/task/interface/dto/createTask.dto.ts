@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsOptional, IsString } from 'class-validator';
+import { CREATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
+import { IsOptional, IsString } from 'class-validator';
 
 export class ReqCreateTaskDto {
-  @ApiProperty({ description: '작업 유형 ID(UUID)' })
-  @IsInt()
-  readonly taskTypesId: number;
+  @ApiProperty({ description: '작업 유형' })
+  @IsString()
+  readonly taskType: string;
 
   @ApiProperty({ description: '작업 이름' })
   @IsString()
@@ -18,7 +19,7 @@ export class ReqCreateTaskDto {
 
 export class ResCreateTaskDto {
   @ApiProperty({
-    example: '작업 생성 성공',
+    example: CREATE_TASK_SUCCESS_MESSAGE,
     description: '성공 메시지',
   })
   @IsString()

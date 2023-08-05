@@ -8,16 +8,30 @@ import { BadgeProgress } from '@prisma/client';
 export class BadgeProgressRepository implements IBadgeProgressRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createBadgeProgress(
-    req: Partial<BadgeProgressEntity>,
-  ): Promise<BadgeProgressEntity> {
-    const { userId, badgeId } = req;
+  async getAllBadgeProgress(
+    userId: string,
+  ): Promise<Array<Pick<BadgeProgressEntity, 'badgeType' | 'progress'>>> {
     const query = `
-      INSERT INTO "BadgeProgress" ("userId", "badgeId")
+    SELECT "badgeType", progress FROM "BadgeProgress"
+    WHERE "userId" = $1::uuid
+    `;
+    const values = [userId];
+    const badgeProgressList = await this.prisma.$queryRawUnsafe<
+      Array<Pick<BadgeProgress, 'badgeType' | 'progress'>>
+    >(query, ...values);
+    return badgeProgressList;
+  }
+
+  async createBadgeProgress(
+    userId: string,
+    badgeType: string,
+  ): Promise<BadgeProgressEntity> {
+    const query = `
+      INSERT INTO "BadgeProgress" ("userId", "badgeType")
       VALUES ($1::uuid, $2)
       RETURNING *
     `;
-    const values = [userId, badgeId];
+    const values = [userId, badgeType];
     const newBadgeProgress = await this.prisma.$queryRawUnsafe<BadgeProgress>(
       query,
       ...values,
@@ -25,7 +39,71 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
     return newBadgeProgress[0];
   }
 
-  // async updateBadgeProgress(id: number): Promise<BadgeProgressEntity> {}
+  async updateConsistency(
+    userId: string,
+    isContinuous: boolean,
+  ): Promise<number> {
+    const consistencyQuery = `
+        INSERT INTO "BadgeProgress"("userId", "badgeType", progress)
+        VALUES ($1::uuid, '일관성 뱃지3', 1)
+        ON CONFLICT ("userId", "badgeType")
+        DO UPDATE 
+        SET progress = ${isContinuous ? '"BadgeProgress".progress + 1' : '1'}
+        RETURNING progress
+      `;
 
-  // async deleteBadgeProgress(id: number): Promise<BadgeProgressEntity> {}
+    const consistencyValues = [userId];
+
+    const updatedBadgeProgress =
+      await this.prisma.$queryRawUnsafe<BadgeProgress>(
+        consistencyQuery,
+        ...consistencyValues,
+      );
+
+    return updatedBadgeProgress[0].progress;
+  }
+
+  async updateDiversity(userId: string, badgeType: string): Promise<number> {
+    const diversityQuery = `
+        INSERT INTO "BadgeProgress"("userId", "badgeType", progress)
+        VALUES ($1::uuid, $2, 1)
+        ON CONFLICT ("userId", "badgeType")
+        DO UPDATE
+        SET progress = "BadgeProgress".progress + 1
+        RETURNING progress
+      `;
+
+    const diversityValues = [userId, badgeType];
+
+    const updatedBadgeProgress =
+      await this.prisma.$queryRawUnsafe<BadgeProgress>(
+        diversityQuery,
+        ...diversityValues,
+      );
+
+    return updatedBadgeProgress[0].progress;
+  }
+
+  async updateProductivity(
+    progress: number,
+    userId: string,
+    badgeType: string,
+  ): Promise<number> {
+    const productivityQuery = `
+        INSERT INTO "BadgeProgress"("userId", "badgeType", progress)
+        VALUES ($2::uuid, $3, 1)
+        ON CONFLICT ("userId", "badgeType")
+        DO UPDATE
+        SET progress = $1
+        RETURNING progress
+      `;
+
+    const productivityValues = [progress, userId, badgeType];
+    const updatedBadgeProgress = await this.prisma.$queryRawUnsafe<any>(
+      productivityQuery,
+      ...productivityValues,
+    );
+
+    return updatedBadgeProgress[0].progress;
+  }
 }

@@ -11,6 +11,7 @@ import { RedisCacheModule } from '@cache/interface/cache.module';
 import { AdminModule } from '@admin/interface/admin.module';
 import { BadgeModule } from './badge/interface/badge.module';
 import { TaskModule } from './task/interface/task.module';
+import { PointModule } from './point/interface/point.module';
 
 @Module({
   providers: [
@@ -31,6 +32,7 @@ import { TaskModule } from './task/interface/task.module';
     WinstonModule.forRoot(getWinstonLogger(process.env.NODE_ENV, 'api')),
     BadgeModule,
     TaskModule,
+    PointModule,
   ],
 })
 export class AppModule implements NestModule {

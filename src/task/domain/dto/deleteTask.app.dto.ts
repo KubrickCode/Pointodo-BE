@@ -4,7 +4,7 @@ import { IsInt, IsString } from 'class-validator';
 export class ReqDeleteTaskAppDto {
   @ApiProperty({ description: '작업 고유 ID(INT)' })
   @IsInt()
-  id: number;
+  readonly id: number;
 }
 
 export class ResDeleteTaskAppDto {
