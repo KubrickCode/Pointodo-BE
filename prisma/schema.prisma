@@ -49,6 +49,8 @@ model BadgeProgress {
   occurredAt        DateTime      @default(now())
   user              User          @relation(fields: [userId], references: [id])
   badge             BadgeTypes    @relation(fields: [badgeType], references: [name])
+
+  @@unique([userId, badgeType])
 }
 
 model PointsLogs {
