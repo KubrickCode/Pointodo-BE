@@ -22,4 +22,5 @@ export interface IPointRepository {
     tx?: Prisma.TransactionClient,
   ): Promise<number>;
   calculateUserPoints(userId: string): Promise<number>;
+  deletePointLog(id: number): Promise<PointEntity>;
 }

@@ -33,7 +33,6 @@ import { cacheConfig } from '@shared/config/cache.config';
 import {
   ALREADY_EXIST_USER_BADGE,
   BUY_BADGE_CONFLICT_POINTS,
-  BUY_BADGE_LESS_POINTS,
   NOT_EXIST_USER_BADGE,
 } from '@shared/messages/badge/badge.errors';
 import {
@@ -63,16 +62,19 @@ export class BadgeService implements IBadgeService {
   async buyBadge(req: ReqBuyBadgeAppDto): Promise<ResBuyBadgeAppDto> {
     const { userId, badgeType } = req;
     const price = await this.badgeAdminRepository.getBadgePrice(badgeType);
-    const currentPoint = await this.pointRepository.calculateUserPoints(userId);
-    if (currentPoint - price < 0)
-      throw new ConflictException(BUY_BADGE_LESS_POINTS);
 
-    await this.pointRepository.createPointLog(
+    const updatedPointLog = await this.pointRepository.createPointLog(
       userId,
       'SPENT',
       `${badgeType} 구매`,
       -price,
     );
+
+    const updatedPoint = await this.pointRepository.calculateUserPoints(userId);
+    if (updatedPoint < 0) {
+      await this.pointRepository.deletePointLog(updatedPointLog.id);
+      throw new ConflictException(BUY_BADGE_CONFLICT_POINTS);
+    }
 
     await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
     await this.cacheService.deleteCache(`userPointsLogs:${req.userId}`);
@@ -80,7 +82,6 @@ export class BadgeService implements IBadgeService {
 
     await this.userBadgeRepository.createUserBadgeLog(userId, badgeType);
 
-    const afterPoint = await this.pointRepository.calculateUserPoints(userId);
     const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
       userId,
     );
@@ -91,8 +92,6 @@ export class BadgeService implements IBadgeService {
 
     if (filteredBadgeList.length > 1)
       throw new ConflictException(ALREADY_EXIST_USER_BADGE);
-
-    if (afterPoint < 0) throw new ConflictException(BUY_BADGE_CONFLICT_POINTS);
 
     return { message: BUY_BADGE_SUCCESS_MESSAGE };
   }

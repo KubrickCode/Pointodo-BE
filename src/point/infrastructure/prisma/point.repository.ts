@@ -105,4 +105,16 @@ export class PointRepository implements IPointRepository {
 
     return userTotalPoints;
   }
+
+  async deletePointLog(id: number): Promise<PointEntity> {
+    const query = `
+    DELETE FROM "PointsLogs"
+    WHERE id = $1
+    RETURNING *
+    `;
+
+    const deletedLog = await this.prisma.$queryRawUnsafe<number>(query, id);
+
+    return deletedLog[0];
+  }
 }
