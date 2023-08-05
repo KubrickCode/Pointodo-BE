@@ -37,8 +37,6 @@ import {
   ReqDeleteUserAppDto,
   ResDeleteUserAppDto,
 } from '@user/domain/dto/deleteUser.app.dto';
-import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
-import { initialUserBadgeProgress } from '@shared/utils/initialUserBadgeProgress';
 import { PasswordHasher } from '@shared/utils/passwordHasher';
 
 @Injectable()
@@ -47,8 +45,6 @@ export class UserService implements IUserService {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
-    @Inject('IBadgeProgressRepository')
-    private readonly badgeProgressRepository: IBadgeProgressRepository,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
@@ -69,13 +65,6 @@ export class UserService implements IUserService {
       email,
       hashedPassword,
     );
-
-    for (const badgeType of initialUserBadgeProgress) {
-      await this.badgeProgressRepository.createBadgeProgress(
-        createdUser.id,
-        badgeType,
-      );
-    }
 
     this.logger.log(
       'info',

@@ -25,10 +25,6 @@ import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgr
       provide: 'ICacheService',
       useClass: CacheService,
     },
-    {
-      provide: 'IBadgeProgressRepository',
-      useClass: BadgeProgressRepository,
-    },
   ],
   imports: [
     JwtModule.registerAsync({
