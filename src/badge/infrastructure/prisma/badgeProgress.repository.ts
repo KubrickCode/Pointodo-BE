@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
 import { BadgeProgressEntity } from '@badge/domain/entities/badgeProgress.entity';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
-import { BadgeProgress } from '@prisma/client';
+import { BadgeProgress, Prisma } from '@prisma/client';
 
 @Injectable()
 export class BadgeProgressRepository implements IBadgeProgressRepository {
@@ -42,7 +42,9 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
   async updateConsistency(
     userId: string,
     isContinuous: boolean,
+    tx?: Prisma.TransactionClient,
   ): Promise<number> {
+    const prisma = tx ? tx : this.prisma;
     const consistencyQuery = `
         UPDATE "BadgeProgress"
         SET progress = ${isContinuous ? 'progress + 1' : '1'}
@@ -52,16 +54,20 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
 
     const consistencyValues = [userId];
 
-    const updatedBadgeProgress =
-      await this.prisma.$queryRawUnsafe<BadgeProgress>(
-        consistencyQuery,
-        ...consistencyValues,
-      );
+    const updatedBadgeProgress = await prisma.$queryRawUnsafe<BadgeProgress>(
+      consistencyQuery,
+      ...consistencyValues,
+    );
 
     return updatedBadgeProgress[0].progress;
   }
 
-  async updateDiversity(userId: string, badgeType: string): Promise<number> {
+  async updateDiversity(
+    userId: string,
+    badgeType: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<number> {
+    const prisma = tx ? tx : this.prisma;
     const diversityQuery = `
           UPDATE "BadgeProgress"
           SET progress = progress + 1
@@ -71,11 +77,10 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
 
     const diversityValues = [userId, badgeType];
 
-    const updatedBadgeProgress =
-      await this.prisma.$queryRawUnsafe<BadgeProgress>(
-        diversityQuery,
-        ...diversityValues,
-      );
+    const updatedBadgeProgress = await prisma.$queryRawUnsafe<BadgeProgress>(
+      diversityQuery,
+      ...diversityValues,
+    );
 
     return updatedBadgeProgress[0].progress;
   }
@@ -84,7 +89,9 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
     progress: number,
     userId: string,
     badgeType: string,
+    tx?: Prisma.TransactionClient,
   ): Promise<number> {
+    const prisma = tx ? tx : this.prisma;
     const productivityQuery = `
         UPDATE "BadgeProgress"
         SET progress = $1
@@ -93,7 +100,7 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
       `;
 
     const productivityValues = [progress, userId, badgeType];
-    const updatedBadgeProgress = await this.prisma.$queryRawUnsafe<any>(
+    const updatedBadgeProgress = await prisma.$queryRawUnsafe<any>(
       productivityQuery,
       ...productivityValues,
     );

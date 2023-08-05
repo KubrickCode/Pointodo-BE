@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PointsLogs } from '@prisma/client';
+import { PointsLogs, Prisma } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
 import { PointEntity } from 'src/point/domain/entities/point.entity';
 import { IPointRepository } from 'src/point/domain/interfaces/point.repository.interface';
@@ -24,7 +24,12 @@ export class PointRepository implements IPointRepository {
     return pointsLogs;
   }
 
-  async isContinuous(userId: string, yesterday: string): Promise<boolean> {
+  async isContinuous(
+    userId: string,
+    yesterday: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<boolean> {
+    const prisma = tx ? tx : this.prisma;
     const isContinuousQuery = `
         SELECT COUNT(*) FROM "PointsLogs"
         WHERE "userId" = $1::uuid AND DATE("occurredAt") = DATE($2) AND "transactionType" = 'EARNED'
@@ -32,7 +37,7 @@ export class PointRepository implements IPointRepository {
 
     const isContinuousValues = [userId, yesterday];
 
-    const isContinuous = await this.prisma.$queryRawUnsafe<[{ count: number }]>(
+    const isContinuous = await prisma.$queryRawUnsafe<[{ count: number }]>(
       isContinuousQuery,
       ...isContinuousValues,
     );
@@ -45,7 +50,9 @@ export class PointRepository implements IPointRepository {
     transactionType: string,
     taskType: string,
     points: number,
+    tx?: Prisma.TransactionClient,
   ): Promise<PointEntity> {
+    const prisma = tx ? tx : this.prisma;
     const createPointLogQuery = `
         INSERT INTO "PointsLogs" ("userId", "transactionType", "taskType", points)
         VALUES ($1::uuid, $2::"PointTransactionType", $3, $4)
@@ -54,7 +61,7 @@ export class PointRepository implements IPointRepository {
 
     const createPointLogValues = [userId, transactionType, taskType, points];
 
-    const createdPointLog = await this.prisma.$queryRawUnsafe<PointsLogs>(
+    const createdPointLog = await prisma.$queryRawUnsafe<PointsLogs>(
       createPointLogQuery,
       ...createPointLogValues,
     );
@@ -62,7 +69,12 @@ export class PointRepository implements IPointRepository {
     return createdPointLog[0];
   }
 
-  async countTasksPerDate(userId: string, date: string): Promise<number> {
+  async countTasksPerDate(
+    userId: string,
+    date: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<number> {
+    const prisma = tx ? tx : this.prisma;
     const countTasksQuery = `
         SELECT COUNT(*) FROM "PointsLogs"
         WHERE "userId" = $1::uuid AND DATE("occurredAt") >= DATE($2) AND "transactionType" = 'EARNED'
@@ -70,7 +82,7 @@ export class PointRepository implements IPointRepository {
 
     const countTasksValues = [userId, date];
 
-    const tasksCount = await this.prisma.$queryRawUnsafe<[{ count: number }]>(
+    const tasksCount = await prisma.$queryRawUnsafe<[{ count: number }]>(
       countTasksQuery,
       ...countTasksValues,
     );

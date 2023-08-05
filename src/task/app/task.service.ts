@@ -43,6 +43,7 @@ import { ICacheService } from '@cache/domain/interfaces/cache.service.interface'
 import { ConfigService } from '@nestjs/config';
 import { TaskEntity } from '@task/domain/entities/task.entity';
 import { cacheConfig } from '@shared/config/cache.config';
+import { PrismaService } from '@shared/service/prisma.service';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -60,6 +61,7 @@ export class TaskService implements ITaskService {
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async getTasksLogs(
@@ -120,17 +122,15 @@ export class TaskService implements ITaskService {
   async completeTask(
     req: ReqCompleteTaskAppDto,
   ): Promise<ResCompleteTaskAppDto> {
-    await this.transaction.beginTransaction();
-
     try {
-      await this.taskRepository.completeTask(req.id);
-
-      const { taskType, completion } = await this.taskRepository.getTaskLogById(
+      const { taskType, completion } = await this.taskRepository.completeTask(
         req.id,
       );
 
-      if (completion !== IS_COMPLETED)
+      if (completion !== IS_COMPLETED) {
+        await this.taskRepository.completeTask(req.id, true);
         throw new ConflictException(COMPLETE_TASK_CONFLICT);
+      }
 
       const isContinuous = await this.pointRepository.isContinuous(
         req.userId,
@@ -192,18 +192,9 @@ export class TaskService implements ITaskService {
         ),
       );
 
-      console.log('hi');
-
-      const { completion: updatedCompletion } =
-        await this.taskRepository.getTaskLogById(req.id);
-      if (updatedCompletion !== IS_COMPLETED)
-        throw new ConflictException(COMPLETE_TASK_CONFLICT);
-
-      await this.transaction.commitTransaction();
-
       return { message: COMPLETE_TASK_SUCCESS_MESSAGE };
     } catch (error) {
-      await this.transaction.rollbackTransaction();
+      console.log(error);
       throw error;
     }
   }

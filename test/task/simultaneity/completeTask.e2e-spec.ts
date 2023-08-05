@@ -44,13 +44,17 @@ describe('TaskController (e2e)', () => {
         taskId = response.body.at(-1).id;
       });
 
-    await request(app.getHttpServer())
-      .patch('/task/complete/' + taskId)
-      .set('Authorization', 'Bearer ' + token)
-      .expect(200)
-      .then((response) => {
+    const promises = Array(5).fill(
+      request(app.getHttpServer())
+        .patch('/task/complete/' + taskId)
+        .set('Authorization', 'Bearer ' + token),
+    );
+
+    await Promise.all(promises).then((responses) => {
+      responses.forEach((response) => {
         console.log(response.body);
       });
+    });
   });
 
   afterAll(async () => {

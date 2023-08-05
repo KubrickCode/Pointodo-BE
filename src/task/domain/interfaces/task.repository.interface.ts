@@ -1,8 +1,12 @@
 import { TaskEntity } from '../entities/task.entity';
+import { Prisma } from '@prisma/client';
 
 export interface ITaskRepository {
   getTasksLogs(userId: string, taskType: string): Promise<TaskEntity[]>;
-  getTaskLogById(id: number): Promise<TaskEntity>;
+  getTaskLogById(
+    id: number,
+    tx?: Prisma.TransactionClient,
+  ): Promise<TaskEntity>;
   createTask(
     userId: string,
     taskType: string,
@@ -16,5 +20,5 @@ export interface ITaskRepository {
     importance: number,
   ): Promise<TaskEntity>;
   deleteTask(id: number): Promise<TaskEntity>;
-  completeTask(id: number): Promise<TaskEntity>;
+  completeTask(id: number, isRollback?: boolean): Promise<TaskEntity>;
 }
