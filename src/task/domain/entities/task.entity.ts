@@ -9,4 +9,5 @@ export class TaskEntity implements TasksLogs {
   completion: number;
   importance: number;
   occurredAt: Date;
+  version: number;
 }

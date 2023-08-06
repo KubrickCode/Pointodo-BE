@@ -129,4 +129,20 @@ export class TaskRepository implements ITaskRepository {
 
     return completedTaskLog[0];
   }
+
+  async lockTask(id: number): Promise<TaskEntity> {
+    const query = `
+        UPDATE "TasksLogs"
+        SET version = 1
+        WHERE id = $1
+        RETURNING *
+      `;
+    const values = [id];
+    const lockedTaskLog = await this.prisma.$queryRawUnsafe<TasksLogs>(
+      query,
+      ...values,
+    );
+
+    return lockedTaskLog[0];
+  }
 }

@@ -82,6 +82,7 @@ model TasksLogs {
   completion        Int           @db.SmallInt @default(0)
   importance        Int           @db.SmallInt @default(3)
   occurredAt        DateTime      @default(now())
+  version           Int           @db.SmallInt @default(0)
   user              User          @relation(fields: [userId], references: [id])
   taskTypeName      TaskTypes     @relation(fields: [taskType], references: [name])
 

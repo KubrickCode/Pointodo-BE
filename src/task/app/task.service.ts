@@ -124,14 +124,15 @@ export class TaskService implements ITaskService {
     req: ReqCompleteTaskAppDto,
   ): Promise<ResCompleteTaskAppDto> {
     try {
-      const { taskType, completion } = await this.taskRepository.completeTask(
-        req.id,
-      );
+      const { taskType, completion, version } =
+        await this.taskRepository.completeTask(req.id);
 
       if (completion !== IS_COMPLETED) {
         await this.taskRepository.completeTask(req.id, true);
         throw new ConflictException(COMPLETE_TASK_CONFLICT);
       }
+
+      if (version === 1) return { message: COMPLETE_TASK_SUCCESS_MESSAGE };
 
       const isContinuous = await this.pointRepository.isContinuous(
         req.userId,
@@ -192,6 +193,8 @@ export class TaskService implements ITaskService {
           this.badgeProgressRepository,
         ),
       );
+
+      await this.taskRepository.lockTask(req.id);
 
       return { message: COMPLETE_TASK_SUCCESS_MESSAGE };
     } catch (error) {

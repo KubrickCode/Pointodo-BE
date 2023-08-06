@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CREATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
+import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqCreateTaskDto {
@@ -17,6 +18,7 @@ export class ReqCreateTaskDto {
   readonly description: string;
 
   @ApiProperty({ description: '작업 중요도' })
+  @Type(() => Number)
   @IsInt()
   readonly importance: number;
 }
