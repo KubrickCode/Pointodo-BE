@@ -69,7 +69,7 @@ export class TaskService implements ITaskService {
   ): Promise<ResGetTasksLogsAppDto[]> {
     const { userId, taskType } = req;
 
-    const cacheKey = `tasksLogs:[taskType:${taskType},user:${userId}]`;
+    const cacheKey = `${taskType}logs:${userId}`;
     const cachedTasksLogs = await this.cacheService.getFromCache<TaskEntity[]>(
       cacheKey,
     );
@@ -97,9 +97,7 @@ export class TaskService implements ITaskService {
       description,
       importance,
     );
-    await this.cacheService.deleteCache(
-      `tasksLogs:[taskType:${taskType},user:${userId}]`,
-    );
+    await this.cacheService.deleteCache(`${taskType}logs:${userId}`);
 
     return { message: CREATE_TASK_SUCCESS_MESSAGE };
   }
@@ -112,7 +110,7 @@ export class TaskService implements ITaskService {
       importance,
     );
     await this.cacheService.deleteCache(
-      `tasksLogs:[taskType:${result.taskType},user:${result.userId}]`,
+      `${result.taskType}logs:${result.userId}`,
     );
 
     return { message: UPDATE_TASK_SUCCESS_MESSAGE };
@@ -120,7 +118,7 @@ export class TaskService implements ITaskService {
   async deleteTask(req: ReqDeleteTaskAppDto): Promise<ResDeleteTaskAppDto> {
     const result = await this.taskRepository.deleteTask(req.id);
     await this.cacheService.deleteCache(
-      `tasksLogs:[taskType:${result.taskType},user:${result.userId}]`,
+      `${result.taskType}logs:${result.userId}`,
     );
     return { message: DELETE_TASK_SUCCESS_MESSAGE };
   }
@@ -131,6 +129,12 @@ export class TaskService implements ITaskService {
     try {
       const { taskType, completion, version } =
         await this.taskRepository.completeTask(req.id);
+
+      await this.cacheService.deleteCache(`userBadgeProgress:${req.userId}`);
+      await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
+      await this.cacheService.deleteCache(`userPointsLogs:${req.userId}`);
+      await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
+      await this.cacheService.deleteCache(`${taskType}logs:${req.userId}`);
 
       if (completion !== IS_COMPLETED) {
         await this.taskRepository.completeTask(req.id, true);
@@ -149,14 +153,6 @@ export class TaskService implements ITaskService {
         'EARNED',
         taskType,
         setTaskPoints(taskType, isContinuous),
-      );
-
-      await this.cacheService.deleteCache(`userBadgeProgress:${req.userId}`);
-      await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
-      await this.cacheService.deleteCache(`userPointsLogs:${req.userId}`);
-      await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
-      await this.cacheService.deleteCache(
-        `tasksLogs:[taskType:${taskType},user:${req.userId}]`,
       );
 
       const updatedConsistency =
@@ -211,7 +207,12 @@ export class TaskService implements ITaskService {
   async cancleTaskCompletion(
     req: ReqCancleTaskCompletionAppDto,
   ): Promise<ResCancleTaskCompletionAppDto> {
-    await this.taskRepository.cancleTaskCompletion(req.id);
+    const cancledTaskLog = await this.taskRepository.cancleTaskCompletion(
+      req.id,
+    );
+    await this.cacheService.deleteCache(
+      `${cancledTaskLog.taskType}logs:${cancledTaskLog.userId}`,
+    );
     return { message: CANCLE_TASK_COMPLETION_SUCCESS_MESSAGE };
   }
 }

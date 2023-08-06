@@ -13,6 +13,7 @@ export class TaskRepository implements ITaskRepository {
       SELECT * FROM "TasksLogs"
       WHERE "userId" = $1::uuid
       AND "taskType" = $2
+      ORDER BY importance ASC
     `;
     const values = [userId, taskType];
     const tasksLogs = await this.prisma.$queryRawUnsafe<TasksLogs[]>(

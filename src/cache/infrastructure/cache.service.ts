@@ -26,6 +26,10 @@ export class CacheService implements ICacheService {
   }
 
   async deleteCache(key: string): Promise<void> {
-    await this.cacheManager.del(key);
+    try {
+      await this.cacheManager.del(key);
+    } catch (err) {
+      console.error('캐시 데이터 삭제 실패', err);
+    }
   }
 }
