@@ -84,8 +84,14 @@ export class TaskService implements ITaskService {
   }
 
   async createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto> {
-    const { userId, taskType, name, description } = req;
-    await this.taskRepository.createTask(userId, taskType, name, description);
+    const { userId, taskType, name, description, importance } = req;
+    await this.taskRepository.createTask(
+      userId,
+      taskType,
+      name,
+      description,
+      importance,
+    );
     await this.cacheService.deleteCache(
       `tasksLogs:[taskType:${taskType},user:${userId}]`,
     );

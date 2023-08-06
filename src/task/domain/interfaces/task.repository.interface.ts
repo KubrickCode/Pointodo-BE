@@ -8,6 +8,7 @@ export interface ITaskRepository {
     taskType: string,
     name: string,
     description: string,
+    importance: number,
   ): Promise<TaskEntity>;
   updateTask(
     id: number,

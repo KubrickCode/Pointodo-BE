@@ -18,6 +18,10 @@ export class ReqCreateTaskAppDto {
   @IsString()
   @IsOptional()
   readonly description: string;
+
+  @ApiProperty({ description: '작업 중요도' })
+  @IsInt()
+  readonly importance: number;
 }
 
 export class ResCreateTaskAppDto {

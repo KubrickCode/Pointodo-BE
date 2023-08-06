@@ -40,13 +40,14 @@ export class TaskRepository implements ITaskRepository {
     taskType: string,
     name: string,
     description: string,
+    importance: number,
   ): Promise<TaskEntity> {
     const query = `
-      INSERT INTO "TasksLogs" ("userId", "taskType", name, description)
-      VALUES ($1::uuid, $2, $3, $4)
+      INSERT INTO "TasksLogs" ("userId", "taskType", name, description, importance)
+      VALUES ($1::uuid, $2, $3, $4 ,$5)
       RETURNING *
     `;
-    const values = [userId, taskType, name, description];
+    const values = [userId, taskType, name, description, importance];
     const newTasksLogs = await this.prisma.$queryRawUnsafe<TasksLogs>(
       query,
       ...values,
