@@ -40,6 +40,11 @@ import { createTaskDocs } from './docs/createTask.docs';
 import { updateTaskDocs } from './docs/updateTask.docs';
 import { deleteTaskDocs } from './docs/deleteTask.docs';
 import { completeTaskDocs } from './docs/completeTask.docs';
+import {
+  ReqCancleTaskCompletionParamDto,
+  ResCancleTaskCompletionDto,
+} from './dto/cancleTaskCompletion.dto';
+import { cancleTaskCompletionDocs } from './docs/cancleTaskCompletion.docs';
 
 @Controller('task')
 @ApiTags('Task')
@@ -104,5 +109,14 @@ export class TaskController {
     const userId = req.user.id;
     const id = param.id;
     return await this.taskService.completeTask({ userId, id });
+  }
+
+  @Patch('/cancle/:id')
+  @ApiOperation(cancleTaskCompletionDocs.operation)
+  @ApiOkResponse(cancleTaskCompletionDocs.okResponse)
+  async cancleTaskCompletion(
+    @Param() param: ReqCancleTaskCompletionParamDto,
+  ): Promise<ResCancleTaskCompletionDto> {
+    return await this.taskService.cancleTaskCompletion({ id: param.id });
   }
 }

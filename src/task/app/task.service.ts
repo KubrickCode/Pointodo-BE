@@ -1,5 +1,6 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import {
+  CANCLE_TASK_COMPLETION_SUCCESS_MESSAGE,
   COMPLETE_TASK_SUCCESS_MESSAGE,
   CREATE_TASK_SUCCESS_MESSAGE,
   DELETE_TASK_SUCCESS_MESSAGE,
@@ -42,6 +43,10 @@ import { ICacheService } from '@cache/domain/interfaces/cache.service.interface'
 import { ConfigService } from '@nestjs/config';
 import { TaskEntity } from '@task/domain/entities/task.entity';
 import { cacheConfig } from '@shared/config/cache.config';
+import {
+  ReqCancleTaskCompletionAppDto,
+  ResCancleTaskCompletionAppDto,
+} from '@task/domain/dto/cancleTaskCompletion.app.dto';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -201,5 +206,12 @@ export class TaskService implements ITaskService {
       console.log(error);
       throw error;
     }
+  }
+
+  async cancleTaskCompletion(
+    req: ReqCancleTaskCompletionAppDto,
+  ): Promise<ResCancleTaskCompletionAppDto> {
+    await this.taskRepository.cancleTaskCompletion(req.id);
+    return { message: CANCLE_TASK_COMPLETION_SUCCESS_MESSAGE };
   }
 }
