@@ -15,7 +15,7 @@ export class UserRepository implements IUserRepository {
     SELECT * FROM "User" WHERE id = $1::uuid
     `;
     const result = await this.prisma.$queryRawUnsafe<User>(query, id);
-    return result ? plainToClass(UserEntity, result[0]) : null;
+    return result[0] ? plainToClass(UserEntity, result[0]) : null;
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
@@ -23,7 +23,7 @@ export class UserRepository implements IUserRepository {
     SELECT * FROM "User" WHERE email = $1
     `;
     const result = await this.prisma.$queryRawUnsafe<User>(query, email);
-    return result ? plainToClass(UserEntity, result[0]) : null;
+    return result[0] ? plainToClass(UserEntity, result[0]) : null;
   }
 
   async findPasswordById(id: string): Promise<string> {
