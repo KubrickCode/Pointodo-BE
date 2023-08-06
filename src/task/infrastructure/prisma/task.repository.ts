@@ -72,7 +72,7 @@ export class TaskRepository implements ITaskRepository {
       placeholderIndex++;
     }
 
-    if (description) {
+    if (description !== undefined) {
       updateFields.push(`description = $${placeholderIndex}`);
       values.push(description);
       placeholderIndex++;
