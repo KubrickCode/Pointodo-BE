@@ -1,23 +1,29 @@
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  TASK_DESC,
+  TASK_IMPORTANCE,
+  TASK_NAME,
+  TASK_TYPE_NAME,
+} from '@shared/constants/task.constant';
 import { CREATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqCreateTaskDto {
-  @ApiProperty({ description: '작업 유형' })
+  @ApiProperty({ description: TASK_TYPE_NAME })
   @IsString()
   readonly taskType: string;
 
-  @ApiProperty({ description: '작업 이름' })
+  @ApiProperty({ description: TASK_NAME })
   @IsString()
   readonly name: string;
 
-  @ApiProperty({ description: '작업 설명' })
+  @ApiProperty({ description: TASK_DESC })
   @IsString()
   @IsOptional()
   readonly description: string;
 
-  @ApiProperty({ description: '작업 중요도' })
+  @ApiProperty({ description: TASK_IMPORTANCE })
   @Type(() => Number)
   @IsInt()
   readonly importance: number;

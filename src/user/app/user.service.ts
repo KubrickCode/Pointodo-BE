@@ -13,7 +13,7 @@ import {
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import {
-  USER_ALREADY_EXISTS,
+  USER_ALREADY_EXIST,
   USER_NOT_FOUND,
 } from '@shared/messages/user/user.errors';
 import { IUserService } from '@user/domain/interfaces/user.service.interface';
@@ -56,7 +56,7 @@ export class UserService implements IUserService {
     const existingUser = await this.userRepository.findByEmail(email);
 
     if (existingUser) {
-      throw new ConflictException(USER_ALREADY_EXISTS);
+      throw new ConflictException(USER_ALREADY_EXIST);
     }
 
     const hashedPassword = await PasswordHasher.hashPassword(password);

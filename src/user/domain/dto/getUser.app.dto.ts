@@ -1,35 +1,46 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Provider, Role } from '@prisma/client';
+import {
+  USER_EMAIL,
+  USER_EMAIL_EXAMPLE,
+  USER_ID,
+  USER_PROVIDER,
+  USER_PROVIDER_EXAMPLE,
+  USER_REGISTER_DATE,
+  USER_ROLE,
+  USER_ROLE_EXAMPLE,
+  USER_SELECTED_BADGE,
+} from '@shared/constants/user.constant';
 import { IsDate, IsEnum, IsString } from 'class-validator';
 
 export class ReqGetUserAppDto {
-  @ApiProperty({ description: '유저 고유 ID(UUID)' })
+  @ApiProperty({ description: USER_ID })
   @IsString()
   readonly id: string;
 }
 
 export class ResGetUserAppDto {
-  @ApiProperty({ description: '유저 고유 ID(UUID)' })
+  @ApiProperty({ description: USER_ID })
   @IsString()
   readonly id: string;
 
-  @ApiProperty({ example: 'test@gmail.com', description: '이메일' })
+  @ApiProperty({ example: USER_EMAIL_EXAMPLE, description: USER_EMAIL })
   @IsString()
   readonly email: string;
 
-  @ApiProperty({ example: 'Local | Google | Kakao', description: '공급 업체' })
+  @ApiProperty({ example: USER_PROVIDER_EXAMPLE, description: USER_PROVIDER })
   @IsEnum(Provider)
   readonly provider: Provider;
 
-  @ApiProperty({ example: 'User | Admin', description: '권한' })
+  @ApiProperty({ example: USER_ROLE_EXAMPLE, description: USER_ROLE })
   @IsEnum(Role)
   readonly role: Role;
 
-  @ApiProperty({ description: '선택 뱃지' })
+  @ApiProperty({ description: USER_SELECTED_BADGE })
   @IsString()
   readonly selectedBadge: string;
 
   @IsDate()
-  @ApiProperty({ description: '가입 날짜' })
+  @ApiProperty({ description: USER_REGISTER_DATE })
   readonly createdAt: Date;
 }

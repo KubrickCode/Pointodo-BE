@@ -2,6 +2,8 @@ import {
   ResCheckPasswordDto,
   ResInvalidCheckPassword,
 } from '@auth/interface/dto/checkPassword.dto';
+import { AUTH_INVALID_PASSWORD } from '@shared/messages/auth/auth.errors';
+import { CHECK_PASSWORD_MESSAGE } from '@shared/messages/auth/auth.messages';
 
 export const checkPasswordDocs = {
   operation: {
@@ -10,9 +12,12 @@ export const checkPasswordDocs = {
   비밀번호를 전달받아 현재 비밀번호와 일치하는지 확인 후, 성공 메시지가 반환됩니다.
   `,
   },
-  okResponse: { type: ResCheckPasswordDto, description: '비밀번호 검증 성공' },
+  okResponse: {
+    type: ResCheckPasswordDto,
+    description: CHECK_PASSWORD_MESSAGE,
+  },
   invalidCheckPassword: {
     type: ResInvalidCheckPassword,
-    description: '비밀번호 검증 실패',
+    description: AUTH_INVALID_PASSWORD,
   },
 };

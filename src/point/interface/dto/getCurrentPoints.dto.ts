@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CURRENT_POINTS } from '@shared/constants/point.constant';
 import { IsInt } from 'class-validator';
 
 export class ResGetCurrentPointsDto {
-  @ApiProperty({ description: '유저 보유 포인트' })
+  @ApiProperty({ description: CURRENT_POINTS })
   @IsInt()
   readonly points: number;
 }

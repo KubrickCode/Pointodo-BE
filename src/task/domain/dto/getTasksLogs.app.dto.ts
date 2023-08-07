@@ -1,46 +1,56 @@
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  TASK_COMPLETION,
+  TASK_DESC,
+  TASK_IMPORTANCE,
+  TASK_LOG_ID,
+  TASK_NAME,
+  TASK_OCCURRED_AT,
+  TASK_TYPE_NAME,
+} from '@shared/constants/task.constant';
+import { USER_ID } from '@shared/constants/user.constant';
 import { IsDate, IsInt, IsString } from 'class-validator';
 
 export class ReqGetTasksLogsAppDto {
-  @ApiProperty({ description: '작업 유저 ID(UUID)' })
+  @ApiProperty({ description: USER_ID })
   @IsString()
   readonly userId: string;
 
-  @ApiProperty({ description: '작업 유형' })
+  @ApiProperty({ description: TASK_TYPE_NAME })
   @IsInt()
   readonly taskType: string;
 }
 
 export class ResGetTasksLogsAppDto {
-  @ApiProperty({ description: '작업 고유 ID(INT)' })
+  @ApiProperty({ description: TASK_LOG_ID })
   @IsInt()
   readonly id: number;
 
-  @ApiProperty({ description: '작업 유저 ID(UUID)' })
+  @ApiProperty({ description: USER_ID })
   @IsString()
   readonly userId: string;
 
-  @ApiProperty({ description: '작업 유형' })
+  @ApiProperty({ description: TASK_TYPE_NAME })
   @IsInt()
   readonly taskType: string;
 
-  @ApiProperty({ description: '작업 이름' })
+  @ApiProperty({ description: TASK_NAME })
   @IsString()
   readonly name: string;
 
-  @ApiProperty({ description: '작업 설명' })
+  @ApiProperty({ description: TASK_DESC })
   @IsString()
   readonly description: string;
 
-  @ApiProperty({ description: '작업 완료 여부' })
+  @ApiProperty({ description: TASK_COMPLETION })
   @IsInt()
   readonly completion: number;
 
-  @ApiProperty({ description: '작업 중요도' })
+  @ApiProperty({ description: TASK_IMPORTANCE })
   @IsInt()
   readonly importance: number;
 
-  @ApiProperty({ description: '작업 생성 시간' })
+  @ApiProperty({ description: TASK_OCCURRED_AT })
   @IsDate()
   readonly occurredAt: Date;
 }

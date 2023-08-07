@@ -1,12 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { TASK_TYPE_ID, TASK_TYPE_NAME } from '@shared/constants/task.constant';
+import { UPDATE_TASK_TYPE_SUCCESS_MESSAGE } from '@shared/messages/admin/task.admin.message';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqUpdateTaskTypeAppDto {
-  @ApiProperty({ description: '작업 타입 고유 ID(SMALL INT)' })
+  @ApiProperty({ description: TASK_TYPE_ID })
   @IsInt()
   readonly id: number;
 
-  @ApiProperty({ description: '작업 타입 이름' })
+  @ApiProperty({ description: TASK_TYPE_NAME })
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
@@ -15,7 +17,7 @@ export class ReqUpdateTaskTypeAppDto {
 
 export class ResUpdateTaskTypeAppDto {
   @ApiProperty({
-    example: '작업 타입 업데이트 성공',
+    example: UPDATE_TASK_TYPE_SUCCESS_MESSAGE,
     description: '성공 메시지',
   })
   @IsString()

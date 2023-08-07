@@ -1,3 +1,4 @@
+import { DELETE_USER_SUCCESS_MESSAGE } from '@shared/messages/user/user.messages';
 import { ResDeleteUserDto } from '../dto/deleteUser.dto';
 
 export const deleteUserDocs = {
@@ -7,5 +8,8 @@ export const deleteUserDocs = {
   회원 탈퇴를 진행하고, 성공 메시지가 반환됩니다.
   `,
   },
-  okResponse: { type: ResDeleteUserDto, description: '회원 탈퇴 성공' },
+  okResponse: {
+    type: ResDeleteUserDto,
+    description: DELETE_USER_SUCCESS_MESSAGE,
+  },
 };

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { BADGE_TYPE_NAME } from '@shared/constants/badge.constant';
 import {
   ALREADY_EXIST_USER_BADGE,
   BUY_BADGE_CONFLICT_POINTS,
@@ -8,7 +9,7 @@ import { BUY_BADGE_SUCCESS_MESSAGE } from '@shared/messages/badge/badge.messages
 import { IsString } from 'class-validator';
 
 export class ReqBuyBadgeDto {
-  @ApiProperty({ description: '뱃지 유형' })
+  @ApiProperty({ description: BADGE_TYPE_NAME })
   @IsString()
   readonly badgeType: string;
 }

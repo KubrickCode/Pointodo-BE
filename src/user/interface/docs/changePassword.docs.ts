@@ -1,3 +1,4 @@
+import { CHANGE_PASSWORD_SUCCESS_MESSAGE } from '@shared/messages/user/user.messages';
 import { ResChangePasswordDto } from '../dto/changePassword.dto';
 
 export const changePasswordDocs = {
@@ -7,5 +8,8 @@ export const changePasswordDocs = {
   새 비밀번호를 전달받아 비밀번호를 변경시키고, 성공 메시지가 반환됩니다.
   `,
   },
-  okResponse: { type: ResChangePasswordDto, description: '비밀번호 변경 성공' },
+  okResponse: {
+    type: ResChangePasswordDto,
+    description: CHANGE_PASSWORD_SUCCESS_MESSAGE,
+  },
 };

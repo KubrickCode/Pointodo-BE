@@ -1,19 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { BADGE_TYPE_NAME } from '@shared/constants/badge.constant';
+import { USER_ID } from '@shared/constants/user.constant';
+import { CHANGE_USER_BADGE_MESSAGE } from '@shared/messages/badge/badge.messages';
 import { IsString } from 'class-validator';
 
 export class ReqChangeSelectedBadgeAppDto {
-  @ApiProperty({ description: '유저 ID(UUID)' })
+  @ApiProperty({ description: USER_ID })
   @IsString()
   readonly userId: string;
 
-  @ApiProperty({ description: '뱃지 유형' })
+  @ApiProperty({ description: BADGE_TYPE_NAME })
   @IsString()
   readonly badgeType: string;
 }
 
 export class ResChangeSelectedBadgeAppDto {
   @ApiProperty({
-    example: '선택 뱃지 변경 성공',
+    example: CHANGE_USER_BADGE_MESSAGE,
     description: '성공 메시지',
   })
   @IsString()

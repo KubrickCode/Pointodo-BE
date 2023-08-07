@@ -1,34 +1,42 @@
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  POINTS,
+  POINT_LOG_ID,
+  POINT_LOG_OCCURRED_AT,
+  POINT_TRANSACTION_TYPE,
+} from '@shared/constants/point.constant';
+import { TASK_TYPE_NAME } from '@shared/constants/task.constant';
+import { USER_ID } from '@shared/constants/user.constant';
 import { IsDate, IsEnum, IsInt, IsString } from 'class-validator';
 
 export class ReqGetAllPointsLogsAppDto {
-  @ApiProperty({ description: '유저 ID(UUID)' })
+  @ApiProperty({ description: USER_ID })
   @IsString()
   readonly userId: string;
 }
 
 export class ResGetAllPointsLogsAppDto {
-  @ApiProperty({ description: '포인트 로그 고유 ID(INT)' })
+  @ApiProperty({ description: POINT_LOG_ID })
   @IsInt()
   readonly id: number;
 
-  @ApiProperty({ description: '유저 ID(UUID)' })
+  @ApiProperty({ description: USER_ID })
   @IsString()
   readonly userId: string;
 
-  @ApiProperty({ description: '작업 유형' })
+  @ApiProperty({ description: TASK_TYPE_NAME })
   @IsInt()
   readonly taskType: string;
 
-  @ApiProperty({ description: '포인트 작업 유형' })
+  @ApiProperty({ description: POINT_TRANSACTION_TYPE })
   @IsEnum(['EARNED', 'SPENT'])
   readonly transactionType: 'EARNED' | 'SPENT';
 
-  @ApiProperty({ description: '거래 포인트' })
+  @ApiProperty({ description: POINTS })
   @IsInt()
   readonly points: number;
 
-  @ApiProperty({ description: '포인트 로그 생성 시간' })
+  @ApiProperty({ description: POINT_LOG_OCCURRED_AT })
   @IsDate()
   readonly occurredAt: Date;
 }

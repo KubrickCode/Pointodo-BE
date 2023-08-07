@@ -1,12 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  BADGE_PROGRESS,
+  BADGE_TYPE_NAME,
+} from '@shared/constants/badge.constant';
 import { IsInt, IsString } from 'class-validator';
 
 export class ResGetAllBadgeProgressDto {
-  @ApiProperty({ description: '뱃지 유형' })
+  @ApiProperty({ description: BADGE_TYPE_NAME })
   @IsString()
   readonly badgeType: string;
 
-  @ApiProperty({ description: '뱃지 획득 진척도' })
+  @ApiProperty({ description: BADGE_PROGRESS })
   @IsInt()
   readonly progress: number;
 }

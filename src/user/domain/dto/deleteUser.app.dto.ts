@@ -1,14 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { USER_ID } from '@shared/constants/user.constant';
+import { DELETE_USER_SUCCESS_MESSAGE } from '@shared/messages/user/user.messages';
 import { IsString } from 'class-validator';
 
 export class ReqDeleteUserAppDto {
-  @ApiProperty({ description: '유저 고유 ID(UUID)' })
+  @ApiProperty({ description: USER_ID })
   @IsString()
   readonly id: string;
 }
 
 export class ResDeleteUserAppDto {
-  @ApiProperty({ example: '회원 탈퇴 성공', description: '성공 메시지' })
+  @ApiProperty({
+    example: DELETE_USER_SUCCESS_MESSAGE,
+    description: '성공 메시지',
+  })
   @IsString()
   readonly message: string;
 }

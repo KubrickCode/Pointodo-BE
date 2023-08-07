@@ -101,6 +101,7 @@ export class TaskService implements ITaskService {
 
     return { message: CREATE_TASK_SUCCESS_MESSAGE };
   }
+
   async updateTask(req: ReqUpdateTaskAppDto): Promise<ResUpdateTaskAppDto> {
     const { id, name, description, importance } = req;
     const result = await this.taskRepository.updateTask(
@@ -115,6 +116,7 @@ export class TaskService implements ITaskService {
 
     return { message: UPDATE_TASK_SUCCESS_MESSAGE };
   }
+
   async deleteTask(req: ReqDeleteTaskAppDto): Promise<ResDeleteTaskAppDto> {
     const result = await this.taskRepository.deleteTask(req.id);
     await this.cacheService.deleteCache(

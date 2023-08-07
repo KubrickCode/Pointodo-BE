@@ -3,6 +3,9 @@ import {
   ResLoginDto,
   ResNotFoundUser,
 } from '@auth/interface/dto/login.dto';
+import { AUTH_INVALID_PASSWORD } from '@shared/messages/auth/auth.errors';
+import { LOGIN_SUCCESS_MESSAGE } from '@shared/messages/auth/auth.messages';
+import { USER_NOT_FOUND } from '@shared/messages/user/user.errors';
 
 export const loginDocs = {
   operation: {
@@ -12,13 +15,13 @@ export const loginDocs = {
     리프레시 토큰을 쿠키에 정의하고, 액세스 토큰을 제공합니다.
     `,
   },
-  okResponse: { type: ResLoginDto, description: '로그인 성공' },
+  okResponse: { type: ResLoginDto, description: LOGIN_SUCCESS_MESSAGE },
   invalidEmail: {
     type: ResNotFoundUser,
-    description: '존재하지 않는 계정 에러',
+    description: USER_NOT_FOUND,
   },
   invalidPassword: {
     type: ResInvalidPassword,
-    description: '비밀번호 불일치 에러',
+    description: AUTH_INVALID_PASSWORD,
   },
 };
