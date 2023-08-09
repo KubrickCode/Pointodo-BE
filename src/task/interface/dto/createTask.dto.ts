@@ -23,7 +23,7 @@ export class ReqCreateTaskDto {
   @ApiProperty({ description: TASK_DESC })
   @IsString()
   @IsOptional()
-  readonly description: string;
+  readonly description?: string;
 
   @ApiProperty({ description: TASK_IMPORTANCE })
   @Type(() => Number)

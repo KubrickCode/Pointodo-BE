@@ -5,7 +5,7 @@ export const deleteTaskDocs = {
   operation: {
     summary: '작업 로그 삭제',
     description: `작업 로그 삭제\n
-    id를 param으로 전달받아서 작업 로그를 삭제하고, 성공 메시지를 반환합니다.
+    id와 taskType을 쿼리 스트링으로 전달받아서 작업 로그를 삭제하고, 성공 메시지를 반환합니다.
   `,
   },
   okResponse: {

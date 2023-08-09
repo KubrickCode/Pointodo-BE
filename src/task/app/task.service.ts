@@ -141,10 +141,10 @@ export class TaskService implements ITaskService {
   }
 
   async deleteTask(req: ReqDeleteTaskAppDto): Promise<ResDeleteTaskAppDto> {
-    const result = await this.taskRepository.deleteTask(req.id);
-    if (result.taskType === 'DUE') {
+    if (req.taskType === 'DUE') {
       await this.taskRepository.deleteTaskDueDate(req.id);
     }
+    const result = await this.taskRepository.deleteTask(req.id);
     await this.cacheService.deleteCache(
       `${result.taskType}logs:${result.userId}`,
     );
@@ -213,8 +213,6 @@ export class TaskService implements ITaskService {
             ),
           ),
         );
-
-      console.log(updatedDiversity);
 
       await completeDiversity(
         updatedDiversity,
