@@ -4,4 +4,6 @@ export interface IUserBadgeRepository {
   createUserBadgeLog(userId: string, badgeId: number): Promise<UserBadgeEntity>;
 
   getUserBadgeList(userId: string): Promise<Array<{ badgeId: number }>>;
+
+  deleteUserBadgeLog(id: number): Promise<UserBadgeEntity>;
 }

@@ -38,4 +38,17 @@ export class UserBadgeRepository implements IUserBadgeRepository {
     >(query, ...values);
     return userBadgeList;
   }
+
+  async deleteUserBadgeLog(id: number): Promise<UserBadgeEntity> {
+    const query = `
+      DELETE FROM "UserBadgesLogs"
+      WHERE id = $1
+    `;
+    const values = [id];
+    const deleteBadgeLog = await this.prisma.$queryRawUnsafe<UserBadgesLogs>(
+      query,
+      ...values,
+    );
+    return deleteBadgeLog;
+  }
 }

@@ -79,7 +79,8 @@ export class BadgeService implements IBadgeService {
     await this.cacheService.deleteCache(`userSpentPointsLogs:${req.userId}`);
     await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
 
-    await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
+    const createdUserBadgeLog =
+      await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
 
     const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
       userId,
@@ -89,8 +90,10 @@ export class BadgeService implements IBadgeService {
       (item) => item.badgeId === badgeId,
     );
 
-    if (filteredBadgeList.length > 1)
+    if (filteredBadgeList.length > 1) {
+      await this.userBadgeRepository.deleteUserBadgeLog(createdUserBadgeLog.id);
       throw new ConflictException(ALREADY_EXIST_USER_BADGE);
+    }
 
     return { message: BUY_BADGE_SUCCESS_MESSAGE };
   }

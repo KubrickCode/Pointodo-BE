@@ -101,7 +101,7 @@ export class TaskService implements ITaskService {
       importance,
     );
 
-    if (taskType === '기한 작업')
+    if (taskType === 'DUE')
       await this.taskRepository.createTaskDueDate(createdTask.id, dueDate);
 
     await this.cacheService.deleteCache(`${taskType}logs:${userId}`);
@@ -198,6 +198,8 @@ export class TaskService implements ITaskService {
             ),
           ),
         );
+
+      console.log(updatedDiversity);
 
       await completeDiversity(
         updatedDiversity,

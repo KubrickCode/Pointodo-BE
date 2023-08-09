@@ -43,8 +43,8 @@ export class PointRepository implements IPointRepository {
 
   async isContinuous(userId: string, yesterday: string): Promise<boolean> {
     const isContinuousQuery = `
-        SELECT COUNT(*) FROM "PointsLogs"
-        WHERE "userId" = $1::uuid AND DATE("occurredAt") = DATE($2) AND "transactionType" = 'EARNED'
+        SELECT COUNT(*) FROM "EarnedPointsLogs"
+        WHERE "userId" = $1::uuid AND DATE("occurredAt") = DATE($2)
       `;
 
     const isContinuousValues = [userId, yesterday];

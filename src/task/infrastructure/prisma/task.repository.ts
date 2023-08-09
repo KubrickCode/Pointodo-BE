@@ -10,7 +10,7 @@ export class TaskRepository implements ITaskRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async getTasksLogs(userId: string, taskType: string): Promise<TaskEntity[]> {
-    let query;
+    let query: string;
 
     if (taskType === 'DUE') {
       query = `
@@ -60,7 +60,7 @@ export class TaskRepository implements ITaskRepository {
   ): Promise<TaskEntity> {
     const query = `
       INSERT INTO "TasksLogs" ("userId", "taskType", name, description, importance)
-      VALUES ($1::uuid, $2, $3, $4 ,$5)
+      VALUES ($1::uuid, $2::"TaskType", $3, $4 ,$5)
       RETURNING *
     `;
     const values = [userId, taskType, name, description, importance];
@@ -135,8 +135,8 @@ export class TaskRepository implements ITaskRepository {
     if (dueDate) {
       const query = `
       UPDATE "TasksDueDate"
-      SET dueDate = $1
-      WHERE taskId = $2
+      SET "dueDate" = $1
+      WHERE "taskId" = $2
       `;
 
       const values = [dueDate, id];
