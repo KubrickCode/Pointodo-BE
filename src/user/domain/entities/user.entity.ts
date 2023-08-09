@@ -27,4 +27,5 @@ export type RoleType = Role;
 export const RoleTypes: ReadonlyRecord<RoleType, RoleType> = {
   USER: 'USER',
   ADMIN: 'ADMIN',
+  MASTER: 'MASTER',
 };

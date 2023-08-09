@@ -123,6 +123,7 @@ enum Provider {
 enum Role {
   USER
   ADMIN
+  MASTER
 }
 
 enum TaskType {
