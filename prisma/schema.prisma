@@ -8,18 +8,21 @@ datasource db {
 }
 
 model User {
-  id                String            @id @default(uuid()) @db.Uuid 
-  selectedBadge     String            @default("기본 뱃지")
-  email             String            @unique @db.VarChar(255)
-  password          String?           @db.VarChar(255)
-  provider          Provider          @default(LOCAL)
-  role              Role              @default(USER)
-  createdAt         DateTime          @default(now())
-  userBadgeLog      UserBadgesLogs[]
-  badgeProgress     BadgeProgress[]
-  pointsLogs        PointsLogs[]
-  taskLogs          TasksLogs[]
-  selectedBadgeName  BadgeTypes        @relation(fields: [selectedBadge], references: [name])
+  id                  String                @id @default(uuid()) @db.Uuid 
+  selectedBadge       Int                   @default(1)
+  email               String                @unique @db.VarChar(255)
+  password            String?               @db.VarChar(255)
+  provider            Provider              @default(LOCAL)
+  role                Role                  @default(USER)
+  createdAt           DateTime              @default(now())
+
+  userBadgeLog        UserBadgesLogs[]
+  badgeProgress       BadgeProgress[]
+  earnedPointsLogs    EarnedPointsLogs[]
+  spentPointsLogs     SpentPointsLogs[]
+  taskLogs            TasksLogs[]
+
+  selectedBadgeId   BadgeTypes        @relation(fields: [selectedBadge], references: [id])
 }
 
 model BadgeTypes {
@@ -28,65 +31,87 @@ model BadgeTypes {
   description       String            @db.VarChar(100)
   price             Int?              @db.Integer               
   iconLink          String            @db.VarChar(1000)
+  
   user              User[]
   userBadgeLog      UserBadgesLogs[]
   badgeProgress     BadgeProgress[]
+  spentPointLog     SpentPointsLogs[]
 }
 
 model UserBadgesLogs {
   id                Int           @id @default(autoincrement())
   userId            String        @db.Uuid
-  badgeType         String
+  badgeId           Int
+  earnedAt          DateTime      @default(now())
+
   user              User          @relation(fields: [userId], references: [id])
-  badge             BadgeTypes    @relation(fields: [badgeType], references: [name])
+  badge             BadgeTypes    @relation(fields: [badgeId], references: [id])
 }
 
 model BadgeProgress {
   id                Int           @id @default(autoincrement())
   userId            String        @db.Uuid
-  badgeType         String
+  badgeId           Int
   progress          Int           @db.SmallInt @default(0)
   occurredAt        DateTime      @default(now())
+
   user              User          @relation(fields: [userId], references: [id])
-  badge             BadgeTypes    @relation(fields: [badgeType], references: [name])
+  badge             BadgeTypes    @relation(fields: [badgeId], references: [id])
 
-  @@unique([userId, badgeType])
+  @@unique([userId, badgeId])
 }
 
-model PointsLogs {
-  id                        Int                     @id @default(autoincrement())
-  userId                    String                  @db.Uuid      
-  transactionType           PointTransactionType         
-  taskType                  String
-  points                    Int                     @db.SmallInt
-  occurredAt                DateTime                @default(now())
-  user                      User                    @relation(fields: [userId], references: [id])
-  taskTypeName              TaskTypes               @relation(fields: [taskType], references: [name])
+model EarnedPointsLogs {
+  id             Int              @id @default(autoincrement())
+  userId         String           @db.Uuid      
+  taskId         Int
+  points         Int              @db.SmallInt
+  occurredAt     DateTime         @default(now())
 
-  @@index([userId, occurredAt, transactionType])
+  user           User             @relation(fields: [userId], references: [id])
+  taskLog        TasksLogs        @relation(fields: [taskId], references: [id])
+
+  @@index([userId, occurredAt])
 }
 
-model TaskTypes {
-  id                Int           @id @default(autoincrement())
-  name              String        @unique @db.VarChar(20)
-  taskLogs          TasksLogs[]
-  pointLogs         PointsLogs[]
+model SpentPointsLogs {
+  id                Int            @id @default(autoincrement())
+  userId            String         @db.Uuid      
+  badgeId           Int
+  points            Int            @db.SmallInt
+  occurredAt        DateTime       @default(now())
+
+  user              User           @relation(fields: [userId], references: [id])
+  badge             BadgeTypes     @relation(fields: [badgeId], references: [id])
+
+  @@index([userId, occurredAt])
 }
 
 model TasksLogs {
   id                Int           @id @default(autoincrement())
   userId            String        @db.Uuid
-  taskType          String
+  taskType          TaskType      @default(DAILY)
   name              String        @db.VarChar(20)
   description       String?       @db.VarChar(500)
   completion        Int           @db.SmallInt @default(0)
   importance        Int           @db.SmallInt @default(3)
   occurredAt        DateTime      @default(now())
   version           Int           @db.SmallInt @default(0)
+
   user              User          @relation(fields: [userId], references: [id])
-  taskTypeName      TaskTypes     @relation(fields: [taskType], references: [name])
+
+  pointLog          EarnedPointsLogs[]
+  dueDate           TasksDueDate[]
 
   @@index([userId])
+}
+
+model TasksDueDate {
+  id            Int           @id @default(autoincrement())
+  taskId        Int
+  dueDate       DateTime      @db.Date
+
+  taskLog       TasksLogs     @relation(fields: [taskId], references: [id])
 }
 
 enum Provider {
@@ -100,7 +125,8 @@ enum Role {
   ADMIN
 }
 
-enum PointTransactionType {
-  EARNED
-  SPENT
+enum TaskType {
+  DAILY
+  DUE
+  FREE
 }
