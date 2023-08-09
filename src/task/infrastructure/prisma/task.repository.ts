@@ -209,6 +209,15 @@ export class TaskRepository implements ITaskRepository {
     return cancledTask[0];
   }
 
+  async resetDailyTask(): Promise<void> {
+    const query = `
+        UPDATE "TasksLogs"
+        SET completion = 0, version = 0
+        WHERE "taskType" = 'DAILY'
+      `;
+    await this.prisma.$queryRawUnsafe<TasksLogs>(query);
+  }
+
   async lockTask(id: number): Promise<void> {
     const query = `
         UPDATE "TasksLogs"

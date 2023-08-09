@@ -27,5 +27,6 @@ export interface ITaskRepository {
 
   completeTask(id: number, isRollback?: boolean): Promise<TaskEntity>;
   cancleTaskCompletion(id: number): Promise<TaskEntity>;
+  resetDailyTask(): Promise<void>;
   lockTask(id: number): Promise<void>;
 }
