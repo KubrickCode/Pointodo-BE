@@ -48,7 +48,7 @@ import {
   ResCancleTaskCompletionAppDto,
 } from '@task/domain/dto/cancleTaskCompletion.app.dto';
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
-import { Cron } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -249,7 +249,7 @@ export class TaskService implements ITaskService {
     return { message: CANCLE_TASK_COMPLETION_SUCCESS_MESSAGE };
   }
 
-  @Cron('45 * * * * *')
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async resetDailyTask() {
     await this.taskRepository.resetDailyTask();
   }
