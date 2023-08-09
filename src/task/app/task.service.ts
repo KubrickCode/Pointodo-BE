@@ -92,26 +92,31 @@ export class TaskService implements ITaskService {
   }
 
   async createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto> {
-    const { userId, taskType, name, description, importance } = req;
-    await this.taskRepository.createTask(
+    const { userId, taskType, name, description, importance, dueDate } = req;
+    const createdTask = await this.taskRepository.createTask(
       userId,
       taskType,
       name,
       description,
       importance,
     );
+
+    if (taskType === '기한 작업')
+      await this.taskRepository.createTaskDueDate(createdTask.id, dueDate);
+
     await this.cacheService.deleteCache(`${taskType}logs:${userId}`);
 
     return { message: CREATE_TASK_SUCCESS_MESSAGE };
   }
 
   async updateTask(req: ReqUpdateTaskAppDto): Promise<ResUpdateTaskAppDto> {
-    const { id, name, description, importance } = req;
+    const { id, name, description, importance, dueDate } = req;
     const result = await this.taskRepository.updateTask(
       id,
       name,
       description,
       importance,
+      dueDate,
     );
     await this.cacheService.deleteCache(
       `${result.taskType}logs:${result.userId}`,
@@ -122,6 +127,9 @@ export class TaskService implements ITaskService {
 
   async deleteTask(req: ReqDeleteTaskAppDto): Promise<ResDeleteTaskAppDto> {
     const result = await this.taskRepository.deleteTask(req.id);
+    if (result.taskType === 'DUE') {
+      await this.taskRepository.deleteTaskDueDate(req.id);
+    }
     await this.cacheService.deleteCache(
       `${result.taskType}logs:${result.userId}`,
     );

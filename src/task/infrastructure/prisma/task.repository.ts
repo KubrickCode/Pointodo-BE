@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { TasksLogs } from '@prisma/client';
+import { TasksDueDate, TasksLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
 import { TaskEntity } from '@task/domain/entities/task.entity';
+import { TasksDueDateEntity } from '@task/domain/entities/tasksDueDate.entity';
 import { ITaskRepository } from '@task/domain/interfaces/task.repository.interface';
 
 @Injectable()
@@ -56,11 +57,29 @@ export class TaskRepository implements ITaskRepository {
     return newTasksLogs[0];
   }
 
+  async createTaskDueDate(
+    id: number,
+    date: string,
+  ): Promise<TasksDueDateEntity> {
+    const query = `
+      INSERT INTO "TasksDueDate" ("taskId", "dueDate")
+      VALUES ($1, $2)
+      RETURNING *
+    `;
+    const values = [id, date];
+    const result = await this.prisma.$queryRawUnsafe<TasksDueDate>(
+      query,
+      ...values,
+    );
+    return result[0];
+  }
+
   async updateTask(
     id: number,
     name: string,
     description: string,
     importance: number,
+    dueDate: string,
   ): Promise<TaskEntity> {
     const updateFields: string[] = [];
     const values: (number | string)[] = [];
@@ -98,6 +117,19 @@ export class TaskRepository implements ITaskRepository {
       query,
       ...values,
     );
+
+    if (dueDate) {
+      const query = `
+      UPDATE "TasksDueDate"
+      SET dueDate = $1
+      WHERE taskId = $2
+      `;
+
+      const values = [dueDate, id];
+
+      await this.prisma.$queryRawUnsafe<void>(query, ...values);
+    }
+
     return updatedTaskLog[0];
   }
 
@@ -113,6 +145,20 @@ export class TaskRepository implements ITaskRepository {
       ...values,
     );
     return deletedTaskLog[0];
+  }
+
+  async deleteTaskDueDate(taskId: number): Promise<TasksDueDateEntity> {
+    const query = `
+      DELETE FROM "TasksDueDate"
+      WHERE taskId = $1
+      RETURNING *
+    `;
+    const values = [taskId];
+    const deletedTaskDueDate = await this.prisma.$queryRawUnsafe<TasksDueDate>(
+      query,
+      ...values,
+    );
+    return deletedTaskDueDate[0];
   }
 
   async completeTask(id: number, isRollback?: boolean): Promise<TaskEntity> {

@@ -109,7 +109,7 @@ model TasksLogs {
 model TasksDueDate {
   id            Int           @id @default(autoincrement())
   taskId        Int
-  dueDate       DateTime      @db.Date
+  dueDate       String        @db.VarChar(10)
 
   taskLog       TasksLogs     @relation(fields: [taskId], references: [id])
 }

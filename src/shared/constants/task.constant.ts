@@ -21,3 +21,4 @@ export const TASK_DESC = '작업 내용';
 export const TASK_IMPORTANCE = '작업 중요도';
 export const TASK_COMPLETION = '작업 완료 여부';
 export const TASK_OCCURRED_AT = '작업 로그 생성 시간';
+export const TASK_DUE_DATE = '작업 만료 기한';

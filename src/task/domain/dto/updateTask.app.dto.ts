@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   TASK_DESC,
+  TASK_DUE_DATE,
   TASK_IMPORTANCE,
   TASK_LOG_ID,
   TASK_NAME,
@@ -16,17 +17,22 @@ export class ReqUpdateTaskAppDto {
   @ApiProperty({ description: TASK_NAME })
   @IsString()
   @IsOptional()
-  readonly name: string;
+  readonly name?: string;
 
   @ApiProperty({ description: TASK_DESC })
   @IsString()
   @IsOptional()
-  readonly description: string;
+  readonly description?: string;
 
   @ApiProperty({ description: TASK_IMPORTANCE })
   @IsInt()
   @IsOptional()
-  readonly importance: number;
+  readonly importance?: number;
+
+  @ApiProperty({ description: TASK_DUE_DATE })
+  @IsString()
+  @IsOptional()
+  readonly dueDate?: string;
 }
 
 export class ResUpdateTaskAppDto {
