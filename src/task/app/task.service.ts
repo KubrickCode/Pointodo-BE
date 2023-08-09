@@ -47,6 +47,7 @@ import {
   ReqCancleTaskCompletionAppDto,
   ResCancleTaskCompletionAppDto,
 } from '@task/domain/dto/cancleTaskCompletion.app.dto';
+import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -55,6 +56,8 @@ export class TaskService implements ITaskService {
     private readonly taskRepository: ITaskRepository,
     @Inject('IBadgeProgressRepository')
     private readonly badgeProgressRepository: IBadgeProgressRepository,
+    @Inject('IBadgeAdminRepository')
+    private readonly badgeAdminRepository: IBadgeAdminRepository,
     @Inject('IPointRepository')
     private readonly pointRepository: IPointRepository,
     @Inject('IUserBadgeRepository')
@@ -134,7 +137,7 @@ export class TaskService implements ITaskService {
 
       await this.cacheService.deleteCache(`userBadgeProgress:${req.userId}`);
       await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
-      await this.cacheService.deleteCache(`userPointsLogs:${req.userId}`);
+      await this.cacheService.deleteCache(`userEarnedPointsLogs:${req.userId}`);
       await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
       await this.cacheService.deleteCache(`${taskType}logs:${req.userId}`);
 
@@ -150,17 +153,20 @@ export class TaskService implements ITaskService {
         HandleDateTime.getYesterday,
       );
 
-      await this.pointRepository.createPointLog(
+      await this.pointRepository.createEarnedPointLog(
         req.userId,
-        'EARNED',
-        taskType,
+        req.id,
         setTaskPoints(taskType, isContinuous),
       );
+
+      const consistencyBadgeId =
+        await this.badgeAdminRepository.getBadgeIdByName('일관성 뱃지3');
 
       const updatedConsistency =
         await this.badgeProgressRepository.updateConsistency(
           req.userId,
           isContinuous,
+          consistencyBadgeId.id,
         );
 
       await completeConsistency(
@@ -169,12 +175,20 @@ export class TaskService implements ITaskService {
         this.userBadgeRepository.createUserBadgeLog.bind(
           this.userBadgeRepository,
         ),
+        this.badgeAdminRepository.getBadgeIdByName.bind(
+          this.badgeAdminRepository,
+        ),
       );
 
       const updatedDiversity =
         await this.badgeProgressRepository.updateDiversity(
           req.userId,
-          setDiversityBadgeType(taskType),
+          await setDiversityBadgeType(
+            taskType,
+            this.badgeAdminRepository.getBadgeIdByName.bind(
+              this.badgeAdminRepository,
+            ),
+          ),
         );
 
       await completeDiversity(
@@ -183,6 +197,9 @@ export class TaskService implements ITaskService {
         req.userId,
         this.userBadgeRepository.createUserBadgeLog.bind(
           this.userBadgeRepository,
+        ),
+        this.badgeAdminRepository.getBadgeIdByName.bind(
+          this.badgeAdminRepository,
         ),
       );
 
@@ -194,6 +211,9 @@ export class TaskService implements ITaskService {
         ),
         this.badgeProgressRepository.updateProductivity.bind(
           this.badgeProgressRepository,
+        ),
+        this.badgeAdminRepository.getBadgeIdByName.bind(
+          this.badgeAdminRepository,
         ),
       );
 

@@ -15,12 +15,12 @@ export class ValidateBadgeTypePipe implements PipeTransform {
   ) {}
 
   async transform(body: any) {
-    if (body.hasOwnProperty('badgeType')) {
+    if (body.hasOwnProperty('badgeId')) {
       const validBadgeTypes =
         await this.badgeAdminRepository.getAllBadgeTypes();
-      const validBadgeNames = validBadgeTypes.map((badge) => badge.name);
+      const validBadgeId = validBadgeTypes.map((badge) => badge.id);
 
-      if (!validBadgeNames.includes(body.badgeType)) {
+      if (!validBadgeId.includes(body.badgeId)) {
         throw new BadRequestException(INVALID_BADGE_TYPE);
       }
     }

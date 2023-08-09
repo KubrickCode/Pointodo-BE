@@ -2,17 +2,22 @@ import { ICacheService } from '@cache/domain/interfaces/cache.service.interface'
 import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
-  ReqGetAllPointsLogsAppDto,
-  ResGetAllPointsLogsAppDto,
-} from '@point/domain/dto/getAllPointsLogs.app.dto';
+  ReqGetEarnedPointsLogsAppDto,
+  ResGetEarnedPointsLogsAppDto,
+} from '@point/domain/dto/getEarnedPointsLogs.app.dto';
 import {
   ReqGetCurrentPointsAppDto,
   ResGetCurrentPointsAppDto,
 } from '@point/domain/dto/getCurrentPoints.app.dto';
-import { PointEntity } from '@point/domain/entities/earnedPoint.entity';
+import { EarnedPointEntity } from '@point/domain/entities/earnedPoint.entity';
+import { SpentPointEntity } from '@point/domain/entities/spentPoint.entity';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
 import { IPointService } from '@point/domain/interfaces/point.service.interface';
 import { cacheConfig } from '@shared/config/cache.config';
+import {
+  ReqGetSpentPointsLogsAppDto,
+  ResGetSpentPointsLogsAppDto,
+} from '@point/domain/dto/getSpentPointsLogs.app.dto';
 
 @Injectable()
 export class PointService implements IPointService {
@@ -24,18 +29,40 @@ export class PointService implements IPointService {
     private readonly configService: ConfigService,
   ) {}
 
-  async getAllPointsLogs(
-    req: ReqGetAllPointsLogsAppDto,
-  ): Promise<ResGetAllPointsLogsAppDto[]> {
-    const cacheKey = `userPointsLogs:${req.userId}`;
+  async getEarnedPointsLogs(
+    req: ReqGetEarnedPointsLogsAppDto,
+  ): Promise<ResGetEarnedPointsLogsAppDto[]> {
+    const cacheKey = `userEarnedPointsLogs:${req.userId}`;
     const cachedPointsLogs = await this.cacheService.getFromCache<
-      PointEntity[]
+      EarnedPointEntity[]
     >(cacheKey);
     if (cachedPointsLogs) {
       return cachedPointsLogs;
     }
 
-    const result = await this.pointRepository.getAllPointsLogs(req.userId);
+    const result = await this.pointRepository.getEarnedPointsLogs(req.userId);
+
+    await this.cacheService.setCache(
+      cacheKey,
+      result,
+      cacheConfig(this.configService).cacheTTL,
+    );
+
+    return result;
+  }
+
+  async getSpentPointsLogs(
+    req: ReqGetSpentPointsLogsAppDto,
+  ): Promise<ResGetSpentPointsLogsAppDto[]> {
+    const cacheKey = `userSpentPointsLogs:${req.userId}`;
+    const cachedPointsLogs = await this.cacheService.getFromCache<
+      SpentPointEntity[]
+    >(cacheKey);
+    if (cachedPointsLogs) {
+      return cachedPointsLogs;
+    }
+
+    const result = await this.pointRepository.getSpentPointsLogs(req.userId);
 
     await this.cacheService.setCache(
       cacheKey,

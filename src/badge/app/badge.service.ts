@@ -60,34 +60,33 @@ export class BadgeService implements IBadgeService {
   ) {}
 
   async buyBadge(req: ReqBuyBadgeAppDto): Promise<ResBuyBadgeAppDto> {
-    const { userId, badgeType } = req;
-    const price = await this.badgeAdminRepository.getBadgePrice(badgeType);
+    const { userId, badgeId } = req;
+    const price = await this.badgeAdminRepository.getBadgePrice(badgeId);
 
-    const updatedPointLog = await this.pointRepository.createPointLog(
+    const updatedPointLog = await this.pointRepository.createSpentPointLog(
       userId,
-      'SPENT',
-      `${badgeType} 구매`,
-      -price,
+      badgeId,
+      price,
     );
 
     const updatedPoint = await this.pointRepository.calculateUserPoints(userId);
     if (updatedPoint < 0) {
-      await this.pointRepository.deletePointLog(updatedPointLog.id);
+      await this.pointRepository.deleteSpentPointLog(updatedPointLog.id);
       throw new ConflictException(BUY_BADGE_CONFLICT_POINTS);
     }
 
     await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
-    await this.cacheService.deleteCache(`userPointsLogs:${req.userId}`);
+    await this.cacheService.deleteCache(`userSpentPointsLogs:${req.userId}`);
     await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
 
-    await this.userBadgeRepository.createUserBadgeLog(userId, badgeType);
+    await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
 
     const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
       userId,
     );
 
     const filteredBadgeList = userBadgeList.filter(
-      (item) => item.badgeType === badgeType,
+      (item) => item.badgeId === badgeId,
     );
 
     if (filteredBadgeList.length > 1)
@@ -121,17 +120,17 @@ export class BadgeService implements IBadgeService {
   async changeSelectedBadge(
     req: ReqChangeSelectedBadgeAppDto,
   ): Promise<ResChangeSelectedBadgeAppDto> {
-    const { userId, badgeType } = req;
+    const { userId, badgeId } = req;
     const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
       userId,
     );
 
-    const badgeTypeList = userBadgeList.map((item) => item.badgeType);
+    const badgeTypeList = userBadgeList.map((item) => item.badgeId);
 
-    if (!badgeTypeList.includes(badgeType))
+    if (!badgeTypeList.includes(badgeId))
       throw new BadRequestException(NOT_EXIST_USER_BADGE);
 
-    await this.userRepository.changeSelectedBadge(userId, badgeType);
+    await this.userRepository.changeSelectedBadge(userId, badgeId);
     return { message: CHANGE_USER_BADGE_MESSAGE };
   }
 

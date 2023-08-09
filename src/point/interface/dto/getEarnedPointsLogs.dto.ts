@@ -3,19 +3,12 @@ import {
   POINTS,
   POINT_LOG_ID,
   POINT_LOG_OCCURRED_AT,
-  POINT_TRANSACTION_TYPE,
 } from '@shared/constants/point.constant';
-import { TASK_TYPE_NAME } from '@shared/constants/task.constant';
+import { TASK_TYPE_ID } from '@shared/constants/task.constant';
 import { USER_ID } from '@shared/constants/user.constant';
-import { IsDate, IsEnum, IsInt, IsString } from 'class-validator';
+import { IsDate, IsInt, IsString } from 'class-validator';
 
-export class ReqGetAllPointsLogsAppDto {
-  @ApiProperty({ description: USER_ID })
-  @IsString()
-  readonly userId: string;
-}
-
-export class ResGetAllPointsLogsAppDto {
+export class ResGetEarnedPointsLogsDto {
   @ApiProperty({ description: POINT_LOG_ID })
   @IsInt()
   readonly id: number;
@@ -24,13 +17,9 @@ export class ResGetAllPointsLogsAppDto {
   @IsString()
   readonly userId: string;
 
-  @ApiProperty({ description: TASK_TYPE_NAME })
+  @ApiProperty({ description: TASK_TYPE_ID })
   @IsInt()
-  readonly taskType: string;
-
-  @ApiProperty({ description: POINT_TRANSACTION_TYPE })
-  @IsEnum(['EARNED', 'SPENT'])
-  readonly transactionType: 'EARNED' | 'SPENT';
+  readonly taskId: number;
 
   @ApiProperty({ description: POINTS })
   @IsInt()

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BADGE_TYPE_NAME } from '@shared/constants/badge.constant';
+import { BADGE_TYPE_ID } from '@shared/constants/badge.constant';
 import { USER_ID } from '@shared/constants/user.constant';
 import { BUY_BADGE_SUCCESS_MESSAGE } from '@shared/messages/badge/badge.messages';
 import { IsInt, IsString } from 'class-validator';
@@ -9,9 +9,9 @@ export class ReqBuyBadgeAppDto {
   @IsString()
   readonly userId: string;
 
-  @ApiProperty({ description: BADGE_TYPE_NAME })
+  @ApiProperty({ description: BADGE_TYPE_ID })
   @IsInt()
-  readonly badgeType: string;
+  readonly badgeId: number;
 }
 
 export class ResBuyBadgeAppDto {

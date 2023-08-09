@@ -10,7 +10,7 @@ export const buyBadgeDocs = {
   operation: {
     summary: '뱃지 구매',
     description: `뱃지 구매\n
-  구매할 뱃지 타입을 전달받아 포인트를 소모하고 뱃지를 구입한 뒤, 성공 메시지가 반환됩니다.
+  구매할 뱃지 ID를 전달받아 포인트를 소모하고 뱃지를 구입한 뒤, 성공 메시지가 반환됩니다.
   `,
   },
   okResponse: { type: ResBuyBadgeDto, description: BUY_BADGE_SUCCESS_MESSAGE },

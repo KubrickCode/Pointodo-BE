@@ -11,5 +11,5 @@ export interface IUserRepository {
   findPasswordById(email: string): Promise<string>;
   changePassword(id: string, newPassword: string): Promise<void>;
   deleteUser(id: string): Promise<UserEntity>;
-  changeSelectedBadge(userId: string, badgeType: string): Promise<UserEntity>;
+  changeSelectedBadge(userId: string, badgeId: number): Promise<UserEntity>;
 }

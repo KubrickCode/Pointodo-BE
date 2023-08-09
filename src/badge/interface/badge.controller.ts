@@ -57,7 +57,7 @@ export class BadgeController {
   ): Promise<ResBuyBadgeDto> {
     return await this.badgeService.buyBadge({
       userId: req.user.id,
-      badgeType: body.badgeType,
+      badgeId: body.badgeId,
     });
   }
 
@@ -89,7 +89,7 @@ export class BadgeController {
   ): Promise<ResChangeSelectedBadgeDto> {
     return await this.badgeService.changeSelectedBadge({
       userId: req.user.id,
-      badgeType: body.badgeType,
+      badgeId: body.badgeId,
     });
   }
 }

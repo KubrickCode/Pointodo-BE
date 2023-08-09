@@ -32,7 +32,7 @@ export class ResGetUserDto {
 
   @ApiProperty({ description: USER_SELECTED_BADGE })
   @IsString()
-  readonly selectedBadge: string;
+  readonly selectedBadge: number;
 
   @IsDate()
   @ApiProperty({ description: USER_REGISTER_DATE })

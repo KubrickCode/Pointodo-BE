@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   BADGE_PROGRESS,
-  BADGE_TYPE_NAME,
+  BADGE_TYPE_ID,
 } from '@shared/constants/badge.constant';
 import { USER_ID } from '@shared/constants/user.constant';
 import { IsInt, IsString } from 'class-validator';
@@ -13,9 +13,9 @@ export class ReqGetAllBadgeProgressAppDto {
 }
 
 export class ResGetAllBadgeProgressAppDto {
-  @ApiProperty({ description: BADGE_TYPE_NAME })
+  @ApiProperty({ description: BADGE_TYPE_ID })
   @IsString()
-  readonly badgeType: string;
+  readonly badgeId: number;
 
   @ApiProperty({ description: BADGE_PROGRESS })
   @IsInt()

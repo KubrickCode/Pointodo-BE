@@ -10,14 +10,14 @@ export class UserBadgeRepository implements IUserBadgeRepository {
 
   async createUserBadgeLog(
     userId: string,
-    badgeType: string,
+    badgeId: number,
   ): Promise<UserBadgeEntity> {
     const query = `
-      INSERT INTO "UserBadgesLogs" ("userId", "badgeType")
+      INSERT INTO "UserBadgesLogs" ("userId", "badgeId")
       VALUES ($1::uuid, $2)
       RETURNING *
     `;
-    const values = [userId, badgeType];
+    const values = [userId, badgeId];
     const newUserBadgeLog = await this.prisma.$queryRawUnsafe<UserBadgesLogs>(
       query,
       ...values,
@@ -27,14 +27,14 @@ export class UserBadgeRepository implements IUserBadgeRepository {
 
   async getUserBadgeList(
     userId: string,
-  ): Promise<Array<Pick<UserBadgeEntity, 'badgeType'>>> {
+  ): Promise<Array<Pick<UserBadgeEntity, 'badgeId'>>> {
     const query = `
-      SELECT "badgeType" FROM "UserBadgesLogs"
+      SELECT "badgeId" FROM "UserBadgesLogs"
       WHERE "userId" = $1::uuid
     `;
     const values = [userId];
     const userBadgeList = await this.prisma.$queryRawUnsafe<
-      Array<{ badgeType: string }>
+      Array<Pick<UserBadgesLogs, 'badgeId'>>
     >(query, ...values);
     return userBadgeList;
   }
