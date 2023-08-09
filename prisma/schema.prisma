@@ -22,7 +22,7 @@ model User {
   spentPointsLogs     SpentPointsLogs[]
   taskLogs            TasksLogs[]
 
-  selectedBadgeId   BadgeTypes        @relation(fields: [selectedBadge], references: [id])
+  selectedBadgeId     BadgeTypes            @relation(fields: [selectedBadge], references: [id])
 }
 
 model BadgeTypes {

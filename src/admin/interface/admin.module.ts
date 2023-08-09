@@ -10,11 +10,8 @@ import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 import { PrismaService } from '@shared/service/prisma.service';
 import { BadgeAdminService } from '@admin/badge/app/badge.admin.service';
 import { BadgeAdminRepository } from '@admin/badge/infrastructure/prisma/badge.admin.repository';
-import { TaskAdminController } from '@admin/interface/task.admin.controller';
-import { TaskAdminService } from '@admin/task/app/task.admin.service';
-import { TaskAdminRepository } from '@admin/task/infrastructure/prisma/task.admin.repository';
 @Module({
-  controllers: [BadgeAdminController, TaskAdminController],
+  controllers: [BadgeAdminController],
   providers: [
     PrismaService,
     {
@@ -40,14 +37,6 @@ import { TaskAdminRepository } from '@admin/task/infrastructure/prisma/task.admi
     {
       provide: 'IBadgeAdminRepository',
       useClass: BadgeAdminRepository,
-    },
-    {
-      provide: 'ITaskAdminService',
-      useClass: TaskAdminService,
-    },
-    {
-      provide: 'ITaskAdminRepository',
-      useClass: TaskAdminRepository,
     },
   ],
   imports: [
