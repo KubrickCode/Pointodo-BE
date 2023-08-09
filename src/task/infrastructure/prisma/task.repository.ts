@@ -17,9 +17,9 @@ export class TaskRepository implements ITaskRepository {
 
     if (taskType === 'DUE') {
       query = `
-            SELECT "TasksLogs".*, "TasksDueDate".dueDate 
+            SELECT "TasksLogs".*, "TasksDueDate"."dueDate" 
             FROM "TasksLogs"
-            LEFT JOIN "TasksDueDate" ON "TasksLogs".id = "TasksDueDate".taskId
+            LEFT JOIN "TasksDueDate" ON "TasksLogs".id = "TasksDueDate"."taskId"
             WHERE "TasksLogs"."userId" = $1::uuid
             AND "TasksLogs"."taskType" = $2::"TaskType"
             ORDER BY "TasksLogs".importance ASC
@@ -167,7 +167,7 @@ export class TaskRepository implements ITaskRepository {
   async deleteTaskDueDate(taskId: number): Promise<TasksDueDateEntity> {
     const query = `
       DELETE FROM "TasksDueDate"
-      WHERE taskId = $1
+      WHERE "taskId" = $1
       RETURNING *
     `;
     const values = [taskId];

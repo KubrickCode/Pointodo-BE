@@ -1,4 +1,9 @@
-import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import {
   CANCLE_TASK_COMPLETION_SUCCESS_MESSAGE,
   COMPLETE_TASK_SUCCESS_MESSAGE,
@@ -37,7 +42,10 @@ import { completeConsistency } from './utils/completeConsistency';
 import { setDiversityBadgeType } from './utils/setDiversityBadgeType';
 import { completeDiversity } from './utils/completeDiversity';
 import { completeProductivity } from './utils/completeProductivity';
-import { COMPLETE_TASK_CONFLICT } from '@shared/messages/task/task.errors';
+import {
+  COMPLETE_TASK_CONFLICT,
+  DUE_DATE_IN_THE_PAST,
+} from '@shared/messages/task/task.errors';
 import { IS_COMPLETED } from '@shared/constants/task.constant';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import { ConfigService } from '@nestjs/config';
@@ -102,8 +110,11 @@ export class TaskService implements ITaskService {
       importance,
     );
 
-    if (taskType === 'DUE')
+    if (taskType === 'DUE') {
+      if (new Date(dueDate) < new Date(HandleDateTime.getToday))
+        throw new BadRequestException(DUE_DATE_IN_THE_PAST);
       await this.taskRepository.createTaskDueDate(createdTask.id, dueDate);
+    }
 
     await this.cacheService.deleteCache(`${taskType}logs:${userId}`);
 
