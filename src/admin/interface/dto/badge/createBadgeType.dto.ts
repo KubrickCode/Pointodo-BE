@@ -1,37 +1,48 @@
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  BADGE_ICON_LINK,
+  BADGE_TYPE_DESC,
+  BADGE_TYPE_ID,
+  BADGE_TYPE_NAME,
+} from '@shared/constants/badge.constant';
+import { CONFLICT_BADGE_NAME } from '@shared/messages/admin/badge.admin.errors';
+import { CREATE_BADGE_TYPE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin.messages';
 import { IsInt, IsString } from 'class-validator';
 
 export class ReqCreateBadgeTypeDto {
-  @ApiProperty({ description: '뱃지 타입 고유 ID(SMALL INT)' })
+  @ApiProperty({ description: BADGE_TYPE_ID })
   @IsInt()
   readonly id: number;
 
-  @ApiProperty({ description: '뱃지 타입 이름' })
+  @ApiProperty({ description: BADGE_TYPE_NAME })
   @IsString()
   readonly name: string;
 
-  @ApiProperty({ description: '뱃지 타입 설명' })
+  @ApiProperty({ description: BADGE_TYPE_DESC })
   @IsString()
   readonly description: string;
 
-  @ApiProperty({ description: '뱃지 타입 아이콘' })
+  @ApiProperty({ description: BADGE_ICON_LINK })
   @IsString()
   readonly iconLink: string;
 }
 
 export class ResCreateBadgeTypeDto {
-  @ApiProperty({ example: '뱃지 타입 생성 성공', description: '성공 메시지' })
+  @ApiProperty({
+    example: CREATE_BADGE_TYPE_SUCCESS_MESSAGE,
+    description: '성공 메시지',
+  })
   @IsString()
   readonly message: string;
 }
 
 export class ResCreateBadgeTypeConflict {
   @ApiProperty({ example: 409, description: '에러 상태 코드' })
-  @IsString()
+  @IsInt()
   readonly statusCode: number;
 
   @ApiProperty({
-    example: '이미 존재하는 ID 혹은 뱃지 이름',
+    example: CONFLICT_BADGE_NAME,
     description: '에러 메시지',
   })
   @IsString()

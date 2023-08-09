@@ -66,7 +66,10 @@ export class TaskController {
   ): Promise<ResGetTasksLogsDto[]> {
     const userId = req.user.id;
     const { taskType } = param;
-    return await this.taskService.getTasksLogs({ userId, taskType });
+    return await this.taskService.getTasksLogs({
+      userId,
+      taskType,
+    });
   }
 
   @Post('create')

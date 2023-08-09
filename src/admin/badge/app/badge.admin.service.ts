@@ -2,7 +2,10 @@ import {
   ReqCreateBadgeTypeAppDto,
   ResCreateBadgeTypeAppDto,
 } from '@admin/badge/domain/dto/createBadgeType.app.dto';
-import { ResDeleteBadgeTypeAppDto } from '@admin/badge/domain/dto/deleteBadgeType.app.dto';
+import {
+  ReqDeleteBadgeTypeAppDto,
+  ResDeleteBadgeTypeAppDto,
+} from '@admin/badge/domain/dto/deleteBadgeType.app.dto';
 import {
   ReqUpdateBadgeTypeAppDto,
   ResUpdateBadgeTypeAppDto,
@@ -68,8 +71,10 @@ export class BadgeAdminService implements IBadgeAdminService {
     return { message: UPDATE_BADGE_TYPE_SUCCESS_MESSAGE };
   }
 
-  async deleteBadgeType(id: number): Promise<ResDeleteBadgeTypeAppDto> {
-    const deletedBadgeType = await this.badgeAdminRepository.delete(id);
+  async deleteBadgeType(
+    req: ReqDeleteBadgeTypeAppDto,
+  ): Promise<ResDeleteBadgeTypeAppDto> {
+    const deletedBadgeType = await this.badgeAdminRepository.delete(req.id);
     this.logger.log('info', `삭제 뱃지 타입 ID:${deletedBadgeType.id}`);
     return { message: DELETE_BADGE_TYPE_SUCCESS_MESSAGE };
   }

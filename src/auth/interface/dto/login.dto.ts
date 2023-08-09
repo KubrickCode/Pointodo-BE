@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, Matches } from 'class-validator';
+import { IsEmail, IsInt, IsString, Matches } from 'class-validator';
 import {
   VALIDATE_EMAIL,
   VALIDATE_PASSWORD,
@@ -43,7 +43,7 @@ export class ResLoginDto {
 
 export class ResNotFoundUser {
   @ApiProperty({ example: 404, description: '에러 상태 코드' })
-  @IsString()
+  @IsInt()
   readonly statusCode: number;
 
   @ApiProperty({

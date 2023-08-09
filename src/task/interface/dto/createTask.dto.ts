@@ -7,13 +7,14 @@ import {
   TASK_TYPE_NAME,
 } from '@shared/constants/task.constant';
 import { CREATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
+import { TaskType_ } from '@task/domain/entities/task.entity';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqCreateTaskDto {
   @ApiProperty({ description: TASK_TYPE_NAME })
   @IsString()
-  readonly taskType: string;
+  readonly taskType: TaskType_;
 
   @ApiProperty({ description: TASK_NAME })
   @IsString()
@@ -30,8 +31,8 @@ export class ReqCreateTaskDto {
   readonly importance: number;
 
   @ApiProperty({ description: TASK_DUE_DATE })
-  @IsString()
   @IsOptional()
+  @IsString()
   readonly dueDate: string;
 }
 

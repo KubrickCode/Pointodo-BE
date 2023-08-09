@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Provider } from '@prisma/client';
 import { JWT_ACCESS_TOKEN } from '@shared/constants/user.constant';
+import { ProviderType } from '@user/domain/entities/user.entity';
 import { IsString } from 'class-validator';
 
 export class ResSocialLoginDto {
@@ -14,7 +14,7 @@ export class ReqSocialLoginDto {
   readonly email: string;
 
   @IsString()
-  readonly provider: Provider;
+  readonly provider: ProviderType;
 }
 
 export class RedirectSocialLoginDto {

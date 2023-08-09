@@ -1,20 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  BADGE_ICON_LINK,
+  BADGE_TYPE_DESC,
+  BADGE_TYPE_ID,
+  BADGE_TYPE_NAME,
+} from '@shared/constants/badge.constant';
 import { IsInt, IsString } from 'class-validator';
 
 export class ResGetAllBadgeTypesDto {
-  @ApiProperty({ description: '뱃지 타입 고유 ID(SMALL INT)' })
+  @ApiProperty({ description: BADGE_TYPE_ID })
   @IsInt()
   readonly id: number;
 
-  @ApiProperty({ description: '뱃지 타입 이름' })
+  @ApiProperty({ description: BADGE_TYPE_NAME })
   @IsString()
   readonly name: string;
 
-  @ApiProperty({ description: '뱃지 타입 설명' })
+  @ApiProperty({ description: BADGE_TYPE_DESC })
   @IsString()
   readonly description: string;
 
-  @ApiProperty({ description: '뱃지 타입 아이콘' })
+  @ApiProperty({ description: BADGE_ICON_LINK })
   @IsString()
   readonly iconLink: string;
 }

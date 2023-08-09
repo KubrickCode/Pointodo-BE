@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TasksDueDate, TasksLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
-import { TaskEntity } from '@task/domain/entities/task.entity';
+import { TaskEntity, TaskType_ } from '@task/domain/entities/task.entity';
 import { TasksDueDateEntity } from '@task/domain/entities/tasksDueDate.entity';
 import { ITaskRepository } from '@task/domain/interfaces/task.repository.interface';
 
@@ -9,7 +9,10 @@ import { ITaskRepository } from '@task/domain/interfaces/task.repository.interfa
 export class TaskRepository implements ITaskRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getTasksLogs(userId: string, taskType: string): Promise<TaskEntity[]> {
+  async getTasksLogs(
+    userId: string,
+    taskType: TaskType_,
+  ): Promise<TaskEntity[]> {
     let query: string;
 
     if (taskType === 'DUE') {
@@ -18,14 +21,14 @@ export class TaskRepository implements ITaskRepository {
             FROM "TasksLogs"
             LEFT JOIN "TasksDueDate" ON "TasksLogs".id = "TasksDueDate".taskId
             WHERE "TasksLogs"."userId" = $1::uuid
-            AND "TasksLogs"."taskType" = $2
+            AND "TasksLogs"."taskType" = $2::"TaskType"
             ORDER BY "TasksLogs".importance ASC
         `;
     } else {
       query = `
             SELECT * FROM "TasksLogs"
             WHERE "userId" = $1::uuid
-            AND "taskType" = $2
+            AND "taskType" = $2::"TaskType"
             ORDER BY importance ASC
         `;
     }
@@ -53,7 +56,7 @@ export class TaskRepository implements ITaskRepository {
 
   async createTask(
     userId: string,
-    taskType: string,
+    taskType: TaskType_,
     name: string,
     description: string,
     importance: number,

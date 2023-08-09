@@ -2,7 +2,10 @@ import {
   ReqCreateBadgeTypeAppDto,
   ResCreateBadgeTypeAppDto,
 } from '../dto/createBadgeType.app.dto';
-import { ResDeleteBadgeTypeAppDto } from '../dto/deleteBadgeType.app.dto';
+import {
+  ReqDeleteBadgeTypeAppDto,
+  ResDeleteBadgeTypeAppDto,
+} from '../dto/deleteBadgeType.app.dto';
 import {
   ReqUpdateBadgeTypeAppDto,
   ResUpdateBadgeTypeAppDto,
@@ -17,5 +20,7 @@ export interface IBadgeAdminService {
   updateBadgeType(
     req: ReqUpdateBadgeTypeAppDto,
   ): Promise<ResUpdateBadgeTypeAppDto>;
-  deleteBadgeType(id: number): Promise<ResDeleteBadgeTypeAppDto>;
+  deleteBadgeType(
+    req: ReqDeleteBadgeTypeAppDto,
+  ): Promise<ResDeleteBadgeTypeAppDto>;
 }

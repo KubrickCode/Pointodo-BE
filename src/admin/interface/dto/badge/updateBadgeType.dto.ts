@@ -1,43 +1,45 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  BADGE_ICON_LINK,
+  BADGE_TYPE_DESC,
+  BADGE_TYPE_ID,
+  BADGE_TYPE_NAME,
+} from '@shared/constants/badge.constant';
+import { CONFLICT_BADGE_NAME } from '@shared/messages/admin/badge.admin.errors';
+import { UPDATE_BADGE_TYPE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin.messages';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqUpdateBadgeTypeParamDto {
-  @ApiProperty({ description: '뱃지 타입 고유 ID' })
+  @ApiProperty({ description: BADGE_TYPE_ID })
   @Type(() => Number)
   @IsInt()
   readonly id: number;
 }
 
 export class ReqUpdateBadgeTypeDto {
-  @ApiProperty({ description: '새 뱃지 ID' })
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsInt()
-  readonly newId: number;
-
-  @ApiProperty({ description: '뱃지 타입 이름' })
+  @ApiProperty({ description: BADGE_TYPE_NAME })
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  readonly name: string;
+  readonly name?: string;
 
-  @ApiProperty({ description: '뱃지 타입 설명' })
+  @ApiProperty({ description: BADGE_TYPE_DESC })
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  readonly description: string;
+  readonly description?: string;
 
-  @ApiProperty({ description: '뱃지 타입 아이콘' })
+  @ApiProperty({ description: BADGE_ICON_LINK })
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  readonly iconLink: string;
+  readonly iconLink?: string;
 }
 
 export class ResUpdateBadgeTypeDto {
   @ApiProperty({
-    example: '뱃지 타입 업데이트 성공',
+    example: UPDATE_BADGE_TYPE_SUCCESS_MESSAGE,
     description: '성공 메시지',
   })
   @IsString()
@@ -46,11 +48,11 @@ export class ResUpdateBadgeTypeDto {
 
 export class ResUpdateBadgeTypeConflict {
   @ApiProperty({ example: 409, description: '에러 상태 코드' })
-  @IsString()
+  @IsInt()
   readonly statusCode: number;
 
   @ApiProperty({
-    example: '이미 존재하는 ID 혹은 뱃지 이름',
+    example: CONFLICT_BADGE_NAME,
     description: '에러 메시지',
   })
   @IsString()

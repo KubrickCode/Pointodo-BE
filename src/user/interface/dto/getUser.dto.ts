@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Provider, Role } from '@prisma/client';
 import {
   USER_EMAIL,
   USER_EMAIL_EXAMPLE,
@@ -11,6 +10,12 @@ import {
   USER_ROLE_EXAMPLE,
   USER_SELECTED_BADGE,
 } from '@shared/constants/user.constant';
+import {
+  ProviderType,
+  ProviderTypes,
+  RoleType,
+  RoleTypes,
+} from '@user/domain/entities/user.entity';
 import { IsDate, IsEnum, IsString } from 'class-validator';
 
 export class ResGetUserDto {
@@ -23,12 +28,12 @@ export class ResGetUserDto {
   readonly email: string;
 
   @ApiProperty({ example: USER_PROVIDER_EXAMPLE, description: USER_PROVIDER })
-  @IsEnum(Provider)
-  readonly provider: Provider;
+  @IsEnum(ProviderTypes)
+  readonly provider: ProviderType;
 
   @ApiProperty({ example: USER_ROLE_EXAMPLE, description: USER_ROLE })
-  @IsEnum(Role)
-  readonly role: Role;
+  @IsEnum(RoleTypes)
+  readonly role: RoleType;
 
   @ApiProperty({ description: USER_SELECTED_BADGE })
   @IsString()

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, Matches } from 'class-validator';
+import { IsArray, IsInt, IsString, Matches } from 'class-validator';
 import { VALIDATE_PASSWORD } from '@shared/messages/auth/auth.messages';
 import { USER_PWD, USER_PWD_EXAMPLE } from '@shared/constants/user.constant';
 import { CHANGE_PASSWORD_SUCCESS_MESSAGE } from '@shared/messages/user/user.messages';
@@ -27,11 +27,11 @@ export class ResChangePasswordDto {
 
 export class ResChangePasswordDtoError {
   @ApiProperty({ example: 400, description: '에러 상태 코드' })
-  @IsString()
-  readonly statusCode: string;
+  @IsInt()
+  readonly statusCode: number;
 
   @ApiProperty({ example: '에러 메시지', description: '에러 메시지' })
-  @IsString()
+  @IsArray()
   readonly message: string[];
 
   @ApiProperty({ example: 'Bad Request', description: '에러 종류' })

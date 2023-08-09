@@ -99,6 +99,6 @@ export class BadgeAdminController {
   async deleteBadgeType(
     @Param() param: ReqDeleteBadgeTypeParamDto,
   ): Promise<ResDeleteBadgeTypeDto> {
-    return await this.badgeAdminService.deleteBadgeType(param.id);
+    return await this.badgeAdminService.deleteBadgeType({ id: param.id });
   }
 }

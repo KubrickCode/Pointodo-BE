@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, Matches } from 'class-validator';
+import { IsArray, IsEmail, IsInt, IsString, Matches } from 'class-validator';
 import {
   VALIDATE_EMAIL,
   VALIDATE_PASSWORD,
@@ -42,14 +42,14 @@ export class ResRegisterDto {
 
 export class ResRegisterExistUserError {
   @ApiProperty({ example: 409, description: '에러 상태 코드' })
-  @IsString()
+  @IsInt()
   readonly statusCode: number;
 
   @ApiProperty({
     example: USER_ALREADY_EXIST,
     description: '에러 메시지',
   })
-  @IsString()
+  @IsArray()
   readonly message: string[];
 
   @ApiProperty({ example: '/api/user/register', description: '요청 경로' })

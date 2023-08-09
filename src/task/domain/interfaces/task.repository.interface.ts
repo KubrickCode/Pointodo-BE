@@ -1,12 +1,12 @@
-import { TaskEntity } from '../entities/task.entity';
+import { TaskEntity, TaskType_ } from '../entities/task.entity';
 import { TasksDueDateEntity } from '../entities/tasksDueDate.entity';
 
 export interface ITaskRepository {
-  getTasksLogs(userId: string, taskType: string): Promise<TaskEntity[]>;
+  getTasksLogs(userId: string, taskType: TaskType_): Promise<TaskEntity[]>;
   getTaskLogById(id: number): Promise<TaskEntity>;
   createTask(
     userId: string,
-    taskType: string,
+    taskType: TaskType_,
     name: string,
     description: string,
     importance: number,

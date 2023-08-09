@@ -6,9 +6,10 @@ import {
   FREE_TASK_CONSISTENCY_POINT,
   FREE_TASK_POINT,
 } from '@shared/constants/task.constant';
+import { TaskType_ } from '@task/domain/entities/task.entity';
 
 export const setTaskPoints = (
-  taskType: string,
+  taskType: TaskType_,
   isContinuous: boolean,
 ): number => {
   let points: number;

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, Matches } from 'class-validator';
+import { IsInt, IsString, Matches } from 'class-validator';
 import {
   CHECK_PASSWORD_MESSAGE,
   VALIDATE_PASSWORD,
@@ -27,7 +27,7 @@ export class ResCheckPasswordDto {
 
 export class ResInvalidCheckPassword {
   @ApiProperty({ example: 401, description: '에러 상태 코드' })
-  @IsString()
+  @IsInt()
   readonly statusCode: number;
 
   @ApiProperty({

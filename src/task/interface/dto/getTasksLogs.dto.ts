@@ -10,25 +10,15 @@ import {
   TASK_TYPE_NAME,
 } from '@shared/constants/task.constant';
 import { USER_ID } from '@shared/constants/user.constant';
+import { TaskType_ } from '@task/domain/entities/task.entity';
 import { Transform } from 'class-transformer';
 import { IsDate, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqGetTasksLogsParamDto {
   @ApiProperty({ description: TASK_TYPE_NAME })
   @IsString()
-  @Transform(({ value }) => {
-    switch (value) {
-      case 'daily':
-        return '매일 작업';
-      case 'due':
-        return '기한 작업';
-      case 'free':
-        return '무기한 작업';
-      default:
-        return value;
-    }
-  })
-  readonly taskType: string;
+  @Transform(({ value }) => value.toUpperCase())
+  readonly taskType: TaskType_;
 }
 
 export class ResGetTasksLogsDto {
@@ -42,7 +32,7 @@ export class ResGetTasksLogsDto {
 
   @ApiProperty({ description: TASK_TYPE_NAME })
   @IsInt()
-  readonly taskType: string;
+  readonly taskType: TaskType_;
 
   @ApiProperty({ description: TASK_NAME })
   @IsString()
