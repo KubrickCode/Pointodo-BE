@@ -10,14 +10,28 @@ export class TaskRepository implements ITaskRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async getTasksLogs(userId: string, taskType: string): Promise<TaskEntity[]> {
-    const query = `
-      SELECT * FROM "TasksLogs"
-      WHERE "userId" = $1::uuid
-      AND "taskType" = $2
-      ORDER BY importance ASC
-    `;
+    let query;
+
+    if (taskType === 'DUE') {
+      query = `
+            SELECT "TasksLogs".*, "TasksDueDate".dueDate 
+            FROM "TasksLogs"
+            LEFT JOIN "TasksDueDate" ON "TasksLogs".id = "TasksDueDate".taskId
+            WHERE "TasksLogs"."userId" = $1::uuid
+            AND "TasksLogs"."taskType" = $2
+            ORDER BY "TasksLogs".importance ASC
+        `;
+    } else {
+      query = `
+            SELECT * FROM "TasksLogs"
+            WHERE "userId" = $1::uuid
+            AND "taskType" = $2
+            ORDER BY importance ASC
+        `;
+    }
+
     const values = [userId, taskType];
-    const tasksLogs = await this.prisma.$queryRawUnsafe<TasksLogs[]>(
+    const tasksLogs = await this.prisma.$queryRawUnsafe<TaskEntity[]>(
       query,
       ...values,
     );

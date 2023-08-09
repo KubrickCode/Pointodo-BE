@@ -10,4 +10,6 @@ export class TaskEntity implements TasksLogs {
   importance: number;
   occurredAt: Date;
   version: number;
+
+  dueDate?: string;
 }
