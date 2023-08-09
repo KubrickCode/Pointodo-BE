@@ -57,6 +57,7 @@ import {
 } from '@task/domain/dto/cancleTaskCompletion.app.dto';
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -73,6 +74,8 @@ export class TaskService implements ITaskService {
     private readonly userBadgeRepository: IUserBadgeRepository,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
+    @Inject('IRedisService')
+    private readonly redisService: IRedisService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -262,6 +265,7 @@ export class TaskService implements ITaskService {
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async resetDailyTask() {
+    await this.redisService.deleteKeysByPrefix('DAILYlogs*');
     await this.taskRepository.resetDailyTask();
   }
 }
