@@ -33,7 +33,7 @@ export class ReqCreateTaskDto {
   @ApiProperty({ description: TASK_DUE_DATE })
   @IsOptional()
   @IsString()
-  readonly dueDate: string;
+  readonly dueDate?: string;
 }
 
 export class ResCreateTaskDto {
