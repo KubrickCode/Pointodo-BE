@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PointsLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
-import { PointEntity } from 'src/point/domain/entities/point.entity';
+import { PointEntity } from '@point/domain/entities/earnedPoint.entity';
 import { IPointRepository } from 'src/point/domain/interfaces/point.repository.interface';
 
 @Injectable()

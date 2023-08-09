@@ -1,4 +1,4 @@
-import { PointEntity } from '../entities/point.entity';
+import { PointEntity } from '../entities/earnedPoint.entity';
 
 export interface IPointRepository {
   getAllPointsLogs(userId: string): Promise<PointEntity[]>;

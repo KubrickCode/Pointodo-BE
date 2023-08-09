@@ -9,7 +9,7 @@ import {
   ReqGetCurrentPointsAppDto,
   ResGetCurrentPointsAppDto,
 } from '@point/domain/dto/getCurrentPoints.app.dto';
-import { PointEntity } from '@point/domain/entities/point.entity';
+import { PointEntity } from '@point/domain/entities/earnedPoint.entity';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
 import { IPointService } from '@point/domain/interfaces/point.service.interface';
 import { cacheConfig } from '@shared/config/cache.config';
