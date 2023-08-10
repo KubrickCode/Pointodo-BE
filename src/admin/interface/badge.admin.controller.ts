@@ -59,7 +59,7 @@ export class BadgeAdminController {
     private readonly badgeAdminService: IBadgeAdminService,
   ) {}
 
-  @Get('/:id')
+  @Get('/:type')
   @HttpCode(200)
   @ApiOperation(getBadgeListDocs.operation)
   @ApiOkResponse(getBadgeListDocs.okResponse)

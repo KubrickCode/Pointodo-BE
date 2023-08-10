@@ -14,6 +14,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
   async getAllBadges(): Promise<BadgeEntity[]> {
     const query = `
     SELECT * FROM "Badge"
+    ORDER BY id ASC
     `;
     return await this.prisma.$queryRawUnsafe<Badge[]>(query);
   }
@@ -22,6 +23,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     const query = `
     SELECT * FROM "Badge"
     WHERE type = $1::"BadgeType"
+    ORDER BY id ASC
     `;
     return await this.prisma.$queryRawUnsafe<Badge[]>(query, type);
   }
