@@ -1,3 +1,4 @@
+import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import {
   ReqBuyBadgeAppDto,
@@ -150,6 +151,23 @@ export class BadgeService implements IBadgeService {
     const result = await this.badgeProgressRepository.getAllBadgeProgress(
       req.userId,
     );
+    await this.cacheService.setCache(
+      cacheKey,
+      result,
+      cacheConfig(this.configService).cacheTTL,
+    );
+    return result;
+  }
+
+  async getAllBadges(): Promise<BadgeEntity[]> {
+    const cacheKey = `allBadges`;
+    const cachedAllBadges = await this.cacheService.getFromCache<BadgeEntity[]>(
+      cacheKey,
+    );
+    if (cachedAllBadges) {
+      return cachedAllBadges;
+    }
+    const result = await this.badgeAdminRepository.getAllBadges();
     await this.cacheService.setCache(
       cacheKey,
       result,

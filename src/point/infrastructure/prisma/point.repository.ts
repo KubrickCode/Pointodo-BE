@@ -117,7 +117,7 @@ export class PointRepository implements IPointRepository {
 
   async calculateUserPoints(userId: string): Promise<number> {
     const earnedPointsQuery = `
-        SELECT SUM(points) AS earnedPoints FROM "EarnedPointsLogs"
+        SELECT SUM(points) AS "earnedPoints" FROM "EarnedPointsLogs"
         WHERE "userId" = $1::uuid
       `;
 
@@ -127,7 +127,7 @@ export class PointRepository implements IPointRepository {
     );
 
     const spentPointsQuery = `
-        SELECT SUM(points) AS spentPoints FROM "SpentPointsLogs"
+        SELECT SUM(points) AS "spentPoints" FROM "SpentPointsLogs"
         WHERE "userId" = $1::uuid
       `;
 

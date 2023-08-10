@@ -66,7 +66,7 @@ model EarnedPointsLogs {
   id             Int              @id @default(autoincrement())
   userId         String           @db.Uuid      
   taskId         Int
-  points         Int              @db.SmallInt
+  points         Int              @db.Integer  
   occurredAt     DateTime         @default(now())
 
   user           User             @relation(fields: [userId], references: [id])
@@ -79,7 +79,7 @@ model SpentPointsLogs {
   id                Int            @id @default(autoincrement())
   userId            String         @db.Uuid      
   badgeId           Int
-  points            Int            @db.SmallInt
+  points            Int            @db.Integer  
   occurredAt        DateTime       @default(now())
 
   user              User           @relation(fields: [userId], references: [id])

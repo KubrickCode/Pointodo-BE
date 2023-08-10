@@ -12,7 +12,10 @@ export class UserRepository implements IUserRepository {
 
   async findById(id: string): Promise<UserEntity | null> {
     const query = `
-    SELECT * FROM "User" WHERE id = $1::uuid
+    SELECT u.*, b."iconLink"
+    FROM "User" u
+    LEFT JOIN "Badge" b ON u."selectedBadge" = b.id
+    WHERE u.id = $1::uuid;
     `;
     const result = await this.prisma.$queryRawUnsafe<User>(query, id);
     return result[0] ? plainToClass(UserEntity, result[0]) : null;

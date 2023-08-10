@@ -34,6 +34,7 @@ import { buyBadgeDocs } from './docs/buyBadge.docs';
 import { getUserBadgeListDocs } from './docs/getUserBadgeList.docs';
 import { getAllBadgeProgressDocs } from './docs/getAllBadgeProgress.docs';
 import { changeSelectedBadgeDocs } from './docs/changeSelectedBadge.docs';
+import { ResGetAllBadgesDto } from './dto/getAllBadges.dto';
 
 @Controller('badge')
 @ApiTags('Badge')
@@ -91,5 +92,10 @@ export class BadgeController {
       userId: req.user.id,
       badgeId: body.badgeId,
     });
+  }
+
+  @Get('all')
+  async getAllBadges(): Promise<ResGetAllBadgesDto[]> {
+    return await this.badgeService.getAllBadges();
   }
 }

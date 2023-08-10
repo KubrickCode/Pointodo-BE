@@ -1,3 +1,4 @@
+import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
 import { ReqBuyBadgeAppDto, ResBuyBadgeAppDto } from '../dto/buyBadge.app.dto';
 import {
   ReqChangeSelectedBadgeAppDto,
@@ -23,4 +24,5 @@ export interface IBadgeService {
   getAllBadgeProgress(
     req: ReqGetAllBadgeProgressAppDto,
   ): Promise<ResGetAllBadgeProgressAppDto[]>;
+  getAllBadges(): Promise<BadgeEntity[]>;
 }
