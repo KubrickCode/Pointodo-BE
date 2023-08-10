@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   TASK_DESC,
   TASK_DUE_DATE,
@@ -21,8 +21,9 @@ export class ReqCreateTaskDto {
   readonly name: string;
 
   @ApiProperty({ description: TASK_DESC })
-  @IsString()
   @IsOptional()
+  @ApiPropertyOptional()
+  @IsString()
   readonly description?: string;
 
   @ApiProperty({ description: TASK_IMPORTANCE })
@@ -32,6 +33,7 @@ export class ReqCreateTaskDto {
 
   @ApiProperty({ description: TASK_DUE_DATE })
   @IsOptional()
+  @ApiPropertyOptional()
   @IsString()
   readonly dueDate?: string;
 }

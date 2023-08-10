@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   TASK_COMPLETION,
   TASK_DESC,
@@ -55,7 +55,8 @@ export class ResGetTasksLogsDto {
   readonly occurredAt: Date;
 
   @ApiProperty({ description: TASK_DUE_DATE })
-  @IsString()
+  @ApiPropertyOptional()
   @IsOptional()
+  @IsString()
   readonly dueDate?: string;
 }
