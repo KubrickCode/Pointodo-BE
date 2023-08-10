@@ -1,9 +1,9 @@
-import { BadgeTypesEntity } from '@admin/badge/domain/entities/badgeTypes.entity';
+import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
 import { TaskType_ } from '@task/domain/entities/task.entity';
 
 export const setDiversityBadgeType = async (
   taskType: TaskType_,
-  getBadgeIdByName: (name: string) => Promise<Pick<BadgeTypesEntity, 'id'>>,
+  getBadgeIdByName: (name: string) => Promise<Pick<BadgeEntity, 'id'>>,
 ) => {
   let diversityBadgeId: number;
   if (taskType === 'DAILY') {

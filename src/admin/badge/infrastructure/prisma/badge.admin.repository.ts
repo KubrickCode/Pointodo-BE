@@ -1,23 +1,23 @@
-import { BadgeTypesEntity } from '@admin/badge/domain/entities/badgeTypes.entity';
+import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { Injectable } from '@nestjs/common';
-import { BadgeTypes } from '@prisma/client';
+import { Badge } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
 
 @Injectable()
 export class BadgeAdminRepository implements IBadgeAdminRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAllBadgeTypes(): Promise<BadgeTypesEntity[]> {
+  async getAllBadges(): Promise<BadgeEntity[]> {
     const query = `
-    SELECT * FROM "BadgeTypes"
+    SELECT * FROM "Badge"
     `;
-    return await this.prisma.$queryRawUnsafe<BadgeTypes[]>(query);
+    return await this.prisma.$queryRawUnsafe<Badge[]>(query);
   }
 
   async getBadgePrice(id: number): Promise<number> {
     const query = `
-    SELECT price FROM "BadgeTypes"
+    SELECT price FROM "Badge"
     WHERE id = $1
     `;
     const values = [id];
@@ -28,13 +28,13 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     return result[0].price;
   }
 
-  async getBadgeIdByName(name: string): Promise<Pick<BadgeTypesEntity, 'id'>> {
+  async getBadgeIdByName(name: string): Promise<Pick<BadgeEntity, 'id'>> {
     const query = `
-    SELECT id FROM "BadgeTypes"
+    SELECT id FROM "Badge"
     WHERE name = $1
     `;
     const values = [name];
-    const result = await this.prisma.$queryRawUnsafe<Pick<BadgeTypes, 'id'>>(
+    const result = await this.prisma.$queryRawUnsafe<Pick<Badge, 'id'>>(
       query,
       ...values,
     );
@@ -43,11 +43,11 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
 
   async isExist(name: string): Promise<boolean> {
     const query = `
-    SELECT * FROM "BadgeTypes"
+    SELECT * FROM "Badge"
     WHERE name = $1
     `;
     const values = [name];
-    const isExist = await this.prisma.$queryRawUnsafe<BadgeTypes | null>(
+    const isExist = await this.prisma.$queryRawUnsafe<Badge | null>(
       query,
       ...values,
     );
@@ -60,16 +60,16 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     description: string,
     iconLink: string,
     price?: number,
-  ): Promise<BadgeTypesEntity> {
+  ): Promise<BadgeEntity> {
     const query = `
-      INSERT INTO "BadgeTypes" (name, description, "iconLink", price)
+      INSERT INTO "Badge" (name, description, "iconLink", price)
       VALUES ($1, $2, $3, $4)
       RETURNING *
       `;
 
     const values = [name, description, iconLink, price];
 
-    const newBadgeType = await this.prisma.$queryRawUnsafe<BadgeTypes>(
+    const newBadgeType = await this.prisma.$queryRawUnsafe<Badge>(
       query,
       ...values,
     );
@@ -81,7 +81,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     name?: string,
     description?: string,
     iconLink?: string,
-  ): Promise<BadgeTypesEntity> {
+  ): Promise<BadgeEntity> {
     const updateFields: string[] = [];
     const values: (number | string)[] = [];
     let placeholderIndex = 1;
@@ -108,27 +108,27 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     placeholderIndex++;
 
     const query = `
-    UPDATE "BadgeTypes"
+    UPDATE "Badge"
     SET ${updateFields.join(', ')}
     WHERE id = $${placeholderIndex - 1}
     RETURNING *
   `;
 
-    const updatedBadgeType = await this.prisma.$queryRawUnsafe<BadgeTypes>(
+    const updatedBadgeType = await this.prisma.$queryRawUnsafe<Badge>(
       query,
       ...values,
     );
     return updatedBadgeType[0];
   }
 
-  async delete(id: number): Promise<BadgeTypesEntity> {
+  async delete(id: number): Promise<BadgeEntity> {
     const query = `
-      DELETE FROM "BadgeTypes"
+      DELETE FROM "Badge"
       WHERE id = $1
       RETURNING *
     `;
     const values = [id];
-    const deletedBadgeType = await this.prisma.$queryRawUnsafe<BadgeTypes>(
+    const deletedBadgeType = await this.prisma.$queryRawUnsafe<Badge>(
       query,
       ...values,
     );

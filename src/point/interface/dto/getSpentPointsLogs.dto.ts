@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BADGE_TYPE_ID } from '@shared/constants/badge.constant';
+import { BADGE_ID } from '@shared/constants/badge.constant';
 import {
   POINTS,
   POINT_LOG_ID,
@@ -17,7 +17,7 @@ export class ResGetSpentPointsLogsDto {
   @IsString()
   readonly userId: string;
 
-  @ApiProperty({ description: BADGE_TYPE_ID })
+  @ApiProperty({ description: BADGE_ID })
   @IsInt()
   readonly badgeId: number;
 

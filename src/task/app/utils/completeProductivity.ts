@@ -1,4 +1,4 @@
-import { BadgeTypesEntity } from '@admin/badge/domain/entities/badgeTypes.entity';
+import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
 import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
 import {
   PRODUCTIVITY_GOAL_FOR_A_MONTH_AGO,
@@ -19,7 +19,7 @@ export const completeProductivity = async (
     userId: string,
     badgeId: number,
   ) => Promise<number>,
-  getBadgeIdByName: (name: string) => Promise<Pick<BadgeTypesEntity, 'id'>>,
+  getBadgeIdByName: (name: string) => Promise<Pick<BadgeEntity, 'id'>>,
 ): Promise<void> => {
   const todayTasksCount = await countTasksPerDate(
     userId,

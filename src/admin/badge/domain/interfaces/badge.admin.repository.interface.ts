@@ -1,21 +1,21 @@
-import { BadgeTypesEntity } from '../entities/badgeTypes.entity';
+import { BadgeEntity } from '../entities/badge.entity';
 
 export interface IBadgeAdminRepository {
-  getAllBadgeTypes(): Promise<BadgeTypesEntity[]>;
+  getAllBadges(): Promise<BadgeEntity[]>;
   getBadgePrice(id: number): Promise<number>;
-  getBadgeIdByName(name: string): Promise<Pick<BadgeTypesEntity, 'id'>>;
+  getBadgeIdByName(name: string): Promise<Pick<BadgeEntity, 'id'>>;
   isExist(name: string): Promise<boolean>;
   create(
     name: string,
     description: string,
     iconLink: string,
     price?: number,
-  ): Promise<BadgeTypesEntity>;
+  ): Promise<BadgeEntity>;
   update(
     id: number,
     name?: string,
     description?: string,
     iconLink?: string,
-  ): Promise<BadgeTypesEntity>;
-  delete(id: number): Promise<BadgeTypesEntity>;
+  ): Promise<BadgeEntity>;
+  delete(id: number): Promise<BadgeEntity>;
 }

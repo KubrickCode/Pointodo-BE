@@ -1,9 +1,9 @@
-export class ReqCreateBadgeTypeAppDto {
+export class ReqCreateBadgeAppDto {
   readonly name: string;
   readonly description: string;
   readonly iconLink: string;
 }
 
-export class ResCreateBadgeTypeAppDto {
+export class ResCreateBadgeAppDto {
   readonly message: string;
 }

@@ -1,4 +1,4 @@
-import { BadgeTypesEntity } from '@admin/badge/domain/entities/badgeTypes.entity';
+import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
 import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
 import { A_MONTH, A_WEEK, A_YEAR } from '@shared/constants/task.constant';
 
@@ -9,7 +9,7 @@ export const completeConsistency = async (
     userId: string,
     badgeId: number,
   ) => Promise<UserBadgeEntity>,
-  getBadgeIdByName: (name: string) => Promise<Pick<BadgeTypesEntity, 'id'>>,
+  getBadgeIdByName: (name: string) => Promise<Pick<BadgeEntity, 'id'>>,
 ) => {
   if (updatedConsistency === A_WEEK) {
     const badgeId = await getBadgeIdByName('일관성 뱃지1');

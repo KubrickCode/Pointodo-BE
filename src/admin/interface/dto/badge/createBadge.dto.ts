@@ -1,24 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   BADGE_ICON_LINK,
-  BADGE_TYPE_DESC,
-  BADGE_TYPE_ID,
-  BADGE_TYPE_NAME,
+  BADGE_DESC,
+  BADGE_ID,
+  BADGE_NAME,
 } from '@shared/constants/badge.constant';
 import { CONFLICT_BADGE_NAME } from '@shared/messages/admin/badge.admin.errors';
-import { CREATE_BADGE_TYPE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin.messages';
+import { CREATE_BADGE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin.messages';
 import { IsInt, IsString } from 'class-validator';
 
-export class ReqCreateBadgeTypeDto {
-  @ApiProperty({ description: BADGE_TYPE_ID })
+export class ReqCreateBadgeDto {
+  @ApiProperty({ description: BADGE_ID })
   @IsInt()
   readonly id: number;
 
-  @ApiProperty({ description: BADGE_TYPE_NAME })
+  @ApiProperty({ description: BADGE_NAME })
   @IsString()
   readonly name: string;
 
-  @ApiProperty({ description: BADGE_TYPE_DESC })
+  @ApiProperty({ description: BADGE_DESC })
   @IsString()
   readonly description: string;
 
@@ -27,16 +27,16 @@ export class ReqCreateBadgeTypeDto {
   readonly iconLink: string;
 }
 
-export class ResCreateBadgeTypeDto {
+export class ResCreateBadgeDto {
   @ApiProperty({
-    example: CREATE_BADGE_TYPE_SUCCESS_MESSAGE,
+    example: CREATE_BADGE_SUCCESS_MESSAGE,
     description: '성공 메시지',
   })
   @IsString()
   readonly message: string;
 }
 
-export class ResCreateBadgeTypeConflict {
+export class ResCreateBadgeConflict {
   @ApiProperty({ example: 409, description: '에러 상태 코드' })
   @IsInt()
   readonly statusCode: number;
