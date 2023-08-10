@@ -18,4 +18,5 @@ export interface IBadgeAdminService {
   createBadge(req: ReqCreateBadgeAppDto): Promise<ResCreateBadgeAppDto>;
   updateBadge(req: ReqUpdateBadgeAppDto): Promise<ResUpdateBadgeAppDto>;
   deleteBadge(req: ReqDeleteBadgeAppDto): Promise<ResDeleteBadgeAppDto>;
+  uploadFile(file: Express.Multer.File): Promise<{ filePath: string }>;
 }

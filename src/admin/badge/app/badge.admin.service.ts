@@ -76,4 +76,8 @@ export class BadgeAdminService implements IBadgeAdminService {
     this.logger.log('info', `삭제 뱃지 타입 ID:${deletedBadge.id}`);
     return { message: DELETE_BADGE_SUCCESS_MESSAGE };
   }
+
+  async uploadFile(file: Express.MulterS3.File): Promise<{ filePath: string }> {
+    return { filePath: file.location };
+  }
 }

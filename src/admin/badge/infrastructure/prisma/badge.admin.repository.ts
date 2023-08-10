@@ -119,7 +119,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
       placeholderIndex++;
     }
 
-    if (price) {
+    if (price !== undefined) {
       updateFields.push(`price = $${placeholderIndex}`);
       values.push(price);
       placeholderIndex++;

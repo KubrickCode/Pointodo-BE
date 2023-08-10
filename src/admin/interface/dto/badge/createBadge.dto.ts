@@ -6,7 +6,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   BADGE_ICON_LINK,
   BADGE_DESC,
-  BADGE_ID,
   BADGE_NAME,
   BADGE_TYPE,
   BADGE_PRICE,
@@ -16,10 +15,6 @@ import { CREATE_BADGE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin
 import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqCreateBadgeDto {
-  @ApiProperty({ description: BADGE_ID })
-  @IsInt()
-  readonly id: number;
-
   @ApiProperty({ description: BADGE_NAME })
   @IsString()
   readonly name: string;

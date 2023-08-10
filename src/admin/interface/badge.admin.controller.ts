@@ -9,6 +9,8 @@ import {
   Patch,
   Get,
   HttpCode,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import {
@@ -46,6 +48,7 @@ import { createBadgeDocs } from '@admin/interface/docs/badge/createBadge.admin.d
 import { updateBadgeDocs } from '@admin/interface/docs/badge/updateBadge.admin.docs';
 import { deleteBadgeDocs } from '@admin/interface/docs/badge/deleteBadge.admin.docs';
 import { adminDocs } from '@admin/interface/docs/admin.docs';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Admin - Badge')
 @ApiBearerAuth()
@@ -105,5 +108,11 @@ export class BadgeAdminController {
     @Param() param: ReqDeleteBadgeParamDto,
   ): Promise<ResDeleteBadgeDto> {
     return await this.badgeAdminService.deleteBadge({ id: param.id });
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: Express.MulterS3.File) {
+    return await this.badgeAdminService.uploadFile(file);
   }
 }

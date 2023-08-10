@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { BadgeAdminController } from '@admin/interface/badge.admin.controller';
 import { jwtConfig } from '@shared/config/jwt.config';
@@ -11,6 +11,8 @@ import { PrismaService } from '@shared/service/prisma.service';
 import { BadgeAdminService } from '@admin/badge/app/badge.admin.service';
 import { BadgeAdminRepository } from '@admin/badge/infrastructure/prisma/badge.admin.repository';
 import { CacheService } from '@cache/infrastructure/cache.service';
+import { MulterModule } from '@nestjs/platform-express';
+import { multerOptionsFactory } from '@shared/utils/multer.options.factory';
 @Module({
   controllers: [BadgeAdminController],
   providers: [
@@ -52,6 +54,11 @@ import { CacheService } from '@cache/infrastructure/cache.service';
           expiresIn: jwtConfig(configService).accessTokenExpiration,
         },
       }),
+      inject: [ConfigService],
+    }),
+    MulterModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: multerOptionsFactory,
       inject: [ConfigService],
     }),
   ],
