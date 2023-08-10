@@ -1,4 +1,4 @@
-import { BadgeEntity } from '../entities/badge.entity';
+import { BadgeEntity, BadgeType_ } from '../entities/badge.entity';
 
 export interface IBadgeAdminRepository {
   getAllBadges(): Promise<BadgeEntity[]>;
@@ -9,6 +9,7 @@ export interface IBadgeAdminRepository {
     name: string,
     description: string,
     iconLink: string,
+    type: BadgeType_,
     price?: number,
   ): Promise<BadgeEntity>;
   update(
@@ -16,6 +17,7 @@ export interface IBadgeAdminRepository {
     name?: string,
     description?: string,
     iconLink?: string,
+    price?: number,
   ): Promise<BadgeEntity>;
   delete(id: number): Promise<BadgeEntity>;
 }

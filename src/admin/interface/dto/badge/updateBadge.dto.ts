@@ -4,6 +4,7 @@ import {
   BADGE_DESC,
   BADGE_ID,
   BADGE_NAME,
+  BADGE_PRICE,
 } from '@shared/constants/badge.constant';
 import { CONFLICT_BADGE_NAME } from '@shared/messages/admin/badge.admin.errors';
 import { UPDATE_BADGE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin.messages';
@@ -35,6 +36,12 @@ export class ReqUpdateBadgeDto {
   @IsOptional()
   @IsString()
   readonly iconLink?: string;
+
+  @ApiProperty({ description: BADGE_PRICE })
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsInt()
+  readonly price?: number;
 }
 
 export class ResUpdateBadgeDto {

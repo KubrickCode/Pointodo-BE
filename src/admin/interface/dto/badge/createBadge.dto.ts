@@ -1,13 +1,19 @@
-import { ApiProperty } from '@nestjs/swagger';
+import {
+  BadgeType_,
+  BadgeTypes,
+} from '@admin/badge/domain/entities/badge.entity';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   BADGE_ICON_LINK,
   BADGE_DESC,
   BADGE_ID,
   BADGE_NAME,
+  BADGE_TYPE,
+  BADGE_PRICE,
 } from '@shared/constants/badge.constant';
 import { CONFLICT_BADGE_NAME } from '@shared/messages/admin/badge.admin.errors';
 import { CREATE_BADGE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin.messages';
-import { IsInt, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqCreateBadgeDto {
   @ApiProperty({ description: BADGE_ID })
@@ -25,6 +31,16 @@ export class ReqCreateBadgeDto {
   @ApiProperty({ description: BADGE_ICON_LINK })
   @IsString()
   readonly iconLink: string;
+
+  @ApiProperty({ description: BADGE_TYPE })
+  @IsEnum(BadgeTypes)
+  readonly type: BadgeType_;
+
+  @ApiProperty({ description: BADGE_PRICE })
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsInt()
+  readonly price?: number;
 }
 
 export class ResCreateBadgeDto {

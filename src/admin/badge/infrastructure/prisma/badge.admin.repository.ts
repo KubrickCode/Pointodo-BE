@@ -1,4 +1,7 @@
-import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
+import {
+  BadgeEntity,
+  BadgeType_,
+} from '@admin/badge/domain/entities/badge.entity';
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { Badge } from '@prisma/client';
@@ -59,15 +62,16 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     name: string,
     description: string,
     iconLink: string,
+    type: BadgeType_,
     price?: number,
   ): Promise<BadgeEntity> {
     const query = `
-      INSERT INTO "Badge" (name, description, "iconLink", price)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO "Badge" (name, description, "iconLink", price, type)
+      VALUES ($1, $2, $3, $4, $5::"BadgeType")
       RETURNING *
       `;
 
-    const values = [name, description, iconLink, price];
+    const values = [name, description, iconLink, price, type];
 
     const newBadgeType = await this.prisma.$queryRawUnsafe<Badge>(
       query,
@@ -81,6 +85,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     name?: string,
     description?: string,
     iconLink?: string,
+    price?: number,
   ): Promise<BadgeEntity> {
     const updateFields: string[] = [];
     const values: (number | string)[] = [];
@@ -101,6 +106,12 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     if (iconLink) {
       updateFields.push(`"iconLink" = $${placeholderIndex}`);
       values.push(iconLink);
+      placeholderIndex++;
+    }
+
+    if (price) {
+      updateFields.push(`price = $${placeholderIndex}`);
+      values.push(price);
       placeholderIndex++;
     }
 

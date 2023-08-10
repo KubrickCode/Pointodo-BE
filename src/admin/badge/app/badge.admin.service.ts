@@ -35,23 +35,25 @@ export class BadgeAdminService implements IBadgeAdminService {
   }
 
   async createBadge(req: ReqCreateBadgeAppDto): Promise<ResCreateBadgeAppDto> {
-    const { name, description, iconLink } = req;
+    const { name, description, iconLink, type, price } = req;
     const isExist = await this.badgeAdminRepository.isExist(name);
     if (isExist) throw new ConflictException(CONFLICT_BADGE_NAME);
     const createdBadge = await this.badgeAdminRepository.create(
       name,
       description,
       iconLink,
+      type,
+      price,
     );
     this.logger.log(
       'info',
-      `생성 뱃지 ID:${createdBadge.id}, 뱃지명:${createdBadge.name}, 설명:${createdBadge.description}, 아이콘 링크:${createdBadge.iconLink}`,
+      `생성 뱃지 ID:${createdBadge.id}, 뱃지명:${createdBadge.name}`,
     );
     return { message: CREATE_BADGE_SUCCESS_MESSAGE };
   }
 
   async updateBadge(req: ReqUpdateBadgeAppDto): Promise<ResUpdateBadgeAppDto> {
-    const { id, name, description, iconLink } = req;
+    const { id, name, description, iconLink, price } = req;
     const isExist = await this.badgeAdminRepository.isExist(name);
     if (isExist) throw new ConflictException(CONFLICT_BADGE_NAME);
     const updatedBadge = await this.badgeAdminRepository.update(
@@ -59,10 +61,11 @@ export class BadgeAdminService implements IBadgeAdminService {
       name,
       description,
       iconLink,
+      price,
     );
     this.logger.log(
       'info',
-      `업데이트 뱃지 타입 ID:${updatedBadge.id}, 뱃지명:${updatedBadge.name}, 설명:${updatedBadge.description}, 아이콘 링크:${updatedBadge.iconLink}`,
+      `업데이트 뱃지 타입 ID:${updatedBadge.id}, 뱃지명:${updatedBadge.name}`,
     );
     return { message: UPDATE_BADGE_SUCCESS_MESSAGE };
   }
