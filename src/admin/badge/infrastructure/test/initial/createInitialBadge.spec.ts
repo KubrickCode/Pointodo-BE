@@ -1,6 +1,7 @@
 import { PrismaService } from '@shared/service/prisma.service';
 import { BadgeAdminRepository } from '../../prisma/badge.admin.repository';
 import { initialBadgeTypes } from './initialBadgeTypes';
+import { BadgeType_ } from '@admin/badge/domain/entities/badge.entity';
 
 describe('createInitialBadgeTypes', () => {
   let prisma: PrismaService;
@@ -10,7 +11,7 @@ describe('createInitialBadgeTypes', () => {
     prisma = new PrismaService();
     badgeAdminRepository = new BadgeAdminRepository(prisma);
     await prisma.user.deleteMany();
-    await prisma.badgeTypes.deleteMany();
+    await prisma.badge.deleteMany();
   });
 
   afterAll(async () => {
@@ -23,6 +24,7 @@ describe('createInitialBadgeTypes', () => {
         item.name,
         item.description,
         item.iconLink,
+        item.type as BadgeType_,
         item.price,
       );
     }

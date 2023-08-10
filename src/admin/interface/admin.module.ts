@@ -10,6 +10,7 @@ import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 import { PrismaService } from '@shared/service/prisma.service';
 import { BadgeAdminService } from '@admin/badge/app/badge.admin.service';
 import { BadgeAdminRepository } from '@admin/badge/infrastructure/prisma/badge.admin.repository';
+import { CacheService } from '@cache/infrastructure/cache.service';
 @Module({
   controllers: [BadgeAdminController],
   providers: [
@@ -37,6 +38,10 @@ import { BadgeAdminRepository } from '@admin/badge/infrastructure/prisma/badge.a
     {
       provide: 'IBadgeAdminRepository',
       useClass: BadgeAdminRepository,
+    },
+    {
+      provide: 'ICacheService',
+      useClass: CacheService,
     },
   ],
   imports: [

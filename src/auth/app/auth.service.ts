@@ -49,6 +49,8 @@ import {
 } from '@auth/domain/dto/validateAdmin.app.dto';
 import { PasswordHasher } from '@shared/utils/passwordHasher';
 import { USER_NOT_FOUND } from '@shared/messages/user/user.errors';
+import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -60,6 +62,9 @@ export class AuthService implements IAuthService {
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    @Inject('ICacheService')
+    private readonly cacheService: ICacheService,
+    private readonly configService: ConfigService,
   ) {}
 
   async validateUser(
@@ -112,6 +117,7 @@ export class AuthService implements IAuthService {
   async login(req: ReqLoginAppDto): Promise<ResLoginAppDto> {
     const accessToken = this.tokenService.generateAccessToken(req);
     const refreshToken = this.tokenService.generateRefreshToken(req);
+    await this.cacheService.deleteCache(`user:${req.id}`);
     await this.redisService.set(
       `refresh_token:${req.id}`,
       refreshToken,
@@ -121,6 +127,7 @@ export class AuthService implements IAuthService {
   }
 
   async logout(req: ReqLogoutAppDto): Promise<ResLogoutAppDto> {
+    await this.cacheService.deleteCache(`user:${req.id}`);
     await this.redisService.delete(`refresh_token:${req.id}`);
     return { message: LOGOUT_SUCCESS_MESSAGE };
   }
@@ -143,6 +150,7 @@ export class AuthService implements IAuthService {
       throw new UnauthorizedException(AUTH_INVALID_TOKEN);
     }
     const user = await this.userRepository.findById(decoded.id);
+    await this.cacheService.deleteCache(`user:${user.id}`);
     const accessToken = this.tokenService.generateAccessToken(user);
     return { accessToken };
   }
