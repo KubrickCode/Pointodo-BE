@@ -36,9 +36,12 @@ import {
   ReqDeleteBadgeParamDto,
   ResDeleteBadgeDto,
 } from '@admin/interface/dto/badge/deleteBadge.dto';
-import { ResGetAllBadgesDto } from '@admin/interface/dto/badge/getAllBadges.dto';
+import {
+  ReqGetBadgeListParamDto,
+  ResGetBadgeListDto,
+} from '@admin/interface/dto/badge/getBadgeList.dto';
 import { globalDocs } from '@shared/docs/global.docs';
-import { getAllBadgesDocs } from '@admin/interface/docs/badge/getAllBadges.admin.docs';
+import { getBadgeListDocs } from '@admin/interface/docs/badge/getAllBadges.admin.docs';
 import { createBadgeDocs } from '@admin/interface/docs/badge/createBadge.admin.docs';
 import { updateBadgeDocs } from '@admin/interface/docs/badge/updateBadge.admin.docs';
 import { deleteBadgeDocs } from '@admin/interface/docs/badge/deleteBadge.admin.docs';
@@ -56,12 +59,14 @@ export class BadgeAdminController {
     private readonly badgeAdminService: IBadgeAdminService,
   ) {}
 
-  @Get('/all')
+  @Get('/:id')
   @HttpCode(200)
-  @ApiOperation(getAllBadgesDocs.operation)
-  @ApiOkResponse(getAllBadgesDocs.okResponse)
-  async getAllBadges(): Promise<ResGetAllBadgesDto[]> {
-    return await this.badgeAdminService.getAllBadges();
+  @ApiOperation(getBadgeListDocs.operation)
+  @ApiOkResponse(getBadgeListDocs.okResponse)
+  async getBadgeList(
+    @Param() param: ReqGetBadgeListParamDto,
+  ): Promise<ResGetBadgeListDto[]> {
+    return await this.badgeAdminService.getBadgeList({ type: param.type });
   }
 
   @Post('/create')

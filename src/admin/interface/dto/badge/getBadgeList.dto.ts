@@ -11,9 +11,17 @@ import {
   BADGE_TYPE,
   BADGE_PRICE,
 } from '@shared/constants/badge.constant';
+import { Transform } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 
-export class ResGetAllBadgesDto {
+export class ReqGetBadgeListParamDto {
+  @ApiProperty({ description: BADGE_TYPE })
+  @IsString()
+  @Transform(({ value }) => value.toUpperCase())
+  readonly type: BadgeType_;
+}
+
+export class ResGetBadgeListDto {
   @ApiProperty({ description: BADGE_ID })
   @IsInt()
   readonly id: number;

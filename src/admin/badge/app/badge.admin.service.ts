@@ -21,6 +21,7 @@ import {
   UPDATE_BADGE_SUCCESS_MESSAGE,
 } from '@shared/messages/admin/badge.admin.messages';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { ReqGetBadgeListAppDto } from '../domain/dto/getBadgeList.app.dto';
 
 @Injectable()
 export class BadgeAdminService implements IBadgeAdminService {
@@ -30,8 +31,8 @@ export class BadgeAdminService implements IBadgeAdminService {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async getAllBadges(): Promise<BadgeEntity[]> {
-    return await this.badgeAdminRepository.getAllBadges();
+  async getBadgeList(req: ReqGetBadgeListAppDto): Promise<BadgeEntity[]> {
+    return await this.badgeAdminRepository.getBadgeList(req.type);
   }
 
   async createBadge(req: ReqCreateBadgeAppDto): Promise<ResCreateBadgeAppDto> {

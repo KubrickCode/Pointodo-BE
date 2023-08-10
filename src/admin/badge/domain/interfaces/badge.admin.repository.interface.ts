@@ -2,6 +2,7 @@ import { BadgeEntity, BadgeType_ } from '../entities/badge.entity';
 
 export interface IBadgeAdminRepository {
   getAllBadges(): Promise<BadgeEntity[]>;
+  getBadgeList(type: BadgeType_): Promise<BadgeEntity[]>;
   getBadgePrice(id: number): Promise<number>;
   getBadgeIdByName(name: string): Promise<Pick<BadgeEntity, 'id'>>;
   isExist(name: string): Promise<boolean>;

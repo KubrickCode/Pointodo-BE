@@ -1,14 +1,14 @@
-import { ResGetAllBadgesDto } from '@admin/interface/dto/badge/getAllBadges.dto';
+import { ResGetBadgeListDto } from '@admin/interface/dto/badge/getBadgeList.dto';
 
-export const getAllBadgesDocs = {
+export const getBadgeListDocs = {
   operation: {
-    summary: '모든 뱃지 요청',
+    summary: '뱃지 목록 요청',
     description: `어드민 권한\n
-  등록된 모든 뱃지 객체를 배열 형태로 반환합니다.
+  type을 param으로 받아, 해당 타입의 모든 뱃지 객체를 배열 형태로 반환합니다.
   `,
   },
   okResponse: {
-    type: ResGetAllBadgesDto,
-    description: '모든 뱃지 요청 성공',
+    type: ResGetBadgeListDto,
+    description: '뱃지 목록 요청 성공',
   },
 };

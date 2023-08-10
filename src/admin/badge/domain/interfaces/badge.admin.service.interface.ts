@@ -6,6 +6,7 @@ import {
   ReqDeleteBadgeAppDto,
   ResDeleteBadgeAppDto,
 } from '../dto/deleteBadge.app.dto';
+import { ReqGetBadgeListAppDto } from '../dto/getBadgeList.app.dto';
 import {
   ReqUpdateBadgeAppDto,
   ResUpdateBadgeAppDto,
@@ -13,7 +14,7 @@ import {
 import { BadgeEntity } from '../entities/badge.entity';
 
 export interface IBadgeAdminService {
-  getAllBadges(): Promise<BadgeEntity[]>;
+  getBadgeList(req: ReqGetBadgeListAppDto): Promise<BadgeEntity[]>;
   createBadge(req: ReqCreateBadgeAppDto): Promise<ResCreateBadgeAppDto>;
   updateBadge(req: ReqUpdateBadgeAppDto): Promise<ResUpdateBadgeAppDto>;
   deleteBadge(req: ReqDeleteBadgeAppDto): Promise<ResDeleteBadgeAppDto>;
