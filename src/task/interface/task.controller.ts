@@ -46,6 +46,11 @@ import {
   ResCancleTaskCompletionDto,
 } from './dto/cancleTaskCompletion.dto';
 import { cancleTaskCompletionDocs } from './docs/cancleTaskCompletion.docs';
+import {
+  ReqGetTotalPagesParamDto,
+  ResGetTotalPagesDto,
+} from './dto/getTotalPages.dto';
+import { getTotalPagesDocs } from './docs/getTotalPages.docs';
 
 @Controller('task')
 @ApiTags('Task')
@@ -73,6 +78,18 @@ export class TaskController {
       page,
       order,
     });
+  }
+
+  @Get('/count/:taskType')
+  @ApiOperation(getTotalPagesDocs.operation)
+  @ApiOkResponse(getTotalPagesDocs.okResponse)
+  async getTotalPages(
+    @Req() req: Request,
+    @Param() param: ReqGetTotalPagesParamDto,
+  ): Promise<ResGetTotalPagesDto> {
+    const userId = req.user.id;
+    const { taskType } = param;
+    return await this.taskService.getTotalPages({ userId, taskType });
   }
 
   @Post('create')

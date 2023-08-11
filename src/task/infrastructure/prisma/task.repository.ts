@@ -52,6 +52,22 @@ export class TaskRepository implements ITaskRepository {
     return tasksLogs;
   }
 
+  async getTotalPages(userId: string, taskType: TaskType_): Promise<number> {
+    const query = `
+    SELECT COUNT(*)
+    FROM "TasksLogs"
+    WHERE "userId" = $1::uuid
+    AND "taskType" = $2::"TaskType"
+    `;
+
+    const values = [userId, taskType];
+    const totalTasks = await this.prisma.$queryRawUnsafe<{ count: number }>(
+      query,
+      ...values,
+    );
+    return Number(totalTasks[0].count);
+  }
+
   async getTaskLogById(id: number): Promise<TaskEntity> {
     const query = `
       SELECT * FROM "TasksLogs"

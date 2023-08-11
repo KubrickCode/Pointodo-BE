@@ -58,6 +58,10 @@ import {
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
+import {
+  ReqGetTotalPagesAppDto,
+  ResGetTotalPagesAppDto,
+} from '@task/domain/dto/getTotalPages.app.dto';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -107,6 +111,17 @@ export class TaskService implements ITaskService {
     );
 
     return result;
+  }
+
+  async getTotalPages(
+    req: ReqGetTotalPagesAppDto,
+  ): Promise<ResGetTotalPagesAppDto> {
+    const { userId, taskType } = req;
+    const totalTasks = await this.taskRepository.getTotalPages(
+      userId,
+      taskType,
+    );
+    return { totalPages: Math.ceil(totalTasks / GET_TASK_LIMIT) };
   }
 
   async createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto> {
