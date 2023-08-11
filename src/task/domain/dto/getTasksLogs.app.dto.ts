@@ -3,6 +3,8 @@ import { TaskType_ } from '../entities/task.entity';
 export class ReqGetTasksLogsAppDto {
   readonly userId: string;
   readonly taskType: TaskType_;
+  readonly page: number;
+  readonly order: string;
 }
 
 export class ResGetTasksLogsAppDto {

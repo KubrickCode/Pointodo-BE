@@ -9,6 +9,7 @@ import {
   Req,
   Param,
   Body,
+  Query,
 } from '@nestjs/common';
 import { ITaskService } from '../domain/interfaces/task.service.interface';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
@@ -25,7 +26,7 @@ import {
 import { globalDocs } from '@shared/docs/global.docs';
 import { Request } from 'express';
 import {
-  ReqGetTasksLogsParamDto,
+  ReqGetTasksLogsQueryDto,
   ResGetTasksLogsDto,
 } from './dto/getTasksLogs.dto';
 import { ReqCreateTaskDto, ResCreateTaskDto } from './dto/createTask.dto';
@@ -57,18 +58,20 @@ export class TaskController {
     private readonly taskService: ITaskService,
   ) {}
 
-  @Get('/:taskType')
+  @Get()
   @ApiOperation(getTasksLogsDocs.operation)
   @ApiOkResponse(getTasksLogsDocs.okResponse)
   async getTasksLogs(
     @Req() req: Request,
-    @Param() param: ReqGetTasksLogsParamDto,
+    @Query() query: ReqGetTasksLogsQueryDto,
   ): Promise<ResGetTasksLogsDto[]> {
     const userId = req.user.id;
-    const { taskType } = param;
+    const { taskType, page, order } = query;
     return await this.taskService.getTasksLogs({
       userId,
       taskType,
+      page,
+      order,
     });
   }
 

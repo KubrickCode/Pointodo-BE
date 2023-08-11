@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ORDER_BY } from '@shared/constants/global.constant';
 import {
   TASK_COMPLETION,
   TASK_DESC,
@@ -7,18 +8,28 @@ import {
   TASK_LOG_ID,
   TASK_NAME,
   TASK_OCCURRED_AT,
+  TASK_PAGE,
   TASK_TYPE_NAME,
 } from '@shared/constants/task.constant';
 import { USER_ID } from '@shared/constants/user.constant';
 import { TaskType_ } from '@task/domain/entities/task.entity';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { IsDate, IsInt, IsOptional, IsString } from 'class-validator';
 
-export class ReqGetTasksLogsParamDto {
+export class ReqGetTasksLogsQueryDto {
   @ApiProperty({ description: TASK_TYPE_NAME })
   @IsString()
   @Transform(({ value }) => value.toUpperCase())
   readonly taskType: TaskType_;
+
+  @ApiProperty({ description: TASK_PAGE })
+  @Type(() => Number)
+  @IsInt()
+  readonly page: number;
+
+  @ApiProperty({ description: ORDER_BY })
+  @IsString()
+  readonly order: string;
 }
 
 export class ResGetTasksLogsDto {

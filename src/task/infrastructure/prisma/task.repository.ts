@@ -12,8 +12,17 @@ export class TaskRepository implements ITaskRepository {
   async getTasksLogs(
     userId: string,
     taskType: TaskType_,
+    limit: number,
+    offset: number,
+    order: string,
   ): Promise<TaskEntity[]> {
     let query: string;
+    let orderBy: string;
+
+    if (order === 'importance') orderBy = 'importance ASC';
+    if (order === 'newest') orderBy = '"occurredAt" DESC';
+    if (order === 'old') orderBy = '"occurredAt" ASC';
+    if (order === 'name') orderBy = 'name ASC';
 
     if (taskType === 'DUE') {
       query = `
@@ -22,18 +31,20 @@ export class TaskRepository implements ITaskRepository {
             LEFT JOIN "TasksDueDate" ON "TasksLogs".id = "TasksDueDate"."taskId"
             WHERE "TasksLogs"."userId" = $1::uuid
             AND "TasksLogs"."taskType" = $2::"TaskType"
-            ORDER BY "TasksLogs".importance ASC
+            ORDER BY "TasksLogs".${orderBy}
+            LIMIT $3 OFFSET $4
         `;
     } else {
       query = `
             SELECT * FROM "TasksLogs"
             WHERE "userId" = $1::uuid
             AND "taskType" = $2::"TaskType"
-            ORDER BY importance ASC
+            ORDER BY ${orderBy}
+            LIMIT $3 OFFSET $4
         `;
     }
 
-    const values = [userId, taskType];
+    const values = [userId, taskType, limit, offset];
     const tasksLogs = await this.prisma.$queryRawUnsafe<TaskEntity[]>(
       query,
       ...values,

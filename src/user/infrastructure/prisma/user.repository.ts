@@ -90,4 +90,5 @@ export class UserRepository implements IUserRepository {
     const user = await this.prisma.$queryRawUnsafe<User>(query, ...values);
     return plainToClass(UserEntity, user[0]);
   }
+
 }
