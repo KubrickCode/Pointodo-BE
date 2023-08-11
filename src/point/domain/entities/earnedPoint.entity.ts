@@ -7,3 +7,7 @@ export class EarnedPointEntity implements EarnedPointsLogs {
   points: number;
   occurredAt: Date;
 }
+
+export class EarnedPointWithTaskName extends EarnedPointEntity {
+  taskName: string;
+}

@@ -1,42 +1,54 @@
 import { Injectable } from '@nestjs/common';
 import { EarnedPointsLogs, SpentPointsLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
-import { EarnedPointEntity } from '@point/domain/entities/earnedPoint.entity';
+import {
+  EarnedPointEntity,
+  EarnedPointWithTaskName,
+} from '@point/domain/entities/earnedPoint.entity';
 import { IPointRepository } from 'src/point/domain/interfaces/point.repository.interface';
-import { SpentPointEntity } from '@point/domain/entities/spentPoint.entity';
+import {
+  SpentPointEntity,
+  SpentPointWithBadgeName,
+} from '@point/domain/entities/spentPoint.entity';
 
 @Injectable()
 export class PointRepository implements IPointRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getEarnedPointsLogs(userId: string): Promise<EarnedPointEntity[]> {
+  async getEarnedPointsLogs(
+    userId: string,
+  ): Promise<EarnedPointWithTaskName[]> {
     const query = `
-    SELECT * FROM "EarnedPointsLogs"
-    WHERE "userId" = $1::uuid
+    SELECT p.*, t.name as "taskName"
+    FROM "EarnedPointsLogs" as p
+    LEFT JOIN "TasksLogs" as t
+    ON p."taskId" = t.id
+    WHERE p."userId" = $1::uuid
     `;
 
     const values = [userId];
 
-    const pointsLogs = await this.prisma.$queryRawUnsafe<EarnedPointsLogs[]>(
-      query,
-      ...values,
-    );
+    const pointsLogs = await this.prisma.$queryRawUnsafe<
+      EarnedPointWithTaskName[]
+    >(query, ...values);
 
     return pointsLogs;
   }
 
-  async getSpentPointsLogs(userId: string): Promise<SpentPointEntity[]> {
+  async getSpentPointsLogs(userId: string): Promise<SpentPointWithBadgeName[]> {
     const query = `
-    SELECT * FROM "SpentPointsLogs"
-    WHERE "userId" = $1::uuid
+    SELECT p.*, b.name as "badgeName"
+    FROM "SpentPointsLogs" as p
+    LEFT JOIN "Badge" as b
+    ON p."badgeId" = b.id
+    WHERE p."userId" = $1::uuid
     `;
 
     const values = [userId];
 
-    const pointsLogs = await this.prisma.$queryRawUnsafe<SpentPointsLogs[]>(
-      query,
-      ...values,
-    );
+    const pointsLogs = await this.prisma.$queryRawUnsafe<
+      SpentPointWithBadgeName[]
+    >(query, ...values);
 
     return pointsLogs;
   }

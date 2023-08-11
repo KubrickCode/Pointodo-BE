@@ -1,10 +1,16 @@
-import { EarnedPointEntity } from '../entities/earnedPoint.entity';
-import { SpentPointEntity } from '../entities/spentPoint.entity';
+import {
+  EarnedPointEntity,
+  EarnedPointWithTaskName,
+} from '../entities/earnedPoint.entity';
+import {
+  SpentPointEntity,
+  SpentPointWithBadgeName,
+} from '../entities/spentPoint.entity';
 
 export interface IPointRepository {
-  getEarnedPointsLogs(userId: string): Promise<EarnedPointEntity[]>;
+  getEarnedPointsLogs(userId: string): Promise<EarnedPointWithTaskName[]>;
 
-  getSpentPointsLogs(userId: string): Promise<SpentPointEntity[]>;
+  getSpentPointsLogs(userId: string): Promise<SpentPointWithBadgeName[]>;
 
   isContinuous(userId: string, yesterday: string): Promise<boolean>;
 

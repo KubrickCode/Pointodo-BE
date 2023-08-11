@@ -7,3 +7,7 @@ export class SpentPointEntity implements SpentPointsLogs {
   points: number;
   occurredAt: Date;
 }
+
+export class SpentPointWithBadgeName extends SpentPointEntity {
+  badgeName: string;
+}

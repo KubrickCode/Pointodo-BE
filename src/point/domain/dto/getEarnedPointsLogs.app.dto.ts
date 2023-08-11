@@ -8,4 +8,5 @@ export class ResGetEarnedPointsLogsAppDto {
   readonly taskId: number;
   readonly points: number;
   readonly occurredAt: Date;
+  readonly taskName: string;
 }

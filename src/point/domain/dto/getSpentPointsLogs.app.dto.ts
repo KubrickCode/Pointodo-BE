@@ -8,4 +8,5 @@ export class ResGetSpentPointsLogsAppDto {
   readonly badgeId: number;
   readonly points: number;
   readonly occurredAt: Date;
+  readonly badgeName: string;
 }

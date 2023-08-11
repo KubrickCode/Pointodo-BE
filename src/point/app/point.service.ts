@@ -9,8 +9,6 @@ import {
   ReqGetCurrentPointsAppDto,
   ResGetCurrentPointsAppDto,
 } from '@point/domain/dto/getCurrentPoints.app.dto';
-import { EarnedPointEntity } from '@point/domain/entities/earnedPoint.entity';
-import { SpentPointEntity } from '@point/domain/entities/spentPoint.entity';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
 import { IPointService } from '@point/domain/interfaces/point.service.interface';
 import { cacheConfig } from '@shared/config/cache.config';
@@ -34,7 +32,7 @@ export class PointService implements IPointService {
   ): Promise<ResGetEarnedPointsLogsAppDto[]> {
     const cacheKey = `userEarnedPointsLogs:${req.userId}`;
     const cachedPointsLogs = await this.cacheService.getFromCache<
-      EarnedPointEntity[]
+      ResGetEarnedPointsLogsAppDto[]
     >(cacheKey);
     if (cachedPointsLogs) {
       return cachedPointsLogs;
@@ -56,7 +54,7 @@ export class PointService implements IPointService {
   ): Promise<ResGetSpentPointsLogsAppDto[]> {
     const cacheKey = `userSpentPointsLogs:${req.userId}`;
     const cachedPointsLogs = await this.cacheService.getFromCache<
-      SpentPointEntity[]
+      ResGetSpentPointsLogsAppDto[]
     >(cacheKey);
     if (cachedPointsLogs) {
       return cachedPointsLogs;

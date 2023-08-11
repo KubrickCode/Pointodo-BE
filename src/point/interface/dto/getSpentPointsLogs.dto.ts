@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BADGE_ID } from '@shared/constants/badge.constant';
+import { BADGE_ID, BADGE_NAME } from '@shared/constants/badge.constant';
 import {
   POINTS,
   POINT_LOG_ID,
@@ -28,4 +28,8 @@ export class ResGetSpentPointsLogsDto {
   @ApiProperty({ description: POINT_LOG_OCCURRED_AT })
   @IsDate()
   readonly occurredAt: Date;
+
+  @ApiProperty({ description: BADGE_NAME })
+  @IsString()
+  readonly badgeName: string;
 }
