@@ -110,6 +110,14 @@ export class UserService implements IUserService {
   async deleteUser(req: ReqDeleteUserAppDto): Promise<ResDeleteUserAppDto> {
     const user = await this.userRepository.deleteUser(req.id);
     await this.cacheService.deleteCache(`user:${req.id}`);
+    await this.cacheService.deleteCache(`userEarnedPointsLogs:${req.id}`);
+    await this.cacheService.deleteCache(`userSpentPointsLogs:${req.id}`);
+    await this.cacheService.deleteCache(`userCurrentPoints:${req.id}`);
+    await this.cacheService.deleteCache(`userBadgeList:${req.id}`);
+    await this.cacheService.deleteCache(`userBadgeProgress:${req.id}`);
+    await this.cacheService.deleteCache(`DAILYlogs:${req.id}`);
+    await this.cacheService.deleteCache(`DUElogs:${req.id}`);
+    await this.cacheService.deleteCache(`FREElogs:${req.id}`);
     this.logger.log(
       'info',
       `회원 탈퇴 - 사용자 ID:${user.id}, 유저 이메일:${user.email}`,
