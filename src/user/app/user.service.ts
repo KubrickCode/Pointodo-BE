@@ -38,6 +38,7 @@ import {
   ResDeleteUserAppDto,
 } from '@user/domain/dto/deleteUser.app.dto';
 import { PasswordHasher } from '@shared/utils/passwordHasher';
+import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -45,6 +46,8 @@ export class UserService implements IUserService {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
+    @Inject('IUserBadgeRepository')
+    private readonly userBadgeRepository: IUserBadgeRepository,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
@@ -65,6 +68,8 @@ export class UserService implements IUserService {
       email,
       hashedPassword,
     );
+
+    await this.userBadgeRepository.createUserBadgeLog(createdUser.id, 1);
 
     this.logger.log(
       'info',

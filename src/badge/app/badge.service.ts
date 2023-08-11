@@ -135,6 +135,7 @@ export class BadgeService implements IBadgeService {
     if (!badgeTypeList.includes(badgeId))
       throw new BadRequestException(NOT_EXIST_USER_BADGE);
 
+    await this.cacheService.deleteCache(`user:${userId}`);
     await this.userRepository.changeSelectedBadge(userId, badgeId);
     return { message: CHANGE_USER_BADGE_MESSAGE };
   }

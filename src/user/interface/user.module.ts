@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PrismaService } from '@shared/service/prisma.service';
 import { CacheService } from '@cache/infrastructure/cache.service';
 import { jwtConfig } from '@shared/config/jwt.config';
+import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repository';
 
 @Module({
   controllers: [UserController],
@@ -23,6 +24,10 @@ import { jwtConfig } from '@shared/config/jwt.config';
     {
       provide: 'ICacheService',
       useClass: CacheService,
+    },
+    {
+      provide: 'IUserBadgeRepository',
+      useClass: UserBadgeRepository,
     },
   ],
   imports: [
