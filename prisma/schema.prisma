@@ -45,7 +45,7 @@ model UserBadgesLogs {
   badgeId           Int
   earnedAt          DateTime      @default(now())
 
-  user              User          @relation(fields: [userId], references: [id])
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   badge             Badge         @relation(fields: [badgeId], references: [id])
 }
 
@@ -56,7 +56,7 @@ model BadgeProgress {
   progress          Int           @db.SmallInt @default(0)
   occurredAt        DateTime      @default(now())
 
-  user              User          @relation(fields: [userId], references: [id])
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   badge             Badge         @relation(fields: [badgeId], references: [id])
 
   @@unique([userId, badgeId])
@@ -69,8 +69,8 @@ model EarnedPointsLogs {
   points         Int              @db.Integer  
   occurredAt     DateTime         @default(now())
 
-  user           User             @relation(fields: [userId], references: [id])
-  taskLog        TasksLogs        @relation(fields: [taskId], references: [id])
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskLog        TasksLogs        @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   @@index([userId, occurredAt])
 }
@@ -82,7 +82,7 @@ model SpentPointsLogs {
   points            Int            @db.Integer  
   occurredAt        DateTime       @default(now())
 
-  user              User           @relation(fields: [userId], references: [id])
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   badge             Badge          @relation(fields: [badgeId], references: [id])
 
   @@index([userId, occurredAt])
@@ -99,7 +99,7 @@ model TasksLogs {
   occurredAt        DateTime      @default(now())
   version           Int           @db.SmallInt @default(0)
 
-  user              User          @relation(fields: [userId], references: [id])
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   pointLog          EarnedPointsLogs[]
   dueDate           TasksDueDate[]
@@ -112,7 +112,7 @@ model TasksDueDate {
   taskId        Int
   dueDate       String        @db.VarChar(10)
 
-  taskLog       TasksLogs     @relation(fields: [taskId], references: [id])
+  taskLog       TasksLogs     @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 
 enum Provider {
