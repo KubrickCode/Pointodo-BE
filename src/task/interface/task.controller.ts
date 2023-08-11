@@ -9,7 +9,6 @@ import {
   Req,
   Param,
   Body,
-  Query,
 } from '@nestjs/common';
 import { ITaskService } from '../domain/interfaces/task.service.interface';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
@@ -31,7 +30,7 @@ import {
 } from './dto/getTasksLogs.dto';
 import { ReqCreateTaskDto, ResCreateTaskDto } from './dto/createTask.dto';
 import { ReqUpdateTaskDto, ResUpdateTaskDto } from './dto/updateTask.dto';
-import { ReqDeleteTaskQueryDto, ResDeleteTaskDto } from './dto/deleteTask.dto';
+import { ReqDeleteTaskParamDto, ResDeleteTaskDto } from './dto/deleteTask.dto';
 import {
   ReqCompleteTaskParamDto,
   ResCompleteTaskDto,
@@ -93,14 +92,13 @@ export class TaskController {
     return await this.taskService.updateTask(body);
   }
 
-  @Delete()
+  @Delete('/:id')
   @ApiOperation(deleteTaskDocs.operation)
   @ApiOkResponse(deleteTaskDocs.okResponse)
   async deleteTask(
-    @Query() query: ReqDeleteTaskQueryDto,
+    @Param() param: ReqDeleteTaskParamDto,
   ): Promise<ResDeleteTaskDto> {
-    const { id, taskType } = query;
-    return await this.taskService.deleteTask({ id, taskType });
+    return await this.taskService.deleteTask({ id: param.id });
   }
 
   @Patch('/complete/:id')

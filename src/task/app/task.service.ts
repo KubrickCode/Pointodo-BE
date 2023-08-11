@@ -141,9 +141,6 @@ export class TaskService implements ITaskService {
   }
 
   async deleteTask(req: ReqDeleteTaskAppDto): Promise<ResDeleteTaskAppDto> {
-    if (req.taskType === 'DUE') {
-      await this.taskRepository.deleteTaskDueDate(req.id);
-    }
     const result = await this.taskRepository.deleteTask(req.id);
     await this.cacheService.deleteCache(
       `${result.taskType}logs:${result.userId}`,
