@@ -92,6 +92,7 @@ export class BadgeService implements IBadgeService {
     );
 
     if (filteredBadgeList.length > 1) {
+      await this.pointRepository.deleteSpentPointLog(updatedPointLog.id);
       await this.userBadgeRepository.deleteUserBadgeLog(createdUserBadgeLog.id);
       throw new ConflictException(ALREADY_EXIST_USER_BADGE);
     }
