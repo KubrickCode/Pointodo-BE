@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
 import { Provider, User } from '@prisma/client';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
-import { UserEntity } from '@user/domain/entities/user.entity';
+import { ProviderType, UserEntity } from '@user/domain/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { plainToClass } from 'class-transformer';
 
@@ -43,7 +43,7 @@ export class UserRepository implements IUserRepository {
   async createUser(
     email: string,
     password?: string,
-    provider?: string,
+    provider?: ProviderType,
   ): Promise<UserEntity> {
     provider = Provider[provider] || Provider['LOCAL'];
     const uuid = uuidv4();
@@ -86,9 +86,26 @@ export class UserRepository implements IUserRepository {
     RETURNING *
     `;
     const values = [badgeId, userId];
-    console.log(values);
     const user = await this.prisma.$queryRawUnsafe<User>(query, ...values);
     return plainToClass(UserEntity, user[0]);
   }
 
+  async getUserList(
+    order: string,
+    limit: number,
+    offset: number,
+    provider?: ProviderType,
+  ): Promise<UserEntity[]> {
+    let orderBy: string;
+    if (order === 'newest') orderBy = '"occurredAt" DESC';
+    if (order === 'old') orderBy = '"occurredAt" ASC';
+    const query = `
+    SELECT * FROM "User"
+    ${provider ? 'WHERE provider = ' + provider : ''}
+    ORDER BY ${orderBy}
+    LIMIT $1 OFFSET $2
+    `;
+    const values = [limit, offset];
+    return await this.prisma.$queryRawUnsafe<User[]>(query, ...values);
+  }
 }

@@ -13,8 +13,9 @@ import { BadgeAdminRepository } from '@admin/badge/infrastructure/prisma/badge.a
 import { CacheService } from '@cache/infrastructure/cache.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { multerOptionsFactory } from '@shared/utils/multer.options.factory';
+import { UserAdminController } from './user.admin.controller';
 @Module({
-  controllers: [BadgeAdminController],
+  controllers: [BadgeAdminController, UserAdminController],
   providers: [
     PrismaService,
     {

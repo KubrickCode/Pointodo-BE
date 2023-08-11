@@ -1,10 +1,10 @@
-import { UserEntity } from '../entities/user.entity';
+import { ProviderType, UserEntity } from '../entities/user.entity';
 
 export interface IUserRepository {
   createUser(
     email: string,
     password?: string,
-    provider?: string,
+    provider?: ProviderType,
   ): Promise<UserEntity>;
   findByEmail(email: string): Promise<UserEntity | null>;
   findById(id: string): Promise<UserEntity | null>;
@@ -12,4 +12,10 @@ export interface IUserRepository {
   changePassword(id: string, newPassword: string): Promise<void>;
   deleteUser(id: string): Promise<UserEntity>;
   changeSelectedBadge(userId: string, badgeId: number): Promise<UserEntity>;
+  getUserList(
+    order: string,
+    limit: number,
+    offset: number,
+    provider?: ProviderType,
+  ): Promise<UserEntity[]>;
 }
