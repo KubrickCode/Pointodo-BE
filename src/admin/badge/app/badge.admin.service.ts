@@ -22,6 +22,8 @@ import {
 } from '@shared/messages/admin/badge.admin.messages';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { ReqGetBadgeListAppDto } from '../domain/dto/getBadgeList.app.dto';
+import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class BadgeAdminService implements IBadgeAdminService {
@@ -29,6 +31,9 @@ export class BadgeAdminService implements IBadgeAdminService {
     @Inject('IBadgeAdminRepository')
     private readonly badgeAdminRepository: IBadgeAdminRepository,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+    @Inject('ICacheService')
+    private readonly cacheService: ICacheService,
+    private readonly configService: ConfigService,
   ) {}
 
   async getBadgeList(req: ReqGetBadgeListAppDto): Promise<BadgeEntity[]> {
@@ -46,6 +51,7 @@ export class BadgeAdminService implements IBadgeAdminService {
       type,
       price,
     );
+    await this.cacheService.deleteCache(`allBadges`);
     this.logger.log(
       'info',
       `생성 뱃지 ID:${createdBadge.id}, 뱃지명:${createdBadge.name}`,
@@ -64,6 +70,7 @@ export class BadgeAdminService implements IBadgeAdminService {
       iconLink,
       price,
     );
+    await this.cacheService.deleteCache(`allBadges`);
     this.logger.log(
       'info',
       `업데이트 뱃지 타입 ID:${updatedBadge.id}, 뱃지명:${updatedBadge.name}`,
@@ -73,6 +80,7 @@ export class BadgeAdminService implements IBadgeAdminService {
 
   async deleteBadge(req: ReqDeleteBadgeAppDto): Promise<ResDeleteBadgeAppDto> {
     const deletedBadge = await this.badgeAdminRepository.delete(req.id);
+    await this.cacheService.deleteCache(`allBadges`);
     this.logger.log('info', `삭제 뱃지 타입 ID:${deletedBadge.id}`);
     return { message: DELETE_BADGE_SUCCESS_MESSAGE };
   }
