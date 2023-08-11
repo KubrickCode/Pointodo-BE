@@ -22,6 +22,11 @@ import {
   ReqGetSpentPointsLogsParamDto,
   ResGetSpentPointsLogsDto,
 } from './dto/getSpentPointsLogs.dto';
+import {
+  ReqGetTotalPointPagesParamDto,
+  ResGetTotalPointPagesDto,
+} from './dto/getTotalPointPages.dto';
+import { getTotalPointPagesDocs } from './docs/getTotalPointPages.docs';
 
 @Controller('point')
 @ApiTags('Point')
@@ -57,6 +62,21 @@ export class PointController {
     return await this.pointService.getSpentPointsLogs({
       userId: req.user.id,
       order: param.order,
+    });
+  }
+
+  @Get('/count/:transactionType')
+  @ApiOperation(getTotalPointPagesDocs.operation)
+  @ApiOkResponse(getTotalPointPagesDocs.okResponse)
+  async getTotalTaskPages(
+    @Req() req: Request,
+    @Param() param: ReqGetTotalPointPagesParamDto,
+  ): Promise<ResGetTotalPointPagesDto> {
+    const userId = req.user.id;
+    const { transactionType } = param;
+    return await this.pointService.getTotalPointPages({
+      userId,
+      transactionType,
     });
   }
 

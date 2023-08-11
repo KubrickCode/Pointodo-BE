@@ -69,6 +69,26 @@ export class PointRepository implements IPointRepository {
     return pointsLogs;
   }
 
+  async getTotalPointPages(
+    userId: string,
+    transactionType: string,
+  ): Promise<number> {
+    let table: string;
+    if (transactionType === 'earned') table = 'EarnedPointsLogs';
+    if (transactionType === 'spent') table = 'SpentPointsLogs';
+    const query = `
+    SELECT COUNT(*)
+    FROM "${table}"
+    WHERE "userId" = $1::uuid
+    `;
+
+    const values = [userId];
+    const totalPointsLogs = await this.prisma.$queryRawUnsafe<{
+      count: number;
+    }>(query, ...values);
+    return Number(totalPointsLogs[0].count);
+  }
+
   async isContinuous(userId: string, yesterday: string): Promise<boolean> {
     const isContinuousQuery = `
         SELECT COUNT(*) FROM "EarnedPointsLogs"

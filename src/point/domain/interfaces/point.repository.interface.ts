@@ -18,6 +18,8 @@ export interface IPointRepository {
     order: string,
   ): Promise<SpentPointWithBadgeName[]>;
 
+  getTotalPointPages(userId: string, transactionType: string): Promise<number>;
+
   isContinuous(userId: string, yesterday: string): Promise<boolean>;
 
   createEarnedPointLog(

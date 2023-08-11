@@ -16,6 +16,11 @@ import {
   ReqGetSpentPointsLogsAppDto,
   ResGetSpentPointsLogsAppDto,
 } from '@point/domain/dto/getSpentPointsLogs.app.dto';
+import {
+  ReqGetTotalPointPagesAppDto,
+  ResGetTotalPointPagesAppDto,
+} from '@point/domain/dto/getTotalPointPages.app.dto';
+import { GET_POINTS_LOGS_LIMIT } from '@shared/constants/point.constant';
 
 @Injectable()
 export class PointService implements IPointService {
@@ -74,6 +79,17 @@ export class PointService implements IPointService {
     );
 
     return result;
+  }
+
+  async getTotalPointPages(
+    req: ReqGetTotalPointPagesAppDto,
+  ): Promise<ResGetTotalPointPagesAppDto> {
+    const { userId, transactionType } = req;
+    const totalPointsLogs = await this.pointRepository.getTotalPointPages(
+      userId,
+      transactionType,
+    );
+    return { totalPages: Math.ceil(totalPointsLogs / GET_POINTS_LOGS_LIMIT) };
   }
 
   async getCurrentPoints(
