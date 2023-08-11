@@ -35,8 +35,8 @@ export class PointService implements IPointService {
   async getEarnedPointsLogs(
     req: ReqGetEarnedPointsLogsAppDto,
   ): Promise<ResGetEarnedPointsLogsAppDto[]> {
-    const { userId, order } = req;
-    const cacheKey = `userEarnedPointsLogs:${userId}-order:${order}`;
+    const { userId, order, page } = req;
+    const cacheKey = `userEarnedPointsLogs:${userId}-page:${page}&order:${order}`;
     const cachedPointsLogs = await this.cacheService.getFromCache<
       ResGetEarnedPointsLogsAppDto[]
     >(cacheKey);
@@ -46,6 +46,8 @@ export class PointService implements IPointService {
 
     const result = await this.pointRepository.getEarnedPointsLogs(
       userId,
+      GET_POINTS_LOGS_LIMIT,
+      (page - 1) * GET_POINTS_LOGS_LIMIT,
       order,
     );
 
@@ -61,8 +63,8 @@ export class PointService implements IPointService {
   async getSpentPointsLogs(
     req: ReqGetSpentPointsLogsAppDto,
   ): Promise<ResGetSpentPointsLogsAppDto[]> {
-    const { userId, order } = req;
-    const cacheKey = `userSpentPointsLogs:${userId}-order:${order}`;
+    const { userId, order, page } = req;
+    const cacheKey = `userSpentPointsLogs:${userId}-page:${page}&order:${order}`;
     const cachedPointsLogs = await this.cacheService.getFromCache<
       ResGetSpentPointsLogsAppDto[]
     >(cacheKey);
@@ -70,7 +72,12 @@ export class PointService implements IPointService {
       return cachedPointsLogs;
     }
 
-    const result = await this.pointRepository.getSpentPointsLogs(userId, order);
+    const result = await this.pointRepository.getSpentPointsLogs(
+      userId,
+      GET_POINTS_LOGS_LIMIT,
+      (page - 1) * GET_POINTS_LOGS_LIMIT,
+      order,
+    );
 
     await this.cacheService.setCache(
       cacheKey,

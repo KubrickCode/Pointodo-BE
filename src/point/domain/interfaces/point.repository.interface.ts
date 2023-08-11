@@ -10,11 +10,15 @@ import {
 export interface IPointRepository {
   getEarnedPointsLogs(
     userId: string,
+    limit: number,
+    offset: number,
     order: string,
   ): Promise<EarnedPointWithTaskName[]>;
 
   getSpentPointsLogs(
     userId: string,
+    limit: number,
+    offset: number,
     order: string,
   ): Promise<SpentPointWithBadgeName[]>;
 

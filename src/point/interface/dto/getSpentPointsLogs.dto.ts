@@ -5,11 +5,18 @@ import {
   POINTS,
   POINT_LOG_ID,
   POINT_LOG_OCCURRED_AT,
+  POINT_PAGE,
 } from '@shared/constants/point.constant';
 import { USER_ID } from '@shared/constants/user.constant';
+import { Type } from 'class-transformer';
 import { IsDate, IsInt, IsString } from 'class-validator';
 
-export class ReqGetSpentPointsLogsParamDto {
+export class ReqGetSpentPointsLogsQueryDto {
+  @ApiProperty({ description: POINT_PAGE })
+  @Type(() => Number)
+  @IsInt()
+  readonly page: number;
+
   @ApiProperty({ description: ORDER_BY })
   @IsString()
   readonly order: string;

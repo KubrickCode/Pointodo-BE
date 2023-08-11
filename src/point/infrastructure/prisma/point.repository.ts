@@ -17,6 +17,8 @@ export class PointRepository implements IPointRepository {
 
   async getEarnedPointsLogs(
     userId: string,
+    limit: number,
+    offset: number,
     order: string,
   ): Promise<EarnedPointWithTaskName[]> {
     let orderBy: string;
@@ -31,9 +33,10 @@ export class PointRepository implements IPointRepository {
     ON p."taskId" = t.id
     WHERE p."userId" = $1::uuid
     ORDER BY p.${orderBy}
+    LIMIT $2 OFFSET $3
     `;
 
-    const values = [userId];
+    const values = [userId, limit, offset];
 
     const pointsLogs = await this.prisma.$queryRawUnsafe<
       EarnedPointWithTaskName[]
@@ -44,6 +47,8 @@ export class PointRepository implements IPointRepository {
 
   async getSpentPointsLogs(
     userId: string,
+    limit: number,
+    offset: number,
     order: string,
   ): Promise<SpentPointWithBadgeName[]> {
     let orderBy: string;
@@ -58,9 +63,10 @@ export class PointRepository implements IPointRepository {
     ON p."badgeId" = b.id
     WHERE p."userId" = $1::uuid
     ORDER BY p.${orderBy}
+    LIMIT $2 OFFSET $3
     `;
 
-    const values = [userId];
+    const values = [userId, limit, offset];
 
     const pointsLogs = await this.prisma.$queryRawUnsafe<
       SpentPointWithBadgeName[]

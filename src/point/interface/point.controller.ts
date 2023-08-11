@@ -1,4 +1,12 @@
-import { Controller, Inject, Get, Req, UseGuards, Param } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Get,
+  Req,
+  UseGuards,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { IPointService } from '@point/domain/interfaces/point.service.interface';
 import { Request } from 'express';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
@@ -13,13 +21,13 @@ import { globalDocs } from '@shared/docs/global.docs';
 import { ResGetCurrentPointsDto } from './dto/getCurrentPoints.dto';
 import { getCurrentPointsDocs } from './docs/getCurrentPoints.docs';
 import {
-  ReqGetEarnedPointsLogsParamDto,
+  ReqGetEarnedPointsLogsQueryDto,
   ResGetEarnedPointsLogsDto,
 } from './dto/getEarnedPointsLogs.dto';
 import { getEarnedPointsLogsDocs } from './docs/getEarnedPointsLogs.docs';
 import { getSpentPointsLogsDocs } from './docs/getSpentPointsLogs.docs';
 import {
-  ReqGetSpentPointsLogsParamDto,
+  ReqGetSpentPointsLogsQueryDto,
   ResGetSpentPointsLogsDto,
 } from './dto/getSpentPointsLogs.dto';
 import {
@@ -39,29 +47,33 @@ export class PointController {
     private readonly pointService: IPointService,
   ) {}
 
-  @Get('/logs/earned/:order')
+  @Get('/logs/earned')
   @ApiOperation(getEarnedPointsLogsDocs.operation)
   @ApiOkResponse(getEarnedPointsLogsDocs.okResponse)
   async getEarnedPointsLogs(
     @Req() req: Request,
-    @Param() param: ReqGetEarnedPointsLogsParamDto,
+    @Query() query: ReqGetEarnedPointsLogsQueryDto,
   ): Promise<ResGetEarnedPointsLogsDto[]> {
+    const { order, page } = query;
     return await this.pointService.getEarnedPointsLogs({
       userId: req.user.id,
-      order: param.order,
+      order,
+      page,
     });
   }
 
-  @Get('/logs/spent/:order')
+  @Get('/logs/spent')
   @ApiOperation(getSpentPointsLogsDocs.operation)
   @ApiOkResponse(getSpentPointsLogsDocs.okResponse)
   async getSpentPointsLogs(
     @Req() req: Request,
-    @Param() param: ReqGetSpentPointsLogsParamDto,
+    @Query() query: ReqGetSpentPointsLogsQueryDto,
   ): Promise<ResGetSpentPointsLogsDto[]> {
+    const { order, page } = query;
     return await this.pointService.getSpentPointsLogs({
       userId: req.user.id,
-      order: param.order,
+      order,
+      page,
     });
   }
 
