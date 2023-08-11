@@ -1,5 +1,6 @@
 export class ReqGetEarnedPointsLogsAppDto {
   readonly userId: string;
+  readonly order: string;
 }
 
 export class ResGetEarnedPointsLogsAppDto {

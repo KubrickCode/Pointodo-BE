@@ -59,9 +59,9 @@ import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admi
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 import {
-  ReqGetTotalPagesAppDto,
-  ResGetTotalPagesAppDto,
-} from '@task/domain/dto/getTotalPages.app.dto';
+  ReqGetTotalTaskPagesAppDto,
+  ResGetTotalTaskPagesAppDto,
+} from '@task/domain/dto/getTotalTaskPages.app.dto';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -113,11 +113,11 @@ export class TaskService implements ITaskService {
     return result;
   }
 
-  async getTotalPages(
-    req: ReqGetTotalPagesAppDto,
-  ): Promise<ResGetTotalPagesAppDto> {
+  async getTotalTaskPages(
+    req: ReqGetTotalTaskPagesAppDto,
+  ): Promise<ResGetTotalTaskPagesAppDto> {
     const { userId, taskType } = req;
-    const totalTasks = await this.taskRepository.getTotalPages(
+    const totalTasks = await this.taskRepository.getTotalTaskPages(
       userId,
       taskType,
     );
@@ -179,8 +179,11 @@ export class TaskService implements ITaskService {
 
       await this.cacheService.deleteCache(`userBadgeProgress:${req.userId}`);
       await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
-      await this.cacheService.deleteCache(`userEarnedPointsLogs:${req.userId}`);
       await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
+      await this.cacheService.deleteCache(`userEarnedPointsLogs:${req.userId}`);
+      await this.redisService.deleteKeysByPrefix(
+        `userEarnedPointsLogs:${req.userId}*`,
+      );
       await this.redisService.deleteKeysByPrefix(
         `${taskType}logs:${req.userId}*`,
       );

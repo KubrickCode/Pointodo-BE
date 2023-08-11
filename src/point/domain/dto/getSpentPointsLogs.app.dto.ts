@@ -1,5 +1,6 @@
 export class ReqGetSpentPointsLogsAppDto {
   readonly userId: string;
+  readonly order: string;
 }
 
 export class ResGetSpentPointsLogsAppDto {

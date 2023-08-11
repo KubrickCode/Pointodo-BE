@@ -1,6 +1,6 @@
-import { ResGetTotalPagesDto } from '../dto/getTotalPages.dto';
+import { ResGetTotalTaskPagesDto } from '../dto/getTotalTaskPages.dto';
 
-export const getTotalPagesDocs = {
+export const getTotalTaskPagesDocs = {
   operation: {
     summary: '작업 총 페이지 수 요청',
     description: `작업 총 페이지 수\n
@@ -8,7 +8,7 @@ export const getTotalPagesDocs = {
   `,
   },
   okResponse: {
-    type: ResGetTotalPagesDto,
+    type: ResGetTotalTaskPagesDto,
     description: '작업 총 페이지 수',
   },
 };

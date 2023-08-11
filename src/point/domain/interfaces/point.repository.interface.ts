@@ -8,9 +8,15 @@ import {
 } from '../entities/spentPoint.entity';
 
 export interface IPointRepository {
-  getEarnedPointsLogs(userId: string): Promise<EarnedPointWithTaskName[]>;
+  getEarnedPointsLogs(
+    userId: string,
+    order: string,
+  ): Promise<EarnedPointWithTaskName[]>;
 
-  getSpentPointsLogs(userId: string): Promise<SpentPointWithBadgeName[]>;
+  getSpentPointsLogs(
+    userId: string,
+    order: string,
+  ): Promise<SpentPointWithBadgeName[]>;
 
   isContinuous(userId: string, yesterday: string): Promise<boolean>;
 

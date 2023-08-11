@@ -1,10 +1,10 @@
 import { TaskType_ } from '../entities/task.entity';
 
-export class ReqGetTotalPagesAppDto {
+export class ReqGetTotalTaskPagesAppDto {
   readonly userId: string;
   readonly taskType: TaskType_;
 }
 
-export class ResGetTotalPagesAppDto {
+export class ResGetTotalTaskPagesAppDto {
   readonly totalPages: number;
 }

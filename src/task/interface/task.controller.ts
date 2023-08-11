@@ -46,11 +46,11 @@ import {
   ResCancleTaskCompletionDto,
 } from './dto/cancleTaskCompletion.dto';
 import { cancleTaskCompletionDocs } from './docs/cancleTaskCompletion.docs';
+import { getTotalTaskPagesDocs } from './docs/getTotalTaskPages.docs';
 import {
-  ReqGetTotalPagesParamDto,
-  ResGetTotalPagesDto,
-} from './dto/getTotalPages.dto';
-import { getTotalPagesDocs } from './docs/getTotalPages.docs';
+  ReqGetTotalTaskPagesParamDto,
+  ResGetTotalTaskPagesDto,
+} from './dto/getTotalTaskPages.dto';
 
 @Controller('task')
 @ApiTags('Task')
@@ -81,15 +81,15 @@ export class TaskController {
   }
 
   @Get('/count/:taskType')
-  @ApiOperation(getTotalPagesDocs.operation)
-  @ApiOkResponse(getTotalPagesDocs.okResponse)
-  async getTotalPages(
+  @ApiOperation(getTotalTaskPagesDocs.operation)
+  @ApiOkResponse(getTotalTaskPagesDocs.okResponse)
+  async getTotalTaskPages(
     @Req() req: Request,
-    @Param() param: ReqGetTotalPagesParamDto,
-  ): Promise<ResGetTotalPagesDto> {
+    @Param() param: ReqGetTotalTaskPagesParamDto,
+  ): Promise<ResGetTotalTaskPagesDto> {
     const userId = req.user.id;
     const { taskType } = param;
-    return await this.taskService.getTotalPages({ userId, taskType });
+    return await this.taskService.getTotalTaskPages({ userId, taskType });
   }
 
   @Post('create')

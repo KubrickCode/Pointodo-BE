@@ -17,13 +17,20 @@ export class PointRepository implements IPointRepository {
 
   async getEarnedPointsLogs(
     userId: string,
+    order: string,
   ): Promise<EarnedPointWithTaskName[]> {
+    let orderBy: string;
+
+    if (order === 'newest') orderBy = '"occurredAt" DESC';
+    if (order === 'old') orderBy = '"occurredAt" ASC';
+
     const query = `
     SELECT p.*, t.name as "taskName"
     FROM "EarnedPointsLogs" as p
     LEFT JOIN "TasksLogs" as t
     ON p."taskId" = t.id
     WHERE p."userId" = $1::uuid
+    ORDER BY p.${orderBy}
     `;
 
     const values = [userId];
@@ -35,13 +42,22 @@ export class PointRepository implements IPointRepository {
     return pointsLogs;
   }
 
-  async getSpentPointsLogs(userId: string): Promise<SpentPointWithBadgeName[]> {
+  async getSpentPointsLogs(
+    userId: string,
+    order: string,
+  ): Promise<SpentPointWithBadgeName[]> {
+    let orderBy: string;
+
+    if (order === 'newest') orderBy = '"occurredAt" DESC';
+    if (order === 'old') orderBy = '"occurredAt" ASC';
+
     const query = `
     SELECT p.*, b.name as "badgeName"
     FROM "SpentPointsLogs" as p
     LEFT JOIN "Badge" as b
     ON p."badgeId" = b.id
     WHERE p."userId" = $1::uuid
+    ORDER BY p.${orderBy}
     `;
 
     const values = [userId];

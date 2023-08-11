@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ORDER_BY } from '@shared/constants/global.constant';
 import {
   POINTS,
   POINT_LOG_ID,
@@ -7,6 +8,12 @@ import {
 import { TASK_NAME, TASK_TYPE_ID } from '@shared/constants/task.constant';
 import { USER_ID } from '@shared/constants/user.constant';
 import { IsDate, IsInt, IsString } from 'class-validator';
+
+export class ReqGetEarnedPointsLogsParamDto {
+  @ApiProperty({ description: ORDER_BY })
+  @IsString()
+  readonly order: string;
+}
 
 export class ResGetEarnedPointsLogsDto {
   @ApiProperty({ description: POINT_LOG_ID })

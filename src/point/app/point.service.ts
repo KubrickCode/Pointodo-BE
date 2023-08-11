@@ -30,7 +30,8 @@ export class PointService implements IPointService {
   async getEarnedPointsLogs(
     req: ReqGetEarnedPointsLogsAppDto,
   ): Promise<ResGetEarnedPointsLogsAppDto[]> {
-    const cacheKey = `userEarnedPointsLogs:${req.userId}`;
+    const { userId, order } = req;
+    const cacheKey = `userEarnedPointsLogs:${userId}-order:${order}`;
     const cachedPointsLogs = await this.cacheService.getFromCache<
       ResGetEarnedPointsLogsAppDto[]
     >(cacheKey);
@@ -38,7 +39,10 @@ export class PointService implements IPointService {
       return cachedPointsLogs;
     }
 
-    const result = await this.pointRepository.getEarnedPointsLogs(req.userId);
+    const result = await this.pointRepository.getEarnedPointsLogs(
+      userId,
+      order,
+    );
 
     await this.cacheService.setCache(
       cacheKey,
@@ -52,7 +56,8 @@ export class PointService implements IPointService {
   async getSpentPointsLogs(
     req: ReqGetSpentPointsLogsAppDto,
   ): Promise<ResGetSpentPointsLogsAppDto[]> {
-    const cacheKey = `userSpentPointsLogs:${req.userId}`;
+    const { userId, order } = req;
+    const cacheKey = `userSpentPointsLogs:${userId}-order:${order}`;
     const cachedPointsLogs = await this.cacheService.getFromCache<
       ResGetSpentPointsLogsAppDto[]
     >(cacheKey);
@@ -60,7 +65,7 @@ export class PointService implements IPointService {
       return cachedPointsLogs;
     }
 
-    const result = await this.pointRepository.getSpentPointsLogs(req.userId);
+    const result = await this.pointRepository.getSpentPointsLogs(userId, order);
 
     await this.cacheService.setCache(
       cacheKey,

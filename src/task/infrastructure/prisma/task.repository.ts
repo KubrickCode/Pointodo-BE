@@ -52,7 +52,10 @@ export class TaskRepository implements ITaskRepository {
     return tasksLogs;
   }
 
-  async getTotalPages(userId: string, taskType: TaskType_): Promise<number> {
+  async getTotalTaskPages(
+    userId: string,
+    taskType: TaskType_,
+  ): Promise<number> {
     const query = `
     SELECT COUNT(*)
     FROM "TasksLogs"

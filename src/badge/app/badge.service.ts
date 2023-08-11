@@ -30,6 +30,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
+import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 import { cacheConfig } from '@shared/config/cache.config';
 import {
   ALREADY_EXIST_USER_BADGE,
@@ -55,6 +56,8 @@ export class BadgeService implements IBadgeService {
     private readonly userRepository: IUserRepository,
     @Inject('IBadgeProgressRepository')
     private readonly badgeProgressRepository: IBadgeProgressRepository,
+    @Inject('IRedisService')
+    private readonly redisService: IRedisService,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
@@ -77,7 +80,9 @@ export class BadgeService implements IBadgeService {
     }
 
     await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
-    await this.cacheService.deleteCache(`userSpentPointsLogs:${req.userId}`);
+    await this.redisService.deleteKeysByPrefix(
+      `userSpentPointsLogs:${req.userId}*`,
+    );
     await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
 
     const createdUserBadgeLog =
