@@ -8,6 +8,7 @@ import { PrismaService } from '@shared/service/prisma.service';
 import { CacheService } from '@cache/infrastructure/cache.service';
 import { jwtConfig } from '@shared/config/jwt.config';
 import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repository';
+import { RedisService } from '@redis/infrastructure/redis.service';
 
 @Module({
   controllers: [UserController],
@@ -28,6 +29,10 @@ import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repo
     {
       provide: 'IUserBadgeRepository',
       useClass: UserBadgeRepository,
+    },
+    {
+      provide: 'IRedisService',
+      useClass: RedisService,
     },
   ],
   imports: [

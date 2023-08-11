@@ -78,6 +78,7 @@ export class BadgeAdminService implements IBadgeAdminService {
     return { message: UPDATE_BADGE_SUCCESS_MESSAGE };
   }
 
+  //여러 관계 조정 필요
   async deleteBadge(req: ReqDeleteBadgeAppDto): Promise<ResDeleteBadgeAppDto> {
     const deletedBadge = await this.badgeAdminRepository.delete(req.id);
     await this.cacheService.deleteCache(`allBadges`);

@@ -9,9 +9,10 @@ import {
   Patch,
   Delete,
   HttpCode,
+  Res,
 } from '@nestjs/common';
 import { ReqRegisterDto, ResRegisterDto } from './dto/register.dto';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import { ResGetUserDto } from './dto/getUser.dto';
 import {
@@ -86,7 +87,9 @@ export class UserController {
   @ApiBearerAuth()
   @ApiOkResponse(deleteUserDocs.okResponse)
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
-  async deleteUser(@Req() req: Request) {
-    return this.userService.deleteUser({ id: req.user.id });
+  async deleteUser(@Req() req: Request, @Res() res: Response) {
+    await this.userService.deleteUser({ id: req.user.id });
+    res.clearCookie('refreshToken');
+    res.send();
   }
 }

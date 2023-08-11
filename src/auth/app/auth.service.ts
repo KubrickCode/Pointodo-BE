@@ -50,7 +50,6 @@ import {
 import { PasswordHasher } from '@shared/utils/passwordHasher';
 import { USER_NOT_FOUND } from '@shared/messages/user/user.errors';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -64,7 +63,6 @@ export class AuthService implements IAuthService {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
-    private readonly configService: ConfigService,
   ) {}
 
   async validateUser(

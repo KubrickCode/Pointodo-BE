@@ -39,6 +39,7 @@ import {
 } from '@user/domain/dto/deleteUser.app.dto';
 import { PasswordHasher } from '@shared/utils/passwordHasher';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
+import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -48,6 +49,8 @@ export class UserService implements IUserService {
     private readonly userRepository: IUserRepository,
     @Inject('IUserBadgeRepository')
     private readonly userBadgeRepository: IUserBadgeRepository,
+    @Inject('IRedisService')
+    private readonly redisService: IRedisService,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
@@ -109,6 +112,7 @@ export class UserService implements IUserService {
 
   async deleteUser(req: ReqDeleteUserAppDto): Promise<ResDeleteUserAppDto> {
     const user = await this.userRepository.deleteUser(req.id);
+    await this.redisService.delete(`refresh_token:${req.id}`);
     await this.cacheService.deleteCache(`user:${req.id}`);
     await this.cacheService.deleteCache(`userEarnedPointsLogs:${req.id}`);
     await this.cacheService.deleteCache(`userSpentPointsLogs:${req.id}`);

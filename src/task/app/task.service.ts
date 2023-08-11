@@ -162,7 +162,7 @@ export class TaskService implements ITaskService {
       await this.cacheService.deleteCache(`${taskType}logs:${req.userId}`);
 
       if (completion !== IS_COMPLETED) {
-        await this.taskRepository.completeTask(req.id, true);
+        await this.taskRepository.completeTask(req.id, true); // 롤백
         throw new ConflictException(COMPLETE_TASK_CONFLICT);
       }
 
@@ -179,18 +179,31 @@ export class TaskService implements ITaskService {
         setTaskPoints(taskType, isContinuous),
       );
 
-      const consistencyBadgeId =
-        await this.badgeAdminRepository.getBadgeIdByName('일관성 뱃지3');
+      const consistencyBadgeNames = [
+        '일관성 뱃지1',
+        '일관성 뱃지2',
+        '일관성 뱃지3',
+      ];
 
-      const updatedConsistency =
-        await this.badgeProgressRepository.updateConsistency(
+      const badgeIds = await Promise.all(
+        consistencyBadgeNames.map((badgeName) =>
+          this.badgeAdminRepository.getBadgeIdByName(badgeName),
+        ),
+      );
+
+      const results = [];
+
+      for (const badge of badgeIds) {
+        const result = await this.badgeProgressRepository.updateConsistency(
           req.userId,
           isContinuous,
-          consistencyBadgeId.id,
+          badge.id,
         );
+        results.push(result);
+      }
 
       await completeConsistency(
-        updatedConsistency,
+        results[0],
         req.userId,
         this.userBadgeRepository.createUserBadgeLog.bind(
           this.userBadgeRepository,
