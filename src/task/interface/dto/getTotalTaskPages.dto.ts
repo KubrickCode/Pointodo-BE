@@ -2,7 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { TaskType_ } from '@task/domain/entities/task.entity';
 import { IsInt, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { TASK_TYPE_NAME, TOTAL_PAGE } from '@shared/constants/task.constant';
+import { TASK_TYPE_NAME } from '@shared/constants/task.constant';
+import { TOTAL_PAGE } from '@shared/constants/global.constant';
 
 export class ReqGetTotalTaskPagesParamDto {
   @ApiProperty({ description: TASK_TYPE_NAME })

@@ -8,6 +8,10 @@ import {
   ReqDeleteUserAppDto,
   ResDeleteUserAppDto,
 } from '../dto/deleteUser.app.dto';
+import {
+  ReqGetUserListAppDto,
+  ResGetUserListAppDto,
+} from '../dto/getUserList.app.dto';
 
 export interface IUserService {
   register(user: ReqRegisterAppDto): Promise<ResRegisterAppDto>;
@@ -16,4 +20,5 @@ export interface IUserService {
     req: ReqChangePasswordAppDto,
   ): Promise<ResChangePasswordAppDto>;
   deleteUser(req: ReqDeleteUserAppDto): Promise<ResDeleteUserAppDto>;
+  getUserList(req: ReqGetUserListAppDto): Promise<ResGetUserListAppDto[]>;
 }

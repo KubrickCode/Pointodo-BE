@@ -14,6 +14,8 @@ import { CacheService } from '@cache/infrastructure/cache.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { multerOptionsFactory } from '@shared/utils/multer.options.factory';
 import { UserAdminController } from './user.admin.controller';
+import { UserService } from '@user/app/user.service';
+import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repository';
 @Module({
   controllers: [BadgeAdminController, UserAdminController],
   providers: [
@@ -45,6 +47,14 @@ import { UserAdminController } from './user.admin.controller';
     {
       provide: 'ICacheService',
       useClass: CacheService,
+    },
+    {
+      provide: 'IUserService',
+      useClass: UserService,
+    },
+    {
+      provide: 'IUserBadgeRepository',
+      useClass: UserBadgeRepository,
     },
   ],
   imports: [

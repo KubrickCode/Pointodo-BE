@@ -24,4 +24,3 @@ export const TASK_COMPLETION = '작업 완료 여부';
 export const TASK_OCCURRED_AT = '작업 로그 생성 시간';
 export const TASK_DUE_DATE = '작업 만료 기한';
 export const TASK_PAGE = '작업 페이지';
-export const TOTAL_PAGE = '총 페이지 수';

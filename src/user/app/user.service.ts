@@ -40,6 +40,11 @@ import {
 import { PasswordHasher } from '@shared/utils/passwordHasher';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
+import {
+  ReqGetUserListAppDto,
+  ResGetUserListAppDto,
+} from '@user/domain/dto/getUserList.app.dto';
+import { GET_USER_LIST_LIMIT } from '@shared/constants/user.constant';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -127,5 +132,17 @@ export class UserService implements IUserService {
       `회원 탈퇴 - 사용자 ID:${user.id}, 유저 이메일:${user.email}`,
     );
     return { message: DELETE_USER_SUCCESS_MESSAGE };
+  }
+
+  async getUserList(
+    req: ReqGetUserListAppDto,
+  ): Promise<ResGetUserListAppDto[]> {
+    const { order, page, provider } = req;
+    return await this.userRepository.getUserList(
+      order,
+      GET_USER_LIST_LIMIT,
+      (page - 1) * GET_USER_LIST_LIMIT,
+      provider,
+    );
   }
 }

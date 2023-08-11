@@ -12,3 +12,6 @@ export const USER_REGISTER_DATE = '가입 날짜';
 export const USER_VALIDATION = '인증 여부';
 export const JWT_ACCESS_TOKEN = 'JWT 액세스 토큰';
 export const JWT_REFRESH_TOKEN = 'JWT 리프레시 토큰 - 쿠키 설정';
+export const USER_LIST_PAGE = '유저 리스트 페이지';
+
+export const GET_USER_LIST_LIMIT = 10;

@@ -97,15 +97,27 @@ export class UserRepository implements IUserRepository {
     provider?: ProviderType,
   ): Promise<UserEntity[]> {
     let orderBy: string;
-    if (order === 'newest') orderBy = '"occurredAt" DESC';
-    if (order === 'old') orderBy = '"occurredAt" ASC';
-    const query = `
-    SELECT * FROM "User"
-    ${provider ? 'WHERE provider = ' + provider : ''}
-    ORDER BY ${orderBy}
-    LIMIT $1 OFFSET $2
-    `;
-    const values = [limit, offset];
-    return await this.prisma.$queryRawUnsafe<User[]>(query, ...values);
+    let query: string;
+    if (order === 'newest') orderBy = '"createdAt" DESC';
+    if (order === 'old') orderBy = '"createdAt" ASC';
+
+    if (provider) {
+      query = `
+      SELECT * FROM "User"
+      WHERE provider = $3::"Provider"
+      ORDER BY ${orderBy}
+      LIMIT $1 OFFSET $2
+      `;
+    } else {
+      query = `
+      SELECT * FROM "User"
+      ORDER BY ${orderBy}
+      LIMIT $1 OFFSET $2
+      `;
+    }
+
+    const values = [limit, offset, provider];
+    const result = await this.prisma.$queryRawUnsafe<User[]>(query, ...values);
+    return plainToClass(UserEntity, result);
   }
 }
