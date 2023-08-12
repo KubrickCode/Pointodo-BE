@@ -1,16 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { BADGE_ID } from '@shared/constants/badge.constant';
 import {
   ALREADY_EXIST_USER_BADGE,
   BUY_BADGE_CONFLICT_POINTS,
   BUY_BADGE_LESS_POINTS,
 } from '@shared/messages/badge/badge.errors';
 import { BUY_BADGE_SUCCESS_MESSAGE } from '@shared/messages/badge/badge.messages';
-import { IsString } from 'class-validator';
+import { IsArray, IsInt, IsString } from 'class-validator';
 
 export class ReqBuyBadgeDto {
-  @ApiProperty({ description: '뱃지 유형' })
-  @IsString()
-  readonly badgeType: string;
+  @ApiProperty({ description: BADGE_ID })
+  @IsInt()
+  readonly badgeId: number;
 }
 
 export class ResBuyBadgeDto {
@@ -24,14 +25,14 @@ export class ResBuyBadgeDto {
 
 export class ResBuyBadgeConflictError {
   @ApiProperty({ example: 409, description: '에러 상태 코드' })
-  @IsString()
+  @IsInt()
   readonly statusCode: number;
 
   @ApiProperty({
     example: `${BUY_BADGE_LESS_POINTS} | ${ALREADY_EXIST_USER_BADGE} | ${BUY_BADGE_CONFLICT_POINTS}`,
     description: '에러 메시지',
   })
-  @IsString()
+  @IsArray()
   readonly message: string[];
 
   @ApiProperty({ example: '/api/badge/buy', description: '요청 경로' })

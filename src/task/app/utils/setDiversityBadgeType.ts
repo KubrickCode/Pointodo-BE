@@ -1,13 +1,22 @@
-export const setDiversityBadgeType = (taskType: string) => {
-  let diversityBadgeType: string;
-  if (taskType === '매일 작업') {
-    diversityBadgeType = '다양성 뱃지1';
+import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
+import { TaskType_ } from '@task/domain/entities/task.entity';
+
+export const setDiversityBadgeType = async (
+  taskType: TaskType_,
+  getBadgeIdByName: (name: string) => Promise<Pick<BadgeEntity, 'id'>>,
+) => {
+  let diversityBadgeId: number;
+  if (taskType === 'DAILY') {
+    const { id } = await getBadgeIdByName('다양성 뱃지1');
+    diversityBadgeId = id;
   }
-  if (taskType === '기한 작업') {
-    diversityBadgeType = '다양성 뱃지2';
+  if (taskType === 'DUE') {
+    const { id } = await getBadgeIdByName('다양성 뱃지2');
+    diversityBadgeId = id;
   }
-  if (taskType === '무기한 작업') {
-    diversityBadgeType = '다양성 뱃지3';
+  if (taskType === 'FREE') {
+    const { id } = await getBadgeIdByName('다양성 뱃지3');
+    diversityBadgeId = id;
   }
-  return diversityBadgeType;
+  return diversityBadgeId;
 };

@@ -12,6 +12,7 @@ import { AdminModule } from '@admin/interface/admin.module';
 import { BadgeModule } from './badge/interface/badge.module';
 import { TaskModule } from './task/interface/task.module';
 import { PointModule } from './point/interface/point.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   providers: [
@@ -33,6 +34,7 @@ import { PointModule } from './point/interface/point.module';
     BadgeModule,
     TaskModule,
     PointModule,
+    ScheduleModule.forRoot(),
   ],
 })
 export class AppModule implements NestModule {

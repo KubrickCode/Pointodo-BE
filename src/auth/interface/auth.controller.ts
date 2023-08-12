@@ -35,13 +35,15 @@ import {
   RedirectSocialLoginDto,
   ResSocialLoginDto,
 } from './dto/socialLogin.dto';
-import { authDocs } from './docs/auth.docs';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
 import { ReqCheckPasswordDto } from './dto/checkPassword.dto';
 import { checkPasswordDocs } from './docs/checkPassword.docs';
 import { ResChangePasswordDto } from '@user/interface/dto/changePassword.dto';
 import { globalDocs } from '@shared/docs/global.docs';
 import { loginDocs } from '@auth/interface/docs/login.docs';
+import { logoutDocs } from './docs/logout.docs';
+import { refreshDocs } from './docs/refresh.docs';
+import { socialLoginDocs } from './docs/socialLogin.docs';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -78,8 +80,8 @@ export class AuthController {
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation(authDocs.logout)
-  @ApiOkResponse({ type: ResLogoutDto })
+  @ApiOperation(logoutDocs.operation)
+  @ApiOkResponse(logoutDocs.okResponse)
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
   async logout(@Req() req: Request, @Res() res: Response): Promise<void> {
     const result: ResLogoutDto = await this.authService.logout(req.user);
@@ -90,8 +92,8 @@ export class AuthController {
   @Get('refresh')
   @HttpCode(201)
   @ApiCookieAuth('refreshToken')
-  @ApiOperation(authDocs.refresh)
-  @ApiCreatedResponse({ type: ResRefreshDto })
+  @ApiOperation(refreshDocs.operation)
+  @ApiCreatedResponse(refreshDocs.okResponse)
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
       const { refreshToken } = req.cookies;
@@ -125,8 +127,8 @@ export class AuthController {
   @Get('google/callback')
   @HttpCode(201)
   @UseGuards(GoogleAuthGuard)
-  @ApiOperation(authDocs.google)
-  @ApiCreatedResponse({ type: RedirectSocialLoginDto })
+  @ApiOperation(socialLoginDocs.google.operation)
+  @ApiCreatedResponse(socialLoginDocs.google.okResponse)
   async googleCallback(
     @Req() req: Request,
     @Res() res: Response,
@@ -149,8 +151,8 @@ export class AuthController {
   @Get('kakao/callback')
   @HttpCode(201)
   @UseGuards(KakaoAuthGuard)
-  @ApiOperation(authDocs.kakao)
-  @ApiCreatedResponse({ type: RedirectSocialLoginDto })
+  @ApiOperation(socialLoginDocs.kakao.operation)
+  @ApiCreatedResponse(socialLoginDocs.kakao.okResponse)
   async kakaoCallback(
     @Req() req: Request,
     @Res() res: Response,
@@ -175,8 +177,8 @@ export class AuthController {
 
   @Get('social-login')
   @HttpCode(201)
-  @ApiOperation(authDocs.socialLogin)
-  @ApiCreatedResponse({ type: ResSocialLoginDto })
+  @ApiOperation(socialLoginDocs.socialLogin.operation)
+  @ApiCreatedResponse(socialLoginDocs.socialLogin.okResponse)
   async socialLogin(@Req() req: Request, @Res() res: Response): Promise<void> {
     const result: ResSocialLoginDto = {
       accessToken: req.cookies['accessToken'],

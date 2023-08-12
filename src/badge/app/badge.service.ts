@@ -1,3 +1,4 @@
+import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import {
   ReqBuyBadgeAppDto,
@@ -8,6 +9,10 @@ import {
   ResChangeSelectedBadgeAppDto,
 } from '@badge/domain/dto/changeSelectedBadge.app.dto';
 import {
+  ReqDeleteUserBadgeAppDto,
+  ResDeleteUserBadgeAppDto,
+} from '@badge/domain/dto/deleteUserBadge.app.dto';
+import {
   ReqGetAllBadgeProgressAppDto,
   ResGetAllBadgeProgressAppDto,
 } from '@badge/domain/dto/getAllBadgeProgress.app.dto';
@@ -15,6 +20,14 @@ import {
   ReqGetUserBadgeListAppDto,
   ResGetUserBadgeListAppDto,
 } from '@badge/domain/dto/getUserBadgeList.app.dto';
+import {
+  ReqGetUserBadgeListWithNameAppDto,
+  ResGetUserBadgeListWithNameAppDto,
+} from '@badge/domain/dto/getUserBadgeListWithName.app.dto';
+import {
+  ReqPutBadgeToUserAppDto,
+  ResPutBadgeToUserAppDto,
+} from '@badge/domain/dto/putBadgeToUser.app.dto';
 import { BadgeProgressEntity } from '@badge/domain/entities/badgeProgress.entity';
 import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
@@ -29,6 +42,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
+import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 import { cacheConfig } from '@shared/config/cache.config';
 import {
   ALREADY_EXIST_USER_BADGE,
@@ -38,6 +52,8 @@ import {
 import {
   BUY_BADGE_SUCCESS_MESSAGE,
   CHANGE_USER_BADGE_MESSAGE,
+  DELETE_USER_BADGE_SUCCESS_MESSAGE,
+  PUT_BADGE_SUCCESS_MESSAGE,
 } from '@shared/messages/badge/badge.messages';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 
@@ -54,44 +70,51 @@ export class BadgeService implements IBadgeService {
     private readonly userRepository: IUserRepository,
     @Inject('IBadgeProgressRepository')
     private readonly badgeProgressRepository: IBadgeProgressRepository,
+    @Inject('IRedisService')
+    private readonly redisService: IRedisService,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
   ) {}
 
   async buyBadge(req: ReqBuyBadgeAppDto): Promise<ResBuyBadgeAppDto> {
-    const { userId, badgeType } = req;
-    const price = await this.badgeAdminRepository.getBadgePrice(badgeType);
+    const { userId, badgeId } = req;
+    const price = await this.badgeAdminRepository.getBadgePrice(badgeId);
 
-    const updatedPointLog = await this.pointRepository.createPointLog(
+    const updatedPointLog = await this.pointRepository.createSpentPointLog(
       userId,
-      'SPENT',
-      `${badgeType} 구매`,
-      -price,
+      badgeId,
+      price,
     );
 
     const updatedPoint = await this.pointRepository.calculateUserPoints(userId);
     if (updatedPoint < 0) {
-      await this.pointRepository.deletePointLog(updatedPointLog.id);
+      await this.pointRepository.deleteSpentPointLog(updatedPointLog.id);
       throw new ConflictException(BUY_BADGE_CONFLICT_POINTS);
     }
 
     await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
-    await this.cacheService.deleteCache(`userPointsLogs:${req.userId}`);
+    await this.redisService.deleteKeysByPrefix(
+      `userSpentPointsLogs:${req.userId}*`,
+    );
     await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
 
-    await this.userBadgeRepository.createUserBadgeLog(userId, badgeType);
+    const createdUserBadgeLog =
+      await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
 
     const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
       userId,
     );
 
     const filteredBadgeList = userBadgeList.filter(
-      (item) => item.badgeType === badgeType,
+      (item) => item.badgeId === badgeId,
     );
 
-    if (filteredBadgeList.length > 1)
+    if (filteredBadgeList.length > 1) {
+      await this.pointRepository.deleteSpentPointLog(updatedPointLog.id);
+      await this.userBadgeRepository.deleteUserBadgeLog(createdUserBadgeLog.id);
       throw new ConflictException(ALREADY_EXIST_USER_BADGE);
+    }
 
     return { message: BUY_BADGE_SUCCESS_MESSAGE };
   }
@@ -118,20 +141,27 @@ export class BadgeService implements IBadgeService {
     return result;
   }
 
+  async getUserBadgeListWithName(
+    req: ReqGetUserBadgeListWithNameAppDto,
+  ): Promise<ResGetUserBadgeListWithNameAppDto[]> {
+    return await this.userBadgeRepository.getUserBadgeListWithName(req.userId);
+  }
+
   async changeSelectedBadge(
     req: ReqChangeSelectedBadgeAppDto,
   ): Promise<ResChangeSelectedBadgeAppDto> {
-    const { userId, badgeType } = req;
+    const { userId, badgeId } = req;
     const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
       userId,
     );
 
-    const badgeTypeList = userBadgeList.map((item) => item.badgeType);
+    const badgeTypeList = userBadgeList.map((item) => item.badgeId);
 
-    if (!badgeTypeList.includes(badgeType))
+    if (!badgeTypeList.includes(badgeId))
       throw new BadRequestException(NOT_EXIST_USER_BADGE);
 
-    await this.userRepository.changeSelectedBadge(userId, badgeType);
+    await this.cacheService.deleteCache(`user:${userId}`);
+    await this.userRepository.changeSelectedBadge(userId, badgeId);
     return { message: CHANGE_USER_BADGE_MESSAGE };
   }
 
@@ -154,5 +184,39 @@ export class BadgeService implements IBadgeService {
       cacheConfig(this.configService).cacheTTL,
     );
     return result;
+  }
+
+  async getAllBadges(): Promise<BadgeEntity[]> {
+    const cacheKey = `allBadges`;
+    const cachedAllBadges = await this.cacheService.getFromCache<BadgeEntity[]>(
+      cacheKey,
+    );
+    if (cachedAllBadges) {
+      return cachedAllBadges;
+    }
+    const result = await this.badgeAdminRepository.getAllBadges();
+    await this.cacheService.setCache(
+      cacheKey,
+      result,
+      cacheConfig(this.configService).cacheTTL,
+    );
+    return result;
+  }
+
+  async putBadgeToUser(
+    req: ReqPutBadgeToUserAppDto,
+  ): Promise<ResPutBadgeToUserAppDto> {
+    const { userId, badgeId } = req;
+    await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
+    await this.cacheService.deleteCache(`userBadgeList:${userId}`);
+    return { message: PUT_BADGE_SUCCESS_MESSAGE };
+  }
+
+  async deleteUserBadge(
+    req: ReqDeleteUserBadgeAppDto,
+  ): Promise<ResDeleteUserBadgeAppDto> {
+    const { userId, badgeId } = req;
+    await this.userBadgeRepository.deleteUserBadge(badgeId, userId);
+    return { message: DELETE_USER_BADGE_SUCCESS_MESSAGE };
   }
 }

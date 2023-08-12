@@ -10,14 +10,14 @@ export class UserBadgeRepository implements IUserBadgeRepository {
 
   async createUserBadgeLog(
     userId: string,
-    badgeType: string,
+    badgeId: number,
   ): Promise<UserBadgeEntity> {
     const query = `
-      INSERT INTO "UserBadgesLogs" ("userId", "badgeType")
+      INSERT INTO "UserBadgesLogs" ("userId", "badgeId")
       VALUES ($1::uuid, $2)
       RETURNING *
     `;
-    const values = [userId, badgeType];
+    const values = [userId, badgeId];
     const newUserBadgeLog = await this.prisma.$queryRawUnsafe<UserBadgesLogs>(
       query,
       ...values,
@@ -27,15 +27,61 @@ export class UserBadgeRepository implements IUserBadgeRepository {
 
   async getUserBadgeList(
     userId: string,
-  ): Promise<Array<Pick<UserBadgeEntity, 'badgeType'>>> {
+  ): Promise<Array<Pick<UserBadgeEntity, 'badgeId'>>> {
     const query = `
-      SELECT "badgeType" FROM "UserBadgesLogs"
+      SELECT "badgeId" FROM "UserBadgesLogs"
       WHERE "userId" = $1::uuid
     `;
     const values = [userId];
     const userBadgeList = await this.prisma.$queryRawUnsafe<
-      Array<{ badgeType: string }>
+      Array<Pick<UserBadgesLogs, 'badgeId'>>
     >(query, ...values);
     return userBadgeList;
+  }
+
+  async getUserBadgeListWithName(
+    userId: string,
+  ): Promise<Array<{ badgeId: number; name: string }>> {
+    const query = `
+      SELECT u."badgeId", b.name
+      FROM "UserBadgesLogs" as u
+      LEFT JOIN "Badge" as b
+      ON u."badgeId" = b.id
+      WHERE "userId" = $1::uuid
+    `;
+    const values = [userId];
+    const userBadgeList = await this.prisma.$queryRawUnsafe<
+      Array<{ badgeId: number; name: string }>
+    >(query, ...values);
+    return userBadgeList;
+  }
+
+  async deleteUserBadgeLog(id: number): Promise<UserBadgeEntity> {
+    const query = `
+      DELETE FROM "UserBadgesLogs"
+      WHERE id = $1
+    `;
+    const values = [id];
+    const deleteBadgeLog = await this.prisma.$queryRawUnsafe<UserBadgesLogs>(
+      query,
+      ...values,
+    );
+    return deleteBadgeLog;
+  }
+
+  async deleteUserBadge(
+    badgeId: number,
+    userId: string,
+  ): Promise<UserBadgeEntity> {
+    const query = `
+      DELETE FROM "UserBadgesLogs"
+      WHERE "badgeId" = $1 AND "userId" = $2::uuid
+    `;
+    const values = [badgeId, userId];
+    const deleteBadgeLog = await this.prisma.$queryRawUnsafe<UserBadgesLogs>(
+      query,
+      ...values,
+    );
+    return deleteBadgeLog;
   }
 }

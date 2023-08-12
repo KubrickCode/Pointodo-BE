@@ -1,55 +1,73 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import { IsDate, IsInt, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ORDER_BY } from '@shared/constants/global.constant';
+import {
+  TASK_COMPLETION,
+  TASK_DESC,
+  TASK_DUE_DATE,
+  TASK_IMPORTANCE,
+  TASK_LOG_ID,
+  TASK_NAME,
+  TASK_OCCURRED_AT,
+  TASK_PAGE,
+  TASK_TYPE_NAME,
+} from '@shared/constants/task.constant';
+import { USER_ID } from '@shared/constants/user.constant';
+import { TaskType_ } from '@task/domain/entities/task.entity';
+import { Transform, Type } from 'class-transformer';
+import { IsDate, IsInt, IsOptional, IsString } from 'class-validator';
 
-export class ReqGetTasksLogsParamDto {
-  @ApiProperty({ description: '작업 유형' })
+export class ReqGetTasksLogsQueryDto {
+  @ApiProperty({ description: TASK_TYPE_NAME })
   @IsString()
-  @Transform(({ value }) => {
-    switch (value) {
-      case 'daily':
-        return '매일 작업';
-      case 'deadline':
-        return '기한 작업';
-      case 'free':
-        return '무기한 작업';
-      default:
-        return value;
-    }
-  })
-  readonly taskType: string;
+  @Transform(({ value }) => value.toUpperCase())
+  readonly taskType: TaskType_;
+
+  @ApiProperty({ description: TASK_PAGE })
+  @Type(() => Number)
+  @IsInt()
+  readonly page: number;
+
+  @ApiProperty({ description: ORDER_BY })
+  @IsString()
+  readonly order: string;
 }
 
 export class ResGetTasksLogsDto {
-  @ApiProperty({ description: '작업 고유 ID(INT)' })
+  @ApiProperty({ description: TASK_LOG_ID })
   @IsInt()
   readonly id: number;
 
-  @ApiProperty({ description: '작업 유저 ID(UUID)' })
+  @ApiProperty({ description: USER_ID })
   @IsString()
   readonly userId: string;
 
-  @ApiProperty({ description: '작업 유형' })
+  @ApiProperty({ description: TASK_TYPE_NAME })
   @IsInt()
-  readonly taskType: string;
+  readonly taskType: TaskType_;
 
-  @ApiProperty({ description: '작업 이름' })
+  @ApiProperty({ description: TASK_NAME })
   @IsString()
   readonly name: string;
 
-  @ApiProperty({ description: '작업 설명' })
+  @ApiProperty({ description: TASK_DESC })
   @IsString()
   readonly description: string;
 
-  @ApiProperty({ description: '작업 완료 여부' })
+  @ApiProperty({ description: TASK_COMPLETION })
   @IsInt()
   readonly completion: number;
 
-  @ApiProperty({ description: '작업 중요도' })
+  @ApiProperty({ description: TASK_IMPORTANCE })
   @IsInt()
   readonly importance: number;
 
-  @ApiProperty({ description: '작업 생성 시간' })
+  @ApiProperty({ description: TASK_OCCURRED_AT })
   @IsDate()
   readonly occurredAt: Date;
+
+  @ApiProperty({ description: TASK_DUE_DATE })
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  readonly dueDate?: string;
 }

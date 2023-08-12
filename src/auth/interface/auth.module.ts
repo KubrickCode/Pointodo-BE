@@ -7,7 +7,6 @@ import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 import { PrismaService } from '@shared/service/prisma.service';
 import { LocalStrategy } from '@auth/infrastructure/passport/strategies/local.strategy';
 import { TokenService } from '@auth/infrastructure/token.service';
-import { JwtStrategy } from '@auth/infrastructure/passport/strategies/jwt.strategy';
 import { jwtConfig } from '@shared/config/jwt.config';
 import { RedisService } from '@redis/infrastructure/redis.service';
 import { GoogleStrategy } from '@auth/infrastructure/passport/strategies/google.strategy';
@@ -19,7 +18,6 @@ import { CacheService } from '@cache/infrastructure/cache.service';
   providers: [
     PrismaService,
     LocalStrategy,
-    JwtStrategy,
     GoogleStrategy,
     KakaoStrategy,
     {

@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { TASK_LOG_ID } from '@shared/constants/task.constant';
 import { DELETE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
 import { Type } from 'class-transformer';
 import { IsInt, IsString } from 'class-validator';
 
 export class ReqDeleteTaskParamDto {
-  @ApiProperty({ description: '작업 고유 ID(INT)' })
+  @ApiProperty({ description: TASK_LOG_ID })
   @Type(() => Number)
   @IsInt()
   readonly id: number;

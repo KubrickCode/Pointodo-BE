@@ -1,20 +1,24 @@
-import { BadgeTypesEntity } from '../entities/badgeTypes.entity';
+import { BadgeEntity, BadgeType_ } from '../entities/badge.entity';
 
 export interface IBadgeAdminRepository {
-  getAllBadgeTypes(): Promise<BadgeTypesEntity[]>;
-  getBadgePrice(name: string): Promise<number>;
+  getAllBadges(): Promise<BadgeEntity[]>;
+  getBadgeList(type: BadgeType_): Promise<BadgeEntity[]>;
+  getBadgePrice(id: number): Promise<number>;
+  getBadgeIdByName(name: string): Promise<Pick<BadgeEntity, 'id'>>;
   isExist(name: string): Promise<boolean>;
   create(
     name: string,
     description: string,
     iconLink: string,
+    type: BadgeType_,
     price?: number,
-  ): Promise<BadgeTypesEntity>;
+  ): Promise<BadgeEntity>;
   update(
     id: number,
     name?: string,
     description?: string,
     iconLink?: string,
-  ): Promise<BadgeTypesEntity>;
-  delete(id: number): Promise<BadgeTypesEntity>;
+    price?: number,
+  ): Promise<BadgeEntity>;
+  delete(id: number): Promise<BadgeEntity>;
 }

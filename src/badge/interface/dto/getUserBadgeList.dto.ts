@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { BADGE_ID } from '@shared/constants/badge.constant';
+import { IsInt } from 'class-validator';
 
 export class ResGetUserBadgeListDto {
-  @ApiProperty({ description: '뱃지 유형' })
-  @IsString()
-  readonly badgeType: string;
+  @ApiProperty({ description: BADGE_ID })
+  @IsInt()
+  readonly badgeId: number;
 }

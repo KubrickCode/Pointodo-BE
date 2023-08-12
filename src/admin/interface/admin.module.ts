@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { BadgeAdminController } from '@admin/interface/badge.admin.controller';
 import { jwtConfig } from '@shared/config/jwt.config';
@@ -10,11 +10,17 @@ import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 import { PrismaService } from '@shared/service/prisma.service';
 import { BadgeAdminService } from '@admin/badge/app/badge.admin.service';
 import { BadgeAdminRepository } from '@admin/badge/infrastructure/prisma/badge.admin.repository';
-import { TaskAdminController } from '@admin/interface/task.admin.controller';
-import { TaskAdminService } from '@admin/task/app/task.admin.service';
-import { TaskAdminRepository } from '@admin/task/infrastructure/prisma/task.admin.repository';
+import { CacheService } from '@cache/infrastructure/cache.service';
+import { MulterModule } from '@nestjs/platform-express';
+import { multerOptionsFactory } from '@shared/utils/multer.options.factory';
+import { UserAdminController } from './user.admin.controller';
+import { UserService } from '@user/app/user.service';
+import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repository';
+import { BadgeService } from '@badge/app/badge.service';
+import { PointRepository } from '@point/infrastructure/prisma/point.repository';
+import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgress.repository';
 @Module({
-  controllers: [BadgeAdminController, TaskAdminController],
+  controllers: [BadgeAdminController, UserAdminController],
   providers: [
     PrismaService,
     {
@@ -42,12 +48,28 @@ import { TaskAdminRepository } from '@admin/task/infrastructure/prisma/task.admi
       useClass: BadgeAdminRepository,
     },
     {
-      provide: 'ITaskAdminService',
-      useClass: TaskAdminService,
+      provide: 'ICacheService',
+      useClass: CacheService,
     },
     {
-      provide: 'ITaskAdminRepository',
-      useClass: TaskAdminRepository,
+      provide: 'IUserService',
+      useClass: UserService,
+    },
+    {
+      provide: 'IUserBadgeRepository',
+      useClass: UserBadgeRepository,
+    },
+    {
+      provide: 'IBadgeService',
+      useClass: BadgeService,
+    },
+    {
+      provide: 'IPointRepository',
+      useClass: PointRepository,
+    },
+    {
+      provide: 'IBadgeProgressRepository',
+      useClass: BadgeProgressRepository,
     },
   ],
   imports: [
@@ -58,6 +80,11 @@ import { TaskAdminRepository } from '@admin/task/infrastructure/prisma/task.admi
           expiresIn: jwtConfig(configService).accessTokenExpiration,
         },
       }),
+      inject: [ConfigService],
+    }),
+    MulterModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: multerOptionsFactory,
       inject: [ConfigService],
     }),
   ],

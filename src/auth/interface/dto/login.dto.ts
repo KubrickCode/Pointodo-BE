@@ -1,18 +1,28 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, Matches } from 'class-validator';
+import { IsEmail, IsInt, IsString, Matches } from 'class-validator';
 import {
   VALIDATE_EMAIL,
   VALIDATE_PASSWORD,
 } from '@shared/messages/auth/auth.messages';
+import {
+  JWT_ACCESS_TOKEN,
+  JWT_REFRESH_TOKEN,
+  USER_EMAIL,
+  USER_EMAIL_EXAMPLE,
+  USER_PWD,
+  USER_PWD_EXAMPLE,
+} from '@shared/constants/user.constant';
+import { USER_NOT_FOUND } from '@shared/messages/user/user.errors';
+import { AUTH_INVALID_PASSWORD } from '@shared/messages/auth/auth.errors';
 
 export class ReqLoginDto {
-  @ApiProperty({ example: 'test@gmail.com', description: '이메일' })
+  @ApiProperty({ example: USER_EMAIL_EXAMPLE, description: USER_EMAIL })
   @IsEmail({}, { message: VALIDATE_EMAIL })
   readonly email: string;
 
   @ApiProperty({
-    example: 'test1234!@',
-    description: '비밀번호(6~20자 영문, 숫자, 특수문자 혼합)',
+    example: USER_PWD_EXAMPLE,
+    description: USER_PWD,
   })
   @IsString()
   @Matches(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,20}$/, {
@@ -22,22 +32,22 @@ export class ReqLoginDto {
 }
 
 export class ResLoginDto {
-  @ApiProperty({ description: 'JWT 액세스 토큰' })
+  @ApiProperty({ description: JWT_ACCESS_TOKEN })
   @IsString()
   readonly accessToken: string;
 
-  @ApiProperty({ description: 'JWT 리프레시 토큰 - 쿠키 설정' })
+  @ApiProperty({ description: JWT_REFRESH_TOKEN })
   @IsString()
   readonly refreshToken?: string;
 }
 
 export class ResNotFoundUser {
   @ApiProperty({ example: 404, description: '에러 상태 코드' })
-  @IsString()
+  @IsInt()
   readonly statusCode: number;
 
   @ApiProperty({
-    example: '존재하지 않는 계정입니다',
+    example: USER_NOT_FOUND,
     description: '에러 메시지',
   })
   @IsString()
@@ -54,7 +64,7 @@ export class ResInvalidPassword {
   readonly statusCode: number;
 
   @ApiProperty({
-    example: '비밀번호가 일치하지 않습니다',
+    example: AUTH_INVALID_PASSWORD,
     description: '에러 메시지',
   })
   @IsString()

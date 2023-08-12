@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { jwtConfig } from '@shared/config/jwt.config';
 import { CacheService } from '@cache/infrastructure/cache.service';
+import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 
 @Module({
   providers: [
@@ -22,6 +23,10 @@ import { CacheService } from '@cache/infrastructure/cache.service';
     {
       provide: 'ICacheService',
       useClass: CacheService,
+    },
+    {
+      provide: 'IUserRepository',
+      useClass: UserRepository,
     },
   ],
   controllers: [PointController],

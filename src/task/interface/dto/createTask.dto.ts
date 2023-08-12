@@ -1,20 +1,41 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  TASK_DESC,
+  TASK_DUE_DATE,
+  TASK_IMPORTANCE,
+  TASK_NAME,
+  TASK_TYPE_NAME,
+} from '@shared/constants/task.constant';
 import { CREATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
-import { IsOptional, IsString } from 'class-validator';
+import { TaskType_ } from '@task/domain/entities/task.entity';
+import { Type } from 'class-transformer';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqCreateTaskDto {
-  @ApiProperty({ description: '작업 유형' })
+  @ApiProperty({ description: TASK_TYPE_NAME })
   @IsString()
-  readonly taskType: string;
+  readonly taskType: TaskType_;
 
-  @ApiProperty({ description: '작업 이름' })
+  @ApiProperty({ description: TASK_NAME })
   @IsString()
   readonly name: string;
 
-  @ApiProperty({ description: '작업 설명' })
-  @IsString()
+  @ApiProperty({ description: TASK_DESC })
   @IsOptional()
-  readonly description: string;
+  @ApiPropertyOptional()
+  @IsString()
+  readonly description?: string;
+
+  @ApiProperty({ description: TASK_IMPORTANCE })
+  @Type(() => Number)
+  @IsInt()
+  readonly importance: number;
+
+  @ApiProperty({ description: TASK_DUE_DATE })
+  @IsOptional()
+  @ApiPropertyOptional()
+  @IsString()
+  readonly dueDate?: string;
 }
 
 export class ResCreateTaskDto {

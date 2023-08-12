@@ -1,10 +1,6 @@
-import { Provider } from '@prisma/client';
-import { IsString } from 'class-validator';
+import { ProviderType } from '@user/domain/entities/user.entity';
 
 export class ReqSocialLoginAppDto {
-  @IsString()
   readonly email: string;
-
-  @IsString()
-  readonly provider: Provider;
+  readonly provider: ProviderType;
 }

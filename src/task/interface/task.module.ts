@@ -10,6 +10,9 @@ import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgr
 import { PointRepository } from '@point/infrastructure/prisma/point.repository';
 import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repository';
 import { CacheService } from '@cache/infrastructure/cache.service';
+import { UserRepository } from '@user/infrastructure/prisma/user.repository';
+import { BadgeAdminRepository } from '@admin/badge/infrastructure/prisma/badge.admin.repository';
+import { RedisService } from '@redis/infrastructure/redis.service';
 
 @Module({
   providers: [
@@ -37,6 +40,18 @@ import { CacheService } from '@cache/infrastructure/cache.service';
     {
       provide: 'ICacheService',
       useClass: CacheService,
+    },
+    {
+      provide: 'IUserRepository',
+      useClass: UserRepository,
+    },
+    {
+      provide: 'IBadgeAdminRepository',
+      useClass: BadgeAdminRepository,
+    },
+    {
+      provide: 'IRedisService',
+      useClass: RedisService,
     },
   ],
   controllers: [TaskController],

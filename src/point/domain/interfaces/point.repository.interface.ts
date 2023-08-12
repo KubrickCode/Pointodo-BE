@@ -1,16 +1,48 @@
-import { PointEntity } from '../entities/point.entity';
+import {
+  EarnedPointEntity,
+  EarnedPointWithTaskName,
+} from '../entities/earnedPoint.entity';
+import {
+  SpentPointEntity,
+  SpentPointWithBadgeName,
+} from '../entities/spentPoint.entity';
 
 export interface IPointRepository {
-  getAllPointsLogs(userId: string): Promise<PointEntity[]>;
-  isContinuous(userId: string, yesterday: string): Promise<boolean>;
-  createPointLog(
+  getEarnedPointsLogs(
     userId: string,
-    transactionType: string,
-    taskType: string,
+    limit: number,
+    offset: number,
+    order: string,
+  ): Promise<EarnedPointWithTaskName[]>;
+
+  getSpentPointsLogs(
+    userId: string,
+    limit: number,
+    offset: number,
+    order: string,
+  ): Promise<SpentPointWithBadgeName[]>;
+
+  getTotalPointPages(userId: string, transactionType: string): Promise<number>;
+
+  isContinuous(userId: string, yesterday: string): Promise<boolean>;
+
+  createEarnedPointLog(
+    userId: string,
+    taskId: number,
     points: number,
-  ): Promise<PointEntity>;
+  ): Promise<EarnedPointEntity>;
+
+  createSpentPointLog(
+    userId: string,
+    badgeId: number,
+    points: number,
+  ): Promise<SpentPointEntity>;
 
   countTasksPerDate(userId: string, date: string): Promise<number>;
+
   calculateUserPoints(userId: string): Promise<number>;
-  deletePointLog(id: number): Promise<PointEntity>;
+
+  deleteEarnedPointLog(id: number): Promise<EarnedPointEntity>;
+
+  deleteSpentPointLog(id: number): Promise<SpentPointEntity>;
 }

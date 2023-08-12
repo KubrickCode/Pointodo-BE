@@ -1,1 +1,1 @@
-export const INVALID_BADGE_TYPE = '유효한 뱃지 타입이 아닙니다';
+export const INVALID_BADGE = '유효한 뱃지가 아닙니다';

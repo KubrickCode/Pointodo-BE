@@ -9,6 +9,7 @@ import {
   Req,
   Param,
   Body,
+  Query,
 } from '@nestjs/common';
 import { ITaskService } from '../domain/interfaces/task.service.interface';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
@@ -25,7 +26,7 @@ import {
 import { globalDocs } from '@shared/docs/global.docs';
 import { Request } from 'express';
 import {
-  ReqGetTasksLogsParamDto,
+  ReqGetTasksLogsQueryDto,
   ResGetTasksLogsDto,
 } from './dto/getTasksLogs.dto';
 import { ReqCreateTaskDto, ResCreateTaskDto } from './dto/createTask.dto';
@@ -40,6 +41,16 @@ import { createTaskDocs } from './docs/createTask.docs';
 import { updateTaskDocs } from './docs/updateTask.docs';
 import { deleteTaskDocs } from './docs/deleteTask.docs';
 import { completeTaskDocs } from './docs/completeTask.docs';
+import {
+  ReqCancleTaskCompletionParamDto,
+  ResCancleTaskCompletionDto,
+} from './dto/cancleTaskCompletion.dto';
+import { cancleTaskCompletionDocs } from './docs/cancleTaskCompletion.docs';
+import { getTotalTaskPagesDocs } from './docs/getTotalTaskPages.docs';
+import {
+  ReqGetTotalTaskPagesParamDto,
+  ResGetTotalTaskPagesDto,
+} from './dto/getTotalTaskPages.dto';
 
 @Controller('task')
 @ApiTags('Task')
@@ -52,16 +63,33 @@ export class TaskController {
     private readonly taskService: ITaskService,
   ) {}
 
-  @Get('/:taskType')
+  @Get()
   @ApiOperation(getTasksLogsDocs.operation)
   @ApiOkResponse(getTasksLogsDocs.okResponse)
   async getTasksLogs(
     @Req() req: Request,
-    @Param() param: ReqGetTasksLogsParamDto,
+    @Query() query: ReqGetTasksLogsQueryDto,
   ): Promise<ResGetTasksLogsDto[]> {
     const userId = req.user.id;
+    const { taskType, page, order } = query;
+    return await this.taskService.getTasksLogs({
+      userId,
+      taskType,
+      page,
+      order,
+    });
+  }
+
+  @Get('/count/:taskType')
+  @ApiOperation(getTotalTaskPagesDocs.operation)
+  @ApiOkResponse(getTotalTaskPagesDocs.okResponse)
+  async getTotalTaskPages(
+    @Req() req: Request,
+    @Param() param: ReqGetTotalTaskPagesParamDto,
+  ): Promise<ResGetTotalTaskPagesDto> {
+    const userId = req.user.id;
     const { taskType } = param;
-    return await this.taskService.getTasksLogs({ userId, taskType });
+    return await this.taskService.getTotalTaskPages({ userId, taskType });
   }
 
   @Post('create')
@@ -104,5 +132,14 @@ export class TaskController {
     const userId = req.user.id;
     const id = param.id;
     return await this.taskService.completeTask({ userId, id });
+  }
+
+  @Patch('/cancle/:id')
+  @ApiOperation(cancleTaskCompletionDocs.operation)
+  @ApiOkResponse(cancleTaskCompletionDocs.okResponse)
+  async cancleTaskCompletion(
+    @Param() param: ReqCancleTaskCompletionParamDto,
+  ): Promise<ResCancleTaskCompletionDto> {
+    return await this.taskService.cancleTaskCompletion({ id: param.id });
   }
 }

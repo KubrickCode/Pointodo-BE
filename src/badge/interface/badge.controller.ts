@@ -29,11 +29,12 @@ import {
 } from './dto/changeSelectedBadge.dto';
 import { ResGetUserBadgeListDto } from './dto/getUserBadgeList.dto';
 import { ResGetAllBadgeProgressDto } from './dto/getAllBadgeProgress.dto';
-import { ValidateBadgeTypePipe } from '@shared/pipes/validateBadgeType.pipe';
+import { ValidateBadgePipe } from '@shared/pipes/validateBadge.pipe';
 import { buyBadgeDocs } from './docs/buyBadge.docs';
 import { getUserBadgeListDocs } from './docs/getUserBadgeList.docs';
 import { getAllBadgeProgressDocs } from './docs/getAllBadgeProgress.docs';
 import { changeSelectedBadgeDocs } from './docs/changeSelectedBadge.docs';
+import { ResGetAllBadgesDto } from './dto/getAllBadges.dto';
 
 @Controller('badge')
 @ApiTags('Badge')
@@ -53,11 +54,11 @@ export class BadgeController {
   @ApiConflictResponse(buyBadgeDocs.conflictError)
   async buyBadge(
     @Req() req: Request,
-    @Body(ValidateBadgeTypePipe) body: ReqBuyBadgeDto,
+    @Body(ValidateBadgePipe) body: ReqBuyBadgeDto,
   ): Promise<ResBuyBadgeDto> {
     return await this.badgeService.buyBadge({
       userId: req.user.id,
-      badgeType: body.badgeType,
+      badgeId: body.badgeId,
     });
   }
 
@@ -85,11 +86,16 @@ export class BadgeController {
   @Patch('selected')
   async changeSelectedBadge(
     @Req() req: Request,
-    @Body(ValidateBadgeTypePipe) body: ReqChangeSelectedBadgeDto,
+    @Body(ValidateBadgePipe) body: ReqChangeSelectedBadgeDto,
   ): Promise<ResChangeSelectedBadgeDto> {
     return await this.badgeService.changeSelectedBadge({
       userId: req.user.id,
-      badgeType: body.badgeType,
+      badgeId: body.badgeId,
     });
+  }
+
+  @Get('all')
+  async getAllBadges(): Promise<ResGetAllBadgesDto[]> {
+    return await this.badgeService.getAllBadges();
   }
 }

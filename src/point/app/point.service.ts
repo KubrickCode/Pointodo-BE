@@ -2,17 +2,25 @@ import { ICacheService } from '@cache/domain/interfaces/cache.service.interface'
 import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
-  ReqGetAllPointsLogsAppDto,
-  ResGetAllPointsLogsAppDto,
-} from '@point/domain/dto/getAllPointsLogs.app.dto';
+  ReqGetEarnedPointsLogsAppDto,
+  ResGetEarnedPointsLogsAppDto,
+} from '@point/domain/dto/getEarnedPointsLogs.app.dto';
 import {
   ReqGetCurrentPointsAppDto,
   ResGetCurrentPointsAppDto,
 } from '@point/domain/dto/getCurrentPoints.app.dto';
-import { PointEntity } from '@point/domain/entities/point.entity';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
 import { IPointService } from '@point/domain/interfaces/point.service.interface';
 import { cacheConfig } from '@shared/config/cache.config';
+import {
+  ReqGetSpentPointsLogsAppDto,
+  ResGetSpentPointsLogsAppDto,
+} from '@point/domain/dto/getSpentPointsLogs.app.dto';
+import {
+  ReqGetTotalPointPagesAppDto,
+  ResGetTotalPointPagesAppDto,
+} from '@point/domain/dto/getTotalPointPages.app.dto';
+import { GET_POINTS_LOGS_LIMIT } from '@shared/constants/point.constant';
 
 @Injectable()
 export class PointService implements IPointService {
@@ -24,18 +32,24 @@ export class PointService implements IPointService {
     private readonly configService: ConfigService,
   ) {}
 
-  async getAllPointsLogs(
-    req: ReqGetAllPointsLogsAppDto,
-  ): Promise<ResGetAllPointsLogsAppDto[]> {
-    const cacheKey = `userPointsLogs:${req.userId}`;
+  async getEarnedPointsLogs(
+    req: ReqGetEarnedPointsLogsAppDto,
+  ): Promise<ResGetEarnedPointsLogsAppDto[]> {
+    const { userId, order, page } = req;
+    const cacheKey = `userEarnedPointsLogs:${userId}-page:${page}&order:${order}`;
     const cachedPointsLogs = await this.cacheService.getFromCache<
-      PointEntity[]
+      ResGetEarnedPointsLogsAppDto[]
     >(cacheKey);
     if (cachedPointsLogs) {
       return cachedPointsLogs;
     }
 
-    const result = await this.pointRepository.getAllPointsLogs(req.userId);
+    const result = await this.pointRepository.getEarnedPointsLogs(
+      userId,
+      GET_POINTS_LOGS_LIMIT,
+      (page - 1) * GET_POINTS_LOGS_LIMIT,
+      order,
+    );
 
     await this.cacheService.setCache(
       cacheKey,
@@ -44,6 +58,45 @@ export class PointService implements IPointService {
     );
 
     return result;
+  }
+
+  async getSpentPointsLogs(
+    req: ReqGetSpentPointsLogsAppDto,
+  ): Promise<ResGetSpentPointsLogsAppDto[]> {
+    const { userId, order, page } = req;
+    const cacheKey = `userSpentPointsLogs:${userId}-page:${page}&order:${order}`;
+    const cachedPointsLogs = await this.cacheService.getFromCache<
+      ResGetSpentPointsLogsAppDto[]
+    >(cacheKey);
+    if (cachedPointsLogs) {
+      return cachedPointsLogs;
+    }
+
+    const result = await this.pointRepository.getSpentPointsLogs(
+      userId,
+      GET_POINTS_LOGS_LIMIT,
+      (page - 1) * GET_POINTS_LOGS_LIMIT,
+      order,
+    );
+
+    await this.cacheService.setCache(
+      cacheKey,
+      result,
+      cacheConfig(this.configService).cacheTTL,
+    );
+
+    return result;
+  }
+
+  async getTotalPointPages(
+    req: ReqGetTotalPointPagesAppDto,
+  ): Promise<ResGetTotalPointPagesAppDto> {
+    const { userId, transactionType } = req;
+    const totalPointsLogs = await this.pointRepository.getTotalPointPages(
+      userId,
+      transactionType,
+    );
+    return { totalPages: Math.ceil(totalPointsLogs / GET_POINTS_LOGS_LIMIT) };
   }
 
   async getCurrentPoints(

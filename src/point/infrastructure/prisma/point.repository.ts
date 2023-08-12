@@ -1,33 +1,104 @@
 import { Injectable } from '@nestjs/common';
-import { PointsLogs } from '@prisma/client';
+import { EarnedPointsLogs, SpentPointsLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
-import { PointEntity } from 'src/point/domain/entities/point.entity';
+import {
+  EarnedPointEntity,
+  EarnedPointWithTaskName,
+} from '@point/domain/entities/earnedPoint.entity';
 import { IPointRepository } from 'src/point/domain/interfaces/point.repository.interface';
+import {
+  SpentPointEntity,
+  SpentPointWithBadgeName,
+} from '@point/domain/entities/spentPoint.entity';
 
 @Injectable()
 export class PointRepository implements IPointRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAllPointsLogs(userId: string): Promise<PointEntity[]> {
+  async getEarnedPointsLogs(
+    userId: string,
+    limit: number,
+    offset: number,
+    order: string,
+  ): Promise<EarnedPointWithTaskName[]> {
+    let orderBy: string;
+
+    if (order === 'newest') orderBy = '"occurredAt" DESC';
+    if (order === 'old') orderBy = '"occurredAt" ASC';
+
     const query = `
-    SELECT * FROM "PointsLogs"
-    WHERE "userId" = $1::uuid
+    SELECT p.*, t.name as "taskName"
+    FROM "EarnedPointsLogs" as p
+    LEFT JOIN "TasksLogs" as t
+    ON p."taskId" = t.id
+    WHERE p."userId" = $1::uuid
+    ORDER BY p.${orderBy}
+    LIMIT $2 OFFSET $3
     `;
 
-    const values = [userId];
+    const values = [userId, limit, offset];
 
-    const pointsLogs = await this.prisma.$queryRawUnsafe<PointsLogs[]>(
-      query,
-      ...values,
-    );
+    const pointsLogs = await this.prisma.$queryRawUnsafe<
+      EarnedPointWithTaskName[]
+    >(query, ...values);
 
     return pointsLogs;
   }
 
+  async getSpentPointsLogs(
+    userId: string,
+    limit: number,
+    offset: number,
+    order: string,
+  ): Promise<SpentPointWithBadgeName[]> {
+    let orderBy: string;
+
+    if (order === 'newest') orderBy = '"occurredAt" DESC';
+    if (order === 'old') orderBy = '"occurredAt" ASC';
+
+    const query = `
+    SELECT p.*, b.name as "badgeName"
+    FROM "SpentPointsLogs" as p
+    LEFT JOIN "Badge" as b
+    ON p."badgeId" = b.id
+    WHERE p."userId" = $1::uuid
+    ORDER BY p.${orderBy}
+    LIMIT $2 OFFSET $3
+    `;
+
+    const values = [userId, limit, offset];
+
+    const pointsLogs = await this.prisma.$queryRawUnsafe<
+      SpentPointWithBadgeName[]
+    >(query, ...values);
+
+    return pointsLogs;
+  }
+
+  async getTotalPointPages(
+    userId: string,
+    transactionType: string,
+  ): Promise<number> {
+    let table: string;
+    if (transactionType === 'earned') table = 'EarnedPointsLogs';
+    if (transactionType === 'spent') table = 'SpentPointsLogs';
+    const query = `
+    SELECT COUNT(*)
+    FROM "${table}"
+    WHERE "userId" = $1::uuid
+    `;
+
+    const values = [userId];
+    const totalPointsLogs = await this.prisma.$queryRawUnsafe<{
+      count: number;
+    }>(query, ...values);
+    return Number(totalPointsLogs[0].count);
+  }
+
   async isContinuous(userId: string, yesterday: string): Promise<boolean> {
     const isContinuousQuery = `
-        SELECT COUNT(*) FROM "PointsLogs"
-        WHERE "userId" = $1::uuid AND DATE("occurredAt") = DATE($2) AND "transactionType" = 'EARNED'
+        SELECT COUNT(*) FROM "EarnedPointsLogs"
+        WHERE "userId" = $1::uuid AND DATE("occurredAt") = DATE($2)
       `;
 
     const isContinuousValues = [userId, yesterday];
@@ -40,21 +111,41 @@ export class PointRepository implements IPointRepository {
     return Number(isContinuous[0].count) > 0;
   }
 
-  async createPointLog(
+  async createEarnedPointLog(
     userId: string,
-    transactionType: string,
-    taskType: string,
+    taskId: number,
     points: number,
-  ): Promise<PointEntity> {
+  ): Promise<EarnedPointEntity> {
     const createPointLogQuery = `
-        INSERT INTO "PointsLogs" ("userId", "transactionType", "taskType", points)
-        VALUES ($1::uuid, $2::"PointTransactionType", $3, $4)
+        INSERT INTO "EarnedPointsLogs" ("userId", "taskId", points)
+        VALUES ($1::uuid, $2, $3)
         RETURNING *
       `;
 
-    const createPointLogValues = [userId, transactionType, taskType, points];
+    const createPointLogValues = [userId, taskId, points];
 
-    const createdPointLog = await this.prisma.$queryRawUnsafe<PointsLogs>(
+    const createdPointLog = await this.prisma.$queryRawUnsafe<EarnedPointsLogs>(
+      createPointLogQuery,
+      ...createPointLogValues,
+    );
+
+    return createdPointLog[0];
+  }
+
+  async createSpentPointLog(
+    userId: string,
+    badgeId: number,
+    points: number,
+  ): Promise<SpentPointEntity> {
+    const createPointLogQuery = `
+        INSERT INTO "SpentPointsLogs" ("userId", "badgeId", points)
+        VALUES ($1::uuid, $2, $3)
+        RETURNING *
+      `;
+
+    const createPointLogValues = [userId, badgeId, points];
+
+    const createdPointLog = await this.prisma.$queryRawUnsafe<SpentPointsLogs>(
       createPointLogQuery,
       ...createPointLogValues,
     );
@@ -64,8 +155,8 @@ export class PointRepository implements IPointRepository {
 
   async countTasksPerDate(userId: string, date: string): Promise<number> {
     const countTasksQuery = `
-        SELECT COUNT(*) FROM "PointsLogs"
-        WHERE "userId" = $1::uuid AND DATE("occurredAt") >= DATE($2) AND "transactionType" = 'EARNED'
+        SELECT COUNT(*) FROM "EarnedPointsLogs"
+        WHERE "userId" = $1::uuid AND DATE("occurredAt") >= DATE($2)
       `;
 
     const countTasksValues = [userId, date];
@@ -79,24 +170,49 @@ export class PointRepository implements IPointRepository {
   }
 
   async calculateUserPoints(userId: string): Promise<number> {
-    const totalPointsQuery = `
-        SELECT SUM(points) FROM "PointsLogs"
+    const earnedPointsQuery = `
+        SELECT SUM(points) AS "earnedPoints" FROM "EarnedPointsLogs"
         WHERE "userId" = $1::uuid
       `;
 
-    const totalPoints = await this.prisma.$queryRawUnsafe<number>(
-      totalPointsQuery,
+    const earnedPoints = await this.prisma.$queryRawUnsafe<number>(
+      earnedPointsQuery,
       userId,
     );
 
-    const userTotalPoints = Number(totalPoints[0].sum) || 0;
+    const spentPointsQuery = `
+        SELECT SUM(points) AS "spentPoints" FROM "SpentPointsLogs"
+        WHERE "userId" = $1::uuid
+      `;
+
+    const spentPoints = await this.prisma.$queryRawUnsafe<number>(
+      spentPointsQuery,
+      userId,
+    );
+
+    const totalEarnedPoints = Number(earnedPoints[0].earnedPoints) || 0;
+    const totalSpentPoints = Number(spentPoints[0].spentPoints) || 0;
+
+    const userTotalPoints = totalEarnedPoints - totalSpentPoints;
 
     return userTotalPoints;
   }
 
-  async deletePointLog(id: number): Promise<PointEntity> {
+  async deleteEarnedPointLog(id: number): Promise<EarnedPointEntity> {
     const query = `
-    DELETE FROM "PointsLogs"
+    DELETE FROM "EarnedPointsLogs"
+    WHERE id = $1
+    RETURNING *
+    `;
+
+    const deletedLog = await this.prisma.$queryRawUnsafe<number>(query, id);
+
+    return deletedLog[0];
+  }
+
+  async deleteSpentPointLog(id: number): Promise<SpentPointEntity> {
+    const query = `
+    DELETE FROM "SpentPointsLogs"
     WHERE id = $1
     RETURNING *
     `;

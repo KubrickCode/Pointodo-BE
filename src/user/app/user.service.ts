@@ -13,7 +13,7 @@ import {
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import {
-  USER_ALREADY_EXISTS,
+  USER_ALREADY_EXIST,
   USER_NOT_FOUND,
 } from '@shared/messages/user/user.errors';
 import { IUserService } from '@user/domain/interfaces/user.service.interface';
@@ -38,6 +38,17 @@ import {
   ResDeleteUserAppDto,
 } from '@user/domain/dto/deleteUser.app.dto';
 import { PasswordHasher } from '@shared/utils/passwordHasher';
+import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
+import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
+import {
+  ReqGetUserListAppDto,
+  ResGetUserListAppDto,
+} from '@user/domain/dto/getUserList.app.dto';
+import { GET_USER_LIST_LIMIT } from '@shared/constants/user.constant';
+import {
+  ReqGetTotalUserListPagesAppDto,
+  ResGetTotalUserListPagesAppDto,
+} from '@user/domain/dto/getTotalUserListPages.app.dto';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -45,6 +56,10 @@ export class UserService implements IUserService {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
+    @Inject('IUserBadgeRepository')
+    private readonly userBadgeRepository: IUserBadgeRepository,
+    @Inject('IRedisService')
+    private readonly redisService: IRedisService,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
@@ -56,7 +71,7 @@ export class UserService implements IUserService {
     const existingUser = await this.userRepository.findByEmail(email);
 
     if (existingUser) {
-      throw new ConflictException(USER_ALREADY_EXISTS);
+      throw new ConflictException(USER_ALREADY_EXIST);
     }
 
     const hashedPassword = await PasswordHasher.hashPassword(password);
@@ -65,6 +80,8 @@ export class UserService implements IUserService {
       email,
       hashedPassword,
     );
+
+    await this.userBadgeRepository.createUserBadgeLog(createdUser.id, 1);
 
     this.logger.log(
       'info',
@@ -104,11 +121,42 @@ export class UserService implements IUserService {
 
   async deleteUser(req: ReqDeleteUserAppDto): Promise<ResDeleteUserAppDto> {
     const user = await this.userRepository.deleteUser(req.id);
+    await this.redisService.delete(`refresh_token:${req.id}`);
     await this.cacheService.deleteCache(`user:${req.id}`);
+    await this.cacheService.deleteCache(`userEarnedPointsLogs:${req.id}`);
+    await this.cacheService.deleteCache(`userSpentPointsLogs:${req.id}`);
+    await this.cacheService.deleteCache(`userCurrentPoints:${req.id}`);
+    await this.cacheService.deleteCache(`userBadgeList:${req.id}`);
+    await this.cacheService.deleteCache(`userBadgeProgress:${req.id}`);
+    await this.cacheService.deleteCache(`DAILYlogs:${req.id}`);
+    await this.cacheService.deleteCache(`DUElogs:${req.id}`);
+    await this.cacheService.deleteCache(`FREElogs:${req.id}`);
     this.logger.log(
       'info',
       `회원 탈퇴 - 사용자 ID:${user.id}, 유저 이메일:${user.email}`,
     );
     return { message: DELETE_USER_SUCCESS_MESSAGE };
+  }
+
+  async getUserList(
+    req: ReqGetUserListAppDto,
+  ): Promise<ResGetUserListAppDto[]> {
+    const { order, page, provider } = req;
+    return await this.userRepository.getUserList(
+      order,
+      GET_USER_LIST_LIMIT,
+      (page - 1) * GET_USER_LIST_LIMIT,
+      provider,
+    );
+  }
+
+  async getTotalUserListPages(
+    req: ReqGetTotalUserListPagesAppDto,
+  ): Promise<ResGetTotalUserListPagesAppDto> {
+    const { provider } = req;
+    const totalUsers = await this.userRepository.getTotalUserListPages(
+      provider,
+    );
+    return { totalPages: Math.ceil(totalUsers / GET_USER_LIST_LIMIT) };
   }
 }

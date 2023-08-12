@@ -9,6 +9,8 @@ import {
   Patch,
   Get,
   HttpCode,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import {
@@ -24,25 +26,29 @@ import {
 import { AdminAuthGuard } from '@auth/infrastructure/passport/guards/admin.guard';
 import { IBadgeAdminService } from '@admin/badge/domain/interfaces/badge.admin.service.interface';
 import {
-  ReqCreateBadgeTypeDto,
-  ResCreateBadgeTypeDto,
-} from '@admin/interface/dto/badge/createBadgeType.dto';
+  ReqCreateBadgeDto,
+  ResCreateBadgeDto,
+} from '@admin/interface/dto/badge/createBadge.dto';
 import {
-  ReqUpdateBadgeTypeDto,
-  ReqUpdateBadgeTypeParamDto,
-  ResUpdateBadgeTypeDto,
-} from '@admin/interface/dto/badge/updateBadgeType.dto';
+  ReqUpdateBadgeDto,
+  ReqUpdateBadgeParamDto,
+  ResUpdateBadgeDto,
+} from '@admin/interface/dto/badge/updateBadge.dto';
 import {
-  ReqDeleteBadgeTypeParamDto,
-  ResDeleteBadgeTypeDto,
-} from '@admin/interface/dto/badge/deleteBadgeType.dto';
-import { ResGetAllBadgeTypesDto } from '@admin/interface/dto/badge/getAllBadgeTypes.dto';
+  ReqDeleteBadgeParamDto,
+  ResDeleteBadgeDto,
+} from '@admin/interface/dto/badge/deleteBadge.dto';
+import {
+  ReqGetBadgeListParamDto,
+  ResGetBadgeListDto,
+} from '@admin/interface/dto/badge/getBadgeList.dto';
 import { globalDocs } from '@shared/docs/global.docs';
-import { getAllBadgeTypesDocs } from '@admin/interface/docs/badge/getAllBadgeTypes.admin.docs';
-import { createBadgeTypeDocs } from '@admin/interface/docs/badge/createBadgeType.admin.docs';
-import { updateBadgeTypeDocs } from '@admin/interface/docs/badge/updateBadgeType.admin.docs';
-import { deleteBadgeTypeDocs } from '@admin/interface/docs/badge/deleteBadgeType.admin.docs';
+import { getBadgeListDocs } from '@admin/interface/docs/badge/getAllBadges.admin.docs';
+import { createBadgeDocs } from '@admin/interface/docs/badge/createBadge.admin.docs';
+import { updateBadgeDocs } from '@admin/interface/docs/badge/updateBadge.admin.docs';
+import { deleteBadgeDocs } from '@admin/interface/docs/badge/deleteBadge.admin.docs';
 import { adminDocs } from '@admin/interface/docs/admin.docs';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Admin - Badge')
 @ApiBearerAuth()
@@ -56,37 +62,39 @@ export class BadgeAdminController {
     private readonly badgeAdminService: IBadgeAdminService,
   ) {}
 
-  @Get('/all')
+  @Get('/:type')
   @HttpCode(200)
-  @ApiOperation(getAllBadgeTypesDocs.operation)
-  @ApiOkResponse(getAllBadgeTypesDocs.okResponse)
-  async getAllBadgeTypes(): Promise<ResGetAllBadgeTypesDto[]> {
-    return await this.badgeAdminService.getAllBadgeTypes();
+  @ApiOperation(getBadgeListDocs.operation)
+  @ApiOkResponse(getBadgeListDocs.okResponse)
+  async getBadgeList(
+    @Param() param: ReqGetBadgeListParamDto,
+  ): Promise<ResGetBadgeListDto[]> {
+    return await this.badgeAdminService.getBadgeList({ type: param.type });
   }
 
   @Post('/create')
   @HttpCode(201)
-  @ApiOperation(createBadgeTypeDocs.operation)
-  @ApiOkResponse(createBadgeTypeDocs.okResponse)
+  @ApiOperation(createBadgeDocs.operation)
+  @ApiOkResponse(createBadgeDocs.okResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
-  @ApiConflictResponse(createBadgeTypeDocs.conflict)
-  async createBadgeType(
-    @Body() body: ReqCreateBadgeTypeDto,
-  ): Promise<ResCreateBadgeTypeDto> {
-    return await this.badgeAdminService.createBadgeType(body);
+  @ApiConflictResponse(createBadgeDocs.conflict)
+  async createBadge(
+    @Body() body: ReqCreateBadgeDto,
+  ): Promise<ResCreateBadgeDto> {
+    return await this.badgeAdminService.createBadge(body);
   }
 
   @Patch('/update/:id')
   @HttpCode(201)
-  @ApiOperation(updateBadgeTypeDocs.operation)
-  @ApiOkResponse(updateBadgeTypeDocs.okResponse)
+  @ApiOperation(updateBadgeDocs.operation)
+  @ApiOkResponse(updateBadgeDocs.okResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
-  @ApiConflictResponse(updateBadgeTypeDocs.conflict)
-  async updateBadgeType(
-    @Body() body: ReqUpdateBadgeTypeDto,
-    @Param() param: ReqUpdateBadgeTypeParamDto,
-  ): Promise<ResUpdateBadgeTypeDto> {
-    return await this.badgeAdminService.updateBadgeType({
+  @ApiConflictResponse(updateBadgeDocs.conflict)
+  async updateBadge(
+    @Body() body: ReqUpdateBadgeDto,
+    @Param() param: ReqUpdateBadgeParamDto,
+  ): Promise<ResUpdateBadgeDto> {
+    return await this.badgeAdminService.updateBadge({
       ...body,
       id: param.id,
     });
@@ -94,11 +102,17 @@ export class BadgeAdminController {
 
   @Delete('/delete/:id')
   @HttpCode(200)
-  @ApiOperation(deleteBadgeTypeDocs.operation)
-  @ApiOkResponse(deleteBadgeTypeDocs.okResponse)
-  async deleteBadgeType(
-    @Param() param: ReqDeleteBadgeTypeParamDto,
-  ): Promise<ResDeleteBadgeTypeDto> {
-    return await this.badgeAdminService.deleteBadgeType(param.id);
+  @ApiOperation(deleteBadgeDocs.operation)
+  @ApiOkResponse(deleteBadgeDocs.okResponse)
+  async deleteBadge(
+    @Param() param: ReqDeleteBadgeParamDto,
+  ): Promise<ResDeleteBadgeDto> {
+    return await this.badgeAdminService.deleteBadge({ id: param.id });
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: Express.MulterS3.File) {
+    return await this.badgeAdminService.uploadFile(file);
   }
 }

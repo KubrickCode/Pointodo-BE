@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgress.repository';
 import { CacheService } from '@cache/infrastructure/cache.service';
+import { RedisService } from '@redis/infrastructure/redis.service';
 
 @Module({
   controllers: [BadgeController],
@@ -43,6 +44,10 @@ import { CacheService } from '@cache/infrastructure/cache.service';
     {
       provide: 'ICacheService',
       useClass: CacheService,
+    },
+    {
+      provide: 'IRedisService',
+      useClass: RedisService,
     },
   ],
   imports: [
