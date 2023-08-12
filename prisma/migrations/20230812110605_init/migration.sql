@@ -2,10 +2,13 @@
 CREATE TYPE "Provider" AS ENUM ('LOCAL', 'GOOGLE', 'KAKAO');
 
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
+CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN', 'MASTER');
 
 -- CreateEnum
 CREATE TYPE "TaskType" AS ENUM ('DAILY', 'DUE', 'FREE');
+
+-- CreateEnum
+CREATE TYPE "BadgeType" AS ENUM ('NORMAL', 'ACHIEVEMENT', 'SPECIAL');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -21,14 +24,15 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "BadgeTypes" (
+CREATE TABLE "Badge" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(20) NOT NULL,
     "description" VARCHAR(100) NOT NULL,
     "price" INTEGER,
     "iconLink" VARCHAR(1000) NOT NULL,
+    "type" "BadgeType" NOT NULL,
 
-    CONSTRAINT "BadgeTypes_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Badge_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -57,7 +61,7 @@ CREATE TABLE "EarnedPointsLogs" (
     "id" SERIAL NOT NULL,
     "userId" UUID NOT NULL,
     "taskId" INTEGER NOT NULL,
-    "points" SMALLINT NOT NULL,
+    "points" INTEGER NOT NULL,
     "occurredAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "EarnedPointsLogs_pkey" PRIMARY KEY ("id")
@@ -68,7 +72,7 @@ CREATE TABLE "SpentPointsLogs" (
     "id" SERIAL NOT NULL,
     "userId" UUID NOT NULL,
     "badgeId" INTEGER NOT NULL,
-    "points" SMALLINT NOT NULL,
+    "points" INTEGER NOT NULL,
     "occurredAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "SpentPointsLogs_pkey" PRIMARY KEY ("id")
@@ -93,7 +97,7 @@ CREATE TABLE "TasksLogs" (
 CREATE TABLE "TasksDueDate" (
     "id" SERIAL NOT NULL,
     "taskId" INTEGER NOT NULL,
-    "dueDate" DATE NOT NULL,
+    "dueDate" VARCHAR(10) NOT NULL,
 
     CONSTRAINT "TasksDueDate_pkey" PRIMARY KEY ("id")
 );
@@ -102,7 +106,7 @@ CREATE TABLE "TasksDueDate" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "BadgeTypes_name_key" ON "BadgeTypes"("name");
+CREATE UNIQUE INDEX "Badge_name_key" ON "Badge"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "BadgeProgress_userId_badgeId_key" ON "BadgeProgress"("userId", "badgeId");
@@ -117,34 +121,34 @@ CREATE INDEX "SpentPointsLogs_userId_occurredAt_idx" ON "SpentPointsLogs"("userI
 CREATE INDEX "TasksLogs_userId_idx" ON "TasksLogs"("userId");
 
 -- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_selectedBadge_fkey" FOREIGN KEY ("selectedBadge") REFERENCES "BadgeTypes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_selectedBadge_fkey" FOREIGN KEY ("selectedBadge") REFERENCES "Badge"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserBadgesLogs" ADD CONSTRAINT "UserBadgesLogs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "UserBadgesLogs" ADD CONSTRAINT "UserBadgesLogs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserBadgesLogs" ADD CONSTRAINT "UserBadgesLogs_badgeId_fkey" FOREIGN KEY ("badgeId") REFERENCES "BadgeTypes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "UserBadgesLogs" ADD CONSTRAINT "UserBadgesLogs_badgeId_fkey" FOREIGN KEY ("badgeId") REFERENCES "Badge"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "BadgeProgress" ADD CONSTRAINT "BadgeProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "BadgeProgress" ADD CONSTRAINT "BadgeProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "BadgeProgress" ADD CONSTRAINT "BadgeProgress_badgeId_fkey" FOREIGN KEY ("badgeId") REFERENCES "BadgeTypes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "BadgeProgress" ADD CONSTRAINT "BadgeProgress_badgeId_fkey" FOREIGN KEY ("badgeId") REFERENCES "Badge"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "EarnedPointsLogs" ADD CONSTRAINT "EarnedPointsLogs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "EarnedPointsLogs" ADD CONSTRAINT "EarnedPointsLogs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "EarnedPointsLogs" ADD CONSTRAINT "EarnedPointsLogs_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "TasksLogs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "EarnedPointsLogs" ADD CONSTRAINT "EarnedPointsLogs_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "TasksLogs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SpentPointsLogs" ADD CONSTRAINT "SpentPointsLogs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "SpentPointsLogs" ADD CONSTRAINT "SpentPointsLogs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SpentPointsLogs" ADD CONSTRAINT "SpentPointsLogs_badgeId_fkey" FOREIGN KEY ("badgeId") REFERENCES "BadgeTypes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "SpentPointsLogs" ADD CONSTRAINT "SpentPointsLogs_badgeId_fkey" FOREIGN KEY ("badgeId") REFERENCES "Badge"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "TasksLogs" ADD CONSTRAINT "TasksLogs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "TasksLogs" ADD CONSTRAINT "TasksLogs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "TasksDueDate" ADD CONSTRAINT "TasksDueDate_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "TasksLogs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "TasksDueDate" ADD CONSTRAINT "TasksDueDate_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "TasksLogs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
