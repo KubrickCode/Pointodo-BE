@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from '@interface/modules/app.module';
+import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
 import { corsOptions } from '@shared/config/cors.config';
@@ -17,7 +17,7 @@ const bootstrap = async () => {
   app.use(cookieParser());
   app.enableCors(corsOptions(configService));
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 
   await app.listen(3000);
 };
