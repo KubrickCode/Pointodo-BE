@@ -6,16 +6,25 @@ export interface IUserRepository {
     password?: string,
     provider?: ProviderType,
   ): Promise<UserEntity>;
+
   findByEmail(email: string): Promise<UserEntity | null>;
+
   findById(id: string): Promise<UserEntity | null>;
+
   findPasswordById(email: string): Promise<string>;
+
   changePassword(id: string, newPassword: string): Promise<void>;
+
   deleteUser(id: string): Promise<UserEntity>;
+
   changeSelectedBadge(userId: string, badgeId: number): Promise<UserEntity>;
+
   getUserList(
     order: string,
     limit: number,
     offset: number,
-    provider?: ProviderType,
+    provider: ProviderType | 'ALL',
   ): Promise<UserEntity[]>;
+
+  getTotalUserListPages(provider: ProviderType | 'ALL'): Promise<number>;
 }

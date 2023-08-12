@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   Inject,
+  Param,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -21,6 +22,10 @@ import {
   ResGetUserListDto,
 } from './dto/user/getUserList.dto';
 import { IUserService } from '@user/domain/interfaces/user.service.interface';
+import {
+  ReqGetTotalUserListPagesParamDto,
+  ResGetTotalUserListPagesDto,
+} from './dto/user/getTotalUserListPages.dto';
 
 @ApiTags('Admin - User')
 @ApiBearerAuth()
@@ -41,5 +46,14 @@ export class UserAdminController {
   ): Promise<ResGetUserListDto[]> {
     const { page, order, provider } = query;
     return await this.userService.getUserList({ order, page, provider });
+  }
+
+  @Get('/count')
+  @HttpCode(200)
+  async getTotalUserListPages(
+    @Param() param: ReqGetTotalUserListPagesParamDto,
+  ): Promise<ResGetTotalUserListPagesDto> {
+    const { provider } = param;
+    return await this.userService.getTotalUserListPages({ provider });
   }
 }

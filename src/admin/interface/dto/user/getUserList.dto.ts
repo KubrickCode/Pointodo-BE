@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { ORDER_BY } from '@shared/constants/global.constant';
 import {
   USER_EMAIL,
@@ -15,11 +15,12 @@ import {
 import {
   ProviderType,
   ProviderTypes,
+  ProviderTypesWithAll,
   RoleType,
   RoleTypes,
 } from '@user/domain/entities/user.entity';
 import { Transform, Type } from 'class-transformer';
-import { IsDate, IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsEnum, IsInt, IsString } from 'class-validator';
 
 export class ReqGetUserListQueryDto {
   @ApiProperty({ description: USER_LIST_PAGE })
@@ -32,11 +33,9 @@ export class ReqGetUserListQueryDto {
   readonly order: string;
 
   @ApiProperty({ description: USER_PROVIDER })
-  @IsEnum(ProviderTypes)
-  @IsOptional()
-  @ApiPropertyOptional()
+  @IsEnum(ProviderTypesWithAll)
   @Transform(({ value }) => value.toUpperCase())
-  readonly provider?: ProviderType;
+  readonly provider: ProviderType | 'ALL';
 }
 
 export class ResGetUserListDto {

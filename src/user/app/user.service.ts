@@ -45,6 +45,10 @@ import {
   ResGetUserListAppDto,
 } from '@user/domain/dto/getUserList.app.dto';
 import { GET_USER_LIST_LIMIT } from '@shared/constants/user.constant';
+import {
+  ReqGetTotalUserListPagesAppDto,
+  ResGetTotalUserListPagesAppDto,
+} from '@user/domain/dto/getTotalUserListPages.app.dto';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -144,5 +148,15 @@ export class UserService implements IUserService {
       (page - 1) * GET_USER_LIST_LIMIT,
       provider,
     );
+  }
+
+  async getTotalUserListPages(
+    req: ReqGetTotalUserListPagesAppDto,
+  ): Promise<ResGetTotalUserListPagesAppDto> {
+    const { provider } = req;
+    const totalUsers = await this.userRepository.getTotalUserListPages(
+      provider,
+    );
+    return { totalPages: Math.ceil(totalUsers / GET_USER_LIST_LIMIT) };
   }
 }

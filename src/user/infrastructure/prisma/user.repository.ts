@@ -94,23 +94,23 @@ export class UserRepository implements IUserRepository {
     order: string,
     limit: number,
     offset: number,
-    provider?: ProviderType,
+    provider: ProviderType | 'ALL',
   ): Promise<UserEntity[]> {
     let orderBy: string;
     let query: string;
     if (order === 'newest') orderBy = '"createdAt" DESC';
     if (order === 'old') orderBy = '"createdAt" ASC';
 
-    if (provider) {
+    if (provider === 'ALL') {
       query = `
       SELECT * FROM "User"
-      WHERE provider = $3::"Provider"
       ORDER BY ${orderBy}
       LIMIT $1 OFFSET $2
       `;
     } else {
       query = `
       SELECT * FROM "User"
+      WHERE provider = $3::"Provider"
       ORDER BY ${orderBy}
       LIMIT $1 OFFSET $2
       `;
@@ -119,5 +119,28 @@ export class UserRepository implements IUserRepository {
     const values = [limit, offset, provider];
     const result = await this.prisma.$queryRawUnsafe<User[]>(query, ...values);
     return plainToClass(UserEntity, result);
+  }
+
+  async getTotalUserListPages(provider: ProviderType | 'ALL'): Promise<number> {
+    let query: string;
+
+    if (provider === 'ALL') {
+      query = `
+      SELECT COUNT(*)
+      FROM "User"
+        `;
+    } else {
+      query = `
+      SELECT COUNT(*)
+      FROM "User"
+      WHERE provider = $1::"Provider"
+        `;
+    }
+
+    const totalUsers = await this.prisma.$queryRawUnsafe<{ count: number }>(
+      query,
+      provider,
+    );
+    return Number(totalUsers[0].count);
   }
 }
