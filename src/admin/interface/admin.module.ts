@@ -16,6 +16,9 @@ import { multerOptionsFactory } from '@shared/utils/multer.options.factory';
 import { UserAdminController } from './user.admin.controller';
 import { UserService } from '@user/app/user.service';
 import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repository';
+import { BadgeService } from '@badge/app/badge.service';
+import { PointRepository } from '@point/infrastructure/prisma/point.repository';
+import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgress.repository';
 @Module({
   controllers: [BadgeAdminController, UserAdminController],
   providers: [
@@ -55,6 +58,18 @@ import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repo
     {
       provide: 'IUserBadgeRepository',
       useClass: UserBadgeRepository,
+    },
+    {
+      provide: 'IBadgeService',
+      useClass: BadgeService,
+    },
+    {
+      provide: 'IPointRepository',
+      useClass: PointRepository,
+    },
+    {
+      provide: 'IBadgeProgressRepository',
+      useClass: BadgeProgressRepository,
     },
   ],
   imports: [

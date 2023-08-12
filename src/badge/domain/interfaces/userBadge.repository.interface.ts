@@ -5,5 +5,10 @@ export interface IUserBadgeRepository {
 
   getUserBadgeList(userId: string): Promise<Array<{ badgeId: number }>>;
 
+  getUserBadgeListWithName(
+    userId: string,
+  ): Promise<Array<{ badgeId: number; name: string }>>;
+
   deleteUserBadgeLog(id: number): Promise<UserBadgeEntity>;
+  deleteUserBadge(badgeId: number, userId: string): Promise<UserBadgeEntity>;
 }

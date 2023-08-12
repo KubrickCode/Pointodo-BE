@@ -39,12 +39,45 @@ export class UserBadgeRepository implements IUserBadgeRepository {
     return userBadgeList;
   }
 
+  async getUserBadgeListWithName(
+    userId: string,
+  ): Promise<Array<{ badgeId: number; name: string }>> {
+    const query = `
+      SELECT u."badgeId", b.name
+      FROM "UserBadgesLogs" as u
+      LEFT JOIN "Badge" as b
+      ON u."badgeId" = b.id
+      WHERE "userId" = $1::uuid
+    `;
+    const values = [userId];
+    const userBadgeList = await this.prisma.$queryRawUnsafe<
+      Array<{ badgeId: number; name: string }>
+    >(query, ...values);
+    return userBadgeList;
+  }
+
   async deleteUserBadgeLog(id: number): Promise<UserBadgeEntity> {
     const query = `
       DELETE FROM "UserBadgesLogs"
       WHERE id = $1
     `;
     const values = [id];
+    const deleteBadgeLog = await this.prisma.$queryRawUnsafe<UserBadgesLogs>(
+      query,
+      ...values,
+    );
+    return deleteBadgeLog;
+  }
+
+  async deleteUserBadge(
+    badgeId: number,
+    userId: string,
+  ): Promise<UserBadgeEntity> {
+    const query = `
+      DELETE FROM "UserBadgesLogs"
+      WHERE "badgeId" = $1 AND "userId" = $2::uuid
+    `;
+    const values = [badgeId, userId];
     const deleteBadgeLog = await this.prisma.$queryRawUnsafe<UserBadgesLogs>(
       query,
       ...values,
