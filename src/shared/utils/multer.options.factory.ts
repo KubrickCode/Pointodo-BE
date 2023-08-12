@@ -16,8 +16,6 @@ export const multerOptionsFactory = (
     },
   });
 
-  console.log(awsConfig(configService));
-
   return {
     storage: multerS3({
       s3,
