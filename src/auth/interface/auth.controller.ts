@@ -44,6 +44,7 @@ import { loginDocs } from '@auth/interface/docs/login.docs';
 import { logoutDocs } from './docs/logout.docs';
 import { refreshDocs } from './docs/refresh.docs';
 import { socialLoginDocs } from './docs/socialLogin.docs';
+import { validateLoggedInDocs } from './docs/validateLoggedIn.docs';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -55,7 +56,12 @@ export class AuthController {
   ) {}
 
   @Get('status')
+  @HttpCode(200)
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation(validateLoggedInDocs.operation)
+  @ApiOkResponse(validateLoggedInDocs.okResponse)
+  @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
   async validateLoggedIn() {
     return true;
   }
