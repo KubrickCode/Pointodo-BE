@@ -54,6 +54,12 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
+  @Get('status')
+  @UseGuards(JwtAuthGuard)
+  async validateLoggedIn() {
+    return true;
+  }
+
   @Post('login')
   @HttpCode(201)
   @UseGuards(LocalAuthGuard)
