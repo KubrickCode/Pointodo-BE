@@ -92,11 +92,25 @@ export class PointService implements IPointService {
     req: ReqGetTotalPointPagesAppDto,
   ): Promise<ResGetTotalPointPagesAppDto> {
     const { userId, transactionType } = req;
+    const cacheKey = `${transactionType}totalPointPages:${userId}`;
+    const cachedtotalPointPages = await this.cacheService.getFromCache<number>(
+      cacheKey,
+    );
+    if (cachedtotalPointPages) {
+      return { totalPages: cachedtotalPointPages };
+    }
     const totalPointsLogs = await this.pointRepository.getTotalPointPages(
       userId,
       transactionType,
     );
-    return { totalPages: Math.ceil(totalPointsLogs / GET_POINTS_LOGS_LIMIT) };
+    const totalPages = Math.ceil(totalPointsLogs / GET_POINTS_LOGS_LIMIT);
+
+    await this.cacheService.setCache(
+      cacheKey,
+      totalPages,
+      cacheConfig(this.configService).cacheTTL,
+    );
+    return { totalPages };
   }
 
   async getCurrentPoints(

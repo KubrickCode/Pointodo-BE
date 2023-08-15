@@ -117,11 +117,30 @@ export class TaskService implements ITaskService {
     req: ReqGetTotalTaskPagesAppDto,
   ): Promise<ResGetTotalTaskPagesAppDto> {
     const { userId, taskType } = req;
+
+    const cacheKey = `${taskType}totalTaskPages:${userId}`;
+    const cachedtotalTaskPages =
+      await this.cacheService.getFromCache<ResGetTotalTaskPagesAppDto>(
+        cacheKey,
+      );
+    if (cachedtotalTaskPages) {
+      return cachedtotalTaskPages;
+    }
+
     const totalTasks = await this.taskRepository.getTotalTaskPages(
       userId,
       taskType,
     );
-    return { totalPages: Math.ceil(totalTasks / GET_TASK_LIMIT) };
+
+    const totalPages = Math.ceil(totalTasks / GET_TASK_LIMIT);
+
+    await this.cacheService.setCache(
+      cacheKey,
+      totalPages,
+      cacheConfig(this.configService).cacheTTL,
+    );
+
+    return { totalPages };
   }
 
   async createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto> {
@@ -140,6 +159,7 @@ export class TaskService implements ITaskService {
       await this.taskRepository.createTaskDueDate(createdTask.id, dueDate);
     }
 
+    await this.cacheService.deleteCache(`${taskType}totalTaskPages:${userId}`);
     await this.redisService.deleteKeysByPrefix(`${taskType}logs:${userId}*`);
 
     return { message: CREATE_TASK_SUCCESS_MESSAGE };
@@ -166,6 +186,9 @@ export class TaskService implements ITaskService {
     const result = await this.taskRepository.deleteTask(req.id);
     await this.redisService.deleteKeysByPrefix(
       `${result.taskType}logs:${result.userId}*`,
+    );
+    await this.cacheService.deleteCache(
+      `${result.taskType}totalTaskPages:${result.userId}`,
     );
     return { message: DELETE_TASK_SUCCESS_MESSAGE };
   }

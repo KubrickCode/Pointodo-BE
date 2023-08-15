@@ -23,17 +23,21 @@ import {
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { ReqGetBadgeListAppDto } from '../domain/dto/getBadgeList.app.dto';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
-import { ConfigService } from '@nestjs/config';
+import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
+import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 
 @Injectable()
 export class BadgeAdminService implements IBadgeAdminService {
   constructor(
     @Inject('IBadgeAdminRepository')
     private readonly badgeAdminRepository: IBadgeAdminRepository,
+    @Inject('IUserRepository')
+    private readonly userRepository: IUserRepository,
+    @Inject('IRedisService')
+    private readonly redisService: IRedisService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
-    private readonly configService: ConfigService,
   ) {}
 
   async getBadgeList(req: ReqGetBadgeListAppDto): Promise<BadgeEntity[]> {
@@ -71,6 +75,7 @@ export class BadgeAdminService implements IBadgeAdminService {
       price,
     );
     await this.cacheService.deleteCache(`allBadges`);
+    await this.redisService.deleteKeysByPrefix(`userBadgeListWithName:*`);
     this.logger.log(
       'info',
       `업데이트 뱃지 타입 ID:${updatedBadge.id}, 뱃지명:${updatedBadge.name}`,
@@ -78,10 +83,19 @@ export class BadgeAdminService implements IBadgeAdminService {
     return { message: UPDATE_BADGE_SUCCESS_MESSAGE };
   }
 
-  //여러 관계 조정 필요
   async deleteBadge(req: ReqDeleteBadgeAppDto): Promise<ResDeleteBadgeAppDto> {
+    await this.userRepository.changeSelectedBadgetoDefault(req.id);
     const deletedBadge = await this.badgeAdminRepository.delete(req.id);
+
     await this.cacheService.deleteCache(`allBadges`);
+    await this.redisService.deleteKeysByPrefix(`user:*`);
+    await this.redisService.deleteKeysByPrefix(`userBadgeList:*`);
+    await this.redisService.deleteKeysByPrefix(`userBadgeProgress:*`);
+    await this.redisService.deleteKeysByPrefix(`userSpentPointsLogs:*`);
+    await this.redisService.deleteKeysByPrefix(`userCurrentPoints:*`);
+    await this.redisService.deleteKeysByPrefix(`userBadgeListWithName:*`);
+    await this.redisService.deleteKeysByPrefix(`SPENTtotalPointPages:*`);
+
     this.logger.log('info', `삭제 뱃지 타입 ID:${deletedBadge.id}`);
     return { message: DELETE_BADGE_SUCCESS_MESSAGE };
   }
