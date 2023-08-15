@@ -23,7 +23,6 @@ import {
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { ReqGetBadgeListAppDto } from '../domain/dto/getBadgeList.app.dto';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class BadgeAdminService implements IBadgeAdminService {
@@ -33,7 +32,6 @@ export class BadgeAdminService implements IBadgeAdminService {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
-    private readonly configService: ConfigService,
   ) {}
 
   async getBadgeList(req: ReqGetBadgeListAppDto): Promise<BadgeEntity[]> {

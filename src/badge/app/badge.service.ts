@@ -44,9 +44,11 @@ import { ConfigService } from '@nestjs/config';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 import { cacheConfig } from '@shared/config/cache.config';
+import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
 import {
   ALREADY_EXIST_USER_BADGE,
   BUY_BADGE_CONFLICT_POINTS,
+  CANT_DELETE_DEAFULT_BADGE,
   NOT_EXIST_USER_BADGE,
 } from '@shared/messages/badge/badge.errors';
 import {
@@ -216,6 +218,11 @@ export class BadgeService implements IBadgeService {
     req: ReqDeleteUserBadgeAppDto,
   ): Promise<ResDeleteUserBadgeAppDto> {
     const { userId, badgeId } = req;
+    if (badgeId === DEFAULT_BADGE_ID)
+      throw new BadRequestException(CANT_DELETE_DEAFULT_BADGE);
+    await this.cacheService.deleteCache(`userBadgeList:${userId}`);
+    await this.cacheService.deleteCache(`user:${userId}`);
+    await this.userRepository.changeSelectedBadge(userId, DEFAULT_BADGE_ID);
     await this.userBadgeRepository.deleteUserBadge(badgeId, userId);
     return { message: DELETE_USER_BADGE_SUCCESS_MESSAGE };
   }
