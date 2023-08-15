@@ -51,6 +51,7 @@ import { PasswordHasher } from '@shared/utils/passwordHasher';
 import { USER_NOT_FOUND } from '@shared/messages/user/user.errors';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
+import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -167,7 +168,10 @@ export class AuthService implements IAuthService {
         null,
         provider,
       );
-      await this.userBadgeRepository.createUserBadgeLog(newUser.id, 1);
+      await this.userBadgeRepository.createUserBadgeLog(
+        newUser.id,
+        DEFAULT_BADGE_ID,
+      );
       return await this.login(newUser);
     }
   }

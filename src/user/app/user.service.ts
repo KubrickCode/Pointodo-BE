@@ -49,6 +49,7 @@ import {
   ReqGetTotalUserListPagesAppDto,
   ResGetTotalUserListPagesAppDto,
 } from '@user/domain/dto/getTotalUserListPages.app.dto';
+import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -81,7 +82,10 @@ export class UserService implements IUserService {
       hashedPassword,
     );
 
-    await this.userBadgeRepository.createUserBadgeLog(createdUser.id, 1);
+    await this.userBadgeRepository.createUserBadgeLog(
+      createdUser.id,
+      DEFAULT_BADGE_ID,
+    );
 
     this.logger.log(
       'info',
