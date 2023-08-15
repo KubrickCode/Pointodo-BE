@@ -209,7 +209,20 @@ export class BadgeService implements IBadgeService {
     req: ReqPutBadgeToUserAppDto,
   ): Promise<ResPutBadgeToUserAppDto> {
     const { userId, badgeId } = req;
-    await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
+    const createdUserBadgeLog =
+      await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
+    const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
+      userId,
+    );
+
+    const filteredBadgeList = userBadgeList.filter(
+      (item) => item.badgeId === badgeId,
+    );
+
+    if (filteredBadgeList.length > 1) {
+      await this.userBadgeRepository.deleteUserBadgeLog(createdUserBadgeLog.id);
+      throw new ConflictException(ALREADY_EXIST_USER_BADGE);
+    }
     await this.cacheService.deleteCache(`userBadgeList:${userId}`);
     return { message: PUT_BADGE_SUCCESS_MESSAGE };
   }
