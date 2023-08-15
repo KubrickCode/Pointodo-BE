@@ -23,6 +23,8 @@ model User {
   taskLogs            TasksLogs[]
 
   selectedBadgeId     Badge            @relation(fields: [selectedBadge], references: [id])
+
+  @@index([provider])
 }
 
 model Badge {
@@ -37,16 +39,20 @@ model Badge {
   userBadgeLog      UserBadgesLogs[]
   badgeProgress     BadgeProgress[]
   spentPointLog     SpentPointsLogs[]
+
+  @@index([type])
 }
 
 model UserBadgesLogs {
   id                Int           @id @default(autoincrement())
   userId            String        @db.Uuid
-  badgeId           Int
+  badgeId           Int           
   earnedAt          DateTime      @default(now())
 
   user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   badge             Badge         @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model BadgeProgress {
@@ -104,7 +110,7 @@ model TasksLogs {
   pointLog          EarnedPointsLogs[]
   dueDate           TasksDueDate[]
 
-  @@index([userId])
+  @@index([userId,taskType])
 }
 
 model TasksDueDate {
