@@ -90,6 +90,15 @@ export class UserRepository implements IUserRepository {
     return plainToClass(UserEntity, user[0]);
   }
 
+  async changeSelectedBadgetoDefault(badgeId: number): Promise<void> {
+    const query = `
+    UPDATE "User" SET "selectedBadge" = 1
+    WHERE "selectedBadge" = $1
+    RETURNING *
+    `;
+    await this.prisma.$queryRawUnsafe<User>(query, badgeId);
+  }
+
   async getUserList(
     order: string,
     limit: number,
