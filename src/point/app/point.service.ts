@@ -92,7 +92,7 @@ export class PointService implements IPointService {
     req: ReqGetTotalPointPagesAppDto,
   ): Promise<ResGetTotalPointPagesAppDto> {
     const { userId, transactionType } = req;
-    const cacheKey = `totalPointPages:${req.userId}`;
+    const cacheKey = `${transactionType}totalPointPages:${userId}`;
     const cachedtotalPointPages = await this.cacheService.getFromCache<number>(
       cacheKey,
     );

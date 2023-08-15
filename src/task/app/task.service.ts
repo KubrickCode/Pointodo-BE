@@ -117,11 +117,30 @@ export class TaskService implements ITaskService {
     req: ReqGetTotalTaskPagesAppDto,
   ): Promise<ResGetTotalTaskPagesAppDto> {
     const { userId, taskType } = req;
+
+    const cacheKey = `${taskType}totalTaskPages:${userId}`;
+    const cachedtotalTaskPages =
+      await this.cacheService.getFromCache<ResGetTotalTaskPagesAppDto>(
+        cacheKey,
+      );
+    if (cachedtotalTaskPages) {
+      return cachedtotalTaskPages;
+    }
+
     const totalTasks = await this.taskRepository.getTotalTaskPages(
       userId,
       taskType,
     );
-    return { totalPages: Math.ceil(totalTasks / GET_TASK_LIMIT) };
+
+    const totalPages = Math.ceil(totalTasks / GET_TASK_LIMIT);
+
+    await this.cacheService.setCache(
+      cacheKey,
+      totalPages,
+      cacheConfig(this.configService).cacheTTL,
+    );
+
+    return { totalPages };
   }
 
   async createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto> {
