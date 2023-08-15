@@ -146,7 +146,24 @@ export class BadgeService implements IBadgeService {
   async getUserBadgeListWithName(
     req: ReqGetUserBadgeListWithNameAppDto,
   ): Promise<ResGetUserBadgeListWithNameAppDto[]> {
-    return await this.userBadgeRepository.getUserBadgeListWithName(req.userId);
+    const cacheKey = `userBadgeListWithName:${req.userId}`;
+    const cachedBadgeListWithName = await this.cacheService.getFromCache<
+      ResGetUserBadgeListWithNameAppDto[]
+    >(cacheKey);
+    if (cachedBadgeListWithName) {
+      return cachedBadgeListWithName;
+    }
+
+    const result = await this.userBadgeRepository.getUserBadgeListWithName(
+      req.userId,
+    );
+
+    await this.cacheService.setCache(
+      cacheKey,
+      result,
+      cacheConfig(this.configService).cacheTTL,
+    );
+    return result;
   }
 
   async changeSelectedBadge(
