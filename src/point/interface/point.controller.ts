@@ -80,7 +80,7 @@ export class PointController {
   @Get('/count/:transactionType')
   @ApiOperation(getTotalPointPagesDocs.operation)
   @ApiOkResponse(getTotalPointPagesDocs.okResponse)
-  async getTotalTaskPages(
+  async getTotalPointPages(
     @Req() req: Request,
     @Param() param: ReqGetTotalPointPagesParamDto,
   ): Promise<ResGetTotalPointPagesDto> {
