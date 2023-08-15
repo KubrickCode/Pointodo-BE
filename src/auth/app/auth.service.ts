@@ -50,6 +50,7 @@ import {
 import { PasswordHasher } from '@shared/utils/passwordHasher';
 import { USER_NOT_FOUND } from '@shared/messages/user/user.errors';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
+import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -60,6 +61,8 @@ export class AuthService implements IAuthService {
     private readonly redisService: IRedisService,
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
+    @Inject('IUserBadgeRepository')
+    private readonly userBadgeRepository: IUserBadgeRepository,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
@@ -164,6 +167,7 @@ export class AuthService implements IAuthService {
         null,
         provider,
       );
+      await this.userBadgeRepository.createUserBadgeLog(newUser.id, 1);
       return await this.login(newUser);
     }
   }
