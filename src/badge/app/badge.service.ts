@@ -117,6 +117,7 @@ export class BadgeService implements IBadgeService {
       `userSpentPointsLogs:${req.userId}*`,
     );
     await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
+    await this.cacheService.deleteCache(`SPENTtotalPointPages:${req.userId}`);
 
     return { message: BUY_BADGE_SUCCESS_MESSAGE };
   }
@@ -252,6 +253,10 @@ export class BadgeService implements IBadgeService {
       throw new BadRequestException(CANT_DELETE_DEAFULT_BADGE);
     await this.cacheService.deleteCache(`userBadgeList:${userId}`);
     await this.cacheService.deleteCache(`user:${userId}`);
+    await this.cacheService.deleteCache(`userCurrentPoints:${userId}`);
+    await this.cacheService.deleteCache(`SPENTtotalPointPages:${userId}`);
+    await this.redisService.deleteKeysByPrefix(`userSpentPointsLogs:${userId}`);
+    await this.redisService.deleteKeysByPrefix(`userBadgeListWithName:*`);
     await this.userRepository.changeSelectedBadge(userId, DEFAULT_BADGE_ID);
     await this.userBadgeRepository.deleteUserBadge(badgeId, userId);
     return { message: DELETE_USER_BADGE_SUCCESS_MESSAGE };

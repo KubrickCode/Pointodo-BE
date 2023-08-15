@@ -94,6 +94,7 @@ export class BadgeAdminService implements IBadgeAdminService {
     await this.redisService.deleteKeysByPrefix(`userSpentPointsLogs:*`);
     await this.redisService.deleteKeysByPrefix(`userCurrentPoints:*`);
     await this.redisService.deleteKeysByPrefix(`userBadgeListWithName:*`);
+    await this.redisService.deleteKeysByPrefix(`SPENTtotalPointPages:*`);
 
     this.logger.log('info', `삭제 뱃지 타입 ID:${deletedBadge.id}`);
     return { message: DELETE_BADGE_SUCCESS_MESSAGE };

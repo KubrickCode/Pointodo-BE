@@ -135,6 +135,12 @@ export class UserService implements IUserService {
     await this.cacheService.deleteCache(`DAILYlogs:${req.id}`);
     await this.cacheService.deleteCache(`DUElogs:${req.id}`);
     await this.cacheService.deleteCache(`FREElogs:${req.id}`);
+    await this.cacheService.deleteCache(`userBadgeListWithName:${req.id}`);
+    await this.cacheService.deleteCache(`EARNEDtotalPointPages:${req.id}`);
+    await this.cacheService.deleteCache(`SPENTtotalPointPages:${req.id}`);
+    await this.cacheService.deleteCache(`DAILYtotalTaskPages:${req.id}`);
+    await this.cacheService.deleteCache(`DUEtotalTaskPages:${req.id}`);
+    await this.cacheService.deleteCache(`FREEtotalTaskPages:${req.id}`);
     this.logger.log(
       'info',
       `회원 탈퇴 - 사용자 ID:${user.id}, 유저 이메일:${user.email}`,

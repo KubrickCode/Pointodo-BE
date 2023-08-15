@@ -159,6 +159,7 @@ export class TaskService implements ITaskService {
       await this.taskRepository.createTaskDueDate(createdTask.id, dueDate);
     }
 
+    await this.cacheService.deleteCache(`${taskType}totalTaskPages:${userId}`);
     await this.redisService.deleteKeysByPrefix(`${taskType}logs:${userId}*`);
 
     return { message: CREATE_TASK_SUCCESS_MESSAGE };
@@ -185,6 +186,9 @@ export class TaskService implements ITaskService {
     const result = await this.taskRepository.deleteTask(req.id);
     await this.redisService.deleteKeysByPrefix(
       `${result.taskType}logs:${result.userId}*`,
+    );
+    await this.cacheService.deleteCache(
+      `${result.taskType}totalTaskPages:${result.userId}`,
     );
     return { message: DELETE_TASK_SUCCESS_MESSAGE };
   }
