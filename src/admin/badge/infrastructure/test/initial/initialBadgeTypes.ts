@@ -326,4 +326,11 @@ export const initialBadgeTypes = [
       'https://pointodo-image-bucket.s3.ap-northeast-2.amazonaws.com/2023-08.jpg',
     type: 'SPECIAL',
   },
+  {
+    name: '슬픈 채영',
+    description: '매우 억울한 모습의 채영',
+    iconLink:
+      'https://pointodo-image-bucket.s3.ap-northeast-2.amazonaws.com/%EC%8A%AC%ED%94%88+%EC%B1%84%EC%98%81.jpg',
+    type: 'SPECIAL',
+  },
 ];
