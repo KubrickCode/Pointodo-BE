@@ -46,7 +46,7 @@ model UserBadgesLogs {
   earnedAt          DateTime      @default(now())
 
   user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  badge             Badge         @relation(fields: [badgeId], references: [id])
+  badge             Badge         @relation(fields: [badgeId], references: [id], onDelete: Cascade)
 }
 
 model BadgeProgress {
@@ -57,7 +57,7 @@ model BadgeProgress {
   occurredAt        DateTime      @default(now())
 
   user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  badge             Badge         @relation(fields: [badgeId], references: [id])
+  badge             Badge         @relation(fields: [badgeId], references: [id], onDelete: Cascade)
 
   @@unique([userId, badgeId])
 }
