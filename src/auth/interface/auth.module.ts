@@ -12,6 +12,7 @@ import { RedisService } from '@redis/infrastructure/redis.service';
 import { GoogleStrategy } from '@auth/infrastructure/passport/strategies/google.strategy';
 import { KakaoStrategy } from '@auth/infrastructure/passport/strategies/kakao.strategy';
 import { CacheService } from '@cache/infrastructure/cache.service';
+import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repository';
 
 @Module({
   controllers: [AuthController],
@@ -39,6 +40,10 @@ import { CacheService } from '@cache/infrastructure/cache.service';
     {
       provide: 'ICacheService',
       useClass: CacheService,
+    },
+    {
+      provide: 'IUserBadgeRepository',
+      useClass: UserBadgeRepository,
     },
   ],
   imports: [

@@ -1,6 +1,6 @@
 export class ReqGetTotalPointPagesAppDto {
   readonly userId: string;
-  readonly transactionType: string;
+  readonly transactionType: 'EARNED' | 'SPENT';
 }
 
 export class ResGetTotalPointPagesAppDto {

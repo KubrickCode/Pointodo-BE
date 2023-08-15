@@ -44,9 +44,11 @@ import { ConfigService } from '@nestjs/config';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 import { cacheConfig } from '@shared/config/cache.config';
+import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
 import {
   ALREADY_EXIST_USER_BADGE,
   BUY_BADGE_CONFLICT_POINTS,
+  CANT_DELETE_DEAFULT_BADGE,
   NOT_EXIST_USER_BADGE,
 } from '@shared/messages/badge/badge.errors';
 import {
@@ -93,12 +95,6 @@ export class BadgeService implements IBadgeService {
       throw new ConflictException(BUY_BADGE_CONFLICT_POINTS);
     }
 
-    await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
-    await this.redisService.deleteKeysByPrefix(
-      `userSpentPointsLogs:${req.userId}*`,
-    );
-    await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
-
     const createdUserBadgeLog =
       await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
 
@@ -115,6 +111,13 @@ export class BadgeService implements IBadgeService {
       await this.userBadgeRepository.deleteUserBadgeLog(createdUserBadgeLog.id);
       throw new ConflictException(ALREADY_EXIST_USER_BADGE);
     }
+
+    await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
+    await this.redisService.deleteKeysByPrefix(
+      `userSpentPointsLogs:${req.userId}*`,
+    );
+    await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
+    await this.cacheService.deleteCache(`SPENTtotalPointPages:${req.userId}`);
 
     return { message: BUY_BADGE_SUCCESS_MESSAGE };
   }
@@ -144,7 +147,24 @@ export class BadgeService implements IBadgeService {
   async getUserBadgeListWithName(
     req: ReqGetUserBadgeListWithNameAppDto,
   ): Promise<ResGetUserBadgeListWithNameAppDto[]> {
-    return await this.userBadgeRepository.getUserBadgeListWithName(req.userId);
+    const cacheKey = `userBadgeListWithName:${req.userId}`;
+    const cachedBadgeListWithName = await this.cacheService.getFromCache<
+      ResGetUserBadgeListWithNameAppDto[]
+    >(cacheKey);
+    if (cachedBadgeListWithName) {
+      return cachedBadgeListWithName;
+    }
+
+    const result = await this.userBadgeRepository.getUserBadgeListWithName(
+      req.userId,
+    );
+
+    await this.cacheService.setCache(
+      cacheKey,
+      result,
+      cacheConfig(this.configService).cacheTTL,
+    );
+    return result;
   }
 
   async changeSelectedBadge(
@@ -207,7 +227,20 @@ export class BadgeService implements IBadgeService {
     req: ReqPutBadgeToUserAppDto,
   ): Promise<ResPutBadgeToUserAppDto> {
     const { userId, badgeId } = req;
-    await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
+    const createdUserBadgeLog =
+      await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
+    const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
+      userId,
+    );
+
+    const filteredBadgeList = userBadgeList.filter(
+      (item) => item.badgeId === badgeId,
+    );
+
+    if (filteredBadgeList.length > 1) {
+      await this.userBadgeRepository.deleteUserBadgeLog(createdUserBadgeLog.id);
+      throw new ConflictException(ALREADY_EXIST_USER_BADGE);
+    }
     await this.cacheService.deleteCache(`userBadgeList:${userId}`);
     return { message: PUT_BADGE_SUCCESS_MESSAGE };
   }
@@ -216,6 +249,15 @@ export class BadgeService implements IBadgeService {
     req: ReqDeleteUserBadgeAppDto,
   ): Promise<ResDeleteUserBadgeAppDto> {
     const { userId, badgeId } = req;
+    if (badgeId === DEFAULT_BADGE_ID)
+      throw new BadRequestException(CANT_DELETE_DEAFULT_BADGE);
+    await this.cacheService.deleteCache(`userBadgeList:${userId}`);
+    await this.cacheService.deleteCache(`user:${userId}`);
+    await this.cacheService.deleteCache(`userCurrentPoints:${userId}`);
+    await this.cacheService.deleteCache(`SPENTtotalPointPages:${userId}`);
+    await this.redisService.deleteKeysByPrefix(`userSpentPointsLogs:${userId}`);
+    await this.redisService.deleteKeysByPrefix(`userBadgeListWithName:*`);
+    await this.userRepository.changeSelectedBadge(userId, DEFAULT_BADGE_ID);
     await this.userBadgeRepository.deleteUserBadge(badgeId, userId);
     return { message: DELETE_USER_BADGE_SUCCESS_MESSAGE };
   }

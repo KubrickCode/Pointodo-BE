@@ -77,11 +77,11 @@ export class PointRepository implements IPointRepository {
 
   async getTotalPointPages(
     userId: string,
-    transactionType: string,
+    transactionType: 'EARNED' | 'SPENT',
   ): Promise<number> {
     let table: string;
-    if (transactionType === 'earned') table = 'EarnedPointsLogs';
-    if (transactionType === 'spent') table = 'SpentPointsLogs';
+    if (transactionType === 'EARNED') table = 'EarnedPointsLogs';
+    if (transactionType === 'SPENT') table = 'SpentPointsLogs';
     const query = `
     SELECT COUNT(*)
     FROM "${table}"

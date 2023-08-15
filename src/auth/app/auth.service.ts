@@ -50,6 +50,8 @@ import {
 import { PasswordHasher } from '@shared/utils/passwordHasher';
 import { USER_NOT_FOUND } from '@shared/messages/user/user.errors';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
+import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
+import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -60,6 +62,8 @@ export class AuthService implements IAuthService {
     private readonly redisService: IRedisService,
     @Inject('IUserRepository')
     private readonly userRepository: IUserRepository,
+    @Inject('IUserBadgeRepository')
+    private readonly userBadgeRepository: IUserBadgeRepository,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
@@ -115,7 +119,6 @@ export class AuthService implements IAuthService {
   async login(req: ReqLoginAppDto): Promise<ResLoginAppDto> {
     const accessToken = this.tokenService.generateAccessToken(req);
     const refreshToken = this.tokenService.generateRefreshToken(req);
-    await this.cacheService.deleteCache(`user:${req.id}`);
     await this.redisService.set(
       `refresh_token:${req.id}`,
       refreshToken,
@@ -125,7 +128,6 @@ export class AuthService implements IAuthService {
   }
 
   async logout(req: ReqLogoutAppDto): Promise<ResLogoutAppDto> {
-    await this.cacheService.deleteCache(`user:${req.id}`);
     await this.redisService.delete(`refresh_token:${req.id}`);
     return { message: LOGOUT_SUCCESS_MESSAGE };
   }
@@ -163,6 +165,10 @@ export class AuthService implements IAuthService {
         email,
         null,
         provider,
+      );
+      await this.userBadgeRepository.createUserBadgeLog(
+        newUser.id,
+        DEFAULT_BADGE_ID,
       );
       return await this.login(newUser);
     }
