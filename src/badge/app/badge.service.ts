@@ -242,6 +242,7 @@ export class BadgeService implements IBadgeService {
       throw new ConflictException(ALREADY_EXIST_USER_BADGE);
     }
     await this.cacheService.deleteCache(`userBadgeList:${userId}`);
+    await this.cacheService.deleteCache(`userBadgeListWithName:${userId}`);
     return { message: PUT_BADGE_SUCCESS_MESSAGE };
   }
 
