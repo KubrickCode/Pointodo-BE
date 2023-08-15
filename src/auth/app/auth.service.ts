@@ -119,7 +119,6 @@ export class AuthService implements IAuthService {
   async login(req: ReqLoginAppDto): Promise<ResLoginAppDto> {
     const accessToken = this.tokenService.generateAccessToken(req);
     const refreshToken = this.tokenService.generateRefreshToken(req);
-    await this.cacheService.deleteCache(`user:${req.id}`);
     await this.redisService.set(
       `refresh_token:${req.id}`,
       refreshToken,
@@ -129,7 +128,6 @@ export class AuthService implements IAuthService {
   }
 
   async logout(req: ReqLogoutAppDto): Promise<ResLogoutAppDto> {
-    await this.cacheService.deleteCache(`user:${req.id}`);
     await this.redisService.delete(`refresh_token:${req.id}`);
     return { message: LOGOUT_SUCCESS_MESSAGE };
   }

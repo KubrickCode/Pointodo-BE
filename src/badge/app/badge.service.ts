@@ -95,12 +95,6 @@ export class BadgeService implements IBadgeService {
       throw new ConflictException(BUY_BADGE_CONFLICT_POINTS);
     }
 
-    await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
-    await this.redisService.deleteKeysByPrefix(
-      `userSpentPointsLogs:${req.userId}*`,
-    );
-    await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
-
     const createdUserBadgeLog =
       await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
 
@@ -117,6 +111,12 @@ export class BadgeService implements IBadgeService {
       await this.userBadgeRepository.deleteUserBadgeLog(createdUserBadgeLog.id);
       throw new ConflictException(ALREADY_EXIST_USER_BADGE);
     }
+
+    await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
+    await this.redisService.deleteKeysByPrefix(
+      `userSpentPointsLogs:${req.userId}*`,
+    );
+    await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
 
     return { message: BUY_BADGE_SUCCESS_MESSAGE };
   }
