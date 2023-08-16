@@ -109,14 +109,14 @@ model TasksLogs {
   user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   pointLog          EarnedPointsLogs[]
-  dueDate           TasksDueDate[]
+  dueDate           TasksDueDate?
 
   @@index([userId,taskType])
 }
 
 model TasksDueDate {
   id            Int           @id @default(autoincrement())
-  taskId        Int
+  taskId        Int           @unique
   dueDate       String        @db.VarChar(10)
 
   taskLog       TasksLogs     @relation(fields: [taskId], references: [id], onDelete: Cascade)
