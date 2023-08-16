@@ -1,7 +1,6 @@
 import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { Injectable } from '@nestjs/common';
-import { UserBadgesLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
 
 @Injectable()
@@ -12,76 +11,50 @@ export class UserBadgeRepository implements IUserBadgeRepository {
     userId: string,
     badgeId: number,
   ): Promise<UserBadgeEntity> {
-    const query = `
-      INSERT INTO "UserBadgesLogs" ("userId", "badgeId")
-      VALUES ($1::uuid, $2)
-      RETURNING *
-    `;
-    const values = [userId, badgeId];
-    const newUserBadgeLog = await this.prisma.$queryRawUnsafe<UserBadgesLogs>(
-      query,
-      ...values,
-    );
-    return newUserBadgeLog[0];
+    return await this.prisma.userBadgesLogs.create({
+      data: { userId, badgeId },
+    });
   }
 
   async getUserBadgeList(
     userId: string,
   ): Promise<Array<Pick<UserBadgeEntity, 'badgeId'>>> {
-    const query = `
-      SELECT "badgeId" FROM "UserBadgesLogs"
-      WHERE "userId" = $1::uuid
-    `;
-    const values = [userId];
-    const userBadgeList = await this.prisma.$queryRawUnsafe<
-      Array<Pick<UserBadgesLogs, 'badgeId'>>
-    >(query, ...values);
-    return userBadgeList;
+    return await this.prisma.userBadgesLogs.findMany({ where: { userId } });
   }
 
   async getUserBadgeListWithName(
     userId: string,
   ): Promise<Array<{ badgeId: number; name: string }>> {
-    const query = `
-      SELECT u."badgeId", b.name
-      FROM "UserBadgesLogs" as u
-      LEFT JOIN "Badge" as b
-      ON u."badgeId" = b.id
-      WHERE "userId" = $1::uuid
-    `;
-    const values = [userId];
-    const userBadgeList = await this.prisma.$queryRawUnsafe<
-      Array<{ badgeId: number; name: string }>
-    >(query, ...values);
-    return userBadgeList;
+    const userBadgeList = await this.prisma.userBadgesLogs.findMany({
+      where: {
+        userId: userId,
+      },
+      select: {
+        badgeId: true,
+        badge: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    return userBadgeList.map((log) => ({
+      badgeId: log.badgeId,
+      name: log.badge.name,
+    }));
   }
 
   async deleteUserBadgeLog(id: number): Promise<UserBadgeEntity> {
-    const query = `
-      DELETE FROM "UserBadgesLogs"
-      WHERE id = $1
-    `;
-    const values = [id];
-    const deleteBadgeLog = await this.prisma.$queryRawUnsafe<UserBadgesLogs>(
-      query,
-      ...values,
-    );
-    return deleteBadgeLog;
+    return await this.prisma.userBadgesLogs.delete({ where: { id } });
   }
 
   async deleteUserBadge(
     badgeId: number,
     userId: string,
   ): Promise<UserBadgeEntity> {
-    const query = `
-      DELETE FROM "UserBadgesLogs"
-      WHERE "badgeId" = $1 AND "userId" = $2::uuid
-    `;
-    const values = [badgeId, userId];
-    const deleteBadgeLog = await this.prisma.$queryRawUnsafe<UserBadgesLogs>(
-      query,
-      ...values,
-    );
-    return deleteBadgeLog;
+    return await this.prisma.userBadgesLogs.delete({
+      where: { badgeId_userId: { badgeId, userId } },
+    });
   }
 }

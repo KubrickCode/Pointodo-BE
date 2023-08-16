@@ -53,6 +53,7 @@ model UserBadgesLogs {
   badge             Badge         @relation(fields: [badgeId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@unique([badgeId,userId])
 }
 
 model BadgeProgress {
