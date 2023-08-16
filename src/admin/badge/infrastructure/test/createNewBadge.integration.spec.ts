@@ -15,17 +15,20 @@ describe('createBadgeType', () => {
   });
 
   it('뱃지 타입 생성 In DB', async () => {
-    const badgeType = {
-      id: 0,
-      name: '123',
-      description: '123',
-      iconLink: '123',
-    };
+    const name = '123';
+    const description = '123';
+    const iconLink = '123';
+    const type = 'SPECIAL';
 
-    const createdBadgeType = await badgeAdminRepository.create(badgeType);
+    const createdBadgeType = await badgeAdminRepository.create(
+      name,
+      description,
+      iconLink,
+      type,
+    );
 
-    const retrievedBadgeType = await prisma.badgeTypes.findUnique({
-      where: { id: createdBadgeType.id },
+    const retrievedBadgeType = await prisma.badge.findUnique({
+      where: { name },
     });
 
     expect(retrievedBadgeType).toMatchObject({
@@ -35,6 +38,6 @@ describe('createBadgeType', () => {
       iconLink: createdBadgeType.iconLink,
     });
 
-    // await prisma.badgeTypes.delete({ where: { id: createdBadgeType.id } });
+    await prisma.badge.delete({ where: { id: createdBadgeType.id } });
   });
 });

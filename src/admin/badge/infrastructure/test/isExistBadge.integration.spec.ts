@@ -15,7 +15,7 @@ describe('getBadgePrice', () => {
   });
 
   it('뱃지 가격 불러오기', async () => {
-    const badgePrice = await badgeAdminRepository.getBadgePrice(2);
+    const badgePrice = await badgeAdminRepository.isExist('일관성 뱃지4');
 
     console.log(badgePrice);
   });
