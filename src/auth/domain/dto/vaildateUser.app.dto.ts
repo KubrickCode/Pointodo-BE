@@ -10,6 +10,6 @@ export class ResValidateUserAppDto {
   readonly email: string;
   readonly provider: ProviderType;
   readonly role: RoleType;
-  readonly selectedBadge: number;
+  readonly selectedBadgeId: number;
   readonly createdAt: Date;
 }

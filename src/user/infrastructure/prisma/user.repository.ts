@@ -14,7 +14,7 @@ export class UserRepository implements IUserRepository {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: {
-        selectedBadgeId: {
+        selectedBadge: {
           select: { iconLink: true },
         },
       },
@@ -70,15 +70,15 @@ export class UserRepository implements IUserRepository {
   ): Promise<UserEntity> {
     const user = await this.prisma.user.update({
       where: { id: userId },
-      data: { selectedBadge: badgeId },
+      data: { selectedBadgeId: badgeId },
     });
     return plainToClass(UserEntity, user);
   }
 
   async changeSelectedBadgeToDefault(badgeId: number): Promise<void> {
     await this.prisma.user.updateMany({
-      where: { selectedBadge: badgeId },
-      data: { selectedBadge: 1 },
+      where: { selectedBadgeId: badgeId },
+      data: { selectedBadgeId: 1 },
     });
   }
 

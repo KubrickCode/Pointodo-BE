@@ -10,7 +10,7 @@ export class UserEntity implements User {
 
   provider: ProviderType;
   role: RoleType;
-  selectedBadge: number;
+  selectedBadgeId: number;
   createdAt: Date;
 }
 
