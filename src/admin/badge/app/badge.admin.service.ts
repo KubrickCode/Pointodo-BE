@@ -87,7 +87,7 @@ export class BadgeAdminService implements IBadgeAdminService {
   }
 
   async deleteBadge(req: ReqDeleteBadgeAppDto): Promise<ResDeleteBadgeAppDto> {
-    await this.userRepository.changeSelectedBadgetoDefault(req.id);
+    await this.userRepository.changeSelectedBadgeToDefault(req.id);
     const deletedBadge = await this.badgeAdminRepository.delete(req.id);
 
     await this.cacheService.deleteCache(`allBadges`);
