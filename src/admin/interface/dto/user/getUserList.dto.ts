@@ -10,7 +10,7 @@ import {
   USER_REGISTER_DATE,
   USER_ROLE,
   USER_ROLE_EXAMPLE,
-  USER_SELECTED_BADGE,
+  USER_SELECTED_BADGE_ID,
 } from '@shared/constants/user.constant';
 import {
   ProviderType,
@@ -55,9 +55,9 @@ export class ResGetUserListDto {
   @IsEnum(RoleTypes)
   readonly role: RoleType;
 
-  @ApiProperty({ description: USER_SELECTED_BADGE })
+  @ApiProperty({ description: USER_SELECTED_BADGE_ID })
   @IsString()
-  readonly selectedBadge: number;
+  readonly selectedBadgeId: number;
 
   @IsDate()
   @ApiProperty({ description: USER_REGISTER_DATE })

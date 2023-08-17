@@ -19,7 +19,7 @@ export interface IUserRepository {
 
   changeSelectedBadge(userId: string, badgeId: number): Promise<UserEntity>;
 
-  changeSelectedBadgetoDefault(badgeId: number): Promise<void>;
+  changeSelectedBadgeToDefault(badgeId: number): Promise<void>;
 
   getUserList(
     order: string,

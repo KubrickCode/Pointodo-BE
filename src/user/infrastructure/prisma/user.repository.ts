@@ -11,33 +11,28 @@ export class UserRepository implements IUserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findById(id: string): Promise<UserEntity | null> {
-    const query = `
-    SELECT u.*, b."iconLink"
-    FROM "User" u
-    LEFT JOIN "Badge" b ON u."selectedBadge" = b.id
-    WHERE u.id = $1::uuid;
-    `;
-    const result = await this.prisma.$queryRawUnsafe<User>(query, id);
-    return result[0] ? plainToClass(UserEntity, result[0]) : null;
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        selectedBadge: {
+          select: { iconLink: true },
+        },
+      },
+    });
+    return user ? plainToClass(UserEntity, user) : null;
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
-    const query = `
-    SELECT * FROM "User" WHERE email = $1
-    `;
-    const result = await this.prisma.$queryRawUnsafe<User>(query, email);
-    return result[0] ? plainToClass(UserEntity, result[0]) : null;
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    return user ? plainToClass(UserEntity, user) : null;
   }
 
   async findPasswordById(id: string): Promise<string> {
-    const query = `
-    SELECT password FROM "User" WHERE id = $1::uuid
-    `;
-    const result = await this.prisma.$queryRawUnsafe<[{ password: string }]>(
-      query,
-      id,
-    );
-    return result[0].password;
+    const result = await this.prisma.user.findUnique({
+      where: { id },
+      select: { password: true },
+    });
+    return result.password;
   }
 
   async createUser(
@@ -48,55 +43,43 @@ export class UserRepository implements IUserRepository {
     provider = Provider[provider] || Provider['LOCAL'];
     const uuid = uuidv4();
 
-    const query = `
-      INSERT INTO "User" (id, email, password, provider)
-      VALUES ($1::uuid, $2, $3, $4::"Provider")
-      RETURNING *
-    `;
-    const values = [uuid, email, password, provider];
-    const newUser = await this.prisma.$queryRawUnsafe<User>(query, ...values);
-    return plainToClass(UserEntity, newUser[0]);
+    const newUser = await this.prisma.user.create({
+      data: { id: uuid, email, password, provider },
+    });
+    return plainToClass(UserEntity, newUser);
   }
 
   async changePassword(id: string, newPassword: string): Promise<void> {
-    const query = `
-    UPDATE "User" SET password = $1 WHERE id = $2::uuid
-    `;
-    const values = [newPassword, id];
-    await this.prisma.$queryRawUnsafe<User>(query, ...values);
+    await this.prisma.user.update({
+      where: { id },
+      data: { password: newPassword },
+    });
   }
 
   async deleteUser(id: string): Promise<UserEntity> {
-    const query = `
-    DELETE FROM "User" WHERE id = $1::uuid
-    RETURNING *
-    `;
-    const values = [id];
-    const user = await this.prisma.$queryRawUnsafe<User>(query, ...values);
-    return plainToClass(UserEntity, user[0]);
+    const deletedUser = await this.prisma.user.delete({
+      where: { id },
+    });
+
+    return plainToClass(UserEntity, deletedUser);
   }
 
   async changeSelectedBadge(
     userId: string,
     badgeId: number,
   ): Promise<UserEntity> {
-    const query = `
-    UPDATE "User" SET "selectedBadge" = $1
-    WHERE id = $2::uuid
-    RETURNING *
-    `;
-    const values = [badgeId, userId];
-    const user = await this.prisma.$queryRawUnsafe<User>(query, ...values);
-    return plainToClass(UserEntity, user[0]);
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { selectedBadgeId: badgeId },
+    });
+    return plainToClass(UserEntity, user);
   }
 
-  async changeSelectedBadgetoDefault(badgeId: number): Promise<void> {
-    const query = `
-    UPDATE "User" SET "selectedBadge" = 1
-    WHERE "selectedBadge" = $1
-    RETURNING *
-    `;
-    await this.prisma.$queryRawUnsafe<User>(query, badgeId);
+  async changeSelectedBadgeToDefault(badgeId: number): Promise<void> {
+    await this.prisma.user.updateMany({
+      where: { selectedBadgeId: badgeId },
+      data: { selectedBadgeId: 1 },
+    });
   }
 
   async getUserList(
@@ -105,51 +88,29 @@ export class UserRepository implements IUserRepository {
     offset: number,
     provider: ProviderType | 'ALL',
   ): Promise<UserEntity[]> {
-    let orderBy: string;
-    let query: string;
-    if (order === 'newest') orderBy = '"createdAt" DESC';
-    if (order === 'old') orderBy = '"createdAt" ASC';
-
+    let result: User[];
     if (provider === 'ALL') {
-      query = `
-      SELECT * FROM "User"
-      ORDER BY ${orderBy}
-      LIMIT $1 OFFSET $2
-      `;
+      result = await this.prisma.user.findMany({
+        orderBy: { createdAt: order === 'newest' ? 'desc' : 'asc' },
+        take: limit,
+        skip: offset,
+      });
     } else {
-      query = `
-      SELECT * FROM "User"
-      WHERE provider = $3::"Provider"
-      ORDER BY ${orderBy}
-      LIMIT $1 OFFSET $2
-      `;
+      result = await this.prisma.user.findMany({
+        where: { provider },
+        orderBy: { createdAt: order === 'newest' ? 'desc' : 'asc' },
+        take: limit,
+        skip: offset,
+      });
     }
-
-    const values = [limit, offset, provider];
-    const result = await this.prisma.$queryRawUnsafe<User[]>(query, ...values);
-    return plainToClass(UserEntity, result);
+    return result.map((user) => plainToClass(UserEntity, user));
   }
 
   async getTotalUserListPages(provider: ProviderType | 'ALL'): Promise<number> {
-    let query: string;
-
     if (provider === 'ALL') {
-      query = `
-      SELECT COUNT(*)
-      FROM "User"
-        `;
+      return await this.prisma.user.count();
     } else {
-      query = `
-      SELECT COUNT(*)
-      FROM "User"
-      WHERE provider = $1::"Provider"
-        `;
+      return await this.prisma.user.count({ where: { provider } });
     }
-
-    const totalUsers = await this.prisma.$queryRawUnsafe<{ count: number }>(
-      query,
-      provider,
-    );
-    return Number(totalUsers[0].count);
   }
 }
