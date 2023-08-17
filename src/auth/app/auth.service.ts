@@ -6,6 +6,7 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  ConflictException,
 } from '@nestjs/common';
 import {
   CHECK_PASSWORD_MESSAGE,
@@ -48,7 +49,10 @@ import {
   ResValidateAdminAppDto,
 } from '@auth/domain/dto/validateAdmin.app.dto';
 import { PasswordHasher } from '@shared/utils/passwordHasher';
-import { USER_NOT_FOUND } from '@shared/messages/user/user.errors';
+import {
+  USER_EXIST_WITH_SOCIAL,
+  USER_NOT_FOUND,
+} from '@shared/messages/user/user.errors';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
@@ -87,6 +91,9 @@ export class AuthService implements IAuthService {
     if (!user) {
       throw new NotFoundException(USER_NOT_FOUND);
     }
+
+    if (user.provider !== 'LOCAL')
+      throw new ConflictException(USER_EXIST_WITH_SOCIAL);
 
     const userPassword = await this.userRepository.findPasswordById(user.id);
 

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { TasksDueDate, TasksLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
 import { TaskEntity, TaskType_ } from '@task/domain/entities/task.entity';
 import { TasksDueDateEntity } from '@task/domain/entities/tasksDueDate.entity';
@@ -16,72 +15,44 @@ export class TaskRepository implements ITaskRepository {
     offset: number,
     order: string,
   ): Promise<TaskEntity[]> {
-    let query: string;
-    let orderBy: string;
+    let orderBy: object;
 
-    if (order === 'importance') orderBy = 'importance ASC';
-    if (order === 'newest') orderBy = '"occurredAt" DESC';
-    if (order === 'old') orderBy = '"occurredAt" ASC';
-    if (order === 'name') orderBy = 'name ASC';
+    if (order === 'importance') orderBy = { importance: 'asc' };
+    if (order === 'newest') orderBy = { occurredAt: 'desc' };
+    if (order === 'old') orderBy = { occurredAt: 'asc' };
+    if (order === 'name') orderBy = { name: 'asc' };
 
     if (taskType === 'DUE') {
-      query = `
-            SELECT "TasksLogs".*, "TasksDueDate"."dueDate" 
-            FROM "TasksLogs"
-            LEFT JOIN "TasksDueDate" ON "TasksLogs".id = "TasksDueDate"."taskId"
-            WHERE "TasksLogs"."userId" = $1::uuid
-            AND "TasksLogs"."taskType" = $2::"TaskType"
-            ORDER BY "TasksLogs".${orderBy}
-            LIMIT $3 OFFSET $4
-        `;
+      const result = await this.prisma.tasksLogs.findMany({
+        where: { userId, taskType },
+        include: { dueDate: true },
+        orderBy,
+        take: limit,
+        skip: offset,
+      });
+      return result.map((item) => ({
+        ...item,
+        dueDate: item.dueDate.dueDate,
+      }));
     } else {
-      query = `
-            SELECT * FROM "TasksLogs"
-            WHERE "userId" = $1::uuid
-            AND "taskType" = $2::"TaskType"
-            ORDER BY ${orderBy}
-            LIMIT $3 OFFSET $4
-        `;
+      return await this.prisma.tasksLogs.findMany({
+        where: { userId, taskType },
+        orderBy,
+        take: limit,
+        skip: offset,
+      });
     }
-
-    const values = [userId, taskType, limit, offset];
-    const tasksLogs = await this.prisma.$queryRawUnsafe<TaskEntity[]>(
-      query,
-      ...values,
-    );
-    return tasksLogs;
   }
 
   async getTotalTaskPages(
     userId: string,
     taskType: TaskType_,
   ): Promise<number> {
-    const query = `
-    SELECT COUNT(*)
-    FROM "TasksLogs"
-    WHERE "userId" = $1::uuid
-    AND "taskType" = $2::"TaskType"
-    `;
-
-    const values = [userId, taskType];
-    const totalTasks = await this.prisma.$queryRawUnsafe<{ count: number }>(
-      query,
-      ...values,
-    );
-    return Number(totalTasks[0].count);
+    return await this.prisma.tasksLogs.count({ where: { userId, taskType } });
   }
 
   async getTaskLogById(id: number): Promise<TaskEntity> {
-    const query = `
-      SELECT * FROM "TasksLogs"
-      WHERE id = $1
-    `;
-    const values = [id];
-    const taskLog = await this.prisma.$queryRawUnsafe<TasksLogs>(
-      query,
-      ...values,
-    );
-    return taskLog[0];
+    return await this.prisma.tasksLogs.findUnique({ where: { id } });
   }
 
   async createTask(
@@ -91,34 +62,18 @@ export class TaskRepository implements ITaskRepository {
     description: string,
     importance: number,
   ): Promise<TaskEntity> {
-    const query = `
-      INSERT INTO "TasksLogs" ("userId", "taskType", name, description, importance)
-      VALUES ($1::uuid, $2::"TaskType", $3, $4 ,$5)
-      RETURNING *
-    `;
-    const values = [userId, taskType, name, description, importance];
-    const newTasksLogs = await this.prisma.$queryRawUnsafe<TasksLogs>(
-      query,
-      ...values,
-    );
-    return newTasksLogs[0];
+    return await this.prisma.tasksLogs.create({
+      data: { userId, taskType, name, description, importance },
+    });
   }
 
   async createTaskDueDate(
     id: number,
     date: string,
   ): Promise<TasksDueDateEntity> {
-    const query = `
-      INSERT INTO "TasksDueDate" ("taskId", "dueDate")
-      VALUES ($1, $2)
-      RETURNING *
-    `;
-    const values = [id, date];
-    const result = await this.prisma.$queryRawUnsafe<TasksDueDate>(
-      query,
-      ...values,
-    );
-    return result[0];
+    return await this.prisma.tasksDueDate.create({
+      data: { taskId: id, dueDate: date },
+    });
   }
 
   async updateTask(
@@ -128,133 +83,67 @@ export class TaskRepository implements ITaskRepository {
     importance: number,
     dueDate: string,
   ): Promise<TaskEntity> {
-    const updateFields: string[] = [];
-    const values: (number | string)[] = [];
-    let placeholderIndex = 1;
+    const data: object = {};
 
     if (name) {
-      updateFields.push(`name = $${placeholderIndex}`);
-      values.push(name);
-      placeholderIndex++;
+      Object.assign(data, { name });
     }
 
     if (description !== undefined) {
-      updateFields.push(`description = $${placeholderIndex}`);
-      values.push(description);
-      placeholderIndex++;
+      Object.assign(data, { description });
     }
 
     if (importance !== undefined) {
-      updateFields.push(`importance = $${placeholderIndex}`);
-      values.push(importance);
-      placeholderIndex++;
+      Object.assign(data, { importance });
     }
 
-    values.push(id);
-    placeholderIndex++;
-
-    const query = `
-      UPDATE "TasksLogs"
-      SET ${updateFields.join(', ')}
-      WHERE id = $${placeholderIndex - 1}
-      RETURNING *
-    `;
-
-    const updatedTaskLog = await this.prisma.$queryRawUnsafe<TasksLogs>(
-      query,
-      ...values,
-    );
+    const updatedTaskLog = await this.prisma.tasksLogs.update({
+      where: { id },
+      data,
+    });
 
     if (dueDate) {
-      const query = `
-      UPDATE "TasksDueDate"
-      SET "dueDate" = $1
-      WHERE "taskId" = $2
-      `;
-
-      const values = [dueDate, id];
-
-      await this.prisma.$queryRawUnsafe<void>(query, ...values);
+      await this.prisma.tasksDueDate.update({
+        where: { id },
+        data: { dueDate },
+      });
     }
 
-    return updatedTaskLog[0];
+    return updatedTaskLog;
   }
 
   async deleteTask(id: number): Promise<TaskEntity> {
-    const query = `
-      DELETE FROM "TasksLogs"
-      WHERE id = $1
-      RETURNING *
-    `;
-    const values = [id];
-    const deletedTaskLog = await this.prisma.$queryRawUnsafe<TasksLogs>(
-      query,
-      ...values,
-    );
-    return deletedTaskLog[0];
+    return await this.prisma.tasksLogs.delete({ where: { id } });
   }
 
   async deleteTaskDueDate(taskId: number): Promise<TasksDueDateEntity> {
-    const query = `
-      DELETE FROM "TasksDueDate"
-      WHERE "taskId" = $1
-      RETURNING *
-    `;
-    const values = [taskId];
-    const deletedTaskDueDate = await this.prisma.$queryRawUnsafe<TasksDueDate>(
-      query,
-      ...values,
-    );
-    return deletedTaskDueDate[0];
+    return await this.prisma.tasksDueDate.delete({ where: { taskId } });
   }
 
   async completeTask(id: number, isRollback?: boolean): Promise<TaskEntity> {
-    const completeQuery = `
-        UPDATE "TasksLogs"
-        SET completion = completion ${isRollback ? '- 1' : '+ 1'}
-        WHERE id = $1
-        RETURNING *
-      `;
-    const completeValues = [id];
-    const completedTaskLog = await this.prisma.$queryRawUnsafe<TasksLogs>(
-      completeQuery,
-      ...completeValues,
-    );
-
-    return completedTaskLog[0];
+    return this.prisma.tasksLogs.update({
+      where: { id },
+      data: {
+        completion: isRollback ? { increment: 1 } : { decrement: 1 },
+      },
+    });
   }
 
   async cancleTaskCompletion(id: number): Promise<TaskEntity> {
-    const query = `
-        UPDATE "TasksLogs"
-        SET completion = completion - 1
-        WHERE id = $1
-        RETURNING *
-      `;
-    const values = [id];
-    const cancledTask = await this.prisma.$queryRawUnsafe<TasksLogs>(
-      query,
-      ...values,
-    );
-    return cancledTask[0];
+    return await this.prisma.tasksLogs.update({
+      where: { id },
+      data: { completion: { decrement: 1 } },
+    });
   }
 
   async resetDailyTask(): Promise<void> {
-    const query = `
-        UPDATE "TasksLogs"
-        SET completion = 0, version = 0
-        WHERE "taskType" = 'DAILY'
-      `;
-    await this.prisma.$queryRawUnsafe<TasksLogs>(query);
+    await this.prisma.tasksLogs.updateMany({
+      where: { taskType: 'DAILY' },
+      data: { completion: 0, version: 0 },
+    });
   }
 
   async lockTask(id: number): Promise<void> {
-    const query = `
-        UPDATE "TasksLogs"
-        SET version = 1
-        WHERE id = $1
-      `;
-    const values = [id];
-    await this.prisma.$queryRawUnsafe<TasksLogs>(query, ...values);
+    await this.prisma.tasksLogs.update({ where: { id }, data: { version: 1 } });
   }
 }

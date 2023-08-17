@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { EarnedPointsLogs, SpentPointsLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
 import {
   EarnedPointEntity,
@@ -21,28 +20,35 @@ export class PointRepository implements IPointRepository {
     offset: number,
     order: string,
   ): Promise<EarnedPointWithTaskName[]> {
-    let orderBy: string;
+    const result = await this.prisma.earnedPointsLogs.findMany({
+      where: { userId },
+      select: {
+        id: true,
+        userId: true,
+        taskId: true,
+        points: true,
+        occurredAt: true,
+        taskLog: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        occurredAt: order === 'newest' ? 'desc' : 'asc',
+      },
+      take: limit,
+      skip: offset,
+    });
 
-    if (order === 'newest') orderBy = '"occurredAt" DESC';
-    if (order === 'old') orderBy = '"occurredAt" ASC';
-
-    const query = `
-    SELECT p.*, t.name as "taskName"
-    FROM "EarnedPointsLogs" as p
-    LEFT JOIN "TasksLogs" as t
-    ON p."taskId" = t.id
-    WHERE p."userId" = $1::uuid
-    ORDER BY p.${orderBy}
-    LIMIT $2 OFFSET $3
-    `;
-
-    const values = [userId, limit, offset];
-
-    const pointsLogs = await this.prisma.$queryRawUnsafe<
-      EarnedPointWithTaskName[]
-    >(query, ...values);
-
-    return pointsLogs;
+    return result.map((item) => ({
+      id: item.id,
+      userId: item.userId,
+      taskId: item.taskId,
+      points: item.points,
+      occurredAt: item.occurredAt,
+      taskName: item.taskLog.name,
+    }));
   }
 
   async getSpentPointsLogs(
@@ -51,64 +57,58 @@ export class PointRepository implements IPointRepository {
     offset: number,
     order: string,
   ): Promise<SpentPointWithBadgeName[]> {
-    let orderBy: string;
+    const result = await this.prisma.spentPointsLogs.findMany({
+      where: { userId },
+      select: {
+        id: true,
+        userId: true,
+        badgeId: true,
+        points: true,
+        occurredAt: true,
+        badge: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        occurredAt: order === 'newest' ? 'desc' : 'asc',
+      },
+      take: limit,
+      skip: offset,
+    });
 
-    if (order === 'newest') orderBy = '"occurredAt" DESC';
-    if (order === 'old') orderBy = '"occurredAt" ASC';
-
-    const query = `
-    SELECT p.*, b.name as "badgeName"
-    FROM "SpentPointsLogs" as p
-    LEFT JOIN "Badge" as b
-    ON p."badgeId" = b.id
-    WHERE p."userId" = $1::uuid
-    ORDER BY p.${orderBy}
-    LIMIT $2 OFFSET $3
-    `;
-
-    const values = [userId, limit, offset];
-
-    const pointsLogs = await this.prisma.$queryRawUnsafe<
-      SpentPointWithBadgeName[]
-    >(query, ...values);
-
-    return pointsLogs;
+    return result.map((item) => ({
+      id: item.id,
+      userId: item.userId,
+      badgeId: item.badgeId,
+      points: item.points,
+      occurredAt: item.occurredAt,
+      badgeName: item.badge.name,
+    }));
   }
 
   async getTotalPointPages(
     userId: string,
     transactionType: 'EARNED' | 'SPENT',
   ): Promise<number> {
-    let table: string;
-    if (transactionType === 'EARNED') table = 'EarnedPointsLogs';
-    if (transactionType === 'SPENT') table = 'SpentPointsLogs';
-    const query = `
-    SELECT COUNT(*)
-    FROM "${table}"
-    WHERE "userId" = $1::uuid
-    `;
-
-    const values = [userId];
-    const totalPointsLogs = await this.prisma.$queryRawUnsafe<{
-      count: number;
-    }>(query, ...values);
-    return Number(totalPointsLogs[0].count);
+    if (transactionType === 'EARNED') {
+      return await this.prisma.earnedPointsLogs.count({ where: { userId } });
+    }
+    if (transactionType === 'SPENT') {
+      return await this.prisma.spentPointsLogs.count({ where: { userId } });
+    }
   }
 
   async isContinuous(userId: string, yesterday: string): Promise<boolean> {
-    const isContinuousQuery = `
-        SELECT COUNT(*) FROM "EarnedPointsLogs"
-        WHERE "userId" = $1::uuid AND DATE("occurredAt") = DATE($2)
-      `;
+    const count = await this.prisma.earnedPointsLogs.count({
+      where: {
+        userId: userId,
+        occurredAt: new Date(yesterday),
+      },
+    });
 
-    const isContinuousValues = [userId, yesterday];
-
-    const isContinuous = await this.prisma.$queryRawUnsafe<[{ count: number }]>(
-      isContinuousQuery,
-      ...isContinuousValues,
-    );
-
-    return Number(isContinuous[0].count) > 0;
+    return count > 0;
   }
 
   async createEarnedPointLog(
@@ -116,20 +116,9 @@ export class PointRepository implements IPointRepository {
     taskId: number,
     points: number,
   ): Promise<EarnedPointEntity> {
-    const createPointLogQuery = `
-        INSERT INTO "EarnedPointsLogs" ("userId", "taskId", points)
-        VALUES ($1::uuid, $2, $3)
-        RETURNING *
-      `;
-
-    const createPointLogValues = [userId, taskId, points];
-
-    const createdPointLog = await this.prisma.$queryRawUnsafe<EarnedPointsLogs>(
-      createPointLogQuery,
-      ...createPointLogValues,
-    );
-
-    return createdPointLog[0];
+    return await this.prisma.earnedPointsLogs.create({
+      data: { userId, taskId, points },
+    });
   }
 
   async createSpentPointLog(
@@ -137,88 +126,55 @@ export class PointRepository implements IPointRepository {
     badgeId: number,
     points: number,
   ): Promise<SpentPointEntity> {
-    const createPointLogQuery = `
-        INSERT INTO "SpentPointsLogs" ("userId", "badgeId", points)
-        VALUES ($1::uuid, $2, $3)
-        RETURNING *
-      `;
-
-    const createPointLogValues = [userId, badgeId, points];
-
-    const createdPointLog = await this.prisma.$queryRawUnsafe<SpentPointsLogs>(
-      createPointLogQuery,
-      ...createPointLogValues,
-    );
-
-    return createdPointLog[0];
+    return await this.prisma.spentPointsLogs.create({
+      data: { userId, badgeId, points },
+    });
   }
 
   async countTasksPerDate(userId: string, date: string): Promise<number> {
-    const countTasksQuery = `
-        SELECT COUNT(*) FROM "EarnedPointsLogs"
-        WHERE "userId" = $1::uuid AND DATE("occurredAt") >= DATE($2)
-      `;
+    const tasksCount = await this.prisma.earnedPointsLogs.count({
+      where: {
+        userId: userId,
+        occurredAt: {
+          gte: new Date(date),
+        },
+      },
+    });
 
-    const countTasksValues = [userId, date];
-
-    const tasksCount = await this.prisma.$queryRawUnsafe<[{ count: number }]>(
-      countTasksQuery,
-      ...countTasksValues,
-    );
-
-    return Number(tasksCount[0].count);
+    return tasksCount;
   }
 
   async calculateUserPoints(userId: string): Promise<number> {
-    const earnedPointsQuery = `
-        SELECT SUM(points) AS "earnedPoints" FROM "EarnedPointsLogs"
-        WHERE "userId" = $1::uuid
-      `;
+    const totalEarnedPoints = await this.prisma.earnedPointsLogs.aggregate({
+      _sum: {
+        points: true,
+      },
+      where: {
+        userId: userId,
+      },
+    });
 
-    const earnedPoints = await this.prisma.$queryRawUnsafe<number>(
-      earnedPointsQuery,
-      userId,
-    );
+    const totalSpentPoints = await this.prisma.spentPointsLogs.aggregate({
+      _sum: {
+        points: true,
+      },
+      where: {
+        userId: userId,
+      },
+    });
 
-    const spentPointsQuery = `
-        SELECT SUM(points) AS "spentPoints" FROM "SpentPointsLogs"
-        WHERE "userId" = $1::uuid
-      `;
-
-    const spentPoints = await this.prisma.$queryRawUnsafe<number>(
-      spentPointsQuery,
-      userId,
-    );
-
-    const totalEarnedPoints = Number(earnedPoints[0].earnedPoints) || 0;
-    const totalSpentPoints = Number(spentPoints[0].spentPoints) || 0;
-
-    const userTotalPoints = totalEarnedPoints - totalSpentPoints;
+    const userTotalPoints =
+      (totalEarnedPoints._sum.points || 0) -
+      (totalSpentPoints._sum.points || 0);
 
     return userTotalPoints;
   }
 
   async deleteEarnedPointLog(id: number): Promise<EarnedPointEntity> {
-    const query = `
-    DELETE FROM "EarnedPointsLogs"
-    WHERE id = $1
-    RETURNING *
-    `;
-
-    const deletedLog = await this.prisma.$queryRawUnsafe<number>(query, id);
-
-    return deletedLog[0];
+    return await this.prisma.earnedPointsLogs.delete({ where: { id } });
   }
 
   async deleteSpentPointLog(id: number): Promise<SpentPointEntity> {
-    const query = `
-    DELETE FROM "SpentPointsLogs"
-    WHERE id = $1
-    RETURNING *
-    `;
-
-    const deletedLog = await this.prisma.$queryRawUnsafe<number>(query, id);
-
-    return deletedLog[0];
+    return await this.prisma.spentPointsLogs.delete({ where: { id } });
   }
 }

@@ -65,8 +65,11 @@ export class BadgeAdminService implements IBadgeAdminService {
 
   async updateBadge(req: ReqUpdateBadgeAppDto): Promise<ResUpdateBadgeAppDto> {
     const { id, name, description, iconLink, price } = req;
-    const isExist = await this.badgeAdminRepository.isExist(name);
-    if (isExist) throw new ConflictException(CONFLICT_BADGE_NAME);
+    if (name) {
+      const isExist = await this.badgeAdminRepository.isExist(name);
+      if (isExist) throw new ConflictException(CONFLICT_BADGE_NAME);
+    }
+
     const updatedBadge = await this.badgeAdminRepository.update(
       id,
       name,
@@ -84,7 +87,7 @@ export class BadgeAdminService implements IBadgeAdminService {
   }
 
   async deleteBadge(req: ReqDeleteBadgeAppDto): Promise<ResDeleteBadgeAppDto> {
-    await this.userRepository.changeSelectedBadgetoDefault(req.id);
+    await this.userRepository.changeSelectedBadgeToDefault(req.id);
     const deletedBadge = await this.badgeAdminRepository.delete(req.id);
 
     await this.cacheService.deleteCache(`allBadges`);
