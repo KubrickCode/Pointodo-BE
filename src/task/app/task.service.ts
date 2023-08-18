@@ -136,7 +136,7 @@ export class TaskService implements ITaskService {
 
     await this.cacheService.setCache(
       cacheKey,
-      totalPages,
+      { totalPages },
       cacheConfig(this.configService).cacheTTL,
     );
 
