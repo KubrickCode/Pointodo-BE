@@ -139,6 +139,7 @@ export class AuthService implements IAuthService {
 
   async logout(req: ReqLogoutAppDto): Promise<ResLogoutAppDto> {
     await this.redisService.delete(`refresh_token:${req.id}`);
+    await this.cacheService.deleteCache(`user:${req.id}`);
     return { message: LOGOUT_SUCCESS_MESSAGE };
   }
 
