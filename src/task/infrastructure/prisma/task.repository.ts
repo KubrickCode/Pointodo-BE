@@ -104,7 +104,7 @@ export class TaskRepository implements ITaskRepository {
 
     if (dueDate) {
       await this.prisma.tasksDueDate.update({
-        where: { id },
+        where: { taskId: id },
         data: { dueDate },
       });
     }
