@@ -113,6 +113,9 @@ export class AuthService implements IAuthService {
     req: ReqCheckPasswordAppDto,
   ): Promise<ResCheckPasswordAppDto> {
     const userPassword = await this.userRepository.findPasswordById(req.id);
+    if (userPassword === null) {
+      throw new ConflictException(USER_EXIST_WITH_SOCIAL);
+    }
     const isCorrectPassword = await PasswordHasher.comparePassword(
       req.password,
       userPassword,
