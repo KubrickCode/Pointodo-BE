@@ -7,11 +7,7 @@ import { REGISTER_SUCCESS_MESSAGE } from '@shared/messages/user/user.messages';
 import { mockUserService } from './userService.mock';
 
 describe('Register', () => {
-  let userService: IUserService;
-
-  beforeEach(() => {
-    userService = mockUserService;
-  });
+  const userService: IUserService = mockUserService;
 
   it('로컬 회원 가입 성공', async () => {
     const user: ReqRegisterAppDto = {
