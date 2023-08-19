@@ -20,7 +20,10 @@ describe('createUser', () => {
       password: 'test1234!@',
     };
 
-    const createdUser = await userRepository.createUser(user);
+    const createdUser = await userRepository.createUser(
+      user.email,
+      user.password,
+    );
 
     const retrievedUser = await prisma.user.findUnique({
       where: { id: createdUser.id },
