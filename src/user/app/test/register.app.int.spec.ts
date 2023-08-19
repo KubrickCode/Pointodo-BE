@@ -16,9 +16,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConfig } from '@shared/config/jwt.config';
 import { getWinstonLogger } from '@shared/utils/winston.util';
 import { REGISTER_SUCCESS_MESSAGE } from '@shared/messages/user/user.messages';
+import { USER_ALREADY_EXIST } from '@shared/messages/user/user.errors';
 
 describe('UserService Integration', () => {
   let userService: UserService;
+  let prismaService: PrismaService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -62,21 +64,31 @@ describe('UserService Integration', () => {
     }).compile();
 
     userService = module.get<UserService>(UserService);
+    prismaService = module.get<PrismaService>(PrismaService);
   });
 
   describe('register', () => {
-    it('should register a new user', async () => {
-      const request: ReqRegisterAppDto = {
-        email: 'test5@example.com',
-        password: 'test1234!@',
-      };
-
+    const request: ReqRegisterAppDto = {
+      email: 'test@test.test',
+      password: 'test1234!@',
+    };
+    it('로컬 유저 생성 -> 리포지토리 -> DB', async () => {
       const expectedResponse: ResRegisterAppDto = {
         message: REGISTER_SUCCESS_MESSAGE,
       };
 
       const result = await userService.register(request);
       expect(result).toEqual(expectedResponse);
+    });
+
+    it('로컬 유저 생성(중복)', async () => {
+      try {
+        await userService.register(request);
+      } catch (error) {
+        expect(error.response.statusCode).toEqual(409);
+        expect(error.response.message).toEqual(USER_ALREADY_EXIST);
+        await prismaService.user.delete({ where: { email: request.email } });
+      }
     });
   });
 });
