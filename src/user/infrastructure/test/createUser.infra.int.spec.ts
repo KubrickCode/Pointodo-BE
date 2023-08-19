@@ -14,26 +14,35 @@ describe('createUser', () => {
     await prisma.$disconnect();
   });
 
-  it('로컬 유저 생성 In DB', async () => {
-    const user = {
-      email: 'test@example.com',
-      password: 'test1234!@',
-    };
+  const user = {
+    email: 'test@test.test',
+    password: 'test1234!@',
+  };
 
+  it('로컬 유저 생성 In DB', async () => {
     const createdUser = await userRepository.createUser(
       user.email,
       user.password,
     );
 
-    const retrievedUser = await prisma.user.findUnique({
-      where: { id: createdUser.id },
-    });
+    const retrievedUser = await userRepository.findById(createdUser.id);
 
     expect(retrievedUser).toMatchObject({
       id: createdUser.id,
       email: createdUser.email,
     });
+  });
 
-    await prisma.user.delete({ where: { id: createdUser.id } });
+  it('로컬 유저 충돌 In DB', async () => {
+    try {
+      const existUser = await userRepository.findByEmail(user.email);
+      expect(existUser).toMatchObject({
+        email: user.email,
+      });
+
+      await userRepository.createUser(user.email, user.password);
+    } catch (error) {
+      await prisma.user.delete({ where: { email: user.email } });
+    }
   });
 });
