@@ -34,7 +34,6 @@ export class PointRepository implements IPointRepository {
         occurredAt: true,
         taskLog: {
           select: {
-            userId: true,
             name: true,
           },
         },
@@ -48,7 +47,6 @@ export class PointRepository implements IPointRepository {
 
     return result.map((item) => ({
       id: item.id,
-      userId: item.taskLog.userId,
       taskId: item.taskId,
       points: item.points,
       occurredAt: item.occurredAt,
@@ -75,7 +73,6 @@ export class PointRepository implements IPointRepository {
         occurredAt: true,
         badgeLog: {
           select: {
-            userId: true,
             badge: {
               select: {
                 name: true,
@@ -93,7 +90,6 @@ export class PointRepository implements IPointRepository {
 
     return result.map((item) => ({
       id: item.id,
-      userId: item.badgeLog.userId,
       badgeLogId: item.badgeLogId,
       points: item.points,
       occurredAt: item.occurredAt,

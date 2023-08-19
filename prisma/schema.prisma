@@ -76,12 +76,13 @@ model EarnedPointsLogs {
 
   taskLog        TasksLogs        @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
+  @@index([taskId])
   @@index([occurredAt])
 }
 
 model SpentPointsLogs {
   id                Int               @id @default(autoincrement())
-  badgeLogId        Int
+  badgeLogId        Int               @unique
   points            Int               @db.Integer  
   occurredAt        DateTime          @default(now())
 

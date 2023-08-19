@@ -6,8 +6,7 @@ export class ReqGetSpentPointsLogsAppDto {
 
 export class ResGetSpentPointsLogsAppDto {
   readonly id: number;
-  readonly userId: string;
-  readonly badgeId: number;
+  readonly badgeLogId: number;
   readonly points: number;
   readonly occurredAt: Date;
   readonly badgeName: string;
