@@ -27,17 +27,15 @@ export interface IPointRepository {
     transactionType: 'EARNED' | 'SPENT',
   ): Promise<number>;
 
-  isContinuous(userId: string, yesterday: string): Promise<boolean>;
+  isContinuous(userId: string): Promise<boolean>;
 
   createEarnedPointLog(
-    userId: string,
     taskId: number,
     points: number,
   ): Promise<EarnedPointEntity>;
 
   createSpentPointLog(
-    userId: string,
-    badgeId: number,
+    badgeLogId: number,
     points: number,
   ): Promise<SpentPointEntity>;
 

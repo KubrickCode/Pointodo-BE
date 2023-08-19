@@ -14,10 +14,10 @@ describe('calculateUserPoints', () => {
     await prisma.$disconnect();
   });
 
-  it('보유 포인트 계산', async () => {
+  it('모든 포인트 페이지 수', async () => {
     const userId = '0030cc64-b54f-4e75-95a5-1379b6928f7e';
-    const points = await pointRepository.calculateUserPoints(userId);
+    const result = await pointRepository.getTotalPointPages(userId, 'SPENT');
 
-    console.log(points);
+    console.log(result);
   });
 });

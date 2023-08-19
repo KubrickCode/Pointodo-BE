@@ -83,20 +83,13 @@ export class BadgeService implements IBadgeService {
     const { userId, badgeId } = req;
     const price = await this.badgeAdminRepository.getBadgePrice(badgeId);
 
-    const updatedPointLog = await this.pointRepository.createSpentPointLog(
-      userId,
-      badgeId,
-      price,
-    );
-
-    const updatedPoint = await this.pointRepository.calculateUserPoints(userId);
-    if (updatedPoint < 0) {
-      await this.pointRepository.deleteSpentPointLog(updatedPointLog.id);
-      throw new ConflictException(BUY_BADGE_CONFLICT_POINTS);
-    }
-
     const createdUserBadgeLog =
       await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
+
+    const updatedPointLog = await this.pointRepository.createSpentPointLog(
+      createdUserBadgeLog.id,
+      price,
+    );
 
     const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
       userId,
@@ -106,10 +99,13 @@ export class BadgeService implements IBadgeService {
       (item) => item.badgeId === badgeId,
     );
 
-    if (filteredBadgeList.length > 1) {
-      await this.pointRepository.deleteSpentPointLog(updatedPointLog.id);
+    const updatedPoint = await this.pointRepository.calculateUserPoints(userId);
+    if (updatedPoint < 0 || filteredBadgeList.length > 1) {
       await this.userBadgeRepository.deleteUserBadgeLog(createdUserBadgeLog.id);
-      throw new ConflictException(ALREADY_EXIST_USER_BADGE);
+      await this.pointRepository.deleteSpentPointLog(updatedPointLog.id);
+      throw new ConflictException(
+        updatedPoint < 0 ? BUY_BADGE_CONFLICT_POINTS : ALREADY_EXIST_USER_BADGE,
+      );
     }
 
     await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);

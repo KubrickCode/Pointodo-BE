@@ -218,13 +218,9 @@ export class TaskService implements ITaskService {
 
       if (version === 1) return { message: COMPLETE_TASK_SUCCESS_MESSAGE };
 
-      const isContinuous = await this.pointRepository.isContinuous(
-        req.userId,
-        HandleDateTime.getYesterday,
-      );
+      const isContinuous = await this.pointRepository.isContinuous(req.userId);
 
       await this.pointRepository.createEarnedPointLog(
-        req.userId,
         req.id,
         setTaskPoints(taskType, isContinuous),
       );
