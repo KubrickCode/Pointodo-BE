@@ -28,7 +28,6 @@ import {
   ReqPutBadgeToUserAppDto,
   ResPutBadgeToUserAppDto,
 } from '@badge/domain/dto/putBadgeToUser.app.dto';
-import { BadgeProgressEntity } from '@badge/domain/entities/badgeProgress.entity';
 import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
@@ -112,7 +111,6 @@ export class BadgeService implements IBadgeService {
     await this.redisService.deleteKeysByPrefix(
       `userSpentPointsLogs:${req.userId}*`,
     );
-    await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
     await this.cacheService.deleteCache(`SPENTtotalPointPages:${req.userId}`);
 
     return { message: BUY_BADGE_SUCCESS_MESSAGE };
@@ -143,24 +141,7 @@ export class BadgeService implements IBadgeService {
   async getUserBadgeListWithName(
     req: ReqGetUserBadgeListWithNameAppDto,
   ): Promise<ResGetUserBadgeListWithNameAppDto[]> {
-    const cacheKey = `userBadgeListWithName:${req.userId}`;
-    const cachedBadgeListWithName = await this.cacheService.getFromCache<
-      ResGetUserBadgeListWithNameAppDto[]
-    >(cacheKey);
-    if (cachedBadgeListWithName) {
-      return cachedBadgeListWithName;
-    }
-
-    const result = await this.userBadgeRepository.getUserBadgeListWithName(
-      req.userId,
-    );
-
-    await this.cacheService.setCache(
-      cacheKey,
-      result,
-      cacheConfig(this.configService).cacheTTL,
-    );
-    return result;
+    return await this.userBadgeRepository.getUserBadgeListWithName(req.userId);
   }
 
   async changeSelectedBadge(
@@ -184,22 +165,7 @@ export class BadgeService implements IBadgeService {
   async getAllBadgeProgress(
     req: ReqGetAllBadgeProgressAppDto,
   ): Promise<ResGetAllBadgeProgressAppDto[]> {
-    const cacheKey = `userBadgeProgress:${req.userId}`;
-    const cachedBadgeProgress = await this.cacheService.getFromCache<
-      BadgeProgressEntity[]
-    >(cacheKey);
-    if (cachedBadgeProgress) {
-      return cachedBadgeProgress;
-    }
-    const result = await this.badgeProgressRepository.getAllBadgeProgress(
-      req.userId,
-    );
-    await this.cacheService.setCache(
-      cacheKey,
-      result,
-      cacheConfig(this.configService).cacheTTL,
-    );
-    return result;
+    return await this.badgeProgressRepository.getAllBadgeProgress(req.userId);
   }
 
   async getAllBadges(): Promise<BadgeEntity[]> {
@@ -238,7 +204,6 @@ export class BadgeService implements IBadgeService {
       throw new ConflictException(ALREADY_EXIST_USER_BADGE);
     }
     await this.cacheService.deleteCache(`userBadgeList:${userId}`);
-    await this.cacheService.deleteCache(`userBadgeListWithName:${userId}`);
     return { message: PUT_BADGE_SUCCESS_MESSAGE };
   }
 
@@ -250,10 +215,8 @@ export class BadgeService implements IBadgeService {
       throw new BadRequestException(CANT_DELETE_DEAFULT_BADGE);
     await this.cacheService.deleteCache(`userBadgeList:${userId}`);
     await this.cacheService.deleteCache(`user:${userId}`);
-    await this.cacheService.deleteCache(`userCurrentPoints:${userId}`);
     await this.cacheService.deleteCache(`SPENTtotalPointPages:${userId}`);
     await this.redisService.deleteKeysByPrefix(`userSpentPointsLogs:${userId}`);
-    await this.redisService.deleteKeysByPrefix(`userBadgeListWithName:*`);
     await this.userRepository.changeSelectedBadge(userId, DEFAULT_BADGE_ID);
     await this.userBadgeRepository.deleteUserBadge(badgeId, userId);
     return { message: DELETE_USER_BADGE_SUCCESS_MESSAGE };

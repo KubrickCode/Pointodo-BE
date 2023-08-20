@@ -161,7 +161,6 @@ export class AuthService implements IAuthService {
       throw new UnauthorizedException(AUTH_INVALID_TOKEN);
     }
     const user = await this.userRepository.findById(decoded.id);
-    await this.cacheService.deleteCache(`user:${user.id}`);
     const accessToken = this.tokenService.generateAccessToken(user);
     return { accessToken };
   }
