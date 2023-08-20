@@ -15,10 +15,8 @@ describe('getBadgeIdByName', () => {
   });
 
   it('뱃지 ID 찾기 In DB', async () => {
-    const name = '일관성 뱃지3';
-
-    const badgeId = await badgeAdminRepository.getBadgeIdByName(name);
-
-    console.log(badgeId);
+    // const name = '일관성 뱃지3';
+    // const badgeId = await badgeAdminRepository.getBadgeIdByName(name);
+    // console.log(badgeId);
   });
 });

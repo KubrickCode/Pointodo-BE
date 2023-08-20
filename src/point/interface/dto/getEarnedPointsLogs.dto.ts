@@ -7,7 +7,6 @@ import {
   POINT_PAGE,
 } from '@shared/constants/point.constant';
 import { TASK_NAME, TASK_TYPE_ID } from '@shared/constants/task.constant';
-import { USER_ID } from '@shared/constants/user.constant';
 import { Type } from 'class-transformer';
 import { IsDate, IsInt, IsString } from 'class-validator';
 
@@ -26,10 +25,6 @@ export class ResGetEarnedPointsLogsDto {
   @ApiProperty({ description: POINT_LOG_ID })
   @IsInt()
   readonly id: number;
-
-  @ApiProperty({ description: USER_ID })
-  @IsString()
-  readonly userId: string;
 
   @ApiProperty({ description: TASK_TYPE_ID })
   @IsInt()

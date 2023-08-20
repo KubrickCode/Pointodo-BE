@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BADGE_ID, BADGE_NAME } from '@shared/constants/badge.constant';
+import { BADGE_LOG_ID, BADGE_NAME } from '@shared/constants/badge.constant';
 import { ORDER_BY } from '@shared/constants/global.constant';
 import {
   POINTS,
@@ -7,7 +7,6 @@ import {
   POINT_LOG_OCCURRED_AT,
   POINT_PAGE,
 } from '@shared/constants/point.constant';
-import { USER_ID } from '@shared/constants/user.constant';
 import { Type } from 'class-transformer';
 import { IsDate, IsInt, IsString } from 'class-validator';
 
@@ -27,13 +26,9 @@ export class ResGetSpentPointsLogsDto {
   @IsInt()
   readonly id: number;
 
-  @ApiProperty({ description: USER_ID })
-  @IsString()
-  readonly userId: string;
-
-  @ApiProperty({ description: BADGE_ID })
+  @ApiProperty({ description: BADGE_LOG_ID })
   @IsInt()
-  readonly badgeId: number;
+  readonly badgeLogId: number;
 
   @ApiProperty({ description: POINTS })
   @IsInt()

@@ -104,7 +104,7 @@ export class TaskRepository implements ITaskRepository {
 
     if (dueDate) {
       await this.prisma.tasksDueDate.update({
-        where: { id },
+        where: { taskId: id },
         data: { dueDate },
       });
     }
@@ -124,7 +124,7 @@ export class TaskRepository implements ITaskRepository {
     return this.prisma.tasksLogs.update({
       where: { id },
       data: {
-        completion: isRollback ? { increment: 1 } : { decrement: 1 },
+        completion: isRollback ? { decrement: 1 } : { increment: 1 },
       },
     });
   }

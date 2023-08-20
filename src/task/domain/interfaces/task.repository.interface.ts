@@ -33,10 +33,14 @@ export interface ITaskRepository {
   ): Promise<TaskEntity>;
 
   deleteTask(id: number): Promise<TaskEntity>;
+
   deleteTaskDueDate(taskId: number): Promise<TasksDueDateEntity>;
 
   completeTask(id: number, isRollback?: boolean): Promise<TaskEntity>;
+
   cancleTaskCompletion(id: number): Promise<TaskEntity>;
+
   resetDailyTask(): Promise<void>;
+
   lockTask(id: number): Promise<void>;
 }

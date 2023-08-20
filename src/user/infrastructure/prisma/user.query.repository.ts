@@ -14,7 +14,7 @@ export class UserRepository implements IUserRepository {
     const query = `
     SELECT u.*, b."iconLink"
     FROM "User" u
-    LEFT JOIN "Badge" b ON u."selectedBadge" = b.id
+    LEFT JOIN "Badge" b ON u."selectedBadgeId" = b.id
     WHERE u.id = $1::uuid;
     `;
     const result = await this.prisma.$queryRawUnsafe<User>(query, id);

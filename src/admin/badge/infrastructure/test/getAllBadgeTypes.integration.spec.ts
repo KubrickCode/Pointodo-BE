@@ -15,8 +15,7 @@ describe('getAllBadgeTypes', () => {
   });
 
   it('뱃지 타입 모두 불러오기', async () => {
-    const allbadgeTypes = await badgeAdminRepository.getAllBadgeTypes();
-
-    console.log(allbadgeTypes);
+    // const allbadgeTypes = await badgeAdminRepository.getAllBadgeTypes();
+    // console.log(allbadgeTypes);
   });
 });

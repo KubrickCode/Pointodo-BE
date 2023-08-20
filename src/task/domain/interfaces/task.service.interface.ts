@@ -29,13 +29,19 @@ import {
 
 export interface ITaskService {
   getTasksLogs(req: ReqGetTasksLogsAppDto): Promise<ResGetTasksLogsAppDto[]>;
+
   getTotalTaskPages(
     req: ReqGetTotalTaskPagesAppDto,
   ): Promise<ResGetTotalTaskPagesAppDto>;
+
   createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto>;
+
   updateTask(req: ReqUpdateTaskAppDto): Promise<ResUpdateTaskAppDto>;
+
   deleteTask(req: ReqDeleteTaskAppDto): Promise<ResDeleteTaskAppDto>;
+
   completeTask(req: ReqCompleteTaskAppDto): Promise<ResCompleteTaskAppDto>;
+
   cancleTaskCompletion(
     req: ReqCancleTaskCompletionAppDto,
   ): Promise<ResCancleTaskCompletionAppDto>;

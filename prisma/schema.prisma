@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   id                  String                @id @default(uuid()) @db.Uuid 
-  selectedBadgeId       Int                   @default(1)
+  selectedBadgeId     Int                   @default(1)
   email               String                @unique @db.VarChar(255)
   password            String?               @db.VarChar(255)
   provider            Provider              @default(LOCAL)
@@ -18,42 +18,41 @@ model User {
 
   userBadgeLog        UserBadgesLogs[]
   badgeProgress       BadgeProgress[]
-  earnedPointsLogs    EarnedPointsLogs[]
-  spentPointsLogs     SpentPointsLogs[]
   taskLogs            TasksLogs[]
 
-  selectedBadge     Badge            @relation(fields: [selectedBadgeId], references: [id])
+  selectedBadge       Badge            @relation(fields: [selectedBadgeId], references: [id])
 
   @@index([provider])
+  @@index([createdAt])
 }
 
 model Badge {
-  id                Int               @id @default(autoincrement())
-  name              String            @unique @db.VarChar(20)
-  description       String            @db.VarChar(100)
-  price             Int?              @db.Integer               
-  iconLink          String            @db.VarChar(1000)
+  id                Int                 @id @default(autoincrement())
+  name              String              @unique @db.VarChar(20)
+  description       String              @db.VarChar(100) @default("뱃지 설명")
+  price             Int?                @db.Integer    
+  iconLink          String              @db.VarChar(1000) @default("뱃지 아이콘 링크")
   type              BadgeType
   
   user              User[]
   userBadgeLog      UserBadgesLogs[]
   badgeProgress     BadgeProgress[]
-  spentPointLog     SpentPointsLogs[]
 
   @@index([type])
 }
 
 model UserBadgesLogs {
-  id                Int           @id @default(autoincrement())
-  userId            String        @db.Uuid
-  badgeId           Int           
-  earnedAt          DateTime      @default(now())
+  id                  Int           @id @default(autoincrement())
+  userId              String        @db.Uuid
+  badgeId             Int           
+  earnedAt            DateTime      @default(now())
 
-  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  badge             Badge         @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge               Badge         @relation(fields: [badgeId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
-  @@unique([badgeId,userId])
+  spentPointsLogs     SpentPointsLogs[]
+
+  @@unique([userId, badgeId])
 }
 
 model BadgeProgress {
@@ -71,35 +70,32 @@ model BadgeProgress {
 
 model EarnedPointsLogs {
   id             Int              @id @default(autoincrement())
-  userId         String           @db.Uuid      
   taskId         Int
-  points         Int              @db.Integer  
+  points         Int              @db.Integer 
   occurredAt     DateTime         @default(now())
 
-  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   taskLog        TasksLogs        @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
-  @@index([userId, occurredAt])
+  @@index([taskId])
+  @@index([occurredAt])
 }
 
 model SpentPointsLogs {
-  id                Int            @id @default(autoincrement())
-  userId            String         @db.Uuid      
-  badgeId           Int
-  points            Int            @db.Integer  
-  occurredAt        DateTime       @default(now())
+  id                Int               @id @default(autoincrement())
+  badgeLogId        Int               @unique
+  points            Int               @db.Integer  
+  occurredAt        DateTime          @default(now())
 
-  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  badge             Badge          @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  badgeLog          UserBadgesLogs    @relation(fields: [badgeLogId], references: [id], onDelete: Cascade)
 
-  @@index([userId, occurredAt])
+  @@index([occurredAt])
 }
 
 model TasksLogs {
   id                Int           @id @default(autoincrement())
   userId            String        @db.Uuid
   taskType          TaskType      @default(DAILY)
-  name              String        @db.VarChar(20)
+  name              String        @db.VarChar(20) @default("작업 이름")
   description       String?       @db.VarChar(500)
   completion        Int           @db.SmallInt @default(0)
   importance        Int           @db.SmallInt @default(3)
@@ -117,7 +113,7 @@ model TasksLogs {
 model TasksDueDate {
   id            Int           @id @default(autoincrement())
   taskId        Int           @unique
-  dueDate       String        @db.VarChar(10)
+  dueDate       String        @db.VarChar(10) @default("2099-12-31")
 
   taskLog       TasksLogs     @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }

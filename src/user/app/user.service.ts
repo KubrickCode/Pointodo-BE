@@ -127,20 +127,9 @@ export class UserService implements IUserService {
     const user = await this.userRepository.deleteUser(req.id);
     await this.redisService.delete(`refresh_token:${req.id}`);
     await this.cacheService.deleteCache(`user:${req.id}`);
-    await this.cacheService.deleteCache(`userEarnedPointsLogs:${req.id}`);
     await this.cacheService.deleteCache(`userSpentPointsLogs:${req.id}`);
-    await this.cacheService.deleteCache(`userCurrentPoints:${req.id}`);
     await this.cacheService.deleteCache(`userBadgeList:${req.id}`);
-    await this.cacheService.deleteCache(`userBadgeProgress:${req.id}`);
-    await this.cacheService.deleteCache(`DAILYlogs:${req.id}`);
-    await this.cacheService.deleteCache(`DUElogs:${req.id}`);
-    await this.cacheService.deleteCache(`FREElogs:${req.id}`);
-    await this.cacheService.deleteCache(`userBadgeListWithName:${req.id}`);
-    await this.cacheService.deleteCache(`EARNEDtotalPointPages:${req.id}`);
     await this.cacheService.deleteCache(`SPENTtotalPointPages:${req.id}`);
-    await this.cacheService.deleteCache(`DAILYtotalTaskPages:${req.id}`);
-    await this.cacheService.deleteCache(`DUEtotalTaskPages:${req.id}`);
-    await this.cacheService.deleteCache(`FREEtotalTaskPages:${req.id}`);
     this.logger.log(
       'info',
       `회원 탈퇴 - 사용자 ID:${user.id}, 유저 이메일:${user.email}`,

@@ -9,6 +9,7 @@ import {
   SpentPointEntity,
   SpentPointWithBadgeName,
 } from '@point/domain/entities/spentPoint.entity';
+import { HandleDateTime } from '@shared/utils/handleDateTime';
 
 @Injectable()
 export class PointRepository implements IPointRepository {
@@ -21,10 +22,13 @@ export class PointRepository implements IPointRepository {
     order: string,
   ): Promise<EarnedPointWithTaskName[]> {
     const result = await this.prisma.earnedPointsLogs.findMany({
-      where: { userId },
+      where: {
+        taskLog: {
+          userId,
+        },
+      },
       select: {
         id: true,
-        userId: true,
         taskId: true,
         points: true,
         occurredAt: true,
@@ -43,7 +47,6 @@ export class PointRepository implements IPointRepository {
 
     return result.map((item) => ({
       id: item.id,
-      userId: item.userId,
       taskId: item.taskId,
       points: item.points,
       occurredAt: item.occurredAt,
@@ -58,16 +61,23 @@ export class PointRepository implements IPointRepository {
     order: string,
   ): Promise<SpentPointWithBadgeName[]> {
     const result = await this.prisma.spentPointsLogs.findMany({
-      where: { userId },
+      where: {
+        badgeLog: {
+          userId,
+        },
+      },
       select: {
         id: true,
-        userId: true,
-        badgeId: true,
+        badgeLogId: true,
         points: true,
         occurredAt: true,
-        badge: {
+        badgeLog: {
           select: {
-            name: true,
+            badge: {
+              select: {
+                name: true,
+              },
+            },
           },
         },
       },
@@ -80,11 +90,10 @@ export class PointRepository implements IPointRepository {
 
     return result.map((item) => ({
       id: item.id,
-      userId: item.userId,
-      badgeId: item.badgeId,
+      badgeLogId: item.badgeLogId,
       points: item.points,
       occurredAt: item.occurredAt,
-      badgeName: item.badge.name,
+      badgeName: item.badgeLog.badge.name,
     }));
   }
 
@@ -93,18 +102,29 @@ export class PointRepository implements IPointRepository {
     transactionType: 'EARNED' | 'SPENT',
   ): Promise<number> {
     if (transactionType === 'EARNED') {
-      return await this.prisma.earnedPointsLogs.count({ where: { userId } });
+      return await this.prisma.earnedPointsLogs.count({
+        where: {
+          taskLog: {
+            userId,
+          },
+        },
+      });
     }
     if (transactionType === 'SPENT') {
-      return await this.prisma.spentPointsLogs.count({ where: { userId } });
+      return await this.prisma.spentPointsLogs.count({
+        where: { badgeLog: { userId } },
+      });
     }
   }
 
-  async isContinuous(userId: string, yesterday: string): Promise<boolean> {
+  async isContinuous(userId: string): Promise<boolean> {
     const count = await this.prisma.earnedPointsLogs.count({
       where: {
-        userId: userId,
-        occurredAt: new Date(yesterday),
+        taskLog: { userId },
+        occurredAt: {
+          gte: new Date(HandleDateTime.getYesterday),
+          lt: new Date(HandleDateTime.getToday),
+        },
       },
     });
 
@@ -112,36 +132,32 @@ export class PointRepository implements IPointRepository {
   }
 
   async createEarnedPointLog(
-    userId: string,
     taskId: number,
     points: number,
   ): Promise<EarnedPointEntity> {
     return await this.prisma.earnedPointsLogs.create({
-      data: { userId, taskId, points },
+      data: { taskId, points },
     });
   }
 
   async createSpentPointLog(
-    userId: string,
-    badgeId: number,
+    badgeLogId: number,
     points: number,
   ): Promise<SpentPointEntity> {
     return await this.prisma.spentPointsLogs.create({
-      data: { userId, badgeId, points },
+      data: { points, badgeLogId },
     });
   }
 
   async countTasksPerDate(userId: string, date: string): Promise<number> {
-    const tasksCount = await this.prisma.earnedPointsLogs.count({
+    return await this.prisma.earnedPointsLogs.count({
       where: {
-        userId: userId,
+        taskLog: { userId },
         occurredAt: {
           gte: new Date(date),
         },
       },
     });
-
-    return tasksCount;
   }
 
   async calculateUserPoints(userId: string): Promise<number> {
@@ -150,7 +166,7 @@ export class PointRepository implements IPointRepository {
         points: true,
       },
       where: {
-        userId: userId,
+        taskLog: { userId },
       },
     });
 
@@ -159,7 +175,7 @@ export class PointRepository implements IPointRepository {
         points: true,
       },
       where: {
-        userId: userId,
+        badgeLog: { userId },
       },
     });
 

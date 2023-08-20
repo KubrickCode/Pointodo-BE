@@ -10,8 +10,6 @@ describe('createInitialBadgeTypes', () => {
   beforeAll(async () => {
     prisma = new PrismaService();
     badgeAdminRepository = new BadgeAdminRepository(prisma);
-    await prisma.user.deleteMany();
-    await prisma.badge.deleteMany();
   });
 
   afterAll(async () => {
