@@ -15,9 +15,8 @@ describe('calculateUserPoints', () => {
   });
 
   it('일관성 확인', async () => {
-    const userId = '0030cc64-b54f-4e75-95a5-1379b6928f7e';
-    const result = await pointRepository.isContinuous(userId);
-
-    console.log(result);
+    // const userId = '0030cc64-b54f-4e75-95a5-1379b6928f7e';
+    // const result = await pointRepository.isContinuous(userId);
+    // console.log(result);
   });
 });

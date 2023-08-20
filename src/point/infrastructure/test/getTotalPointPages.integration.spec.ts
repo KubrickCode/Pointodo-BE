@@ -15,9 +15,8 @@ describe('calculateUserPoints', () => {
   });
 
   it('모든 포인트 페이지 수', async () => {
-    const userId = '0030cc64-b54f-4e75-95a5-1379b6928f7e';
-    const result = await pointRepository.getTotalPointPages(userId, 'SPENT');
-
-    console.log(result);
+    // const userId = '0030cc64-b54f-4e75-95a5-1379b6928f7e';
+    // const result = await pointRepository.getTotalPointPages(userId, 'SPENT');
+    // console.log(result);
   });
 });

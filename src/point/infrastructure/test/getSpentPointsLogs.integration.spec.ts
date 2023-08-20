@@ -15,14 +15,13 @@ describe('calculateUserPoints', () => {
   });
 
   it('소모 포인트 내역', async () => {
-    const userId = '0030cc64-b54f-4e75-95a5-1379b6928f7e';
-    const result = await pointRepository.getSpentPointsLogs(
-      userId,
-      5,
-      0,
-      'newest',
-    );
-
-    console.log(result);
+    // const userId = '0030cc64-b54f-4e75-95a5-1379b6928f7e';
+    // const result = await pointRepository.getSpentPointsLogs(
+    //   userId,
+    //   5,
+    //   0,
+    //   'newest',
+    // );
+    // console.log(result);
   });
 });

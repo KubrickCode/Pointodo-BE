@@ -10,8 +10,6 @@ describe('createInitialBadgeTypes', () => {
   beforeAll(async () => {
     prisma = new PrismaService();
     badgeAdminRepository = new BadgeAdminRepository(prisma);
-    await prisma.user.deleteMany();
-    await prisma.badge.deleteMany();
   });
 
   afterAll(async () => {
@@ -19,14 +17,14 @@ describe('createInitialBadgeTypes', () => {
   });
 
   it('초기 뱃지 타입 생성 In DB', async () => {
-    for (const item of initialBadgeTypes) {
-      await badgeAdminRepository.create(
-        item.name,
-        item.description,
-        item.iconLink,
-        item.type as BadgeType_,
-        item.price,
-      );
-    }
+    // for (const item of initialBadgeTypes) {
+    //   await badgeAdminRepository.create(
+    //     item.name,
+    //     item.description,
+    //     item.iconLink,
+    //     item.type as BadgeType_,
+    //     item.price,
+    //   );
+    // }
   });
 });

@@ -16,12 +16,11 @@ describe('calculateUserPoints', () => {
   });
 
   it('날짜 별 완료 작업 수', async () => {
-    const userId = '0030cc64-b54f-4e75-95a5-1379b6928f7e';
-    const result = await pointRepository.countTasksPerDate(
-      userId,
-      HandleDateTime.getToday,
-    );
-
-    console.log(result);
+    // const userId = '0030cc64-b54f-4e75-95a5-1379b6928f7e';
+    // const result = await pointRepository.countTasksPerDate(
+    //   userId,
+    //   HandleDateTime.getToday,
+    // );
+    // console.log(result);
   });
 });

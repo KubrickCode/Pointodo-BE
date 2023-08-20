@@ -8,13 +8,11 @@ import { PrismaService } from '@shared/service/prisma.service';
 import { REGISTER_SUCCESS_MESSAGE } from '@shared/messages/user/user.messages';
 import { USER_ALREADY_EXIST } from '@shared/messages/user/user.errors';
 import { userServiceTestModuleOptions } from './userService.test.option';
-import { INestApplication } from '@nestjs/common';
 
 describe('register', () => {
   let userService: UserService;
   let prismaService: PrismaService;
   let module: TestingModule;
-  let app: INestApplication;
 
   beforeAll(async () => {
     module = await Test.createTestingModule(
@@ -23,14 +21,12 @@ describe('register', () => {
 
     userService = module.get<UserService>(UserService);
     prismaService = module.get<PrismaService>(PrismaService);
-    app = module.createNestApplication();
 
-    await app.init();
+    await module.init();
   });
 
   afterAll(async () => {
-    await prismaService.$disconnect();
-    await app.close();
+    await module.close();
   });
 
   const request: ReqRegisterAppDto = {
@@ -54,7 +50,6 @@ describe('register', () => {
       expect(error.response.statusCode).toEqual(409);
       expect(error.response.message).toEqual(USER_ALREADY_EXIST);
       await prismaService.user.delete({ where: { email: request.email } });
-      await prismaService.$disconnect();
     }
   });
 });
