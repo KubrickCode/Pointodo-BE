@@ -35,29 +35,12 @@ export class PointService implements IPointService {
   async getEarnedPointsLogs(
     req: ReqGetEarnedPointsLogsAppDto,
   ): Promise<ResGetEarnedPointsLogsAppDto[]> {
-    const { userId, order, page } = req;
-    const cacheKey = `userEarnedPointsLogs:${userId}-page:${page}&order:${order}`;
-    const cachedPointsLogs = await this.cacheService.getFromCache<
-      ResGetEarnedPointsLogsAppDto[]
-    >(cacheKey);
-    if (cachedPointsLogs) {
-      return cachedPointsLogs;
-    }
-
-    const result = await this.pointRepository.getEarnedPointsLogs(
-      userId,
+    return await this.pointRepository.getEarnedPointsLogs(
+      req.userId,
       GET_POINTS_LOGS_LIMIT,
-      (page - 1) * GET_POINTS_LOGS_LIMIT,
-      order,
+      (req.page - 1) * GET_POINTS_LOGS_LIMIT,
+      req.order,
     );
-
-    await this.cacheService.setCache(
-      cacheKey,
-      result,
-      cacheConfig(this.configService).cacheTTL,
-    );
-
-    return result;
   }
 
   async getSpentPointsLogs(
@@ -92,45 +75,37 @@ export class PointService implements IPointService {
     req: ReqGetTotalPointPagesAppDto,
   ): Promise<ResGetTotalPointPagesAppDto> {
     const { userId, transactionType } = req;
-    const cacheKey = `${transactionType}totalPointPages:${userId}`;
-    const cachedtotalPointPages = await this.cacheService.getFromCache<number>(
-      cacheKey,
-    );
-    if (cachedtotalPointPages) {
-      return { totalPages: cachedtotalPointPages };
+    const cacheKey = `SPENTtotalPointPages:${userId}`;
+
+    if (transactionType === 'SPENT') {
+      const cachedtotalPointPages =
+        await this.cacheService.getFromCache<number>(cacheKey);
+      if (cachedtotalPointPages) {
+        return { totalPages: cachedtotalPointPages };
+      }
     }
+
     const totalPointsLogs = await this.pointRepository.getTotalPointPages(
       userId,
       transactionType,
     );
     const totalPages = Math.ceil(totalPointsLogs / GET_POINTS_LOGS_LIMIT);
 
-    await this.cacheService.setCache(
-      cacheKey,
-      totalPages,
-      cacheConfig(this.configService).cacheTTL,
-    );
+    if (transactionType === 'SPENT') {
+      await this.cacheService.setCache(
+        cacheKey,
+        totalPages,
+        cacheConfig(this.configService).cacheTTL,
+      );
+    }
+
     return { totalPages };
   }
 
   async getCurrentPoints(
     req: ReqGetCurrentPointsAppDto,
   ): Promise<ResGetCurrentPointsAppDto> {
-    const cacheKey = `userCurrentPoints:${req.userId}`;
-    const cachedCurrentPoints = await this.cacheService.getFromCache<number>(
-      cacheKey,
-    );
-    if (cachedCurrentPoints) {
-      return { points: cachedCurrentPoints };
-    }
-
     const points = await this.pointRepository.calculateUserPoints(req.userId);
-
-    await this.cacheService.setCache(
-      cacheKey,
-      points,
-      cacheConfig(this.configService).cacheTTL,
-    );
 
     return { points };
   }

@@ -113,6 +113,9 @@ export class AuthService implements IAuthService {
     req: ReqCheckPasswordAppDto,
   ): Promise<ResCheckPasswordAppDto> {
     const userPassword = await this.userRepository.findPasswordById(req.id);
+    if (userPassword === null) {
+      throw new ConflictException(USER_EXIST_WITH_SOCIAL);
+    }
     const isCorrectPassword = await PasswordHasher.comparePassword(
       req.password,
       userPassword,
@@ -136,6 +139,7 @@ export class AuthService implements IAuthService {
 
   async logout(req: ReqLogoutAppDto): Promise<ResLogoutAppDto> {
     await this.redisService.delete(`refresh_token:${req.id}`);
+    await this.cacheService.deleteCache(`user:${req.id}`);
     return { message: LOGOUT_SUCCESS_MESSAGE };
   }
 
@@ -157,7 +161,6 @@ export class AuthService implements IAuthService {
       throw new UnauthorizedException(AUTH_INVALID_TOKEN);
     }
     const user = await this.userRepository.findById(decoded.id);
-    await this.cacheService.deleteCache(`user:${user.id}`);
     const accessToken = this.tokenService.generateAccessToken(user);
     return { accessToken };
   }

@@ -48,16 +48,12 @@ import {
 } from '@shared/messages/task/task.errors';
 import { GET_TASK_LIMIT, IS_COMPLETED } from '@shared/constants/task.constant';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
-import { ConfigService } from '@nestjs/config';
-import { TaskEntity } from '@task/domain/entities/task.entity';
-import { cacheConfig } from '@shared/config/cache.config';
 import {
   ReqCancleTaskCompletionAppDto,
   ResCancleTaskCompletionAppDto,
 } from '@task/domain/dto/cancleTaskCompletion.app.dto';
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 import {
   ReqGetTotalTaskPagesAppDto,
   ResGetTotalTaskPagesAppDto,
@@ -78,67 +74,29 @@ export class TaskService implements ITaskService {
     private readonly userBadgeRepository: IUserBadgeRepository,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
-    @Inject('IRedisService')
-    private readonly redisService: IRedisService,
-    private readonly configService: ConfigService,
   ) {}
 
   async getTasksLogs(
     req: ReqGetTasksLogsAppDto,
   ): Promise<ResGetTasksLogsAppDto[]> {
-    const { userId, taskType, page, order } = req;
-
-    const cacheKey = `${taskType}logs:${userId}-page:${page}&order:${order}`;
-    const cachedTasksLogs = await this.cacheService.getFromCache<TaskEntity[]>(
-      cacheKey,
-    );
-    if (cachedTasksLogs) {
-      return cachedTasksLogs;
-    }
-
-    const result = await this.taskRepository.getTasksLogs(
-      userId,
-      taskType,
+    return await this.taskRepository.getTasksLogs(
+      req.userId,
+      req.taskType,
       GET_TASK_LIMIT,
-      (page - 1) * GET_TASK_LIMIT,
-      order,
+      (req.page - 1) * GET_TASK_LIMIT,
+      req.order,
     );
-
-    await this.cacheService.setCache(
-      cacheKey,
-      result,
-      cacheConfig(this.configService).cacheTTL,
-    );
-
-    return result;
   }
 
   async getTotalTaskPages(
     req: ReqGetTotalTaskPagesAppDto,
   ): Promise<ResGetTotalTaskPagesAppDto> {
-    const { userId, taskType } = req;
-
-    const cacheKey = `${taskType}totalTaskPages:${userId}`;
-    const cachedtotalTaskPages =
-      await this.cacheService.getFromCache<ResGetTotalTaskPagesAppDto>(
-        cacheKey,
-      );
-    if (cachedtotalTaskPages) {
-      return cachedtotalTaskPages;
-    }
-
     const totalTasks = await this.taskRepository.getTotalTaskPages(
-      userId,
-      taskType,
+      req.userId,
+      req.taskType,
     );
 
     const totalPages = Math.ceil(totalTasks / GET_TASK_LIMIT);
-
-    await this.cacheService.setCache(
-      cacheKey,
-      totalPages,
-      cacheConfig(this.configService).cacheTTL,
-    );
 
     return { totalPages };
   }
@@ -159,37 +117,23 @@ export class TaskService implements ITaskService {
       await this.taskRepository.createTaskDueDate(createdTask.id, dueDate);
     }
 
-    await this.cacheService.deleteCache(`${taskType}totalTaskPages:${userId}`);
-    await this.redisService.deleteKeysByPrefix(`${taskType}logs:${userId}*`);
-
     return { message: CREATE_TASK_SUCCESS_MESSAGE };
   }
 
   async updateTask(req: ReqUpdateTaskAppDto): Promise<ResUpdateTaskAppDto> {
-    const { id, name, description, importance, dueDate } = req;
-    const result = await this.taskRepository.updateTask(
-      id,
-      name,
-      description,
-      importance,
-      dueDate,
-    );
-
-    await this.redisService.deleteKeysByPrefix(
-      `${result.taskType}logs:${result.userId}*`,
+    await this.taskRepository.updateTask(
+      req.id,
+      req.name,
+      req.description,
+      req.importance,
+      req.dueDate,
     );
 
     return { message: UPDATE_TASK_SUCCESS_MESSAGE };
   }
 
   async deleteTask(req: ReqDeleteTaskAppDto): Promise<ResDeleteTaskAppDto> {
-    const result = await this.taskRepository.deleteTask(req.id);
-    await this.redisService.deleteKeysByPrefix(
-      `${result.taskType}logs:${result.userId}*`,
-    );
-    await this.cacheService.deleteCache(
-      `${result.taskType}totalTaskPages:${result.userId}`,
-    );
+    await this.taskRepository.deleteTask(req.id);
     return { message: DELETE_TASK_SUCCESS_MESSAGE };
   }
 
@@ -200,16 +144,7 @@ export class TaskService implements ITaskService {
       const { taskType, completion, version } =
         await this.taskRepository.completeTask(req.id);
 
-      await this.cacheService.deleteCache(`userBadgeProgress:${req.userId}`);
       await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
-      await this.cacheService.deleteCache(`userCurrentPoints:${req.userId}`);
-      await this.cacheService.deleteCache(`userEarnedPointsLogs:${req.userId}`);
-      await this.redisService.deleteKeysByPrefix(
-        `userEarnedPointsLogs:${req.userId}*`,
-      );
-      await this.redisService.deleteKeysByPrefix(
-        `${taskType}logs:${req.userId}*`,
-      );
 
       if (completion !== IS_COMPLETED) {
         await this.taskRepository.completeTask(req.id, true); // 롤백
@@ -218,13 +153,9 @@ export class TaskService implements ITaskService {
 
       if (version === 1) return { message: COMPLETE_TASK_SUCCESS_MESSAGE };
 
-      const isContinuous = await this.pointRepository.isContinuous(
-        req.userId,
-        HandleDateTime.getYesterday,
-      );
+      const isContinuous = await this.pointRepository.isContinuous(req.userId);
 
       await this.pointRepository.createEarnedPointLog(
-        req.userId,
         req.id,
         setTaskPoints(taskType, isContinuous),
       );
@@ -312,18 +243,12 @@ export class TaskService implements ITaskService {
   async cancleTaskCompletion(
     req: ReqCancleTaskCompletionAppDto,
   ): Promise<ResCancleTaskCompletionAppDto> {
-    const cancledTaskLog = await this.taskRepository.cancleTaskCompletion(
-      req.id,
-    );
-    await this.redisService.deleteKeysByPrefix(
-      `${cancledTaskLog.taskType}logs:${cancledTaskLog.userId}*`,
-    );
+    await this.taskRepository.cancleTaskCompletion(req.id);
     return { message: CANCLE_TASK_COMPLETION_SUCCESS_MESSAGE };
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async resetDailyTask() {
-    await this.redisService.deleteKeysByPrefix('DAILYlogs*');
     await this.taskRepository.resetDailyTask();
   }
 }

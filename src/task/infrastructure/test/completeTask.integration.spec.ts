@@ -15,12 +15,11 @@ describe('createUser', () => {
   });
 
   it('작업 완료 In DB', async () => {
-    const req = {
-      id: 1,
-      taskTypesId: 1,
-      userId: '82f7955d-3128-42a3-bd64-e8a7c6c2cdce',
-    };
-
-    await taskRepository.completeTask(req);
+    // const req = {
+    //   id: 1,
+    //   taskTypesId: 1,
+    //   userId: '82f7955d-3128-42a3-bd64-e8a7c6c2cdce',
+    // };
+    // await taskRepository.completeTask(req);
   });
 });

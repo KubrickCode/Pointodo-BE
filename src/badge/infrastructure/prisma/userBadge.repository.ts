@@ -54,7 +54,7 @@ export class UserBadgeRepository implements IUserBadgeRepository {
     userId: string,
   ): Promise<UserBadgeEntity> {
     return await this.prisma.userBadgesLogs.delete({
-      where: { badgeId_userId: { badgeId, userId } },
+      where: { userId_badgeId: { userId, badgeId } },
     });
   }
 }
