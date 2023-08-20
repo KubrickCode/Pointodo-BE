@@ -49,6 +49,8 @@ RUN yarn prisma generate
 
 RUN yarn build
 
+RUN yarn test
+
 EXPOSE 3000
 
 CMD ["pm2-runtime", "start", "dist/main.js"]
