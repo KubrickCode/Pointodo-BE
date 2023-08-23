@@ -34,8 +34,7 @@ export class ReqCreateBadgeDto {
   @ApiProperty({ description: BADGE_PRICE })
   @ApiPropertyOptional()
   @IsOptional()
-  @IsInt()
-  readonly price?: number;
+  readonly price?: number | null;
 }
 
 export class ResCreateBadgeDto {

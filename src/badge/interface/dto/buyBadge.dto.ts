@@ -6,10 +6,12 @@ import {
   BUY_BADGE_LESS_POINTS,
 } from '@shared/messages/badge/badge.errors';
 import { BUY_BADGE_SUCCESS_MESSAGE } from '@shared/messages/badge/badge.messages';
+import { Type } from 'class-transformer';
 import { IsArray, IsInt, IsString } from 'class-validator';
 
 export class ReqBuyBadgeDto {
   @ApiProperty({ description: BADGE_ID })
+  @Type(() => Number)
   @IsInt()
   readonly badgeId: number;
 }

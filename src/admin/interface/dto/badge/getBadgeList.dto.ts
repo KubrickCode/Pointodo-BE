@@ -46,5 +46,5 @@ export class ResGetBadgeListDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()
-  readonly price?: number;
+  readonly price?: number | null;
 }

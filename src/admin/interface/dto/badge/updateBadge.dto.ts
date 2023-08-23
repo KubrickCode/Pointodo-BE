@@ -23,25 +23,25 @@ export class ReqUpdateBadgeDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  readonly name?: string;
+  readonly name?: string | null;
 
   @ApiProperty({ description: BADGE_DESC })
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  readonly description?: string;
+  readonly description?: string | null;
 
   @ApiProperty({ description: BADGE_ICON_LINK })
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  readonly iconLink?: string;
+  readonly iconLink?: string | null;
 
   @ApiProperty({ description: BADGE_PRICE })
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()
-  readonly price?: number;
+  readonly price?: number | null;
 }
 
 export class ResUpdateBadgeDto {

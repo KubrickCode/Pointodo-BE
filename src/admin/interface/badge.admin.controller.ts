@@ -81,6 +81,7 @@ export class BadgeAdminController {
   async createBadge(
     @Body() body: ReqCreateBadgeDto,
   ): Promise<ResCreateBadgeDto> {
+    console.log(body);
     return await this.badgeAdminService.createBadge(body);
   }
 
