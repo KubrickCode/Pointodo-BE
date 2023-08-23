@@ -1,6 +1,6 @@
 import { BadgeType_ } from '../entities/badge.entity';
 
-export class ReqCreateBadgeAppDto {
+export class ReqAdminCreateBadgeAppDto {
   readonly name: string;
   readonly description: string;
   readonly iconLink: string;
@@ -8,6 +8,6 @@ export class ReqCreateBadgeAppDto {
   readonly price?: number;
 }
 
-export class ResCreateBadgeAppDto {
+export class ResAdminCreateBadgeAppDto {
   readonly message: string;
 }

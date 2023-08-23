@@ -22,7 +22,7 @@ import {
 import { Transform, Type } from 'class-transformer';
 import { IsDate, IsEnum, IsInt, IsString } from 'class-validator';
 
-export class ReqGetUserListQueryDto {
+export class ReqAdminGetUserListQueryDto {
   @ApiProperty({ description: USER_LIST_PAGE })
   @Type(() => Number)
   @IsInt()
@@ -38,7 +38,7 @@ export class ReqGetUserListQueryDto {
   readonly provider: ProviderType | 'ALL';
 }
 
-export class ResGetUserListDto {
+export class ResAdminGetUserListDto {
   @ApiProperty({ description: USER_ID })
   @IsString()
   readonly id: string;

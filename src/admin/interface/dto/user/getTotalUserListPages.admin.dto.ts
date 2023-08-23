@@ -8,14 +8,14 @@ import {
 } from '@user/domain/entities/user.entity';
 import { Transform } from 'class-transformer';
 
-export class ReqGetTotalUserListPagesParamDto {
+export class ReqAdminGetTotalUserListPagesParamDto {
   @ApiProperty({ description: USER_PROVIDER })
   @IsEnum(ProviderTypesWithAll)
   @Transform(({ value }) => value.toUpperCase())
   readonly provider: ProviderType | 'ALL';
 }
 
-export class ResGetTotalUserListPagesDto {
+export class ResAdminGetTotalUserListPagesDto {
   @ApiProperty({ description: TOTAL_PAGE })
   @IsInt()
   readonly totalPages: number;

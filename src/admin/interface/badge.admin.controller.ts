@@ -26,22 +26,22 @@ import {
 import { AdminAuthGuard } from '@auth/infrastructure/passport/guards/admin.guard';
 import { IBadgeAdminService } from '@admin/badge/domain/interfaces/badge.admin.service.interface';
 import {
-  ReqCreateBadgeDto,
-  ResCreateBadgeDto,
-} from '@admin/interface/dto/badge/createBadge.dto';
+  ReqAdminCreateBadgeDto,
+  ResAdminCreateBadgeDto,
+} from '@admin/interface/dto/badge/createBadge.admin.dto';
 import {
-  ReqUpdateBadgeDto,
-  ReqUpdateBadgeParamDto,
-  ResUpdateBadgeDto,
-} from '@admin/interface/dto/badge/updateBadge.dto';
+  ReqAdminUpdateBadgeDto,
+  ReqAdminUpdateBadgeParamDto,
+  ResAdminUpdateBadgeDto,
+} from '@admin/interface/dto/badge/updateBadge.admin.dto';
 import {
-  ReqDeleteBadgeParamDto,
-  ResDeleteBadgeDto,
-} from '@admin/interface/dto/badge/deleteBadge.dto';
+  ReqAdminDeleteBadgeParamDto,
+  ResAdminDeleteBadgeDto,
+} from '@admin/interface/dto/badge/deleteBadge.admin.dto';
 import {
-  ReqGetBadgeListParamDto,
-  ResGetBadgeListDto,
-} from '@admin/interface/dto/badge/getBadgeList.dto';
+  ReqAdminGetBadgeListParamDto,
+  ResAdminGetBadgeListDto,
+} from '@admin/interface/dto/badge/getBadgeList.admin.dto';
 import { globalDocs } from '@shared/docs/global.docs';
 import { getBadgeListDocs } from '@admin/interface/docs/badge/getAllBadges.admin.docs';
 import { createBadgeDocs } from '@admin/interface/docs/badge/createBadge.admin.docs';
@@ -67,8 +67,8 @@ export class BadgeAdminController {
   @ApiOperation(getBadgeListDocs.operation)
   @ApiOkResponse(getBadgeListDocs.okResponse)
   async getBadgeList(
-    @Param() param: ReqGetBadgeListParamDto,
-  ): Promise<ResGetBadgeListDto[]> {
+    @Param() param: ReqAdminGetBadgeListParamDto,
+  ): Promise<ResAdminGetBadgeListDto[]> {
     return await this.badgeAdminService.getBadgeList({ type: param.type });
   }
 
@@ -79,9 +79,8 @@ export class BadgeAdminController {
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   @ApiConflictResponse(createBadgeDocs.conflict)
   async createBadge(
-    @Body() body: ReqCreateBadgeDto,
-  ): Promise<ResCreateBadgeDto> {
-    console.log(body);
+    @Body() body: ReqAdminCreateBadgeDto,
+  ): Promise<ResAdminCreateBadgeDto> {
     return await this.badgeAdminService.createBadge(body);
   }
 
@@ -92,9 +91,9 @@ export class BadgeAdminController {
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   @ApiConflictResponse(updateBadgeDocs.conflict)
   async updateBadge(
-    @Body() body: ReqUpdateBadgeDto,
-    @Param() param: ReqUpdateBadgeParamDto,
-  ): Promise<ResUpdateBadgeDto> {
+    @Body() body: ReqAdminUpdateBadgeDto,
+    @Param() param: ReqAdminUpdateBadgeParamDto,
+  ): Promise<ResAdminUpdateBadgeDto> {
     return await this.badgeAdminService.updateBadge({
       ...body,
       id: param.id,
@@ -106,8 +105,8 @@ export class BadgeAdminController {
   @ApiOperation(deleteBadgeDocs.operation)
   @ApiOkResponse(deleteBadgeDocs.okResponse)
   async deleteBadge(
-    @Param() param: ReqDeleteBadgeParamDto,
-  ): Promise<ResDeleteBadgeDto> {
+    @Param() param: ReqAdminDeleteBadgeParamDto,
+  ): Promise<ResAdminDeleteBadgeDto> {
     return await this.badgeAdminService.deleteBadge({ id: param.id });
   }
 

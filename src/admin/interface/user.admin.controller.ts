@@ -21,25 +21,27 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import {
-  ReqGetUserListQueryDto,
-  ResGetUserListDto,
-} from './dto/user/getUserList.dto';
+  ReqAdminGetUserListQueryDto,
+  ResAdminGetUserListDto,
+} from './dto/user/getUserList.admin.dto';
 import { IUserService } from '@user/domain/interfaces/user.service.interface';
 import {
-  ReqGetTotalUserListPagesParamDto,
-  ResGetTotalUserListPagesDto,
-} from './dto/user/getTotalUserListPages.dto';
-import { ResGetUserBadgeListDto } from '@badge/interface/dto/getUserBadgeList.dto';
-import { ReqGetUserBadgeListParamDto } from './dto/user/getUserBadgeList.dto';
+  ReqAdminGetTotalUserListPagesParamDto,
+  ResAdminGetTotalUserListPagesDto,
+} from './dto/user/getTotalUserListPages.admin.dto';
+import {
+  ResAdminGetUserBadgeListDto,
+  ReqAdminGetUserBadgeListParamDto,
+} from './dto/user/getUserBadgeList.admin.dto';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import {
-  ReqPutBadgeToUserDto,
-  ResPutBadgeToUserDto,
-} from './dto/user/putBadgeToUser.dto';
+  ReqAdminPutBadgeToUserDto,
+  ResAdminPutBadgeToUserDto,
+} from './dto/user/putBadgeToUser.admin.dto';
 import {
-  ReqDeleteUserBadgeQueryDto,
-  ResDeleteUserBadgeDto,
-} from './dto/user/deleteUserBadge.dto';
+  ReqAdminDeleteUserBadgeQueryDto,
+  ResAdminDeleteUserBadgeDto,
+} from './dto/user/deleteUserBadge.admin.dto';
 
 @ApiTags('Admin - User')
 @ApiBearerAuth()
@@ -58,8 +60,8 @@ export class UserAdminController {
   @Get('/list')
   @HttpCode(200)
   async getUserList(
-    @Query() query: ReqGetUserListQueryDto,
-  ): Promise<ResGetUserListDto[]> {
+    @Query() query: ReqAdminGetUserListQueryDto,
+  ): Promise<ResAdminGetUserListDto[]> {
     const { page, order, provider } = query;
     return await this.userService.getUserList({ order, page, provider });
   }
@@ -67,8 +69,8 @@ export class UserAdminController {
   @Get('/count/:provider')
   @HttpCode(200)
   async getTotalUserListPages(
-    @Param() param: ReqGetTotalUserListPagesParamDto,
-  ): Promise<ResGetTotalUserListPagesDto> {
+    @Param() param: ReqAdminGetTotalUserListPagesParamDto,
+  ): Promise<ResAdminGetTotalUserListPagesDto> {
     const { provider } = param;
     return await this.userService.getTotalUserListPages({ provider });
   }
@@ -76,8 +78,8 @@ export class UserAdminController {
   @Get('/badge/list/:id')
   @HttpCode(200)
   async getUserBadgeList(
-    @Param() param: ReqGetUserBadgeListParamDto,
-  ): Promise<ResGetUserBadgeListDto[]> {
+    @Param() param: ReqAdminGetUserBadgeListParamDto,
+  ): Promise<ResAdminGetUserBadgeListDto[]> {
     const { id } = param;
     return await this.badgeService.getUserBadgeListWithName({ userId: id });
   }
@@ -85,8 +87,8 @@ export class UserAdminController {
   @Put('/badge/put')
   @HttpCode(201)
   async putBadgeToUser(
-    @Body() body: ReqPutBadgeToUserDto,
-  ): Promise<ResPutBadgeToUserDto> {
+    @Body() body: ReqAdminPutBadgeToUserDto,
+  ): Promise<ResAdminPutBadgeToUserDto> {
     const { userId, badgeId } = body;
     return await this.badgeService.putBadgeToUser({ userId, badgeId });
   }
@@ -94,8 +96,8 @@ export class UserAdminController {
   @Delete('/badge')
   @HttpCode(200)
   async deleteUserBadge(
-    @Query() query: ReqDeleteUserBadgeQueryDto,
-  ): Promise<ResDeleteUserBadgeDto> {
+    @Query() query: ReqAdminDeleteUserBadgeQueryDto,
+  ): Promise<ResAdminDeleteUserBadgeDto> {
     const { userId, badgeId } = query;
     return await this.badgeService.deleteUserBadge({ userId, badgeId });
   }

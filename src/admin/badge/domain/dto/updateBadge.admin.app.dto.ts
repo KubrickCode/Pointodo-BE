@@ -1,4 +1,4 @@
-export class ReqUpdateBadgeAppDto {
+export class ReqAdminUpdateBadgeAppDto {
   readonly id: number;
   readonly name?: string;
   readonly description?: string;
@@ -6,6 +6,6 @@ export class ReqUpdateBadgeAppDto {
   readonly price?: number;
 }
 
-export class ResUpdateBadgeAppDto {
+export class ResAdminUpdateBadgeAppDto {
   readonly message: string;
 }

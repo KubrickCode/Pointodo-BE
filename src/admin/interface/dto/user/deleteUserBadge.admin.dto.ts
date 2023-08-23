@@ -1,11 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BADGE_ID } from '@shared/constants/badge.constant';
 import { USER_ID } from '@shared/constants/user.constant';
-import { PUT_BADGE_SUCCESS_MESSAGE } from '@shared/messages/badge/badge.messages';
+import { DELETE_USER_BADGE_SUCCESS_MESSAGE } from '@shared/messages/badge/badge.messages';
+import { Type } from 'class-transformer';
 import { IsInt, IsString } from 'class-validator';
 
-export class ReqPutBadgeToUserDto {
+export class ReqAdminDeleteUserBadgeQueryDto {
   @ApiProperty({ description: BADGE_ID })
+  @Type(() => Number)
   @IsInt()
   readonly badgeId: number;
 
@@ -14,9 +16,9 @@ export class ReqPutBadgeToUserDto {
   readonly userId: string;
 }
 
-export class ResPutBadgeToUserDto {
+export class ResAdminDeleteUserBadgeDto {
   @ApiProperty({
-    example: PUT_BADGE_SUCCESS_MESSAGE,
+    example: DELETE_USER_BADGE_SUCCESS_MESSAGE,
     description: '성공 메시지',
   })
   @IsString()
