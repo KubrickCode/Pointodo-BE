@@ -2,6 +2,10 @@ import {
   AUTH_EMPTY_TOKEN,
   AUTH_EXPIRED_TOKEN,
   AUTH_INVALID_TOKEN,
+  JWT_EXPIRED,
+  JWT_INVALID_TOKEN,
+  JWT_MALFORMED,
+  JWT_NOT_PROVIDED,
 } from '@shared/messages/auth/auth.errors';
 import {
   Injectable,
@@ -48,15 +52,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       if (!user) throw new UnauthorizedException(USER_NOT_FOUND);
       return { id: verify.id };
     } catch (error) {
-      console.log(error.message);
-
       switch (error.message) {
-        case 'invalid token':
-        case 'jwt malformed':
+        case JWT_INVALID_TOKEN:
+        case JWT_MALFORMED:
           throw new UnauthorizedException(AUTH_INVALID_TOKEN);
-        case 'jwt expired':
+        case JWT_EXPIRED:
           throw new UnauthorizedException(AUTH_EXPIRED_TOKEN);
-        case 'jwt must be provided':
+        case JWT_NOT_PROVIDED:
           throw new UnauthorizedException(AUTH_EMPTY_TOKEN);
         case USER_NOT_FOUND:
           throw new UnauthorizedException(USER_NOT_FOUND);
