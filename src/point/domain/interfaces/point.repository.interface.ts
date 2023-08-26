@@ -31,11 +31,13 @@ export interface IPointRepository {
 
   createEarnedPointLog(
     taskId: number,
+    userId: string,
     points: number,
   ): Promise<EarnedPointEntity>;
 
   createSpentPointLog(
     badgeLogId: number,
+    userId: string,
     points: number,
   ): Promise<SpentPointEntity>;
 

@@ -1,4 +1,4 @@
-import { ResDeleteBadgeDto } from '@admin/interface/dto/badge/deleteBadge.dto';
+import { ResAdminDeleteBadgeDto } from '@admin/interface/dto/badge/deleteBadge.admin.dto';
 
 export const deleteBadgeDocs = {
   operation: {
@@ -8,7 +8,7 @@ export const deleteBadgeDocs = {
   `,
   },
   okResponse: {
-    type: ResDeleteBadgeDto,
+    type: ResAdminDeleteBadgeDto,
     description: '뱃지 삭제 성공',
   },
 };

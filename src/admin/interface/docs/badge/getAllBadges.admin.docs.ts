@@ -1,4 +1,4 @@
-import { ResGetBadgeListDto } from '@admin/interface/dto/badge/getBadgeList.dto';
+import { ResAdminGetBadgeListDto } from '@admin/interface/dto/badge/getBadgeList.admin.dto';
 
 export const getBadgeListDocs = {
   operation: {
@@ -8,7 +8,7 @@ export const getBadgeListDocs = {
   `,
   },
   okResponse: {
-    type: ResGetBadgeListDto,
+    type: ResAdminGetBadgeListDto,
     description: '뱃지 목록 요청 성공',
   },
 };

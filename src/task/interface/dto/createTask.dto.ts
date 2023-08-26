@@ -24,7 +24,7 @@ export class ReqCreateTaskDto {
   @IsOptional()
   @ApiPropertyOptional()
   @IsString()
-  readonly description?: string;
+  readonly description?: string | null;
 
   @ApiProperty({ description: TASK_IMPORTANCE })
   @Type(() => Number)
@@ -35,7 +35,7 @@ export class ReqCreateTaskDto {
   @IsOptional()
   @ApiPropertyOptional()
   @IsString()
-  readonly dueDate?: string;
+  readonly dueDate?: string | null;
 }
 
 export class ResCreateTaskDto {

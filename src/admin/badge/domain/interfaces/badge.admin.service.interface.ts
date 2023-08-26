@@ -1,22 +1,28 @@
 import {
-  ReqCreateBadgeAppDto,
-  ResCreateBadgeAppDto,
-} from '../dto/createBadge.app.dto';
+  ReqAdminCreateBadgeAppDto,
+  ResAdminCreateBadgeAppDto,
+} from '../dto/createBadge.admin.app.dto';
 import {
-  ReqDeleteBadgeAppDto,
-  ResDeleteBadgeAppDto,
-} from '../dto/deleteBadge.app.dto';
-import { ReqGetBadgeListAppDto } from '../dto/getBadgeList.app.dto';
+  ReqAdminDeleteBadgeAppDto,
+  ResAdminDeleteBadgeAppDto,
+} from '../dto/deleteBadge.admin.app.dto';
+import { ReqAdminGetBadgeListAppDto } from '../dto/getBadgeList.admin.app.dto';
 import {
-  ReqUpdateBadgeAppDto,
-  ResUpdateBadgeAppDto,
-} from '../dto/updateBadge.app.dto';
+  ReqAdminUpdateBadgeAppDto,
+  ResAdminUpdateBadgeAppDto,
+} from '../dto/updateBadge.admin.app.dto';
 import { BadgeEntity } from '../entities/badge.entity';
 
 export interface IBadgeAdminService {
-  getBadgeList(req: ReqGetBadgeListAppDto): Promise<BadgeEntity[]>;
-  createBadge(req: ReqCreateBadgeAppDto): Promise<ResCreateBadgeAppDto>;
-  updateBadge(req: ReqUpdateBadgeAppDto): Promise<ResUpdateBadgeAppDto>;
-  deleteBadge(req: ReqDeleteBadgeAppDto): Promise<ResDeleteBadgeAppDto>;
+  getBadgeList(req: ReqAdminGetBadgeListAppDto): Promise<BadgeEntity[]>;
+  createBadge(
+    req: ReqAdminCreateBadgeAppDto,
+  ): Promise<ResAdminCreateBadgeAppDto>;
+  updateBadge(
+    req: ReqAdminUpdateBadgeAppDto,
+  ): Promise<ResAdminUpdateBadgeAppDto>;
+  deleteBadge(
+    req: ReqAdminDeleteBadgeAppDto,
+  ): Promise<ResAdminDeleteBadgeAppDto>;
   uploadFile(file: Express.Multer.File): Promise<{ filePath: string }>;
 }

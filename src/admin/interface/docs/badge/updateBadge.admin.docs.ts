@@ -1,7 +1,7 @@
 import {
-  ResUpdateBadgeConflict,
-  ResUpdateBadgeDto,
-} from '@admin/interface/dto/badge/updateBadge.dto';
+  ResAdminUpdateBadgeConflict,
+  ResAdminUpdateBadgeDto,
+} from '@admin/interface/dto/badge/updateBadge.admin.dto';
 
 export const updateBadgeDocs = {
   operation: {
@@ -11,11 +11,11 @@ export const updateBadgeDocs = {
   `,
   },
   okResponse: {
-    type: ResUpdateBadgeDto,
+    type: ResAdminUpdateBadgeDto,
     description: '뱃지 업데이트 성공',
   },
   conflict: {
-    type: ResUpdateBadgeConflict,
+    type: ResAdminUpdateBadgeConflict,
     description: '뱃지 중복 에러',
   },
 };

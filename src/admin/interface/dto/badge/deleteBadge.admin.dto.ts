@@ -4,14 +4,14 @@ import { DELETE_BADGE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin
 import { Type } from 'class-transformer';
 import { IsInt, IsString } from 'class-validator';
 
-export class ReqDeleteBadgeParamDto {
+export class ReqAdminDeleteBadgeParamDto {
   @ApiProperty({ description: BADGE_ID })
   @Type(() => Number)
   @IsInt()
   readonly id: number;
 }
 
-export class ResDeleteBadgeDto {
+export class ResAdminDeleteBadgeDto {
   @ApiProperty({
     example: DELETE_BADGE_SUCCESS_MESSAGE,
     description: '성공 메시지',

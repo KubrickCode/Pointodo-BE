@@ -14,14 +14,14 @@ import {
 import { Transform } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 
-export class ReqGetBadgeListParamDto {
+export class ReqAdminGetBadgeListParamDto {
   @ApiProperty({ description: BADGE_TYPE })
   @IsString()
   @Transform(({ value }) => value.toUpperCase())
   readonly type: BadgeType_;
 }
 
-export class ResGetBadgeListDto {
+export class ResAdminGetBadgeListDto {
   @ApiProperty({ description: BADGE_ID })
   @IsInt()
   readonly id: number;
@@ -46,5 +46,5 @@ export class ResGetBadgeListDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()
-  readonly price?: number;
+  readonly price?: number | null;
 }

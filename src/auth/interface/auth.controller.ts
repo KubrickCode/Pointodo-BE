@@ -28,13 +28,9 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { ReqLoginDto, ResLoginDto } from './dto/login.dto';
+import { ReqLoginDto } from './dto/login.dto';
 import { ResLogoutDto } from './dto/logout.dto';
-import { ResRefreshDto } from './dto/refresh.dto';
-import {
-  RedirectSocialLoginDto,
-  ResSocialLoginDto,
-} from './dto/socialLogin.dto';
+import { RedirectSocialLoginDto } from './dto/socialLogin.dto';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
 import { ReqCheckPasswordDto } from './dto/checkPassword.dto';
 import { checkPasswordDocs } from './docs/checkPassword.docs';
@@ -79,13 +75,17 @@ export class AuthController {
     const { accessToken, refreshToken } = await this.authService.login({
       id: req.user.id,
     });
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
     });
-    const result: ResLoginDto = { accessToken };
-    res.json(result);
+    res.send();
   }
 
   @Post('logout')
@@ -97,6 +97,7 @@ export class AuthController {
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
   async logout(@Req() req: Request, @Res() res: Response): Promise<void> {
     const result: ResLogoutDto = await this.authService.logout(req.user);
+    res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
     res.json(result);
   }
@@ -109,12 +110,17 @@ export class AuthController {
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
       const { refreshToken } = req.cookies;
-      const accessToken = await this.authService.refresh({ refreshToken });
-      const result: ResRefreshDto = accessToken;
-      res.json(result);
+      const { accessToken } = await this.authService.refresh({ refreshToken });
+      res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      });
+      res.json(true);
     } catch (error) {
+      res.clearCookie('accessToken');
       res.clearCookie('refreshToken');
-      res.send();
+      res.json(false);
     }
   }
 
@@ -155,9 +161,10 @@ export class AuthController {
       secure: true,
       sameSite: 'strict',
     });
-    res.redirect(
-      `${globalConfig(this.configService).clientOrigin}/social-login`,
-    );
+    const result: RedirectSocialLoginDto = {
+      redirectUri: `${globalConfig(this.configService).clientOrigin}`,
+    };
+    res.redirect(result.redirectUri);
   }
 
   @Get('kakao/callback')
@@ -180,22 +187,8 @@ export class AuthController {
       sameSite: 'strict',
     });
     const result: RedirectSocialLoginDto = {
-      redirectUri: `${
-        globalConfig(this.configService).clientOrigin
-      }/social-login`,
+      redirectUri: `${globalConfig(this.configService).clientOrigin}`,
     };
     res.redirect(result.redirectUri);
-  }
-
-  @Get('social-login')
-  @HttpCode(201)
-  @ApiOperation(socialLoginDocs.socialLogin.operation)
-  @ApiCreatedResponse(socialLoginDocs.socialLogin.okResponse)
-  async socialLogin(@Req() req: Request, @Res() res: Response): Promise<void> {
-    const result: ResSocialLoginDto = {
-      accessToken: req.cookies['accessToken'],
-    };
-    res.clearCookie('accessToken');
-    res.json(result);
   }
 }
