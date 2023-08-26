@@ -18,7 +18,7 @@ export class UserRepository implements IUserRepository {
     WHERE u.id = $1::uuid;
     `;
     const result = await this.prisma.$queryRawUnsafe<User>(query, id);
-    return result[0] ? plainToClass(UserEntity, result[0]) : null;
+    return result[0];
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
@@ -26,12 +26,12 @@ export class UserRepository implements IUserRepository {
     SELECT * FROM "User" WHERE email = $1
     `;
     const result = await this.prisma.$queryRawUnsafe<User>(query, email);
-    return result[0] ? plainToClass(UserEntity, result[0]) : null;
+    return result[0];
   }
 
   async findPasswordById(id: string): Promise<string> {
     const query = `
-    SELECT password FROM "User" WHERE id = $1::uuid
+    SELECT password FROM "UserPassword" WHERE userId = $1::uuid
     `;
     const result = await this.prisma.$queryRawUnsafe<[{ password: string }]>(
       query,
@@ -48,19 +48,31 @@ export class UserRepository implements IUserRepository {
     provider = Provider[provider] || Provider['LOCAL'];
     const uuid = uuidv4();
 
-    const query = `
-      INSERT INTO "User" (id, email, password, provider)
-      VALUES ($1::uuid, $2, $3, $4::"Provider")
+    return await this.prisma.$transaction(async (tx) => {
+      const query = `
+      INSERT INTO "User" (id, email, provider)
+      VALUES ($1::uuid, $2, $3::"Provider")
       RETURNING *
-    `;
-    const values = [uuid, email, password, provider];
-    const newUser = await this.prisma.$queryRawUnsafe<User>(query, ...values);
-    return plainToClass(UserEntity, newUser[0]);
+      `;
+      const values = [uuid, email, provider];
+      const newUser = await tx.$queryRawUnsafe<User>(query, ...values);
+
+      if (password) {
+        const query = `
+        INSERT INTO "UserPassword" ("userId", password)
+        VALUES ($1::uuid, $2)
+        `;
+        const values = [newUser.id, password];
+        await tx.$queryRawUnsafe<User>(query, ...values);
+      }
+
+      return newUser;
+    });
   }
 
   async changePassword(id: string, newPassword: string): Promise<void> {
     const query = `
-    UPDATE "User" SET password = $1 WHERE id = $2::uuid
+    UPDATE "UserPassword" SET password = $1 WHERE userId = $2::uuid
     `;
     const values = [newPassword, id];
     await this.prisma.$queryRawUnsafe<User>(query, ...values);
@@ -126,8 +138,7 @@ export class UserRepository implements IUserRepository {
     }
 
     const values = [limit, offset, provider];
-    const result = await this.prisma.$queryRawUnsafe<User[]>(query, ...values);
-    return plainToClass(UserEntity, result);
+    return await this.prisma.$queryRawUnsafe<User[]>(query, ...values);
   }
 
   async getTotalUserListPages(provider: ProviderType | 'ALL'): Promise<number> {
