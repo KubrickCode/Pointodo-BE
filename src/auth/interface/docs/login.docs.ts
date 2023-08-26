@@ -12,7 +12,7 @@ export const loginDocs = {
     summary: '로그인',
     description: `로컬 유저 로그인\n
     이메일과 패스워드를 전달받아 로컬 유저를 생성하고,\n
-    리프레시 토큰을 쿠키에 정의하고, 액세스 토큰을 제공합니다.
+    액세스 토큰과 리프레시 토큰을 쿠키에 정의합니다.
     `,
   },
   okResponse: { type: ResLoginDto, description: LOGIN_SUCCESS_MESSAGE },
