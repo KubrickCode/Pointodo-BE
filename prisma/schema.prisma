@@ -81,7 +81,7 @@ model BadgeProgress {
 model EarnedPointsLogs {
   id             Int              @id @default(autoincrement())
   taskId         Int
-  userId         String           @db.Uuid
+  userId         String           @db.Uuid @default("5b1eb1d5-e156-4ee3-915c-60b67872bedc")
   points         Int              @db.Integer 
   occurredAt     DateTime         @default(now())
 
@@ -95,7 +95,7 @@ model EarnedPointsLogs {
 model SpentPointsLogs {
   id                Int               @id @default(autoincrement())
   badgeLogId        Int               @unique
-  userId            String            @db.Uuid 
+  userId            String            @db.Uuid @default("5b1eb1d5-e156-4ee3-915c-60b67872bedc")
   points            Int               @db.Integer  
   occurredAt        DateTime          @default(now())
 

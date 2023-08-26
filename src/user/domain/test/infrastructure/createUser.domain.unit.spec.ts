@@ -12,7 +12,6 @@ describe('createUser', () => {
     const createdUser: UserEntity = {
       id: 'test1234',
       email,
-      password,
       provider: 'LOCAL',
       role: 'USER',
       selectedBadgeId: 1,
