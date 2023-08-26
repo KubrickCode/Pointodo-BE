@@ -10,5 +10,7 @@ export const jwtConfig = (configService: ConfigService) => {
 };
 
 export const jwtExpiration = {
+  accessTokenExpirationHours: 1,
+  refreshTokenExpirationDays: 7,
   refreshTokenExpirationSeconds: 60 * 60 * 24 * 7,
 };
