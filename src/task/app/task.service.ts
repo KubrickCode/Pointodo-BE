@@ -157,6 +157,7 @@ export class TaskService implements ITaskService {
 
       await this.pointRepository.createEarnedPointLog(
         req.id,
+        req.userId,
         setTaskPoints(taskType, isContinuous),
       );
 
