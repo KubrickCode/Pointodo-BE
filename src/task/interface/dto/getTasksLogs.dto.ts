@@ -69,5 +69,5 @@ export class ResGetTasksLogsDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  readonly dueDate?: string;
+  readonly dueDate?: string | null;
 }

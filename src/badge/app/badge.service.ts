@@ -87,6 +87,7 @@ export class BadgeService implements IBadgeService {
 
     const updatedPointLog = await this.pointRepository.createSpentPointLog(
       createdUserBadgeLog.id,
+      userId,
       price,
     );
 

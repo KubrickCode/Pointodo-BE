@@ -1,7 +1,7 @@
 import {
   ResCreateBadgeConflict,
-  ResCreateBadgeDto,
-} from '@admin/interface/dto/badge/createBadge.dto';
+  ResAdminCreateBadgeDto,
+} from '@admin/interface/dto/badge/createBadge.admin.dto';
 
 export const createBadgeDocs = {
   operation: {
@@ -11,7 +11,7 @@ export const createBadgeDocs = {
   `,
   },
   okResponse: {
-    type: ResCreateBadgeDto,
+    type: ResAdminCreateBadgeDto,
     description: '뱃지 생성 성공',
   },
   conflict: {

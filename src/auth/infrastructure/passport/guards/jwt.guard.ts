@@ -1,4 +1,5 @@
 import {
+  AUTH_EMPTY_TOKEN,
   AUTH_EXPIRED_TOKEN,
   AUTH_INVALID_TOKEN,
 } from '@shared/messages/auth/auth.errors';
@@ -30,10 +31,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
 
-    const { authorization } = request.headers;
+    const { accessToken } = request?.cookies;
 
-    const token = authorization.replace('Bearer ', '');
-    request.user = await this.validateToken(token);
+    request.user = await this.validateToken(accessToken);
     return true;
   }
 
@@ -48,12 +48,16 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       if (!user) throw new UnauthorizedException(USER_NOT_FOUND);
       return { id: verify.id };
     } catch (error) {
+      console.log(error.message);
+
       switch (error.message) {
         case 'invalid token':
         case 'jwt malformed':
           throw new UnauthorizedException(AUTH_INVALID_TOKEN);
         case 'jwt expired':
           throw new UnauthorizedException(AUTH_EXPIRED_TOKEN);
+        case 'jwt must be provided':
+          throw new UnauthorizedException(AUTH_EMPTY_TOKEN);
         case USER_NOT_FOUND:
           throw new UnauthorizedException(USER_NOT_FOUND);
         default:

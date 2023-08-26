@@ -1,15 +1,15 @@
 import {
-  ReqCreateBadgeAppDto,
-  ResCreateBadgeAppDto,
-} from '@admin/badge/domain/dto/createBadge.app.dto';
+  ReqAdminCreateBadgeAppDto,
+  ResAdminCreateBadgeAppDto,
+} from '@admin/badge/domain/dto/createBadge.admin.app.dto';
 import {
-  ReqDeleteBadgeAppDto,
-  ResDeleteBadgeAppDto,
-} from '@admin/badge/domain/dto/deleteBadge.app.dto';
+  ReqAdminDeleteBadgeAppDto,
+  ResAdminDeleteBadgeAppDto,
+} from '@admin/badge/domain/dto/deleteBadge.admin.app.dto';
 import {
-  ReqUpdateBadgeAppDto,
-  ResUpdateBadgeAppDto,
-} from '@admin/badge/domain/dto/updateBadge.app.dto';
+  ReqAdminUpdateBadgeAppDto,
+  ResAdminUpdateBadgeAppDto,
+} from '@admin/badge/domain/dto/updateBadge.admin.app.dto';
 import { BadgeEntity } from '../domain/entities/badge.entity';
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { IBadgeAdminService } from '@admin/badge/domain/interfaces/badge.admin.service.interface';
@@ -21,7 +21,7 @@ import {
   UPDATE_BADGE_SUCCESS_MESSAGE,
 } from '@shared/messages/admin/badge.admin.messages';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { ReqGetBadgeListAppDto } from '../domain/dto/getBadgeList.app.dto';
+import { ReqAdminGetBadgeListAppDto } from '../domain/dto/getBadgeList.admin.app.dto';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
@@ -40,11 +40,13 @@ export class BadgeAdminService implements IBadgeAdminService {
     private readonly cacheService: ICacheService,
   ) {}
 
-  async getBadgeList(req: ReqGetBadgeListAppDto): Promise<BadgeEntity[]> {
+  async getBadgeList(req: ReqAdminGetBadgeListAppDto): Promise<BadgeEntity[]> {
     return await this.badgeAdminRepository.getBadgeList(req.type);
   }
 
-  async createBadge(req: ReqCreateBadgeAppDto): Promise<ResCreateBadgeAppDto> {
+  async createBadge(
+    req: ReqAdminCreateBadgeAppDto,
+  ): Promise<ResAdminCreateBadgeAppDto> {
     const { name, description, iconLink, type, price } = req;
     const isExist = await this.badgeAdminRepository.isExist(name);
     if (isExist) throw new ConflictException(CONFLICT_BADGE_NAME);
@@ -63,7 +65,9 @@ export class BadgeAdminService implements IBadgeAdminService {
     return { message: CREATE_BADGE_SUCCESS_MESSAGE };
   }
 
-  async updateBadge(req: ReqUpdateBadgeAppDto): Promise<ResUpdateBadgeAppDto> {
+  async updateBadge(
+    req: ReqAdminUpdateBadgeAppDto,
+  ): Promise<ResAdminUpdateBadgeAppDto> {
     const { id, name, description, iconLink, price } = req;
     if (name) {
       const isExist = await this.badgeAdminRepository.isExist(name);
@@ -85,7 +89,9 @@ export class BadgeAdminService implements IBadgeAdminService {
     return { message: UPDATE_BADGE_SUCCESS_MESSAGE };
   }
 
-  async deleteBadge(req: ReqDeleteBadgeAppDto): Promise<ResDeleteBadgeAppDto> {
+  async deleteBadge(
+    req: ReqAdminDeleteBadgeAppDto,
+  ): Promise<ResAdminDeleteBadgeAppDto> {
     await this.userRepository.changeSelectedBadgeToDefault(req.id);
     const deletedBadge = await this.badgeAdminRepository.delete(req.id);
 

@@ -18,25 +18,25 @@ export class ReqUpdateTaskDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  readonly name?: string;
+  readonly name?: string | null;
 
   @ApiProperty({ description: TASK_DESC })
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  readonly description?: string;
+  readonly description?: string | null;
 
   @ApiProperty({ description: TASK_IMPORTANCE })
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()
-  readonly importance?: number;
+  readonly importance?: number | null;
 
   @ApiProperty({ description: TASK_DUE_DATE })
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  readonly dueDate?: string;
+  readonly dueDate?: string | null;
 }
 
 export class ResUpdateTaskDto {
