@@ -41,6 +41,8 @@ import { logoutDocs } from './docs/logout.docs';
 import { refreshDocs } from './docs/refresh.docs';
 import { socialLoginDocs } from './docs/socialLogin.docs';
 import { validateLoggedInDocs } from './docs/validateLoggedIn.docs';
+import { HandleDateTime } from '@shared/utils/handleDateTime';
+import { jwtExpiration } from '@shared/config/jwt.config';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -79,11 +81,21 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
+      expires: new Date(
+        HandleDateTime.getFewHoursLater(
+          jwtExpiration.accessTokenExpirationHours,
+        ),
+      ),
     });
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
+      expires: new Date(
+        HandleDateTime.getFewDaysLater(
+          jwtExpiration.refreshTokenExpirationDays,
+        ),
+      ),
     });
     res.send();
   }
@@ -115,6 +127,11 @@ export class AuthController {
         httpOnly: true,
         secure: true,
         sameSite: 'strict',
+        expires: new Date(
+          HandleDateTime.getFewHoursLater(
+            jwtExpiration.accessTokenExpirationHours,
+          ),
+        ),
       });
       res.json(true);
     } catch (error) {
@@ -155,11 +172,21 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
+      expires: new Date(
+        HandleDateTime.getFewHoursLater(
+          jwtExpiration.accessTokenExpirationHours,
+        ),
+      ),
     });
     res.cookie('refreshToken', req.user.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
+      expires: new Date(
+        HandleDateTime.getFewDaysLater(
+          jwtExpiration.refreshTokenExpirationDays,
+        ),
+      ),
     });
     const result: RedirectSocialLoginDto = {
       redirectUri: `${globalConfig(this.configService).clientOrigin}`,
@@ -180,11 +207,21 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
+      expires: new Date(
+        HandleDateTime.getFewHoursLater(
+          jwtExpiration.accessTokenExpirationHours,
+        ),
+      ),
     });
     res.cookie('refreshToken', req.user.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
+      expires: new Date(
+        HandleDateTime.getFewDaysLater(
+          jwtExpiration.refreshTokenExpirationDays,
+        ),
+      ),
     });
     const result: RedirectSocialLoginDto = {
       redirectUri: `${globalConfig(this.configService).clientOrigin}`,

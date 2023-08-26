@@ -49,7 +49,7 @@ export class UserRepository implements IUserRepository {
 
       if (password)
         await tx.userPassword.create({
-          data: { userId: newUser.id, password: password },
+          data: { userId: newUser.id, password },
         });
 
       return newUser;
