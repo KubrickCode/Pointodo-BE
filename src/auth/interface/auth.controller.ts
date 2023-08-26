@@ -30,10 +30,7 @@ import {
 } from '@nestjs/swagger';
 import { ReqLoginDto } from './dto/login.dto';
 import { ResLogoutDto } from './dto/logout.dto';
-import {
-  RedirectSocialLoginDto,
-  ResSocialLoginDto,
-} from './dto/socialLogin.dto';
+import { RedirectSocialLoginDto } from './dto/socialLogin.dto';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
 import { ReqCheckPasswordDto } from './dto/checkPassword.dto';
 import { checkPasswordDocs } from './docs/checkPassword.docs';
@@ -164,9 +161,10 @@ export class AuthController {
       secure: true,
       sameSite: 'strict',
     });
-    res.redirect(
-      `${globalConfig(this.configService).clientOrigin}/social-login`,
-    );
+    const result: RedirectSocialLoginDto = {
+      redirectUri: `${globalConfig(this.configService).clientOrigin}`,
+    };
+    res.redirect(result.redirectUri);
   }
 
   @Get('kakao/callback')
@@ -189,22 +187,8 @@ export class AuthController {
       sameSite: 'strict',
     });
     const result: RedirectSocialLoginDto = {
-      redirectUri: `${
-        globalConfig(this.configService).clientOrigin
-      }/social-login`,
+      redirectUri: `${globalConfig(this.configService).clientOrigin}`,
     };
     res.redirect(result.redirectUri);
-  }
-
-  @Get('social-login')
-  @HttpCode(201)
-  @ApiOperation(socialLoginDocs.socialLogin.operation)
-  @ApiCreatedResponse(socialLoginDocs.socialLogin.okResponse)
-  async socialLogin(@Req() req: Request, @Res() res: Response): Promise<void> {
-    const result: ResSocialLoginDto = {
-      accessToken: req.cookies['accessToken'],
-    };
-    res.clearCookie('accessToken');
-    res.json(result);
   }
 }
