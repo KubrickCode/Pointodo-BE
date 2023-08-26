@@ -11,7 +11,6 @@ model User {
   id                  String                @id @default(uuid()) @db.Uuid 
   selectedBadgeId     Int                   @default(1)
   email               String                @unique @db.VarChar(255)
-  password            String?               @db.VarChar(255)
   provider            Provider              @default(LOCAL)
   role                Role                  @default(USER)
   createdAt           DateTime              @default(now())
@@ -19,11 +18,22 @@ model User {
   userBadgeLog        UserBadgesLogs[]
   badgeProgress       BadgeProgress[]
   taskLogs            TasksLogs[]
+  userPassword        UserPassword[]
+  earnedPointsLogs    EarnedPointsLogs[]
+  spentPointsLogs     SpentPointsLogs[]
 
   selectedBadge       Badge            @relation(fields: [selectedBadgeId], references: [id])
 
   @@index([provider])
   @@index([createdAt])
+}
+
+model UserPassword {
+  id          Int       @id @default(autoincrement())
+  userId      String    @db.Uuid 
+  password    String    @db.VarChar(255)
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Badge {
@@ -71,10 +81,12 @@ model BadgeProgress {
 model EarnedPointsLogs {
   id             Int              @id @default(autoincrement())
   taskId         Int
+  userId         String           @db.Uuid
   points         Int              @db.Integer 
   occurredAt     DateTime         @default(now())
 
   taskLog        TasksLogs        @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([taskId])
   @@index([occurredAt])
@@ -83,10 +95,12 @@ model EarnedPointsLogs {
 model SpentPointsLogs {
   id                Int               @id @default(autoincrement())
   badgeLogId        Int               @unique
+  userId            String            @db.Uuid 
   points            Int               @db.Integer  
   occurredAt        DateTime          @default(now())
 
   badgeLog          UserBadgesLogs    @relation(fields: [badgeLogId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([occurredAt])
 }
