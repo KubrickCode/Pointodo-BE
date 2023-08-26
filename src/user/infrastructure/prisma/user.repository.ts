@@ -28,8 +28,8 @@ export class UserRepository implements IUserRepository {
   }
 
   async findPasswordById(id: string): Promise<string> {
-    const result = await this.prisma.user.findUnique({
-      where: { id },
+    const result = await this.prisma.userPassword.findUnique({
+      where: { userId: id },
       select: { password: true },
     });
     return result.password;

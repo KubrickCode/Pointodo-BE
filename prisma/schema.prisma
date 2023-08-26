@@ -30,8 +30,8 @@ model User {
 
 model UserPassword {
   id          Int       @id @default(autoincrement())
-  userId      String    @db.Uuid 
-  password    String    @db.VarChar(255)
+  userId      String    @unique @db.Uuid 
+  password    String    @unique @db.VarChar(255)
 
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
