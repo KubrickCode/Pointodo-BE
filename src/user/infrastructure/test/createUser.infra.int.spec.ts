@@ -31,7 +31,7 @@ describe('createUser', () => {
       id: createdUser.id,
       email: createdUser.email,
     });
-  });
+  }, 30000);
 
   it('로컬 유저 충돌 In DB', async () => {
     try {
@@ -44,5 +44,5 @@ describe('createUser', () => {
     } catch (error) {
       await prisma.user.delete({ where: { email: user.email } });
     }
-  });
+  }, 30000);
 });
