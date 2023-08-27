@@ -48,7 +48,6 @@ import {
   ReqValidateAdminAppDto,
   ResValidateAdminAppDto,
 } from '@auth/domain/dto/validateAdmin.app.dto';
-import { PasswordHasher } from '@shared/utils/passwordHasher';
 import {
   USER_EXIST_WITH_SOCIAL,
   USER_NOT_FOUND,
@@ -56,6 +55,7 @@ import {
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
+import { IPasswordHasher } from '@shared/interfaces/IPasswordHasher';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -71,6 +71,8 @@ export class AuthService implements IAuthService {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
+    @Inject('IPasswordHasher')
+    private readonly passwordHasher: IPasswordHasher,
   ) {}
 
   async validateUser(
@@ -97,7 +99,7 @@ export class AuthService implements IAuthService {
 
     const userPassword = await this.userRepository.findPasswordById(user.id);
 
-    const isCorrectPassword = await PasswordHasher.comparePassword(
+    const isCorrectPassword = await this.passwordHasher.comparePassword(
       req.password,
       userPassword,
     );
@@ -116,7 +118,7 @@ export class AuthService implements IAuthService {
     if (userPassword === null) {
       throw new ConflictException(USER_EXIST_WITH_SOCIAL);
     }
-    const isCorrectPassword = await PasswordHasher.comparePassword(
+    const isCorrectPassword = await this.passwordHasher.comparePassword(
       req.password,
       userPassword,
     );

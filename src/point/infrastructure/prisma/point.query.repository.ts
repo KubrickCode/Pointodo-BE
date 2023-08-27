@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { EarnedPointsLogs, SpentPointsLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
 import {
@@ -10,11 +10,15 @@ import {
   SpentPointEntity,
   SpentPointWithBadgeName,
 } from '@point/domain/entities/spentPoint.entity';
-import { HandleDateTime } from '@shared/utils/handleDateTime';
+import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 
 @Injectable()
 export class PointRepository implements IPointRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject('IHandleDateTime')
+    private readonly handleDateTime: IHandleDateTime,
+  ) {}
 
   async getEarnedPointsLogs(
     userId: string,
@@ -106,7 +110,7 @@ export class PointRepository implements IPointRepository {
       AND DATE("occurredAt") = DATE($2)
       `;
 
-    const isContinuousValues = [userId, HandleDateTime.getYesterday];
+    const isContinuousValues = [userId, this.handleDateTime.getYesterday()];
 
     const isContinuous = await this.prisma.$queryRawUnsafe<[{ count: number }]>(
       isContinuousQuery,

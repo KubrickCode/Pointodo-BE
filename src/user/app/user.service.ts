@@ -37,7 +37,6 @@ import {
   ReqDeleteUserAppDto,
   ResDeleteUserAppDto,
 } from '@user/domain/dto/deleteUser.app.dto';
-import { PasswordHasher } from '@shared/utils/passwordHasher';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 import {
@@ -50,6 +49,7 @@ import {
   ResGetTotalUserListPagesAppDto,
 } from '@user/domain/dto/getTotalUserListPages.app.dto';
 import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
+import { IPasswordHasher } from '@shared/interfaces/IPasswordHasher';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -64,6 +64,8 @@ export class UserService implements IUserService {
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
+    @Inject('IPasswordHasher')
+    private readonly passwordHasher: IPasswordHasher,
   ) {}
 
   async register(newUser: ReqRegisterAppDto): Promise<ResRegisterAppDto> {
@@ -75,7 +77,7 @@ export class UserService implements IUserService {
       throw new ConflictException(USER_ALREADY_EXIST);
     }
 
-    const hashedPassword = await PasswordHasher.hashPassword(password);
+    const hashedPassword = await this.passwordHasher.hashPassword(password);
 
     const createdUser = await this.userRepository.createUser(
       email,
@@ -117,7 +119,7 @@ export class UserService implements IUserService {
   async changePassword(
     req: ReqChangePasswordAppDto,
   ): Promise<ResChangePasswordAppDto> {
-    const newPassword = await PasswordHasher.hashPassword(req.password);
+    const newPassword = await this.passwordHasher.hashPassword(req.password);
     await this.userRepository.changePassword(req.id, newPassword);
     this.logger.log('info', `비밀번호 변경 - 사용자 ID:${req.id}`);
     return { message: CHANGE_PASSWORD_SUCCESS_MESSAGE };
