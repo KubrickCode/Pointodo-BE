@@ -16,10 +16,10 @@ export class AdminAuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const userId = request.user.id;
+    const { id } = request.user;
 
     try {
-      await this.authService.validateAdmin({ id: userId });
+      await this.authService.validateAdmin({ id });
       return true;
     } catch (e) {
       throw new ForbiddenException(AUTH_INVALID_ADMIN);
