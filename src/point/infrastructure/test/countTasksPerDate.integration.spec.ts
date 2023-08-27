@@ -4,11 +4,13 @@ import { HandleDateTime } from '@shared/utils/handleDateTime';
 
 describe('calculateUserPoints', () => {
   let prisma: PrismaService;
+  let handleDateTime: HandleDateTime;
   let pointRepository: PointRepository;
 
   beforeAll(() => {
     prisma = new PrismaService();
-    pointRepository = new PointRepository(prisma);
+    handleDateTime = new HandleDateTime();
+    pointRepository = new PointRepository(prisma, handleDateTime);
   });
 
   afterAll(async () => {

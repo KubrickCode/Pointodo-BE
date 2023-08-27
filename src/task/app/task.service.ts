@@ -31,7 +31,6 @@ import {
 } from '../domain/dto/getTasksLogs.app.dto';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
-import { HandleDateTime } from '@shared/utils/handleDateTime';
 import {
   ReqCompleteTaskAppDto,
   ResCompleteTaskAppDto,
@@ -58,6 +57,7 @@ import {
   ReqGetTotalTaskPagesAppDto,
   ResGetTotalTaskPagesAppDto,
 } from '@task/domain/dto/getTotalTaskPages.app.dto';
+import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -74,6 +74,8 @@ export class TaskService implements ITaskService {
     private readonly userBadgeRepository: IUserBadgeRepository,
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
+    @Inject('IHandleDateTime')
+    private readonly handleDateTime: IHandleDateTime,
   ) {}
 
   async getTasksLogs(
@@ -112,7 +114,7 @@ export class TaskService implements ITaskService {
     );
 
     if (taskType === 'DUE') {
-      if (new Date(dueDate) < new Date(HandleDateTime.getToday))
+      if (new Date(dueDate) < new Date(this.handleDateTime.getToday()))
         throw new BadRequestException(DUE_DATE_IN_THE_PAST);
       await this.taskRepository.createTaskDueDate(createdTask.id, dueDate);
     }
@@ -230,6 +232,11 @@ export class TaskService implements ITaskService {
         this.badgeAdminRepository.getBadgeIdByName.bind(
           this.badgeAdminRepository,
         ),
+        [
+          this.handleDateTime.getToday(),
+          this.handleDateTime.getAWeekAgo(),
+          this.handleDateTime.getAMonthAgo(),
+        ],
       );
 
       await this.taskRepository.lockTask(req.id);

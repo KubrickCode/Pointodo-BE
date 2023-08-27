@@ -27,22 +27,22 @@ export class RedisService
   }
 
   async set(key: string, value: any, ttl: number) {
-    await this.client.set(key, JSON.stringify(value), 'EX', ttl);
+    await this.client?.set(key, JSON.stringify(value), 'EX', ttl);
   }
 
   async get(key: string) {
-    const data = await this.client.get(key);
+    const data = await this.client?.get(key);
     return data ? JSON.parse(data) : null;
   }
 
   async delete(key: string) {
-    await this.client.del(key);
+    await this.client?.del(key);
   }
 
   async deleteKeysByPrefix(prefix: string): Promise<void> {
-    const keys = await this.client.keys(`${prefix}*`);
+    const keys = await this.client?.keys(`${prefix}*`);
     if (keys.length > 0) {
-      await this.client.del(...keys);
+      await this.client?.del(...keys);
     }
   }
 }

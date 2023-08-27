@@ -1,25 +1,33 @@
 import {
   DateTimeFormatter,
-  LocalDate,
   ZoneId,
   ZonedDateTime,
   convert,
 } from '@js-joda/core';
 import '@js-joda/timezone';
+import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 
-export class HandleDateTime {
-  private static DATE_FORMATTER = DateTimeFormatter.ofPattern('yyyy-MM-dd');
-  private static today = LocalDate.now();
-  private static nowZonedTime = ZonedDateTime.now(ZoneId.of('Asia/Seoul'));
+export class HandleDateTime implements IHandleDateTime {
+  private readonly DATE_FORMATTER = DateTimeFormatter.ofPattern('yyyy-MM-dd');
 
-  static getToday = this.today.format(this.DATE_FORMATTER);
-  static getYesterday = this.today.minusDays(1).format(this.DATE_FORMATTER);
-  static getAWeekAgo = this.today.minusWeeks(1).format(this.DATE_FORMATTER);
-  static getAMonthAgo = this.today.minusMonths(1).format(this.DATE_FORMATTER);
+  private getNowZonedTime(): ZonedDateTime {
+    return ZonedDateTime.now(ZoneId.of('Asia/Seoul'));
+  }
 
-  static getFewHoursLater = (hours: number) =>
-    convert(this.nowZonedTime.plusHours(hours)).toDate();
+  getToday = () => this.getNowZonedTime().format(this.DATE_FORMATTER);
 
-  static getFewDaysLater = (days: number) =>
-    convert(this.nowZonedTime.plusDays(days)).toDate();
+  getYesterday = () =>
+    this.getNowZonedTime().minusDays(1).format(this.DATE_FORMATTER);
+
+  getAWeekAgo = () =>
+    this.getNowZonedTime().minusWeeks(1).format(this.DATE_FORMATTER);
+
+  getAMonthAgo = () =>
+    this.getNowZonedTime().minusMonths(1).format(this.DATE_FORMATTER);
+
+  getFewHoursLater = (hours: number) =>
+    convert(this.getNowZonedTime().plusHours(hours)).toDate();
+
+  getFewDaysLater = (days: number) =>
+    convert(this.getNowZonedTime().plusDays(days)).toDate();
 }

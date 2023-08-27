@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
 import {
   EarnedPointEntity,
@@ -9,11 +9,15 @@ import {
   SpentPointEntity,
   SpentPointWithBadgeName,
 } from '@point/domain/entities/spentPoint.entity';
-import { HandleDateTime } from '@shared/utils/handleDateTime';
+import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 
 @Injectable()
 export class PointRepository implements IPointRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject('IHandleDateTime')
+    private readonly handleDateTime: IHandleDateTime,
+  ) {}
 
   async getEarnedPointsLogs(
     userId: string,
@@ -120,8 +124,8 @@ export class PointRepository implements IPointRepository {
       where: {
         userId,
         occurredAt: {
-          gte: new Date(HandleDateTime.getYesterday),
-          lt: new Date(HandleDateTime.getToday),
+          gte: new Date(this.handleDateTime.getYesterday()),
+          lt: new Date(this.handleDateTime.getToday()),
         },
       },
     });
