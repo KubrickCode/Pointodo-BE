@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { jwtConfig } from '@shared/config/jwt.config';
 import { CacheService } from '@cache/infrastructure/cache.service';
 import { UserRepository } from '@user/infrastructure/prisma/user.repository';
+import { HandleDateTime } from '@shared/utils/handleDateTime';
 
 @Module({
   providers: [
@@ -27,6 +28,10 @@ import { UserRepository } from '@user/infrastructure/prisma/user.repository';
     {
       provide: 'IUserRepository',
       useClass: UserRepository,
+    },
+    {
+      provide: 'IHandleDateTime',
+      useClass: HandleDateTime,
     },
   ],
   controllers: [PointController],

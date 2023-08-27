@@ -19,6 +19,7 @@ import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repo
 import { BadgeService } from '@badge/app/badge.service';
 import { PointRepository } from '@point/infrastructure/prisma/point.repository';
 import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgress.repository';
+import { HandleDateTime } from '@shared/utils/handleDateTime';
 @Module({
   controllers: [BadgeAdminController, UserAdminController],
   providers: [
@@ -70,6 +71,10 @@ import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgr
     {
       provide: 'IBadgeProgressRepository',
       useClass: BadgeProgressRepository,
+    },
+    {
+      provide: 'IHandleDateTime',
+      useClass: HandleDateTime,
     },
   ],
   imports: [

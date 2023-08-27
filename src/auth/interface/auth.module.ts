@@ -13,6 +13,7 @@ import { GoogleStrategy } from '@auth/infrastructure/passport/strategies/google.
 import { KakaoStrategy } from '@auth/infrastructure/passport/strategies/kakao.strategy';
 import { CacheService } from '@cache/infrastructure/cache.service';
 import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repository';
+import { HandleDateTime } from '@shared/utils/handleDateTime';
 
 @Module({
   controllers: [AuthController],
@@ -44,6 +45,10 @@ import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repo
     {
       provide: 'IUserBadgeRepository',
       useClass: UserBadgeRepository,
+    },
+    {
+      provide: 'IHandleDateTime',
+      useClass: HandleDateTime,
     },
   ],
   imports: [

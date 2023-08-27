@@ -13,6 +13,7 @@ import { CacheService } from '@cache/infrastructure/cache.service';
 import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 import { BadgeAdminRepository } from '@admin/badge/infrastructure/prisma/badge.admin.repository';
 import { RedisService } from '@redis/infrastructure/redis.service';
+import { HandleDateTime } from '@shared/utils/handleDateTime';
 
 @Module({
   providers: [
@@ -52,6 +53,10 @@ import { RedisService } from '@redis/infrastructure/redis.service';
     {
       provide: 'IRedisService',
       useClass: RedisService,
+    },
+    {
+      provide: 'IHandleDateTime',
+      useClass: HandleDateTime,
     },
   ],
   controllers: [TaskController],

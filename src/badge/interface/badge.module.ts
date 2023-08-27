@@ -12,6 +12,7 @@ import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgress.repository';
 import { CacheService } from '@cache/infrastructure/cache.service';
 import { RedisService } from '@redis/infrastructure/redis.service';
+import { HandleDateTime } from '@shared/utils/handleDateTime';
 
 @Module({
   controllers: [BadgeController],
@@ -48,6 +49,10 @@ import { RedisService } from '@redis/infrastructure/redis.service';
     {
       provide: 'IRedisService',
       useClass: RedisService,
+    },
+    {
+      provide: 'IHandleDateTime',
+      useClass: HandleDateTime,
     },
   ],
   imports: [

@@ -41,8 +41,8 @@ import { logoutDocs } from './docs/logout.docs';
 import { refreshDocs } from './docs/refresh.docs';
 import { socialLoginDocs } from './docs/socialLogin.docs';
 import { validateLoggedInDocs } from './docs/validateLoggedIn.docs';
-import { HandleDateTime } from '@shared/utils/handleDateTime';
 import { jwtExpiration } from '@shared/config/jwt.config';
+import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -50,6 +50,8 @@ export class AuthController {
   constructor(
     @Inject('IAuthService')
     private readonly authService: IAuthService,
+    @Inject('IHandleDateTime')
+    private readonly handleDateTime: IHandleDateTime,
     private readonly configService: ConfigService,
   ) {}
 
@@ -81,7 +83,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: HandleDateTime.getFewHoursLater(
+      expires: this.handleDateTime.getFewHoursLater(
         jwtExpiration.accessTokenExpirationHours,
       ),
     });
@@ -89,7 +91,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: HandleDateTime.getFewDaysLater(
+      expires: this.handleDateTime.getFewDaysLater(
         jwtExpiration.refreshTokenExpirationDays,
       ),
     });
@@ -123,7 +125,7 @@ export class AuthController {
         httpOnly: true,
         secure: true,
         sameSite: 'strict',
-        expires: HandleDateTime.getFewHoursLater(
+        expires: this.handleDateTime.getFewHoursLater(
           jwtExpiration.accessTokenExpirationHours,
         ),
       });
@@ -166,7 +168,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: HandleDateTime.getFewHoursLater(
+      expires: this.handleDateTime.getFewHoursLater(
         jwtExpiration.accessTokenExpirationHours,
       ),
     });
@@ -174,7 +176,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: HandleDateTime.getFewDaysLater(
+      expires: this.handleDateTime.getFewDaysLater(
         jwtExpiration.refreshTokenExpirationDays,
       ),
     });
@@ -197,7 +199,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: HandleDateTime.getFewHoursLater(
+      expires: this.handleDateTime.getFewHoursLater(
         jwtExpiration.accessTokenExpirationHours,
       ),
     });
@@ -205,7 +207,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: HandleDateTime.getFewDaysLater(
+      expires: this.handleDateTime.getFewDaysLater(
         jwtExpiration.refreshTokenExpirationDays,
       ),
     });

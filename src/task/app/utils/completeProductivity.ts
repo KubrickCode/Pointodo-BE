@@ -5,7 +5,6 @@ import {
   PRODUCTIVITY_GOAL_FOR_A_WEEK_AGO,
   PRODUCTIVITY_GOAL_FOR_TODAY,
 } from '@shared/constants/task.constant';
-import { HandleDateTime } from '@shared/utils/handleDateTime';
 
 export const completeProductivity = async (
   userId: string,
@@ -20,19 +19,11 @@ export const completeProductivity = async (
     badgeId: number,
   ) => Promise<number>,
   getBadgeIdByName: (name: string) => Promise<Pick<BadgeEntity, 'id'>>,
+  [today, aWeekAgo, aMonthAgo]: [string, string, string],
 ): Promise<void> => {
-  const todayTasksCount = await countTasksPerDate(
-    userId,
-    HandleDateTime.getToday,
-  );
-  const weeklyTasksCount = await countTasksPerDate(
-    userId,
-    HandleDateTime.getAWeekAgo,
-  );
-  const monthTasksCount = await countTasksPerDate(
-    userId,
-    HandleDateTime.getAMonthAgo,
-  );
+  const todayTasksCount = await countTasksPerDate(userId, today);
+  const weeklyTasksCount = await countTasksPerDate(userId, aWeekAgo);
+  const monthTasksCount = await countTasksPerDate(userId, aMonthAgo);
 
   const productivityBadgeId1 = await getBadgeIdByName('생산성 뱃지1');
   const productivityBadgeId2 = await getBadgeIdByName('생산성 뱃지2');
