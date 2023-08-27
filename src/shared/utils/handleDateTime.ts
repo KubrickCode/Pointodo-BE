@@ -5,8 +5,9 @@ import {
   convert,
 } from '@js-joda/core';
 import '@js-joda/timezone';
+import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 
-export class HandleDateTime {
+export class HandleDateTime implements IHandleDateTime {
   private readonly DATE_FORMATTER = DateTimeFormatter.ofPattern('yyyy-MM-dd');
 
   private getNowZonedTime(): ZonedDateTime {

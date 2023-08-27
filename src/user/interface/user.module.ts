@@ -9,6 +9,7 @@ import { CacheService } from '@cache/infrastructure/cache.service';
 import { jwtConfig } from '@shared/config/jwt.config';
 import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repository';
 import { RedisService } from '@redis/infrastructure/redis.service';
+import { PasswordHasher } from '@shared/utils/passwordHasher';
 
 @Module({
   controllers: [UserController],
@@ -33,6 +34,10 @@ import { RedisService } from '@redis/infrastructure/redis.service';
     {
       provide: 'IRedisService',
       useClass: RedisService,
+    },
+    {
+      provide: 'IPasswordHasher',
+      useClass: PasswordHasher,
     },
   ],
   imports: [

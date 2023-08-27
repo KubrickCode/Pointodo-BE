@@ -14,6 +14,7 @@ import { KakaoStrategy } from '@auth/infrastructure/passport/strategies/kakao.st
 import { CacheService } from '@cache/infrastructure/cache.service';
 import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repository';
 import { HandleDateTime } from '@shared/utils/handleDateTime';
+import { PasswordHasher } from '@shared/utils/passwordHasher';
 
 @Module({
   controllers: [AuthController],
@@ -49,6 +50,10 @@ import { HandleDateTime } from '@shared/utils/handleDateTime';
     {
       provide: 'IHandleDateTime',
       useClass: HandleDateTime,
+    },
+    {
+      provide: 'IPasswordHasher',
+      useClass: PasswordHasher,
     },
   ],
   imports: [

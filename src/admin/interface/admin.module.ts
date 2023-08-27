@@ -20,6 +20,7 @@ import { BadgeService } from '@badge/app/badge.service';
 import { PointRepository } from '@point/infrastructure/prisma/point.repository';
 import { BadgeProgressRepository } from '@badge/infrastructure/prisma/badgeProgress.repository';
 import { HandleDateTime } from '@shared/utils/handleDateTime';
+import { PasswordHasher } from '@shared/utils/passwordHasher';
 @Module({
   controllers: [BadgeAdminController, UserAdminController],
   providers: [
@@ -75,6 +76,10 @@ import { HandleDateTime } from '@shared/utils/handleDateTime';
     {
       provide: 'IHandleDateTime',
       useClass: HandleDateTime,
+    },
+    {
+      provide: 'IPasswordHasher',
+      useClass: PasswordHasher,
     },
   ],
   imports: [
