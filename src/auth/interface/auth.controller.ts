@@ -81,20 +81,16 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: new Date(
-        HandleDateTime.getFewHoursLater(
-          jwtExpiration.accessTokenExpirationHours,
-        ),
+      expires: HandleDateTime.getFewHoursLater(
+        jwtExpiration.accessTokenExpirationHours,
       ),
     });
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: new Date(
-        HandleDateTime.getFewDaysLater(
-          jwtExpiration.refreshTokenExpirationDays,
-        ),
+      expires: HandleDateTime.getFewDaysLater(
+        jwtExpiration.refreshTokenExpirationDays,
       ),
     });
     res.send();
@@ -127,10 +123,8 @@ export class AuthController {
         httpOnly: true,
         secure: true,
         sameSite: 'strict',
-        expires: new Date(
-          HandleDateTime.getFewHoursLater(
-            jwtExpiration.accessTokenExpirationHours,
-          ),
+        expires: HandleDateTime.getFewHoursLater(
+          jwtExpiration.accessTokenExpirationHours,
         ),
       });
       res.json(true);
@@ -172,20 +166,16 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: new Date(
-        HandleDateTime.getFewHoursLater(
-          jwtExpiration.accessTokenExpirationHours,
-        ),
+      expires: HandleDateTime.getFewHoursLater(
+        jwtExpiration.accessTokenExpirationHours,
       ),
     });
     res.cookie('refreshToken', req.user.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: new Date(
-        HandleDateTime.getFewDaysLater(
-          jwtExpiration.refreshTokenExpirationDays,
-        ),
+      expires: HandleDateTime.getFewDaysLater(
+        jwtExpiration.refreshTokenExpirationDays,
       ),
     });
     const result: RedirectSocialLoginDto = {
@@ -207,20 +197,16 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: new Date(
-        HandleDateTime.getFewHoursLater(
-          jwtExpiration.accessTokenExpirationHours,
-        ),
+      expires: HandleDateTime.getFewHoursLater(
+        jwtExpiration.accessTokenExpirationHours,
       ),
     });
     res.cookie('refreshToken', req.user.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: new Date(
-        HandleDateTime.getFewDaysLater(
-          jwtExpiration.refreshTokenExpirationDays,
-        ),
+      expires: HandleDateTime.getFewDaysLater(
+        jwtExpiration.refreshTokenExpirationDays,
       ),
     });
     const result: RedirectSocialLoginDto = {
