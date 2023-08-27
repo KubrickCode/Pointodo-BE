@@ -124,8 +124,8 @@ export class PointRepository implements IPointRepository {
       where: {
         userId,
         occurredAt: {
-          gte: new Date(this.handleDateTime.getYesterday),
-          lt: new Date(this.handleDateTime.getToday),
+          gte: new Date(this.handleDateTime.getYesterday()),
+          lt: new Date(this.handleDateTime.getToday()),
         },
       },
     });

@@ -110,7 +110,7 @@ export class PointRepository implements IPointRepository {
       AND DATE("occurredAt") = DATE($2)
       `;
 
-    const isContinuousValues = [userId, this.handleDateTime.getYesterday];
+    const isContinuousValues = [userId, this.handleDateTime.getYesterday()];
 
     const isContinuous = await this.prisma.$queryRawUnsafe<[{ count: number }]>(
       isContinuousQuery,

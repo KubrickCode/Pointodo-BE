@@ -14,16 +14,16 @@ export class HandleDateTime implements IHandleDateTime {
     return ZonedDateTime.now(ZoneId.of('Asia/Seoul'));
   }
 
-  getToday = this.getNowZonedTime().format(this.DATE_FORMATTER);
-  getYesterday = this.getNowZonedTime()
-    .minusDays(1)
-    .format(this.DATE_FORMATTER);
-  getAWeekAgo = this.getNowZonedTime()
-    .minusWeeks(1)
-    .format(this.DATE_FORMATTER);
-  getAMonthAgo = this.getNowZonedTime()
-    .minusMonths(1)
-    .format(this.DATE_FORMATTER);
+  getToday = () => this.getNowZonedTime().format(this.DATE_FORMATTER);
+
+  getYesterday = () =>
+    this.getNowZonedTime().minusDays(1).format(this.DATE_FORMATTER);
+
+  getAWeekAgo = () =>
+    this.getNowZonedTime().minusWeeks(1).format(this.DATE_FORMATTER);
+
+  getAMonthAgo = () =>
+    this.getNowZonedTime().minusMonths(1).format(this.DATE_FORMATTER);
 
   getFewHoursLater = (hours: number) =>
     convert(this.getNowZonedTime().plusHours(hours)).toDate();

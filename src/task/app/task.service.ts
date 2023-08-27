@@ -114,7 +114,7 @@ export class TaskService implements ITaskService {
     );
 
     if (taskType === 'DUE') {
-      if (new Date(dueDate) < new Date(this.handleDateTime.getToday))
+      if (new Date(dueDate) < new Date(this.handleDateTime.getToday()))
         throw new BadRequestException(DUE_DATE_IN_THE_PAST);
       await this.taskRepository.createTaskDueDate(createdTask.id, dueDate);
     }
@@ -233,9 +233,9 @@ export class TaskService implements ITaskService {
           this.badgeAdminRepository,
         ),
         [
-          this.handleDateTime.getToday,
-          this.handleDateTime.getAWeekAgo,
-          this.handleDateTime.getAMonthAgo,
+          this.handleDateTime.getToday(),
+          this.handleDateTime.getAWeekAgo(),
+          this.handleDateTime.getAMonthAgo(),
         ],
       );
 
