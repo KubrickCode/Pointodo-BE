@@ -83,8 +83,8 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: this.handleDateTime.getFewHoursLater(
-        jwtExpiration.accessTokenExpirationHours,
+      expires: this.handleDateTime.getFewDaysLater(
+        jwtExpiration.refreshTokenExpirationDays,
       ),
     });
     res.cookie('refreshToken', refreshToken, {
@@ -125,8 +125,8 @@ export class AuthController {
         httpOnly: true,
         secure: true,
         sameSite: 'strict',
-        expires: this.handleDateTime.getFewHoursLater(
-          jwtExpiration.accessTokenExpirationHours,
+        expires: this.handleDateTime.getFewDaysLater(
+          jwtExpiration.refreshTokenExpirationDays,
         ),
       });
       res.json(true);
@@ -168,8 +168,8 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: this.handleDateTime.getFewHoursLater(
-        jwtExpiration.accessTokenExpirationHours,
+      expires: this.handleDateTime.getFewDaysLater(
+        jwtExpiration.refreshTokenExpirationDays,
       ),
     });
     res.cookie('refreshToken', req.user.refreshToken, {
@@ -199,8 +199,8 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      expires: this.handleDateTime.getFewHoursLater(
-        jwtExpiration.accessTokenExpirationHours,
+      expires: this.handleDateTime.getFewDaysLater(
+        jwtExpiration.refreshTokenExpirationDays,
       ),
     });
     res.cookie('refreshToken', req.user.refreshToken, {

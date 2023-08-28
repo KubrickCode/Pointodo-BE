@@ -4,6 +4,8 @@ export interface IHandleDateTime {
   getAWeekAgo: () => string;
   getAMonthAgo: () => string;
 
+  getFewSecondsLater: (seconds: number) => Date;
+
   getFewHoursLater: (hours: number) => Date;
 
   getFewDaysLater: (days: number) => Date;

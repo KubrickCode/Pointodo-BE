@@ -31,7 +31,7 @@ export class UserRepository implements IUserRepository {
       where: { userId: id },
       select: { password: true },
     });
-    return result.password;
+    return result?.password ?? null;
   }
 
   async createUser(
