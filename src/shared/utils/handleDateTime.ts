@@ -25,6 +25,9 @@ export class HandleDateTime implements IHandleDateTime {
   getAMonthAgo = () =>
     this.getNowZonedTime().minusMonths(1).format(this.DATE_FORMATTER);
 
+  getFewSecondsLater = (seconds: number) =>
+    convert(this.getNowZonedTime().plusSeconds(seconds)).toDate();
+
   getFewHoursLater = (hours: number) =>
     convert(this.getNowZonedTime().plusHours(hours)).toDate();
 
