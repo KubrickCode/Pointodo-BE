@@ -10,6 +10,8 @@ import {
   SpentPointWithBadgeName,
 } from '@point/domain/entities/spentPoint.entity';
 import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
+import { plainToClass } from 'class-transformer';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class PointRepository implements IPointRepository {
@@ -20,7 +22,7 @@ export class PointRepository implements IPointRepository {
   ) {}
 
   async getEarnedPointsLogs(
-    userId: string,
+    userId: UUID,
     limit: number,
     offset: number,
     order: string,
@@ -48,18 +50,20 @@ export class PointRepository implements IPointRepository {
       skip: offset,
     });
 
-    return result.map((item) => ({
-      id: item.id,
-      taskId: item.taskId,
-      userId: item.userId,
-      points: item.points,
-      occurredAt: item.occurredAt,
-      taskName: item.taskLog.name,
-    }));
+    return result.map((item) =>
+      plainToClass(EarnedPointWithTaskName, {
+        id: item.id,
+        taskId: item.taskId,
+        userId: item.userId,
+        points: item.points,
+        occurredAt: item.occurredAt,
+        taskName: item.taskLog.name,
+      }),
+    );
   }
 
   async getSpentPointsLogs(
-    userId: string,
+    userId: UUID,
     limit: number,
     offset: number,
     order: string,
@@ -91,18 +95,20 @@ export class PointRepository implements IPointRepository {
       skip: offset,
     });
 
-    return result.map((item) => ({
-      id: item.id,
-      badgeLogId: item.badgeLogId,
-      userId: item.userId,
-      points: item.points,
-      occurredAt: item.occurredAt,
-      badgeName: item.badgeLog.badge.name,
-    }));
+    return result.map((item) =>
+      plainToClass(SpentPointWithBadgeName, {
+        id: item.id,
+        badgeLogId: item.badgeLogId,
+        userId: item.userId,
+        points: item.points,
+        occurredAt: item.occurredAt,
+        badgeName: item.badgeLog.badge.name,
+      }),
+    );
   }
 
   async getTotalPointPages(
-    userId: string,
+    userId: UUID,
     transactionType: 'EARNED' | 'SPENT',
   ): Promise<number> {
     if (transactionType === 'EARNED') {
@@ -135,22 +141,24 @@ export class PointRepository implements IPointRepository {
 
   async createEarnedPointLog(
     taskId: number,
-    userId: string,
+    userId: UUID,
     points: number,
   ): Promise<EarnedPointEntity> {
-    return await this.prisma.earnedPointsLogs.create({
+    const result = await this.prisma.earnedPointsLogs.create({
       data: { taskId, userId, points },
     });
+    return plainToClass(EarnedPointEntity, result);
   }
 
   async createSpentPointLog(
     badgeLogId: number,
-    userId: string,
+    userId: UUID,
     points: number,
   ): Promise<SpentPointEntity> {
-    return await this.prisma.spentPointsLogs.create({
+    const result = await this.prisma.spentPointsLogs.create({
       data: { badgeLogId, userId, points },
     });
+    return plainToClass(SpentPointEntity, result);
   }
 
   async countTasksPerDate(userId: string, date: string): Promise<number> {
@@ -164,7 +172,7 @@ export class PointRepository implements IPointRepository {
     });
   }
 
-  async calculateUserPoints(userId: string): Promise<number> {
+  async calculateUserPoints(userId: UUID): Promise<number> {
     const totalEarnedPoints = await this.prisma.earnedPointsLogs.aggregate({
       _sum: {
         points: true,
@@ -191,10 +199,12 @@ export class PointRepository implements IPointRepository {
   }
 
   async deleteEarnedPointLog(id: number): Promise<EarnedPointEntity> {
-    return await this.prisma.earnedPointsLogs.delete({ where: { id } });
+    const result = await this.prisma.earnedPointsLogs.delete({ where: { id } });
+    return plainToClass(EarnedPointEntity, result);
   }
 
   async deleteSpentPointLog(id: number): Promise<SpentPointEntity> {
-    return await this.prisma.spentPointsLogs.delete({ where: { id } });
+    const result = await this.prisma.spentPointsLogs.delete({ where: { id } });
+    return plainToClass(SpentPointEntity, result);
   }
 }

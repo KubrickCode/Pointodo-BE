@@ -3,13 +3,15 @@ import { PrismaService } from '@shared/service/prisma.service';
 import { TaskEntity, TaskType_ } from '@task/domain/entities/task.entity';
 import { TasksDueDateEntity } from '@task/domain/entities/tasksDueDate.entity';
 import { ITaskRepository } from '@task/domain/interfaces/task.repository.interface';
+import { plainToClass } from 'class-transformer';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class TaskRepository implements ITaskRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async getTasksLogs(
-    userId: string,
+    userId: UUID,
     taskType: TaskType_,
     limit: number,
     offset: number,
@@ -30,41 +32,43 @@ export class TaskRepository implements ITaskRepository {
         take: limit,
         skip: offset,
       });
-      return result.map((item) => ({
-        ...item,
-        dueDate: item.dueDate.dueDate,
-      }));
+      return result.map((item) =>
+        plainToClass(TaskEntity, {
+          ...item,
+          dueDate: item.dueDate.dueDate,
+        }),
+      );
     } else {
-      return await this.prisma.tasksLogs.findMany({
+      const result = await this.prisma.tasksLogs.findMany({
         where: { userId, taskType },
         orderBy,
         take: limit,
         skip: offset,
       });
+      return result.map((item) => plainToClass(TaskEntity, item));
     }
   }
 
-  async getTotalTaskPages(
-    userId: string,
-    taskType: TaskType_,
-  ): Promise<number> {
+  async getTotalTaskPages(userId: UUID, taskType: TaskType_): Promise<number> {
     return await this.prisma.tasksLogs.count({ where: { userId, taskType } });
   }
 
   async getTaskLogById(id: number): Promise<TaskEntity> {
-    return await this.prisma.tasksLogs.findUnique({ where: { id } });
+    const result = await this.prisma.tasksLogs.findUnique({ where: { id } });
+    return plainToClass(TaskEntity, result);
   }
 
   async createTask(
-    userId: string,
+    userId: UUID,
     taskType: TaskType_,
     name: string,
     description: string,
     importance: number,
   ): Promise<TaskEntity> {
-    return await this.prisma.tasksLogs.create({
+    const result = await this.prisma.tasksLogs.create({
       data: { userId, taskType, name, description, importance },
     });
+    return plainToClass(TaskEntity, result);
   }
 
   async createTaskDueDate(
@@ -109,11 +113,12 @@ export class TaskRepository implements ITaskRepository {
       });
     }
 
-    return updatedTaskLog;
+    return plainToClass(TaskEntity, updatedTaskLog);
   }
 
   async deleteTask(id: number): Promise<TaskEntity> {
-    return await this.prisma.tasksLogs.delete({ where: { id } });
+    const result = await this.prisma.tasksLogs.delete({ where: { id } });
+    return plainToClass(TaskEntity, result);
   }
 
   async deleteTaskDueDate(taskId: number): Promise<TasksDueDateEntity> {
@@ -121,19 +126,21 @@ export class TaskRepository implements ITaskRepository {
   }
 
   async completeTask(id: number, isRollback?: boolean): Promise<TaskEntity> {
-    return this.prisma.tasksLogs.update({
+    const result = this.prisma.tasksLogs.update({
       where: { id },
       data: {
         completion: isRollback ? { decrement: 1 } : { increment: 1 },
       },
     });
+    return plainToClass(TaskEntity, result);
   }
 
   async cancleTaskCompletion(id: number): Promise<TaskEntity> {
-    return await this.prisma.tasksLogs.update({
+    const result = await this.prisma.tasksLogs.update({
       where: { id },
       data: { completion: { decrement: 1 } },
     });
+    return plainToClass(TaskEntity, result);
   }
 
   async resetDailyTask(): Promise<void> {

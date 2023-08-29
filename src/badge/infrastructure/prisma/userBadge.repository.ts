@@ -20,13 +20,13 @@ export class UserBadgeRepository implements IUserBadgeRepository {
   }
 
   async getUserBadgeList(
-    userId: string,
+    userId: UUID,
   ): Promise<Array<Pick<UserBadgeEntity, 'badgeId'>>> {
     return await this.prisma.userBadgesLogs.findMany({ where: { userId } });
   }
 
   async getUserBadgeListWithName(
-    userId: string,
+    userId: UUID,
   ): Promise<Array<{ badgeId: number; name: string }>> {
     const userBadgeList = await this.prisma.userBadgesLogs.findMany({
       where: {
@@ -55,7 +55,7 @@ export class UserBadgeRepository implements IUserBadgeRepository {
 
   async deleteUserBadge(
     badgeId: number,
-    userId: string,
+    userId: UUID,
   ): Promise<UserBadgeEntity> {
     const result = await this.prisma.userBadgesLogs.delete({
       where: { userId_badgeId: { userId, badgeId } },
