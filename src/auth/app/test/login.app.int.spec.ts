@@ -26,7 +26,7 @@ describe('register', () => {
     id: TEST1_ID_LOCAL,
   };
 
-  it('로컬 유저 생성 -> 리포지토리 -> DB', async () => {
+  it('로그인 성공', async () => {
     const loginSpy = jest.spyOn(authService, 'login');
     const result: ResLoginAppDto = await authService.login(request);
 
