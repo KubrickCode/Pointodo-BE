@@ -1,5 +1,7 @@
+import { UUID } from 'crypto';
+
 export class ReqGetAllBadgeProgressAppDto {
-  readonly userId: string;
+  readonly userId: UUID;
 }
 
 export class ResGetAllBadgeProgressAppDto {

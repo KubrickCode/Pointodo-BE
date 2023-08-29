@@ -20,7 +20,8 @@ import {
   RoleTypes,
 } from '@user/domain/entities/user.entity';
 import { Transform, Type } from 'class-transformer';
-import { IsDate, IsEnum, IsInt, IsString } from 'class-validator';
+import { IsDate, IsEnum, IsInt, IsString, IsUUID } from 'class-validator';
+import { UUID } from 'crypto';
 
 export class ReqAdminGetUserListQueryDto {
   @ApiProperty({ description: USER_LIST_PAGE })
@@ -40,8 +41,8 @@ export class ReqAdminGetUserListQueryDto {
 
 export class ResAdminGetUserListDto {
   @ApiProperty({ description: USER_ID })
-  @IsString()
-  readonly id: string;
+  @IsUUID()
+  readonly id: UUID;
 
   @ApiProperty({ example: USER_EMAIL_EXAMPLE, description: USER_EMAIL })
   @IsString()

@@ -1,7 +1,8 @@
 import { User, Provider, Role } from '@prisma/client';
+import { UUID } from 'crypto';
 
 export class UserEntity implements User {
-  id: string;
+  id: UUID;
   email: string;
   provider: ProviderType;
   role: RoleType;

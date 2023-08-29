@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import {
   EarnedPointEntity,
   EarnedPointWithTaskName,
@@ -9,39 +10,39 @@ import {
 
 export interface IPointRepository {
   getEarnedPointsLogs(
-    userId: string,
+    userId: UUID,
     limit: number,
     offset: number,
     order: string,
   ): Promise<EarnedPointWithTaskName[]>;
 
   getSpentPointsLogs(
-    userId: string,
+    userId: UUID,
     limit: number,
     offset: number,
     order: string,
   ): Promise<SpentPointWithBadgeName[]>;
 
   getTotalPointPages(
-    userId: string,
+    userId: UUID,
     transactionType: 'EARNED' | 'SPENT',
   ): Promise<number>;
 
-  isContinuous(userId: string): Promise<boolean>;
+  isContinuous(userId: UUID): Promise<boolean>;
 
   createEarnedPointLog(
     taskId: number,
-    userId: string,
+    userId: UUID,
     points: number,
   ): Promise<EarnedPointEntity>;
 
   createSpentPointLog(
     badgeLogId: number,
-    userId: string,
+    userId: UUID,
     points: number,
   ): Promise<SpentPointEntity>;
 
-  countTasksPerDate(userId: string, date: string): Promise<number>;
+  countTasksPerDate(userId: UUID, date: string): Promise<number>;
 
   calculateUserPoints(userId: string): Promise<number>;
 

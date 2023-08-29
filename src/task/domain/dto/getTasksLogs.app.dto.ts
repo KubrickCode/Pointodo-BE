@@ -1,7 +1,8 @@
+import { UUID } from 'crypto';
 import { TaskType_ } from '../entities/task.entity';
 
 export class ReqGetTasksLogsAppDto {
-  readonly userId: string;
+  readonly userId: UUID;
   readonly taskType: TaskType_;
   readonly page: number;
   readonly order: string;
@@ -9,7 +10,7 @@ export class ReqGetTasksLogsAppDto {
 
 export class ResGetTasksLogsAppDto {
   readonly id: number;
-  readonly userId: string;
+  readonly userId: UUID;
   readonly taskType: TaskType_;
   readonly name: string;
   readonly description: string;

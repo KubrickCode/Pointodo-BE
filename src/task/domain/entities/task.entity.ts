@@ -1,8 +1,9 @@
 import { TaskType, TasksLogs } from '@prisma/client';
+import { UUID } from 'crypto';
 
 export class TaskEntity implements TasksLogs {
   id: number;
-  userId: string;
+  userId: UUID;
   taskType: TaskType_;
   name: string;
   description: string | null;

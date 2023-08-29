@@ -1,5 +1,7 @@
+import { UUID } from 'crypto';
+
 export class ReqGetTotalPointPagesAppDto {
-  readonly userId: string;
+  readonly userId: UUID;
   readonly transactionType: 'EARNED' | 'SPENT';
 }
 

@@ -1,9 +1,10 @@
 import { EarnedPointsLogs } from '@prisma/client';
+import { UUID } from 'crypto';
 
 export class EarnedPointEntity implements EarnedPointsLogs {
   id: number;
   taskId: number;
-  userId: string;
+  userId: UUID;
   points: number;
   occurredAt: Date;
 }

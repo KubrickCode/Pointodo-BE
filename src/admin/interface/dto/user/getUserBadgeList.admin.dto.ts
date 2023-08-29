@@ -1,12 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BADGE_ID, BADGE_NAME } from '@shared/constants/badge.constant';
 import { USER_ID } from '@shared/constants/user.constant';
-import { IsInt, IsString } from 'class-validator';
+import { IsInt, IsString, IsUUID } from 'class-validator';
+import { UUID } from 'crypto';
 
 export class ReqAdminGetUserBadgeListParamDto {
   @ApiProperty({ description: USER_ID })
-  @IsString()
-  readonly id: string;
+  @IsUUID()
+  readonly id: UUID;
 }
 
 export class ResAdminGetUserBadgeListDto {

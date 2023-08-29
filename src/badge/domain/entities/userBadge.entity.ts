@@ -1,8 +1,9 @@
 import { UserBadgesLogs } from '@prisma/client';
+import { UUID } from 'crypto';
 
 export class UserBadgeEntity implements UserBadgesLogs {
   id: number;
-  userId: string;
+  userId: UUID;
   badgeId: number;
   earnedAt: Date;
 }
