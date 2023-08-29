@@ -11,7 +11,7 @@ export const requestE2E = async (
 ): Promise<request.Response> => {
   return await request(app.getHttpServer())
     [method](path)
-    .set('Authorization', 'Bearer ' + token)
+    .set('Cookie', [`accessToken=${token}`])
     .send(body)
     .expect(status);
 };
