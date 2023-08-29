@@ -1,5 +1,9 @@
+import { IsUUID } from 'class-validator';
+import { UUID } from 'crypto';
+
 export class ReqLoginAppDto {
-  readonly id: string;
+  @IsUUID()
+  readonly id: UUID;
 }
 
 export class ResLoginAppDto {
