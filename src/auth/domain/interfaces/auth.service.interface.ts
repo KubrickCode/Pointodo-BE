@@ -17,10 +17,16 @@ import {
 
 export interface IAuthService {
   validateUser(req: ReqValidateUserAppDto): Promise<ResValidateUserAppDto>;
+
   checkPassword(req: ReqCheckPasswordAppDto): Promise<ResCheckPasswordAppDto>;
+
   login(req: ReqLoginAppDto): Promise<ResLoginAppDto>;
+
   logout(req: ReqLogoutAppDto): Promise<ResLogoutAppDto>;
+
   refresh(req: ReqRefreshAppDto): Promise<ResRefreshAppDto>;
+
   socialLogin(socialUser: ReqSocialLoginAppDto): Promise<ResLoginAppDto>;
+
   validateAdmin(req: ReqValidateAdminAppDto): Promise<ResValidateAdminAppDto>;
 }
