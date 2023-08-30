@@ -75,9 +75,10 @@ export class TaskRepository implements ITaskRepository {
     id: number,
     date: string,
   ): Promise<TasksDueDateEntity> {
-    return await this.prisma.tasksDueDate.create({
+    const result = await this.prisma.tasksDueDate.create({
       data: { taskId: id, dueDate: date },
     });
+    return plainToClass(TasksDueDateEntity, result);
   }
 
   async updateTask(
