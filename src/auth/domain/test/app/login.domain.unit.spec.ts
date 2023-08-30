@@ -7,7 +7,7 @@ describe('Login', () => {
 
   it('로그인 성공', async () => {
     const request: ReqLoginAppDto = {
-      id: 'uuid',
+      id: 'uuid-uuid-uuid-uuid-uuid',
     };
 
     const response: ResLoginAppDto = {

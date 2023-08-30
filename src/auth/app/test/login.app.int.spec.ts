@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { authServiceTestModuleOptions } from './authService.test.option';
 import { AuthService } from '../auth.service';
 import { ReqLoginAppDto, ResLoginAppDto } from '@auth/domain/dto/login.app.dto';
-import { TEST1_ID_LOCAL } from '@shared/test/userMockData';
+import { TEST1_USER_LOCAL } from '@shared/test/userMockData';
 
 describe('register', () => {
   let authService: AuthService;
@@ -23,7 +23,7 @@ describe('register', () => {
   });
 
   const request: ReqLoginAppDto = {
-    id: TEST1_ID_LOCAL,
+    id: TEST1_USER_LOCAL.id,
   };
 
   it('로그인 성공', async () => {

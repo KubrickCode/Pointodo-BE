@@ -5,6 +5,7 @@ import { requestE2E } from '../request.e2e';
 import {
   TEST1_USER_LOCAL_WITH_PASSWORD,
   TEST2_USER_GOOGLE,
+  TEST3_USER_KAKAO,
 } from '../../src/shared/test/userMockData';
 import {
   USER_EXIST_WITH_SOCIAL,
@@ -67,13 +68,24 @@ describe('회원가입 in UserController (e2e)', () => {
   });
 
   it('로그인 e2e 테스트 - 소셜 계정 오류', async () => {
-    const response = await requestE2E(app, path, 'post', 409, {
+    const googleResponse = await requestE2E(app, path, 'post', 409, {
       ...body,
       email: TEST2_USER_GOOGLE.email,
     });
-    expect(response.statusCode).toEqual(409);
-    expect(response.body.statusCode).toEqual(409);
-    expect(response.body.message).toEqual(USER_EXIST_WITH_SOCIAL);
-    expect(response.body.path).toEqual(path);
+
+    expect(googleResponse.statusCode).toEqual(409);
+    expect(googleResponse.body.statusCode).toEqual(409);
+    expect(googleResponse.body.message).toEqual(USER_EXIST_WITH_SOCIAL);
+    expect(googleResponse.body.path).toEqual(path);
+
+    const kakaoResponse = await requestE2E(app, path, 'post', 409, {
+      ...body,
+      email: TEST3_USER_KAKAO.email,
+    });
+
+    expect(kakaoResponse.statusCode).toEqual(409);
+    expect(kakaoResponse.body.statusCode).toEqual(409);
+    expect(kakaoResponse.body.message).toEqual(USER_EXIST_WITH_SOCIAL);
+    expect(kakaoResponse.body.path).toEqual(path);
   });
 });

@@ -15,7 +15,7 @@ describe('ValidateUser', () => {
     };
 
     const response: ResValidateUserAppDto = {
-      id: 'uuid',
+      id: 'uuid-uuid-uuid-uuid-uuid',
       email: 'test@test.test',
       provider: 'LOCAL',
       role: 'USER',
