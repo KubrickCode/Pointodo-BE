@@ -49,14 +49,16 @@ export const MOCK_USER = {
   createdAt: new Date(),
 };
 
+export const TEST_PASSWORD = 'test1234!@';
+
 export const MOCK_USER_WITH_PWD = {
   ...MOCK_USER,
-  password: 'test1234!@',
+  password: TEST_PASSWORD,
 };
 
 export const TEST1_USER_LOCAL_WITH_PASSWORD = {
   ...TEST1_USER_LOCAL,
-  password: 'test1234!@',
+  password: TEST_PASSWORD,
 };
 
 export const TEST_ACCESS_TOKEN = 'accessToken';

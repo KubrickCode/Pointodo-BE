@@ -12,7 +12,7 @@ export class ResGetUserAppDto {
   readonly provider: ProviderType;
   readonly role: RoleType;
   readonly selectedBadgeId: number;
-  readonly selectedBadge?: { iconLink: string };
+  readonly selectedBadge: { iconLink: string };
 
   @Type(() => Date)
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
