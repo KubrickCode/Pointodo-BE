@@ -3,13 +3,15 @@ import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.reposit
 import { Injectable } from '@nestjs/common';
 import { UserBadgesLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
+import { plainToClass } from 'class-transformer';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class UserBadgeRepository implements IUserBadgeRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async createUserBadgeLog(
-    userId: string,
+    userId: UUID,
     badgeId: number,
   ): Promise<UserBadgeEntity> {
     const query = `
@@ -26,7 +28,7 @@ export class UserBadgeRepository implements IUserBadgeRepository {
   }
 
   async getUserBadgeList(
-    userId: string,
+    userId: UUID,
   ): Promise<Array<Pick<UserBadgeEntity, 'badgeId'>>> {
     const query = `
       SELECT "badgeId" FROM "UserBadgesLogs"
@@ -40,7 +42,7 @@ export class UserBadgeRepository implements IUserBadgeRepository {
   }
 
   async getUserBadgeListWithName(
-    userId: string,
+    userId: UUID,
   ): Promise<Array<{ badgeId: number; name: string }>> {
     const query = `
       SELECT u."badgeId", b.name
@@ -66,12 +68,12 @@ export class UserBadgeRepository implements IUserBadgeRepository {
       query,
       ...values,
     );
-    return deleteBadgeLog;
+    return plainToClass(UserBadgeEntity, deleteBadgeLog);
   }
 
   async deleteUserBadge(
     badgeId: number,
-    userId: string,
+    userId: UUID,
   ): Promise<UserBadgeEntity> {
     const query = `
       DELETE FROM "UserBadgesLogs"
@@ -82,6 +84,6 @@ export class UserBadgeRepository implements IUserBadgeRepository {
       query,
       ...values,
     );
-    return deleteBadgeLog;
+    return plainToClass(UserBadgeEntity, deleteBadgeLog);
   }
 }
