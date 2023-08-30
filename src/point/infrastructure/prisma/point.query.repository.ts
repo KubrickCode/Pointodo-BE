@@ -11,6 +11,7 @@ import {
   SpentPointWithBadgeName,
 } from '@point/domain/entities/spentPoint.entity';
 import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class PointRepository implements IPointRepository {
@@ -21,7 +22,7 @@ export class PointRepository implements IPointRepository {
   ) {}
 
   async getEarnedPointsLogs(
-    userId: string,
+    userId: UUID,
     limit: number,
     offset: number,
     order: string,
@@ -48,7 +49,7 @@ export class PointRepository implements IPointRepository {
   }
 
   async getSpentPointsLogs(
-    userId: string,
+    userId: UUID,
     limit: number,
     offset: number,
     order: string,
@@ -79,7 +80,7 @@ export class PointRepository implements IPointRepository {
   }
 
   async getTotalPointPages(
-    userId: string,
+    userId: UUID,
     transactionType: 'EARNED' | 'SPENT',
   ): Promise<number> {
     let query: string;
@@ -122,7 +123,7 @@ export class PointRepository implements IPointRepository {
 
   async createEarnedPointLog(
     taskId: number,
-    userId: string,
+    userId: UUID,
     points: number,
   ): Promise<EarnedPointEntity> {
     const createPointLogQuery = `
@@ -143,7 +144,7 @@ export class PointRepository implements IPointRepository {
 
   async createSpentPointLog(
     badgeLogId: number,
-    userId: string,
+    userId: UUID,
     points: number,
   ): Promise<SpentPointEntity> {
     const createPointLogQuery = `
@@ -162,7 +163,7 @@ export class PointRepository implements IPointRepository {
     return createdPointLog[0];
   }
 
-  async countTasksPerDate(userId: string, date: string): Promise<number> {
+  async countTasksPerDate(userId: UUID, date: string): Promise<number> {
     const countTasksQuery = `
       SELECT COUNT(*) FROM "EarnedPointsLogs"
       WHERE "userId" = $1::uuid
@@ -179,7 +180,7 @@ export class PointRepository implements IPointRepository {
     return Number(tasksCount[0].count);
   }
 
-  async calculateUserPoints(userId: string): Promise<number> {
+  async calculateUserPoints(userId: UUID): Promise<number> {
     const earnedPointsQuery = `
         SELECT SUM(points) AS "earnedPoints" FROM "EarnedPointsLogs"
         WHERE "userId" = $1::uuid

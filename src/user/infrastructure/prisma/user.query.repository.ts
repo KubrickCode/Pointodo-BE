@@ -5,12 +5,13 @@ import { IUserRepository } from '@user/domain/interfaces/user.repository.interfa
 import { ProviderType, UserEntity } from '@user/domain/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { plainToClass } from 'class-transformer';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findById(id: string): Promise<UserEntity | null> {
+  async findById(id: UUID): Promise<UserEntity | null> {
     const query = `
     SELECT u.*, b."iconLink"
     FROM "User" u
@@ -29,7 +30,7 @@ export class UserRepository implements IUserRepository {
     return result[0];
   }
 
-  async findPasswordById(id: string): Promise<string> {
+  async findPasswordById(id: UUID): Promise<string> {
     const query = `
     SELECT password FROM "UserPassword" WHERE userId = $1::uuid
     `;
@@ -48,7 +49,7 @@ export class UserRepository implements IUserRepository {
     provider = Provider[provider] || Provider['LOCAL'];
     const uuid = uuidv4();
 
-    return await this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx) => {
       const query = `
       INSERT INTO "User" (id, email, provider)
       VALUES ($1::uuid, $2, $3::"Provider")
@@ -68,9 +69,11 @@ export class UserRepository implements IUserRepository {
 
       return newUser;
     });
+
+    return plainToClass(UserEntity, result);
   }
 
-  async changePassword(id: string, newPassword: string): Promise<void> {
+  async changePassword(id: UUID, newPassword: string): Promise<void> {
     const query = `
     UPDATE "UserPassword" SET password = $1 WHERE userId = $2::uuid
     `;
@@ -78,7 +81,7 @@ export class UserRepository implements IUserRepository {
     await this.prisma.$queryRawUnsafe<User>(query, ...values);
   }
 
-  async deleteUser(id: string): Promise<UserEntity> {
+  async deleteUser(id: UUID): Promise<UserEntity> {
     const query = `
     DELETE FROM "User" WHERE id = $1::uuid
     RETURNING *
@@ -89,7 +92,7 @@ export class UserRepository implements IUserRepository {
   }
 
   async changeSelectedBadge(
-    userId: string,
+    userId: UUID,
     badgeId: number,
   ): Promise<UserEntity> {
     const query = `
@@ -138,7 +141,8 @@ export class UserRepository implements IUserRepository {
     }
 
     const values = [limit, offset, provider];
-    return await this.prisma.$queryRawUnsafe<User[]>(query, ...values);
+    const result = await this.prisma.$queryRawUnsafe<User[]>(query, ...values);
+    return result.map((item) => plainToClass(UserEntity, item));
   }
 
   async getTotalUserListPages(provider: ProviderType | 'ALL'): Promise<number> {

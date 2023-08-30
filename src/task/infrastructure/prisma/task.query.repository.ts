@@ -4,13 +4,14 @@ import { PrismaService } from '@shared/service/prisma.service';
 import { TaskEntity, TaskType_ } from '@task/domain/entities/task.entity';
 import { TasksDueDateEntity } from '@task/domain/entities/tasksDueDate.entity';
 import { ITaskRepository } from '@task/domain/interfaces/task.repository.interface';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class TaskRepository implements ITaskRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async getTasksLogs(
-    userId: string,
+    userId: UUID,
     taskType: TaskType_,
     limit: number,
     offset: number,
@@ -52,10 +53,7 @@ export class TaskRepository implements ITaskRepository {
     return tasksLogs;
   }
 
-  async getTotalTaskPages(
-    userId: string,
-    taskType: TaskType_,
-  ): Promise<number> {
+  async getTotalTaskPages(userId: UUID, taskType: TaskType_): Promise<number> {
     const query = `
     SELECT COUNT(*)
     FROM "TasksLogs"
@@ -85,7 +83,7 @@ export class TaskRepository implements ITaskRepository {
   }
 
   async createTask(
-    userId: string,
+    userId: UUID,
     taskType: TaskType_,
     name: string,
     description: string,
