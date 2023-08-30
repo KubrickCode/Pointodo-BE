@@ -1,6 +1,8 @@
+import { UUID } from 'crypto';
+
 export class ReqPutBadgeToUserAppDto {
   readonly badgeId: number;
-  readonly userId: string;
+  readonly userId: UUID;
 }
 
 export class ResPutBadgeToUserAppDto {

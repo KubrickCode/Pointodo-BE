@@ -2,7 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { BADGE_ID } from '@shared/constants/badge.constant';
 import { USER_ID } from '@shared/constants/user.constant';
 import { PUT_BADGE_SUCCESS_MESSAGE } from '@shared/messages/badge/badge.messages';
-import { IsInt, IsString } from 'class-validator';
+import { IsInt, IsString, IsUUID } from 'class-validator';
+import { UUID } from 'crypto';
 
 export class ReqAdminPutBadgeToUserDto {
   @ApiProperty({ description: BADGE_ID })
@@ -10,8 +11,8 @@ export class ReqAdminPutBadgeToUserDto {
   readonly badgeId: number;
 
   @ApiProperty({ description: USER_ID })
-  @IsString()
-  readonly userId: string;
+  @IsUUID()
+  readonly userId: UUID;
 }
 
 export class ResAdminPutBadgeToUserDto {

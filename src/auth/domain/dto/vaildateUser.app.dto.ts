@@ -1,4 +1,5 @@
 import { ProviderType, RoleType } from '@user/domain/entities/user.entity';
+import { UUID } from 'crypto';
 
 export class ReqValidateUserAppDto {
   readonly email: string;
@@ -6,7 +7,7 @@ export class ReqValidateUserAppDto {
 }
 
 export class ResValidateUserAppDto {
-  readonly id: string;
+  readonly id: UUID;
   readonly email: string;
   readonly provider: ProviderType;
   readonly role: RoleType;

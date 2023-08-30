@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import { ProviderType, RoleType } from '../entities/user.entity';
 
 export class ReqGetUserListAppDto {
@@ -7,7 +8,7 @@ export class ReqGetUserListAppDto {
 }
 
 export class ResGetUserListAppDto {
-  readonly id: string;
+  readonly id: UUID;
   readonly email: string;
   readonly provider: ProviderType;
   readonly role: RoleType;

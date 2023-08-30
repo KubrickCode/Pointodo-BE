@@ -1,7 +1,9 @@
+import { UUID } from 'crypto';
+
 export class ReqGenerateAccessTokenAppDto {
-  readonly id: string;
+  readonly id: UUID;
 }
 
 export class ReqGenerateRefreshTokenAppDto {
-  readonly id: string;
+  readonly id: UUID;
 }

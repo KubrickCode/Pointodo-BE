@@ -10,7 +10,7 @@ describe('createUser', () => {
     const password = 'test1234!@';
 
     const createdUser: UserEntity = {
-      id: 'test1234',
+      id: 'uuid-uuid-uuid-uuid-uuid',
       email,
       provider: 'LOCAL',
       role: 'USER',

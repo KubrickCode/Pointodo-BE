@@ -1,11 +1,13 @@
+import { UUID } from 'crypto';
+
 export interface DecodedAccessToken {
-  id: string;
+  id: UUID;
   iat?: number;
   exp?: number;
 }
 
 export interface DecodedRefreshToken {
-  id: string;
+  id: UUID;
   iat?: number;
   exp?: number;
 }

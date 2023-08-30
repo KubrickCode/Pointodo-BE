@@ -4,7 +4,6 @@ import {
   Logger,
   UnauthorizedException,
   NotFoundException,
-  BadRequestException,
   ForbiddenException,
   ConflictException,
 } from '@nestjs/common';
@@ -24,8 +23,6 @@ import {
   AUTH_INVALID_TOKEN,
 } from '@shared/messages/auth/auth.errors';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
-import { plainToClass } from 'class-transformer';
-import { validate } from 'class-validator';
 import {
   ReqValidateUserAppDto,
   ResValidateUserAppDto,
@@ -78,16 +75,6 @@ export class AuthService implements IAuthService {
   async validateUser(
     req: ReqValidateUserAppDto,
   ): Promise<ResValidateUserAppDto> {
-    const loginDto = plainToClass(ReqValidateUserAppDto, req);
-    const validationErrors = await validate(loginDto);
-
-    if (validationErrors.length > 0) {
-      const message = validationErrors
-        .map((err) => Object.values(err.constraints))
-        .flat();
-      throw new BadRequestException(message);
-    }
-
     const user = await this.userRepository.findByEmail(req.email);
 
     if (!user) {

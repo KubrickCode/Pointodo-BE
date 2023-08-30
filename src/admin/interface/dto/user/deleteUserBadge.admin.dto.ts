@@ -3,7 +3,8 @@ import { BADGE_ID } from '@shared/constants/badge.constant';
 import { USER_ID } from '@shared/constants/user.constant';
 import { DELETE_USER_BADGE_SUCCESS_MESSAGE } from '@shared/messages/badge/badge.messages';
 import { Type } from 'class-transformer';
-import { IsInt, IsString } from 'class-validator';
+import { IsInt, IsString, IsUUID } from 'class-validator';
+import { UUID } from 'crypto';
 
 export class ReqAdminDeleteUserBadgeQueryDto {
   @ApiProperty({ description: BADGE_ID })
@@ -12,8 +13,8 @@ export class ReqAdminDeleteUserBadgeQueryDto {
   readonly badgeId: number;
 
   @ApiProperty({ description: USER_ID })
-  @IsString()
-  readonly userId: string;
+  @IsUUID()
+  readonly userId: UUID;
 }
 
 export class ResAdminDeleteUserBadgeDto {

@@ -1,7 +1,8 @@
+import { UUID } from 'crypto';
 import { TaskType_ } from '../entities/task.entity';
 
 export class ReqGetTotalTaskPagesAppDto {
-  readonly userId: string;
+  readonly userId: UUID;
   readonly taskType: TaskType_;
 }
 

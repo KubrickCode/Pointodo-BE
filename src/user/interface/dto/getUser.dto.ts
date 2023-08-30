@@ -16,12 +16,13 @@ import {
   RoleType,
   RoleTypes,
 } from '@user/domain/entities/user.entity';
-import { IsDate, IsEnum, IsString } from 'class-validator';
+import { IsDate, IsEnum, IsString, IsUUID } from 'class-validator';
+import { UUID } from 'crypto';
 
 export class ResGetUserDto {
   @ApiProperty({ description: USER_ID })
-  @IsString()
-  readonly id: string;
+  @IsUUID()
+  readonly id: UUID;
 
   @ApiProperty({ example: USER_EMAIL_EXAMPLE, description: USER_EMAIL })
   @IsString()

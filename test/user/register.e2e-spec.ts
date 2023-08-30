@@ -8,9 +8,12 @@ import {
   VALIDATE_PASSWORD,
 } from '@shared/messages/auth/auth.messages';
 import { requestE2E } from '../request.e2e';
+import * as cookieParser from 'cookie-parser';
 
 describe('회원가입 in UserController (e2e)', () => {
   let app: INestApplication;
+  const path = '/user/register';
+  const body = { email: 'test@test.com', password: 'test1234!@' };
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -19,25 +22,21 @@ describe('회원가입 in UserController (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
+    app.use(cookieParser());
     await app.init();
   });
 
   afterAll(async () => {
     const loginResult = await requestE2E(app, '/auth/login', 'post', 201, body);
-    await requestE2E(
-      app,
-      '/user',
-      'delete',
-      200,
-      null,
-      loginResult.body.accessToken,
-    );
+    const accessToken = loginResult.headers['set-cookie']
+      .find((cookie: string) => cookie.includes('accessToken'))
+      .split('accessToken=')[1]
+      .split(';')[0];
+
+    await requestE2E(app, '/user', 'delete', 200, null, accessToken);
 
     await app.close();
   });
-
-  const path = '/user/register';
-  const body = { email: 'test@test.com', password: 'test1234!@' };
 
   it('회원가입 e2e 테스트', async () => {
     const response = await requestE2E(app, path, 'post', 201, body);
