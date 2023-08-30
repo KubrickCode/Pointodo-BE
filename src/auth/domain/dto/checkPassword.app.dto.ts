@@ -1,5 +1,7 @@
+import { UUID } from 'crypto';
+
 export class ReqCheckPasswordAppDto {
-  readonly id: string;
+  readonly id: UUID;
   readonly password: string;
 }
 

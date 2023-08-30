@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import { ProviderType, UserEntity } from '../entities/user.entity';
 
 export interface IUserRepository {
@@ -9,15 +10,15 @@ export interface IUserRepository {
 
   findByEmail(email: string): Promise<UserEntity | null>;
 
-  findById(id: string): Promise<UserEntity | null>;
+  findById(id: UUID): Promise<UserEntity | null>;
 
   findPasswordById(email: string): Promise<string>;
 
-  changePassword(id: string, newPassword: string): Promise<void>;
+  changePassword(id: UUID, newPassword: string): Promise<void>;
 
-  deleteUser(id: string): Promise<UserEntity>;
+  deleteUser(id: UUID): Promise<UserEntity>;
 
-  changeSelectedBadge(userId: string, badgeId: number): Promise<UserEntity>;
+  changeSelectedBadge(userId: UUID, badgeId: number): Promise<UserEntity>;
 
   changeSelectedBadgeToDefault(badgeId: number): Promise<void>;
 

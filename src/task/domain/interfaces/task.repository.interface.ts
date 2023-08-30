@@ -1,21 +1,22 @@
+import { UUID } from 'crypto';
 import { TaskEntity, TaskType_ } from '../entities/task.entity';
 import { TasksDueDateEntity } from '../entities/tasksDueDate.entity';
 
 export interface ITaskRepository {
   getTasksLogs(
-    userId: string,
+    userId: UUID,
     taskType: TaskType_,
     limit: number,
     offset: number,
     order: string,
   ): Promise<TaskEntity[]>;
 
-  getTotalTaskPages(userId: string, taskType: TaskType_): Promise<number>;
+  getTotalTaskPages(userId: UUID, taskType: TaskType_): Promise<number>;
 
   getTaskLogById(id: number): Promise<TaskEntity>;
 
   createTask(
-    userId: string,
+    userId: UUID,
     taskType: TaskType_,
     name: string,
     description: string,

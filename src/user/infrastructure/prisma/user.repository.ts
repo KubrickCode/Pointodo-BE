@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
-import { Provider } from '@prisma/client';
+import { Provider, User } from '@prisma/client';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import { ProviderType, UserEntity } from '@user/domain/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { UUID } from 'crypto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findById(id: string): Promise<UserEntity | null> {
+  async findById(id: UUID): Promise<UserEntity | null> {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: {
@@ -18,15 +20,15 @@ export class UserRepository implements IUserRepository {
         },
       },
     });
-    return user;
+    return plainToClass(UserEntity, user);
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
     const user = await this.prisma.user.findUnique({ where: { email } });
-    return user;
+    return plainToClass(UserEntity, user);
   }
 
-  async findPasswordById(id: string): Promise<string> {
+  async findPasswordById(id: UUID): Promise<string> {
     const result = await this.prisma.userPassword.findUnique({
       where: { userId: id },
       select: { password: true },
@@ -42,7 +44,7 @@ export class UserRepository implements IUserRepository {
     provider = Provider[provider] || Provider['LOCAL'];
     const uuid = uuidv4();
 
-    return await this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx) => {
       const newUser = await tx.user.create({
         data: { id: uuid, email, provider },
       });
@@ -54,32 +56,34 @@ export class UserRepository implements IUserRepository {
 
       return newUser;
     });
+
+    return plainToClass(UserEntity, result);
   }
 
-  async changePassword(id: string, newPassword: string): Promise<void> {
+  async changePassword(id: UUID, newPassword: string): Promise<void> {
     await this.prisma.userPassword.update({
       where: { userId: id },
       data: { password: newPassword },
     });
   }
 
-  async deleteUser(id: string): Promise<UserEntity> {
+  async deleteUser(id: UUID): Promise<UserEntity> {
     const deletedUser = await this.prisma.user.delete({
       where: { id },
     });
 
-    return deletedUser;
+    return plainToClass(UserEntity, deletedUser);
   }
 
   async changeSelectedBadge(
-    userId: string,
+    userId: UUID,
     badgeId: number,
   ): Promise<UserEntity> {
     const user = await this.prisma.user.update({
       where: { id: userId },
       data: { selectedBadgeId: badgeId },
     });
-    return user;
+    return plainToClass(UserEntity, user);
   }
 
   async changeSelectedBadgeToDefault(badgeId: number): Promise<void> {
@@ -95,20 +99,23 @@ export class UserRepository implements IUserRepository {
     offset: number,
     provider: ProviderType | 'ALL',
   ): Promise<UserEntity[]> {
+    let result: User[];
     if (provider === 'ALL') {
-      return await this.prisma.user.findMany({
+      result = await this.prisma.user.findMany({
         orderBy: { createdAt: order === 'newest' ? 'desc' : 'asc' },
         take: limit,
         skip: offset,
       });
     } else {
-      return await this.prisma.user.findMany({
+      result = await this.prisma.user.findMany({
         where: { provider },
         orderBy: { createdAt: order === 'newest' ? 'desc' : 'asc' },
         take: limit,
         skip: offset,
       });
     }
+
+    return result.map((item) => plainToClass(UserEntity, item));
   }
 
   async getTotalUserListPages(provider: ProviderType | 'ALL'): Promise<number> {

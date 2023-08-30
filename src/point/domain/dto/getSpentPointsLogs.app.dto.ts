@@ -1,5 +1,7 @@
+import { UUID } from 'crypto';
+
 export class ReqGetSpentPointsLogsAppDto {
-  readonly userId: string;
+  readonly userId: UUID;
   readonly order: string;
   readonly page: number;
 }

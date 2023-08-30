@@ -1,10 +1,13 @@
-import { UserEntity } from '@user/domain/entities/user.entity';
 import { ITokenService } from '@auth/domain/interfaces/token.service.interface';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { jwtConfig } from '@shared/config/jwt.config';
 import { DecodedAccessToken } from '@auth/domain/interfaces/decodedToken.interface';
+import {
+  ReqGenerateAccessTokenAppDto,
+  ReqGenerateRefreshTokenAppDto,
+} from '@auth/domain/dto/tokenService.app.dto';
 
 @Injectable()
 export class TokenService implements ITokenService {
@@ -13,16 +16,16 @@ export class TokenService implements ITokenService {
     private readonly configService: ConfigService,
   ) {}
 
-  generateAccessToken(user: UserEntity): string {
-    const { id } = user;
+  generateAccessToken(payload: ReqGenerateAccessTokenAppDto): string {
+    const { id } = payload;
     const accessTokenExpiration = jwtConfig(
       this.configService,
     ).accessTokenExpiration;
     return this.jwtService.sign({ id }, { expiresIn: accessTokenExpiration });
   }
 
-  generateRefreshToken(user: UserEntity): string {
-    const { id } = user;
+  generateRefreshToken(payload: ReqGenerateRefreshTokenAppDto): string {
+    const { id } = payload;
     const refreshTokenExpiration = jwtConfig(
       this.configService,
     ).refreshTokenExpiration;

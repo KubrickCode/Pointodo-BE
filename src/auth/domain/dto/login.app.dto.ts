@@ -1,5 +1,7 @@
+import { UUID } from 'crypto';
+
 export class ReqLoginAppDto {
-  readonly id: string;
+  readonly id: UUID;
 }
 
 export class ResLoginAppDto {

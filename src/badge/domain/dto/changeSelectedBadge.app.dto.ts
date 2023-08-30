@@ -1,5 +1,7 @@
+import { UUID } from 'crypto';
+
 export class ReqChangeSelectedBadgeAppDto {
-  readonly userId: string;
+  readonly userId: UUID;
   readonly badgeId: number;
 }
 
