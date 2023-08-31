@@ -8,6 +8,7 @@ export class UserEntity implements User {
   role: RoleType;
   selectedBadgeId: number;
   createdAt: Date;
+  selectedBadge?: { iconLink: string };
 }
 
 type ReadonlyRecord<K extends string, V> = Readonly<Record<K, V>>;

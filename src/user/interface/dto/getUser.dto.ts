@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { BADGE_ICON_LINK } from '@shared/constants/badge.constant';
 import {
   USER_EMAIL,
   USER_EMAIL_EXAMPLE,
@@ -16,7 +17,8 @@ import {
   RoleType,
   RoleTypes,
 } from '@user/domain/entities/user.entity';
-import { IsDate, IsEnum, IsString, IsUUID } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsDate, IsEnum, IsObject, IsString, IsUUID } from 'class-validator';
 import { UUID } from 'crypto';
 
 export class ResGetUserDto {
@@ -40,7 +42,13 @@ export class ResGetUserDto {
   @IsString()
   readonly selectedBadgeId: number;
 
-  @IsDate()
   @ApiProperty({ description: USER_REGISTER_DATE })
+  @Type(() => Date)
+  @Transform(({ value }) => new Date(value), { toClassOnly: true })
+  @IsDate()
   readonly createdAt: Date;
+
+  @ApiProperty({ description: BADGE_ICON_LINK })
+  @IsObject()
+  readonly selectedBadge: { iconLink: string };
 }

@@ -58,6 +58,7 @@ import {
   ResGetTotalTaskPagesAppDto,
 } from '@task/domain/dto/getTotalTaskPages.app.dto';
 import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -114,12 +115,19 @@ export class TaskService implements ITaskService {
     );
 
     if (taskType === 'DUE') {
-      if (new Date(dueDate) < new Date(this.handleDateTime.getToday()))
+      if (new Date(dueDate) < new Date(this.handleDateTime.getToday())) {
+        await this.taskRepository.deleteTask(createdTask.id);
         throw new BadRequestException(DUE_DATE_IN_THE_PAST);
+      }
       await this.taskRepository.createTaskDueDate(createdTask.id, dueDate);
     }
 
-    return { message: CREATE_TASK_SUCCESS_MESSAGE };
+    const result = {
+      id: createdTask.id,
+      message: CREATE_TASK_SUCCESS_MESSAGE,
+    };
+
+    return plainToClass(ResCreateTaskAppDto, result);
   }
 
   async updateTask(req: ReqUpdateTaskAppDto): Promise<ResUpdateTaskAppDto> {
