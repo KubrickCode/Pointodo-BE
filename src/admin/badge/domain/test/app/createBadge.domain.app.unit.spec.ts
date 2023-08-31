@@ -29,6 +29,7 @@ describe('createBadge', () => {
     };
 
     const expectedResult: ResAdminCreateBadgeAppDto = {
+      id: 1,
       message: CREATE_BADGE_SUCCESS_MESSAGE,
     };
 
@@ -56,6 +57,7 @@ describe('createBadge', () => {
     };
 
     const expectedResult: ResAdminCreateBadgeAppDto = {
+      id: 1,
       message: CREATE_BADGE_SUCCESS_MESSAGE,
     };
 

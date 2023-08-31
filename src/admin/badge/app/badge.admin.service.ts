@@ -25,6 +25,7 @@ import { ReqAdminGetBadgeListAppDto } from '../domain/dto/getBadgeList.admin.app
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class BadgeAdminService implements IBadgeAdminService {
@@ -62,7 +63,11 @@ export class BadgeAdminService implements IBadgeAdminService {
       'info',
       `생성 뱃지 ID:${createdBadge.id}, 뱃지명:${createdBadge.name}`,
     );
-    return { message: CREATE_BADGE_SUCCESS_MESSAGE };
+    const result = {
+      id: createdBadge.id,
+      message: CREATE_BADGE_SUCCESS_MESSAGE,
+    };
+    return plainToClass(ResAdminCreateBadgeAppDto, result);
   }
 
   async updateBadge(
