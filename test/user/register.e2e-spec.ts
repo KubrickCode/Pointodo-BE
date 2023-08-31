@@ -9,6 +9,13 @@ import {
 } from '@shared/messages/auth/auth.messages';
 import { requestE2E } from '../request.e2e';
 import * as cookieParser from 'cookie-parser';
+import { validateOrReject } from 'class-validator';
+import {
+  ResRegisterDto,
+  ResRegisterExistUserError,
+} from '@user/interface/dto/register.dto';
+import { plainToClass } from 'class-transformer';
+import { ResInvalidation } from '@shared/dto/global.dto';
 
 describe('회원가입 in UserController (e2e)', () => {
   let app: INestApplication;
@@ -43,6 +50,7 @@ describe('회원가입 in UserController (e2e)', () => {
     const response = await requestE2E(app, path, 'post', 201, body);
 
     expect(response.body.message).toEqual(REGISTER_SUCCESS_MESSAGE);
+    await validateOrReject(plainToClass(ResRegisterDto, response.body));
   }, 30000);
 
   it('회원가입 중복 e2e 테스트', async () => {
@@ -51,6 +59,9 @@ describe('회원가입 in UserController (e2e)', () => {
     expect(response.body.statusCode).toEqual(409);
     expect(response.body.message).toEqual(USER_ALREADY_EXIST);
     expect(response.body.path).toEqual(path);
+    await validateOrReject(
+      plainToClass(ResRegisterExistUserError, response.body),
+    );
   }, 30000);
 
   it('회원가입 유효성 검사 실패 e2e 테스트', async () => {
@@ -62,5 +73,6 @@ describe('회원가입 in UserController (e2e)', () => {
     expect(response.body.statusCode).toEqual(400);
     expect(response.body.message).toEqual([VALIDATE_EMAIL, VALIDATE_PASSWORD]);
     expect(response.body.path).toEqual(path);
+    await validateOrReject(plainToClass(ResInvalidation, response.body));
   }, 30000);
 });
