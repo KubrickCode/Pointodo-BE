@@ -20,6 +20,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiConflictResponse,
   ApiCookieAuth,
   ApiCreatedResponse,
   ApiNotFoundResponse,
@@ -74,6 +75,7 @@ export class AuthController {
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   @ApiNotFoundResponse(loginDocs.invalidEmail)
   @ApiUnauthorizedResponse(loginDocs.invalidPassword)
+  @ApiConflictResponse(loginDocs.conflictError)
   @ApiBody({ type: ReqLoginDto })
   async login(@Req() req: Request, @Res() res: Response): Promise<void> {
     const { accessToken, refreshToken } = await this.authService.login({
