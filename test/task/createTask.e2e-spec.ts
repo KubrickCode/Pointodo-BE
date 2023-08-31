@@ -169,7 +169,9 @@ describe('createTask in taskController (e2e)', () => {
     );
 
     expect(response.body.statusCode).toEqual(400);
-    expect(response.body.message).toEqual(DUE_DATE_IN_THE_PAST);
+    expect(response.body.message[0]).toEqual(DUE_DATE_IN_THE_PAST);
     expect(response.body.path).toEqual(path);
+
+    await validateOrReject(plainToClass(ResInvalidation, response.body));
   }, 30000);
 });

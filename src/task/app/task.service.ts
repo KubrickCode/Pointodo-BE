@@ -117,7 +117,7 @@ export class TaskService implements ITaskService {
     if (taskType === 'DUE') {
       if (new Date(dueDate) < new Date(this.handleDateTime.getToday())) {
         await this.taskRepository.deleteTask(createdTask.id);
-        throw new BadRequestException(DUE_DATE_IN_THE_PAST);
+        throw new BadRequestException([DUE_DATE_IN_THE_PAST]);
       }
       await this.taskRepository.createTaskDueDate(createdTask.id, dueDate);
     }
