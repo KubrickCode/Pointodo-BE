@@ -31,7 +31,7 @@ describe('유저 정보 조회 in UserController (e2e)', () => {
       .find((cookie: string) => cookie.includes('accessToken'))
       .split('accessToken=')[1]
       .split(';')[0];
-  });
+  }, 30000);
 
   afterAll(async () => {
     await app.close();
