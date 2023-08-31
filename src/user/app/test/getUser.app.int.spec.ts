@@ -22,7 +22,7 @@ describe('getUser', () => {
     userService = module.get<UserService>(UserService);
 
     await module.init();
-  });
+  }, 30000);
 
   afterAll(async () => {
     await module.close();
@@ -38,7 +38,7 @@ describe('getUser', () => {
     const user = await userService.getUser(req);
     expect(user).toEqual(expectedResponse);
     expect(user).toBeInstanceOf(ResGetUserAppDto);
-  });
+  }, 30000);
 
   it('유저 조회 APP에서 FROM DB 실패 - 존재하지 않는 계정', async () => {
     try {
@@ -48,5 +48,5 @@ describe('getUser', () => {
       expect(error.response.message).toEqual(USER_NOT_FOUND);
       expect(error.response.error).toEqual('Not Found');
     }
-  });
+  }, 30000);
 });

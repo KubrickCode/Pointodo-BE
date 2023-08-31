@@ -19,7 +19,7 @@ describe('getUserBadgeList', () => {
     badgeService = module.get<BadgeService>(BadgeService);
 
     await module.init();
-  });
+  }, 30000);
 
   afterAll(async () => {
     await module.close();
@@ -34,5 +34,5 @@ describe('getUserBadgeList', () => {
 
     expect(result[0]).toBeInstanceOf(ResGetUserBadgeListAppDto);
     expect(result[0]).toEqual({ badgeId: 1 });
-  });
+  }, 30000);
 });

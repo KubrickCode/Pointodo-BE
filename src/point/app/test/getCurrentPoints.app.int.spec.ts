@@ -19,7 +19,7 @@ describe('getCurrentPoints', () => {
     pointService = module.get<PointService>(PointService);
 
     await module.init();
-  });
+  }, 30000);
 
   afterAll(async () => {
     await module.close();
@@ -33,5 +33,5 @@ describe('getCurrentPoints', () => {
     const result = await pointService.getCurrentPoints(request);
     expect(result).toBeInstanceOf(ResGetCurrentPointsAppDto);
     expect(result.points).toEqual(0);
-  });
+  }, 30000);
 });

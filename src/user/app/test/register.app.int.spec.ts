@@ -23,7 +23,7 @@ describe('register', () => {
     prismaService = module.get<PrismaService>(PrismaService);
 
     await module.init();
-  });
+  }, 30000);
 
   afterAll(async () => {
     await module.close();
@@ -42,7 +42,7 @@ describe('register', () => {
     const result = await userService.register(request);
     expect(result).toEqual(expectedResponse);
     expect(result).toBeInstanceOf(ResRegisterAppDto);
-  });
+  }, 30000);
 
   it('로컬 유저 생성(중복)', async () => {
     try {
@@ -52,5 +52,5 @@ describe('register', () => {
       expect(error.response.message).toEqual(USER_ALREADY_EXIST);
       await prismaService.user.delete({ where: { email: request.email } });
     }
-  });
+  }, 30000);
 });

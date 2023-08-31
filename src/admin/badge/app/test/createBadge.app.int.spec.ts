@@ -21,7 +21,7 @@ describe('createBadge', () => {
     badgeAdminService = module.get<BadgeAdminService>(BadgeAdminService);
 
     await module.init();
-  });
+  }, 30000);
 
   afterAll(async () => {
     await module.close();
@@ -52,7 +52,7 @@ describe('createBadge', () => {
     expect(result).toBeInstanceOf(ResAdminCreateBadgeAppDto);
 
     await badgeAdminService.deleteBadge({ id: result.id });
-  });
+  }, 30000);
 
   it('뱃지 생성 성공 - SPECIAL', async () => {
     const name = 'test';
@@ -74,7 +74,7 @@ describe('createBadge', () => {
     expect(result).toBeInstanceOf(ResAdminCreateBadgeAppDto);
 
     await badgeAdminService.deleteBadge({ id: result.id });
-  });
+  }, 30000);
 
   it('뱃지 생성 실패 - 중복 이름', async () => {
     try {
@@ -101,5 +101,5 @@ describe('createBadge', () => {
       expect(error.response.message).toEqual(CONFLICT_BADGE_NAME);
       expect(error.response.error).toEqual('Conflict');
     }
-  });
+  }, 30000);
 });

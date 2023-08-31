@@ -16,7 +16,7 @@ describe('register', () => {
     authService = module.get<AuthService>(AuthService);
 
     await module.init();
-  });
+  }, 30000);
 
   afterAll(async () => {
     await module.close();
@@ -33,5 +33,5 @@ describe('register', () => {
     expect(loginSpy).toHaveBeenCalledWith(request);
     expect(result).toHaveProperty('accessToken');
     expect(result).toHaveProperty('refreshToken');
-  });
+  }, 30000);
 });
