@@ -1,6 +1,7 @@
 import { PrismaService } from '@shared/service/prisma.service';
 import { PointRepository } from '../prisma/point.repository';
 import { HandleDateTime } from '@shared/utils/handleDateTime';
+import { TEST1_USER_LOCAL } from '@shared/test/userMockData';
 
 describe('calculateUserPoints', () => {
   let prisma: PrismaService;
@@ -11,15 +12,16 @@ describe('calculateUserPoints', () => {
     prisma = new PrismaService();
     handleDateTime = new HandleDateTime();
     pointRepository = new PointRepository(prisma, handleDateTime);
-  });
+  }, 30000);
 
   afterAll(async () => {
     await prisma.$disconnect();
   });
 
-  it('모든 포인트 페이지 수', async () => {
-    // const userId = '0030cc64-b54f-4e75-95a5-1379b6928f7e';
-    // const result = await pointRepository.getTotalPointPages(userId, 'SPENT');
-    // console.log(result);
-  });
+  it('유저 보유 포인트 계산', async () => {
+    const userId = TEST1_USER_LOCAL.id;
+    const result = await pointRepository.calculateUserPoints(userId);
+
+    expect(result).toEqual(0);
+  }, 30000);
 });

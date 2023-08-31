@@ -18,7 +18,14 @@ import {
   RoleTypes,
 } from '@user/domain/entities/user.entity';
 import { Transform, Type } from 'class-transformer';
-import { IsDate, IsEnum, IsObject, IsString, IsUUID } from 'class-validator';
+import {
+  IsDate,
+  IsEnum,
+  IsInt,
+  IsObject,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { UUID } from 'crypto';
 
 export class ResGetUserDto {
@@ -39,7 +46,7 @@ export class ResGetUserDto {
   readonly role: RoleType;
 
   @ApiProperty({ description: USER_SELECTED_BADGE_ID })
-  @IsString()
+  @IsInt()
   readonly selectedBadgeId: number;
 
   @ApiProperty({ description: USER_REGISTER_DATE })

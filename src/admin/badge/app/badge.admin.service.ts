@@ -25,6 +25,7 @@ import { ReqAdminGetBadgeListAppDto } from '../domain/dto/getBadgeList.admin.app
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class BadgeAdminService implements IBadgeAdminService {
@@ -48,9 +49,9 @@ export class BadgeAdminService implements IBadgeAdminService {
     req: ReqAdminCreateBadgeAppDto,
   ): Promise<ResAdminCreateBadgeAppDto> {
     const { name, description, iconLink, type, price } = req;
-    const isExist = await this.badgeAdminRepository.isExist(name);
+    const isExist = await this.badgeAdminRepository.isExistBadge(name);
     if (isExist) throw new ConflictException(CONFLICT_BADGE_NAME);
-    const createdBadge = await this.badgeAdminRepository.create(
+    const createdBadge = await this.badgeAdminRepository.createBadge(
       name,
       description,
       iconLink,
@@ -62,7 +63,11 @@ export class BadgeAdminService implements IBadgeAdminService {
       'info',
       `생성 뱃지 ID:${createdBadge.id}, 뱃지명:${createdBadge.name}`,
     );
-    return { message: CREATE_BADGE_SUCCESS_MESSAGE };
+    const result = {
+      id: createdBadge.id,
+      message: CREATE_BADGE_SUCCESS_MESSAGE,
+    };
+    return plainToClass(ResAdminCreateBadgeAppDto, result);
   }
 
   async updateBadge(
@@ -70,11 +75,11 @@ export class BadgeAdminService implements IBadgeAdminService {
   ): Promise<ResAdminUpdateBadgeAppDto> {
     const { id, name, description, iconLink, price } = req;
     if (name) {
-      const isExist = await this.badgeAdminRepository.isExist(name);
+      const isExist = await this.badgeAdminRepository.isExistBadge(name);
       if (isExist) throw new ConflictException(CONFLICT_BADGE_NAME);
     }
 
-    const updatedBadge = await this.badgeAdminRepository.update(
+    const updatedBadge = await this.badgeAdminRepository.updateBadge(
       id,
       name,
       description,
@@ -93,7 +98,7 @@ export class BadgeAdminService implements IBadgeAdminService {
     req: ReqAdminDeleteBadgeAppDto,
   ): Promise<ResAdminDeleteBadgeAppDto> {
     await this.userRepository.changeSelectedBadgeToDefault(req.id);
-    const deletedBadge = await this.badgeAdminRepository.delete(req.id);
+    const deletedBadge = await this.badgeAdminRepository.deleteBadge(req.id);
 
     await this.cacheService.deleteCache(`allBadges`);
     await this.redisService.deleteKeysByPrefix(`user:*`);

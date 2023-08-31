@@ -54,7 +54,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     return result[0];
   }
 
-  async isExist(name: string): Promise<boolean> {
+  async isExistBadge(name: string): Promise<boolean> {
     const query = `
     SELECT * FROM "Badge"
     WHERE name = $1
@@ -68,7 +68,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     return true;
   }
 
-  async create(
+  async createBadge(
     name: string,
     description: string,
     iconLink: string,
@@ -90,7 +90,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     return newBadgeType[0];
   }
 
-  async update(
+  async updateBadge(
     id: number,
     name?: string,
     description?: string,
@@ -142,7 +142,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     return updatedBadgeType[0];
   }
 
-  async delete(id: number): Promise<BadgeEntity> {
+  async deleteBadge(id: number): Promise<BadgeEntity> {
     const query = `
       DELETE FROM "Badge"
       WHERE id = $1

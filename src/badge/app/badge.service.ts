@@ -28,7 +28,6 @@ import {
   ReqPutBadgeToUserAppDto,
   ResPutBadgeToUserAppDto,
 } from '@badge/domain/dto/putBadgeToUser.app.dto';
-import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
@@ -57,6 +56,7 @@ import {
   PUT_BADGE_SUCCESS_MESSAGE,
 } from '@shared/messages/badge/badge.messages';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class BadgeService implements IBadgeService {
@@ -122,13 +122,20 @@ export class BadgeService implements IBadgeService {
   ): Promise<ResGetUserBadgeListAppDto[]> {
     const cacheKey = `userBadgeList:${req.userId}`;
     const cachedBadgeList = await this.cacheService.getFromCache<
-      UserBadgeEntity[]
+      ResGetUserBadgeListAppDto[]
     >(cacheKey);
     if (cachedBadgeList) {
-      return cachedBadgeList;
+      return cachedBadgeList.map((item) =>
+        plainToClass(ResGetUserBadgeListAppDto, item),
+      );
     }
 
-    const result = await this.userBadgeRepository.getUserBadgeList(req.userId);
+    const response = await this.userBadgeRepository.getUserBadgeList(
+      req.userId,
+    );
+    const result = response.map((item) =>
+      plainToClass(ResGetUserBadgeListAppDto, item),
+    );
 
     await this.cacheService.setCache(
       cacheKey,
