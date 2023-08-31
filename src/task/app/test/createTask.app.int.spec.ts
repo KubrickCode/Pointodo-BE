@@ -10,7 +10,7 @@ import {
 import { CREATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
 import { DUE_DATE_IN_THE_PAST } from '@shared/messages/task/task.errors';
 
-describe('getUser', () => {
+describe('createTask', () => {
   let taskService: TaskService;
   let module: TestingModule;
 
@@ -78,7 +78,7 @@ describe('getUser', () => {
       await taskService.createTask(request);
     } catch (error) {
       expect(error.response.statusCode).toEqual(400);
-      expect(error.response.message).toEqual(DUE_DATE_IN_THE_PAST);
+      expect(error.response.message[0]).toEqual(DUE_DATE_IN_THE_PAST);
       expect(error.response.error).toEqual('Bad Request');
     }
   });
