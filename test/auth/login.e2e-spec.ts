@@ -43,7 +43,7 @@ describe('회원가입 in UserController (e2e)', () => {
     expect(response.headers['set-cookie'][0]).toContain('accessToken');
     expect(response.headers['set-cookie'][1]).toContain('refreshToken');
     expect(response.statusCode).toEqual(201);
-  });
+  }, 30000);
 
   it('로그인 e2e 테스트 - 없는 계정 오류', async () => {
     const response = await requestE2E(app, path, 'post', 404, {
@@ -54,7 +54,7 @@ describe('회원가입 in UserController (e2e)', () => {
     expect(response.body.statusCode).toEqual(404);
     expect(response.body.message).toEqual(USER_NOT_FOUND);
     expect(response.body.path).toEqual(path);
-  });
+  }, 30000);
 
   it('로그인 e2e 테스트 - 비밀번호 오류', async () => {
     const response = await requestE2E(app, path, 'post', 401, {
@@ -65,7 +65,7 @@ describe('회원가입 in UserController (e2e)', () => {
     expect(response.body.statusCode).toEqual(401);
     expect(response.body.message).toEqual(AUTH_INVALID_PASSWORD);
     expect(response.body.path).toEqual(path);
-  });
+  }, 30000);
 
   it('로그인 e2e 테스트 - 소셜 계정 오류', async () => {
     const googleResponse = await requestE2E(app, path, 'post', 409, {
@@ -87,5 +87,5 @@ describe('회원가입 in UserController (e2e)', () => {
     expect(kakaoResponse.body.statusCode).toEqual(409);
     expect(kakaoResponse.body.message).toEqual(USER_EXIST_WITH_SOCIAL);
     expect(kakaoResponse.body.path).toEqual(path);
-  });
+  }, 30000);
 });

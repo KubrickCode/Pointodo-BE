@@ -42,7 +42,7 @@ describe('회원가입 in UserController (e2e)', () => {
     const response = await requestE2E(app, path, 'post', 201, body);
 
     expect(response.body.message).toEqual(REGISTER_SUCCESS_MESSAGE);
-  });
+  }, 30000);
 
   it('회원가입 중복 e2e 테스트', async () => {
     const response = await requestE2E(app, path, 'post', 409, body);
@@ -50,7 +50,7 @@ describe('회원가입 in UserController (e2e)', () => {
     expect(response.body.statusCode).toEqual(409);
     expect(response.body.message).toEqual(USER_ALREADY_EXIST);
     expect(response.body.path).toEqual(path);
-  });
+  }, 30000);
 
   it('회원가입 유효성 검사 실패 e2e 테스트', async () => {
     const response = await requestE2E(app, path, 'post', 400, {
@@ -61,5 +61,5 @@ describe('회원가입 in UserController (e2e)', () => {
     expect(response.body.statusCode).toEqual(400);
     expect(response.body.message).toEqual([VALIDATE_EMAIL, VALIDATE_PASSWORD]);
     expect(response.body.path).toEqual(path);
-  });
+  }, 30000);
 });

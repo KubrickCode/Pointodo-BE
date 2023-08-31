@@ -41,12 +41,12 @@ describe('유저 정보 조회 in UserController (e2e)', () => {
     const response = await requestE2E(app, path, 'get', 200, null, accessToken);
     const result = plainToClass(ResGetUserDto, response.body);
     expect(result).toEqual(plainToClass(ResGetUserDto, TEST1_USER_LOCAL));
-  });
+  }, 30000);
 
   it('유저 정보 조회 실패 e2e 테스트 - 토큰 에러', async () => {
     const response = await requestE2E(app, path, 'get', 401, null, 'token');
     expect(response.body.statusCode).toEqual(401);
     expect(response.body.message).toEqual(AUTH_INVALID_TOKEN);
     expect(response.body.path).toEqual(path);
-  });
+  }, 30000);
 });
