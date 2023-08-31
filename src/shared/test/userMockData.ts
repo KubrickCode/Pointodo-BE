@@ -56,10 +56,5 @@ export const MOCK_USER_WITH_PWD = {
   password: TEST_PASSWORD,
 };
 
-export const TEST1_USER_LOCAL_WITH_PASSWORD = {
-  ...TEST1_USER_LOCAL,
-  password: TEST_PASSWORD,
-};
-
 export const TEST_ACCESS_TOKEN = 'accessToken';
 export const TEST_REFRESH_TOKEN = 'refreshToken';

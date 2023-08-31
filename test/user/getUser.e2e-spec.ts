@@ -3,14 +3,14 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import { requestE2E } from '../request.e2e';
 import * as cookieParser from 'cookie-parser';
-import { TEST1_USER_LOCAL, TEST_PASSWORD } from '@shared/test/userMockData';
 import { plainToClass } from 'class-transformer';
 import { ResGetUserDto } from '@user/interface/dto/getUser.dto';
 import { AUTH_INVALID_TOKEN } from '@shared/messages/auth/auth.errors';
+import { setupLoggedIn } from '../setupLoggedIn.e2e';
+import { TEST1_USER_LOCAL } from '@shared/test/userMockData';
 
 describe('유저 정보 조회 in UserController (e2e)', () => {
   let app: INestApplication;
-  const path = '/user';
   let accessToken: string;
 
   beforeAll(async () => {
@@ -23,19 +23,14 @@ describe('유저 정보 조회 in UserController (e2e)', () => {
     app.use(cookieParser());
     await app.init();
 
-    const loginResult = await requestE2E(app, '/auth/login', 'post', 201, {
-      email: TEST1_USER_LOCAL.email,
-      password: TEST_PASSWORD,
-    });
-    accessToken = loginResult.headers['set-cookie']
-      .find((cookie: string) => cookie.includes('accessToken'))
-      .split('accessToken=')[1]
-      .split(';')[0];
+    accessToken = await setupLoggedIn(app);
   }, 30000);
 
   afterAll(async () => {
     await app.close();
   });
+
+  const path = '/user';
 
   it('유저 정보 조회 e2e 테스트', async () => {
     const response = await requestE2E(app, path, 'get', 200, null, accessToken);

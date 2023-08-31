@@ -12,8 +12,6 @@ import * as cookieParser from 'cookie-parser';
 
 describe('회원가입 in UserController (e2e)', () => {
   let app: INestApplication;
-  const path = '/user/register';
-  const body = { email: 'test@test.com', password: 'test1234!@' };
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -37,6 +35,9 @@ describe('회원가입 in UserController (e2e)', () => {
 
     await app.close();
   });
+
+  const path = '/user/register';
+  const body = { email: 'test@test.com', password: 'test1234!@' };
 
   it('회원가입 e2e 테스트', async () => {
     const response = await requestE2E(app, path, 'post', 201, body);

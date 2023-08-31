@@ -3,9 +3,10 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import { requestE2E } from '../request.e2e';
 import {
-  TEST1_USER_LOCAL_WITH_PASSWORD,
+  TEST1_USER_LOCAL,
   TEST2_USER_GOOGLE,
   TEST3_USER_KAKAO,
+  TEST_PASSWORD,
 } from '../../src/shared/test/userMockData';
 import {
   USER_EXIST_WITH_SOCIAL,
@@ -14,7 +15,7 @@ import {
 import { AUTH_INVALID_PASSWORD } from '@shared/messages/auth/auth.errors';
 import * as cookieParser from 'cookie-parser';
 
-describe('회원가입 in UserController (e2e)', () => {
+describe('로그인 in UserController (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -34,11 +35,12 @@ describe('회원가입 in UserController (e2e)', () => {
 
   const path = '/auth/login';
   const body = {
-    email: TEST1_USER_LOCAL_WITH_PASSWORD.email,
-    password: TEST1_USER_LOCAL_WITH_PASSWORD.password,
+    email: TEST1_USER_LOCAL.email,
+    password: TEST_PASSWORD,
   };
 
   it('로그인 e2e 테스트', async () => {
+    console.log(body);
     const response = await requestE2E(app, path, 'post', 201, body);
     expect(response.headers['set-cookie'][0]).toContain('accessToken');
     expect(response.headers['set-cookie'][1]).toContain('refreshToken');
