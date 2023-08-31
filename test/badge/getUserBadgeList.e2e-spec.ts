@@ -7,6 +7,7 @@ import { plainToClass } from 'class-transformer';
 import { setupLoggedIn } from '../setupLoggedIn.e2e';
 import { validateOrReject } from 'class-validator';
 import { ResGetUserBadgeListDto } from '@badge/interface/dto/getUserBadgeList.dto';
+import { tokenError } from '../tokenError.e2e';
 
 describe('유저 뱃지 목록 조회 in BadgeController (e2e)', () => {
   let app: INestApplication;
@@ -39,4 +40,10 @@ describe('유저 뱃지 목록 조회 in BadgeController (e2e)', () => {
 
     await validateOrReject(result);
   }, 30000);
+
+  it(
+    '유저 뱃지 목록 조회 실패 e2e 테스트 - 토큰 에러',
+    async () => await tokenError(app, path, 'get'),
+    30000,
+  );
 });

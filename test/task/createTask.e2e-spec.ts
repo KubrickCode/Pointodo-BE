@@ -14,6 +14,7 @@ import { plainToClass } from 'class-transformer';
 import { ResInvalidation } from '@shared/dto/global.dto';
 import { DUE_DATE_IN_THE_PAST } from '@shared/messages/task/task.errors';
 import { setupLoggedIn } from '../setupLoggedIn.e2e';
+import { tokenError } from '../tokenError.e2e';
 
 describe('createTask in taskController (e2e)', () => {
   let app: INestApplication;
@@ -174,4 +175,10 @@ describe('createTask in taskController (e2e)', () => {
 
     await validateOrReject(plainToClass(ResInvalidation, response.body));
   }, 30000);
+
+  it(
+    '작업 생성 실패 e2e 테스트 - 토큰 에러',
+    async () => await tokenError(app, path, 'post'),
+    30000,
+  );
 });
