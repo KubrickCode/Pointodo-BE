@@ -7,10 +7,9 @@ import { jwtConfig } from '@shared/config/jwt.config';
 import { TaskModule } from '@task/interface/task.module';
 import { TaskProvider } from '@task/interface/task.provider';
 import { TaskService } from '../task.service';
-import { HandleDateTime } from '@shared/utils/handleDateTime';
 
 export const taskServiceTestModuleOptions = {
-  providers: [...TaskProvider, TaskService, HandleDateTime],
+  providers: [...TaskProvider, TaskService],
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',

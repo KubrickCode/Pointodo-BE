@@ -51,6 +51,7 @@ import {
   ReqGetTotalTaskPagesParamDto,
   ResGetTotalTaskPagesDto,
 } from './dto/getTotalTaskPages.dto';
+import { plainToClass } from 'class-transformer';
 
 @Controller('task')
 @ApiTags('Task')
@@ -101,7 +102,8 @@ export class TaskController {
     @Body() body: ReqCreateTaskDto,
   ): Promise<ResCreateTaskDto> {
     const userId = req.user.id;
-    return await this.taskService.createTask({ userId, ...body });
+    const result = await this.taskService.createTask({ userId, ...body });
+    return plainToClass(ResCreateTaskDto, result);
   }
 
   @Patch('update')

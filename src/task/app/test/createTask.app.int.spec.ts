@@ -8,13 +8,10 @@ import {
   ResCreateTaskAppDto,
 } from '@task/domain/dto/createTask.app.dto';
 import { CREATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
-import { HandleDateTime } from '@shared/utils/handleDateTime';
-import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 import { DUE_DATE_IN_THE_PAST } from '@shared/messages/task/task.errors';
 
 describe('getUser', () => {
   let taskService: TaskService;
-  let handleDateTime: IHandleDateTime;
   let module: TestingModule;
 
   beforeAll(async () => {
@@ -23,7 +20,6 @@ describe('getUser', () => {
     ).compile();
 
     taskService = module.get<TaskService>(TaskService);
-    handleDateTime = module.get<IHandleDateTime>(HandleDateTime);
 
     await module.init();
   });
@@ -70,15 +66,13 @@ describe('getUser', () => {
 
   it('DUE 작업 생성 실패 APP에서 DB까지 - dueDate 현 날짜보다 과거', async () => {
     try {
-      const dueDate = handleDateTime.getYesterday();
-
       const request: ReqCreateTaskAppDto = {
         userId: TEST1_USER_LOCAL.id,
         taskType: 'DUE',
         name: 'test',
         description: 'test',
         importance: 0,
-        dueDate,
+        dueDate: '1999-01-01',
       };
 
       await taskService.createTask(request);
