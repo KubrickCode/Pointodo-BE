@@ -9,5 +9,6 @@ export class ReqAdminCreateBadgeAppDto {
 }
 
 export class ResAdminCreateBadgeAppDto {
+  readonly id: number;
   readonly message: string;
 }

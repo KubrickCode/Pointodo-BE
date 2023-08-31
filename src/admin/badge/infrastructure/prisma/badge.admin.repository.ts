@@ -5,6 +5,7 @@ import {
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class BadgeAdminRepository implements IBadgeAdminRepository {
@@ -45,7 +46,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     return result;
   }
 
-  async isExist(name: string): Promise<boolean> {
+  async isExistBadge(name: string): Promise<boolean> {
     const isExist = await this.prisma.badge.findUnique({
       where: { name },
     });
@@ -53,14 +54,14 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     return true;
   }
 
-  async create(
+  async createBadge(
     name: string,
     description: string,
     iconLink: string,
     type: BadgeType_,
     price?: number,
   ): Promise<BadgeEntity> {
-    return await this.prisma.badge.create({
+    const result = await this.prisma.badge.create({
       data: {
         name,
         description,
@@ -69,9 +70,10 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
         type,
       },
     });
+    return plainToClass(BadgeEntity, result);
   }
 
-  async update(
+  async updateBadge(
     id: number,
     name?: string,
     description?: string,
@@ -104,7 +106,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     });
   }
 
-  async delete(id: number): Promise<BadgeEntity> {
+  async deleteBadge(id: number): Promise<BadgeEntity> {
     return await this.prisma.badge.delete({ where: { id } });
   }
 }

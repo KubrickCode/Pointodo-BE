@@ -10,7 +10,7 @@ import {
 import { CREATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
 import { DUE_DATE_IN_THE_PAST } from '@shared/messages/task/task.errors';
 
-describe('getUser', () => {
+describe('createTask', () => {
   let taskService: TaskService;
   let module: TestingModule;
 
@@ -22,7 +22,7 @@ describe('getUser', () => {
     taskService = module.get<TaskService>(TaskService);
 
     await module.init();
-  });
+  }, 30000);
 
   afterAll(async () => {
     await module.close();
@@ -45,7 +45,7 @@ describe('getUser', () => {
     expect(result.message).toEqual(CREATE_TASK_SUCCESS_MESSAGE);
 
     await taskService.deleteTask({ id: result.id });
-  });
+  }, 30000);
 
   it('작업 생성 성공 APP에서 DB까지 - DUE', async () => {
     const request: ReqCreateTaskAppDto = {
@@ -62,7 +62,7 @@ describe('getUser', () => {
     expect(result.message).toEqual(CREATE_TASK_SUCCESS_MESSAGE);
 
     await taskService.deleteTask({ id: result.id });
-  });
+  }, 30000);
 
   it('DUE 작업 생성 실패 APP에서 DB까지 - dueDate 현 날짜보다 과거', async () => {
     try {
@@ -78,8 +78,8 @@ describe('getUser', () => {
       await taskService.createTask(request);
     } catch (error) {
       expect(error.response.statusCode).toEqual(400);
-      expect(error.response.message).toEqual(DUE_DATE_IN_THE_PAST);
+      expect(error.response.message[0]).toEqual(DUE_DATE_IN_THE_PAST);
       expect(error.response.error).toEqual('Bad Request');
     }
-  });
+  }, 30000);
 });

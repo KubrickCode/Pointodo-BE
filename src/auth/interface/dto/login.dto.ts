@@ -12,7 +12,10 @@ import {
   USER_PWD,
   USER_PWD_EXAMPLE,
 } from '@shared/constants/user.constant';
-import { USER_NOT_FOUND } from '@shared/messages/user/user.errors';
+import {
+  USER_EXIST_WITH_SOCIAL,
+  USER_NOT_FOUND,
+} from '@shared/messages/user/user.errors';
 import { AUTH_INVALID_PASSWORD } from '@shared/messages/auth/auth.errors';
 
 export class ReqLoginDto {
@@ -60,11 +63,28 @@ export class ResNotFoundUser {
 
 export class ResInvalidPassword {
   @ApiProperty({ example: 401, description: '에러 상태 코드' })
-  @IsString()
+  @IsInt()
   readonly statusCode: number;
 
   @ApiProperty({
     example: AUTH_INVALID_PASSWORD,
+    description: '에러 메시지',
+  })
+  @IsString()
+  readonly message: string;
+
+  @ApiProperty({ example: '/api/auth/login', description: '요청 경로' })
+  @IsString()
+  readonly path: string;
+}
+
+export class ResNotLocalUserLogin {
+  @ApiProperty({ example: 409, description: '에러 상태 코드' })
+  @IsInt()
+  readonly statusCode: number;
+
+  @ApiProperty({
+    example: USER_EXIST_WITH_SOCIAL,
     description: '에러 메시지',
   })
   @IsString()

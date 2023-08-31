@@ -44,7 +44,7 @@ export interface IPointRepository {
 
   countTasksPerDate(userId: UUID, date: string): Promise<number>;
 
-  calculateUserPoints(userId: string): Promise<number>;
+  calculateUserPoints(userId: UUID): Promise<number>;
 
   deleteEarnedPointLog(id: number): Promise<EarnedPointEntity>;
 

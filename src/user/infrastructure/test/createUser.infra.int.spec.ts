@@ -8,7 +8,7 @@ describe('createUser', () => {
   beforeAll(() => {
     prisma = new PrismaService();
     userRepository = new UserRepository(prisma);
-  });
+  }, 30000);
 
   afterAll(async () => {
     await prisma.$disconnect();

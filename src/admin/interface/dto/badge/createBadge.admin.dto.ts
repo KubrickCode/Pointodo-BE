@@ -9,6 +9,7 @@ import {
   BADGE_NAME,
   BADGE_TYPE,
   BADGE_PRICE,
+  BADGE_ID,
 } from '@shared/constants/badge.constant';
 import { CONFLICT_BADGE_NAME } from '@shared/messages/admin/badge.admin.errors';
 import { CREATE_BADGE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin.messages';
@@ -38,6 +39,12 @@ export class ReqAdminCreateBadgeDto {
 }
 
 export class ResAdminCreateBadgeDto {
+  @ApiProperty({
+    description: BADGE_ID,
+  })
+  @IsInt()
+  readonly id: number;
+
   @ApiProperty({
     example: CREATE_BADGE_SUCCESS_MESSAGE,
     description: '성공 메시지',

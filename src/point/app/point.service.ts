@@ -21,6 +21,7 @@ import {
   ResGetTotalPointPagesAppDto,
 } from '@point/domain/dto/getTotalPointPages.app.dto';
 import { GET_POINTS_LOGS_LIMIT } from '@shared/constants/point.constant';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class PointService implements IPointService {
@@ -107,6 +108,6 @@ export class PointService implements IPointService {
   ): Promise<ResGetCurrentPointsAppDto> {
     const points = await this.pointRepository.calculateUserPoints(req.userId);
 
-    return { points };
+    return plainToClass(ResGetCurrentPointsAppDto, { points });
   }
 }

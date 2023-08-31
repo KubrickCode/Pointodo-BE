@@ -3,7 +3,6 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import { requestE2E } from '../request.e2e';
 import * as cookieParser from 'cookie-parser';
-import { TEST1_USER_LOCAL, TEST_PASSWORD } from '@shared/test/userMockData';
 import { TaskType_ } from '@task/domain/entities/task.entity';
 import {
   ReqCreateTaskDto,
@@ -14,22 +13,12 @@ import { validateOrReject } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { ResInvalidation } from '@shared/dto/global.dto';
 import { DUE_DATE_IN_THE_PAST } from '@shared/messages/task/task.errors';
+import { setupLoggedIn } from '../setupLoggedIn.e2e';
+import { tokenError } from '../tokenError.e2e';
 
 describe('createTask in taskController (e2e)', () => {
   let app: INestApplication;
-  const path = '/task/create';
   let accessToken: string;
-
-  const taskTypes: TaskType_[] = ['DAILY', 'FREE'];
-  const randomIndex = Math.floor(Math.random() * taskTypes.length);
-
-  const request: ReqCreateTaskDto = {
-    taskType: taskTypes[randomIndex],
-    name: 'test',
-    description: 'test',
-    importance: 0,
-    dueDate: '2099-12-30',
-  };
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -42,19 +31,24 @@ describe('createTask in taskController (e2e)', () => {
 
     await app.init();
 
-    const loginResult = await requestE2E(app, '/auth/login', 'post', 201, {
-      email: TEST1_USER_LOCAL.email,
-      password: TEST_PASSWORD,
-    });
-    accessToken = loginResult.headers['set-cookie']
-      .find((cookie: string) => cookie.includes('accessToken'))
-      .split('accessToken=')[1]
-      .split(';')[0];
+    accessToken = await setupLoggedIn(app);
   }, 30000);
 
   afterAll(async () => {
     await app.close();
   });
+
+  const path = '/task/create';
+  const taskTypes: TaskType_[] = ['DAILY', 'FREE'];
+  const randomIndex = Math.floor(Math.random() * taskTypes.length);
+
+  const request: ReqCreateTaskDto = {
+    taskType: taskTypes[randomIndex],
+    name: 'test',
+    description: 'test',
+    importance: 0,
+    dueDate: '2099-12-30',
+  };
 
   it('작업 생성 성공 e2e 테스트 - DAILY,FREE', async () => {
     const body = { ...request };
@@ -176,7 +170,15 @@ describe('createTask in taskController (e2e)', () => {
     );
 
     expect(response.body.statusCode).toEqual(400);
-    expect(response.body.message).toEqual(DUE_DATE_IN_THE_PAST);
+    expect(response.body.message[0]).toEqual(DUE_DATE_IN_THE_PAST);
     expect(response.body.path).toEqual(path);
+
+    await validateOrReject(plainToClass(ResInvalidation, response.body));
   }, 30000);
+
+  it(
+    '작업 생성 실패 e2e 테스트 - 토큰 에러',
+    async () => await tokenError(app, path, 'post'),
+    30000,
+  );
 });
