@@ -14,7 +14,10 @@ describe('getUser', () => {
       id: MOCK_USER.id,
     };
 
-    const res: ResGetUserAppDto = MOCK_USER;
+    const res: ResGetUserAppDto = {
+      ...MOCK_USER,
+      selectedBadge: { iconLink: 'link' },
+    };
 
     jest.spyOn(userService, 'getUser').mockResolvedValue(res);
 

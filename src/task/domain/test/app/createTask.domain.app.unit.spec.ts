@@ -8,7 +8,7 @@ import {
 import { TaskType_ } from '@task/domain/entities/task.entity';
 import { CREATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
 
-describe('getUser', () => {
+describe('createTask', () => {
   const taskService: ITaskService = mockTaskService;
 
   it('작업 생성 성공', async () => {
@@ -24,6 +24,7 @@ describe('getUser', () => {
     };
 
     const createdTask: ResCreateTaskAppDto = {
+      id: 1,
       message: CREATE_TASK_SUCCESS_MESSAGE,
     };
 
