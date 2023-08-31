@@ -22,7 +22,11 @@ export class UserBadgeRepository implements IUserBadgeRepository {
   async getUserBadgeList(
     userId: UUID,
   ): Promise<Array<Pick<UserBadgeEntity, 'badgeId'>>> {
-    return await this.prisma.userBadgesLogs.findMany({ where: { userId } });
+    const result = await this.prisma.userBadgesLogs.findMany({
+      where: { userId },
+    });
+
+    return result.map((item) => ({ badgeId: item.badgeId }));
   }
 
   async getUserBadgeListWithName(

@@ -4,7 +4,9 @@ import { UserBadgeEntity } from './../entities/userBadge.entity';
 export interface IUserBadgeRepository {
   createUserBadgeLog(userId: UUID, badgeId: number): Promise<UserBadgeEntity>;
 
-  getUserBadgeList(userId: UUID): Promise<Array<{ badgeId: number }>>;
+  getUserBadgeList(
+    userId: UUID,
+  ): Promise<Array<Pick<UserBadgeEntity, 'badgeId'>>>;
 
   getUserBadgeListWithName(
     userId: UUID,
