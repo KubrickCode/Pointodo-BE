@@ -3,6 +3,7 @@ import {
   TASK_DESC,
   TASK_DUE_DATE,
   TASK_IMPORTANCE,
+  TASK_LOG_ID,
   TASK_NAME,
   TASK_TYPE_NAME,
 } from '@shared/constants/task.constant';
@@ -39,6 +40,10 @@ export class ReqCreateTaskDto {
 }
 
 export class ResCreateTaskDto {
+  @ApiProperty({ description: TASK_LOG_ID })
+  @IsInt()
+  readonly id: number;
+
   @ApiProperty({
     example: CREATE_TASK_SUCCESS_MESSAGE,
     description: '성공 메시지',

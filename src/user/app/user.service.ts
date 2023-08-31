@@ -18,7 +18,6 @@ import {
 } from '@shared/messages/user/user.errors';
 import { IUserService } from '@user/domain/interfaces/user.service.interface';
 import { ICacheService } from 'src/cache/domain/interfaces/cache.service.interface';
-import { UserEntity } from '@user/domain/entities/user.entity';
 import { cacheConfig } from '@shared/config/cache.config';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -50,6 +49,7 @@ import {
 } from '@user/domain/dto/getTotalUserListPages.app.dto';
 import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
 import { IPasswordHasher } from '@shared/interfaces/IPasswordHasher';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -93,15 +93,17 @@ export class UserService implements IUserService {
       'info',
       `가입 이메일:${createdUser.email}, 사용자 ID:${createdUser.id}, 가입 일시:${createdUser.createdAt}, 공급 업체:${createdUser.provider}`,
     );
-    return { message: REGISTER_SUCCESS_MESSAGE };
+
+    const result = { message: REGISTER_SUCCESS_MESSAGE };
+    return plainToClass(ResRegisterAppDto, result);
   }
 
   async getUser(req: ReqGetUserAppDto): Promise<ResGetUserAppDto> {
     const cacheKey = `user:${req.id}`;
-    const cachedUser = await this.cacheService.getFromCache<UserEntity>(
+    const cachedUser = await this.cacheService.getFromCache<ResGetUserAppDto>(
       cacheKey,
     );
-    if (cachedUser) return cachedUser;
+    if (cachedUser) return plainToClass(ResGetUserAppDto, cachedUser);
 
     const user = await this.userRepository.findById(req.id);
     if (user === null) {
@@ -113,7 +115,7 @@ export class UserService implements IUserService {
       user,
       cacheConfig(this.configService).cacheTTL,
     );
-    return user;
+    return plainToClass(ResGetUserAppDto, user);
   }
 
   async changePassword(

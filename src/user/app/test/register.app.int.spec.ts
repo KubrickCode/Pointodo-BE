@@ -41,6 +41,7 @@ describe('register', () => {
 
     const result = await userService.register(request);
     expect(result).toEqual(expectedResponse);
+    expect(result).toBeInstanceOf(ResRegisterAppDto);
   });
 
   it('로컬 유저 생성(중복)', async () => {

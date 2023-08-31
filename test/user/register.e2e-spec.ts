@@ -24,7 +24,7 @@ describe('회원가입 in UserController (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     app.use(cookieParser());
     await app.init();
-  });
+  }, 30000);
 
   afterAll(async () => {
     const loginResult = await requestE2E(app, '/auth/login', 'post', 201, body);

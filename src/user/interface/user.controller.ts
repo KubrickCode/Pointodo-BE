@@ -32,6 +32,7 @@ import { ReqChangePasswordDto } from './dto/changePassword.dto';
 import { changePasswordDocs } from './docs/changePassword.docs';
 import { deleteUserDocs } from './docs/deleteUser.docs';
 import { globalDocs } from '@shared/docs/global.docs';
+import { plainToClass } from 'class-transformer';
 
 @Controller('user')
 @ApiTags('User')
@@ -48,7 +49,7 @@ export class UserController {
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   @ApiConflictResponse(registerDocs.existUser)
   async register(@Body() user: ReqRegisterDto): Promise<ResRegisterDto> {
-    return this.userService.register(user);
+    return await this.userService.register(user);
   }
 
   @Get()
@@ -59,7 +60,8 @@ export class UserController {
   @ApiOkResponse(getUserDocs.okResponse)
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
   async getUser(@Req() req: Request): Promise<ResGetUserDto> {
-    return this.userService.getUser({ id: req.user.id });
+    const result = await this.userService.getUser({ id: req.user.id });
+    return plainToClass(ResGetUserDto, result);
   }
 
   @Patch('password')
@@ -74,7 +76,7 @@ export class UserController {
     @Req() req: Request,
     @Body() body: ReqChangePasswordDto,
   ) {
-    return this.userService.changePassword({
+    return await this.userService.changePassword({
       id: req.user.id,
       password: body.password,
     });

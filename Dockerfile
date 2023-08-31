@@ -51,6 +51,8 @@ RUN yarn build
 
 RUN yarn test
 
+RUN yarn test:e2e
+
 EXPOSE 3000
 
 CMD ["pm2-runtime", "start", "dist/main.js"]
