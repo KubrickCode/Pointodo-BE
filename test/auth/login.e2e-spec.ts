@@ -14,6 +14,13 @@ import {
 } from '@shared/messages/user/user.errors';
 import { AUTH_INVALID_PASSWORD } from '@shared/messages/auth/auth.errors';
 import * as cookieParser from 'cookie-parser';
+import { validateOrReject } from 'class-validator';
+import { plainToClass } from 'class-transformer';
+import {
+  ResInvalidPassword,
+  ResNotFoundUser,
+  ResNotLocalUserLogin,
+} from '@auth/interface/dto/login.dto';
 
 describe('로그인 in UserController (e2e)', () => {
   let app: INestApplication;
@@ -40,8 +47,8 @@ describe('로그인 in UserController (e2e)', () => {
   };
 
   it('로그인 e2e 테스트', async () => {
-    console.log(body);
     const response = await requestE2E(app, path, 'post', 201, body);
+
     expect(response.headers['set-cookie'][0]).toContain('accessToken');
     expect(response.headers['set-cookie'][1]).toContain('refreshToken');
     expect(response.statusCode).toEqual(201);
@@ -52,10 +59,13 @@ describe('로그인 in UserController (e2e)', () => {
       ...body,
       email: 'email@gmail.com',
     });
+
     expect(response.statusCode).toEqual(404);
     expect(response.body.statusCode).toEqual(404);
     expect(response.body.message).toEqual(USER_NOT_FOUND);
     expect(response.body.path).toEqual(path);
+
+    await validateOrReject(plainToClass(ResNotFoundUser, response.body));
   }, 30000);
 
   it('로그인 e2e 테스트 - 비밀번호 오류', async () => {
@@ -63,10 +73,13 @@ describe('로그인 in UserController (e2e)', () => {
       ...body,
       password: 'password',
     });
+
     expect(response.statusCode).toEqual(401);
     expect(response.body.statusCode).toEqual(401);
     expect(response.body.message).toEqual(AUTH_INVALID_PASSWORD);
     expect(response.body.path).toEqual(path);
+
+    await validateOrReject(plainToClass(ResInvalidPassword, response.body));
   }, 30000);
 
   it('로그인 e2e 테스트 - 소셜 계정 오류', async () => {
@@ -80,6 +93,10 @@ describe('로그인 in UserController (e2e)', () => {
     expect(googleResponse.body.message).toEqual(USER_EXIST_WITH_SOCIAL);
     expect(googleResponse.body.path).toEqual(path);
 
+    await validateOrReject(
+      plainToClass(ResNotLocalUserLogin, googleResponse.body),
+    );
+
     const kakaoResponse = await requestE2E(app, path, 'post', 409, {
       ...body,
       email: TEST3_USER_KAKAO.email,
@@ -89,5 +106,9 @@ describe('로그인 in UserController (e2e)', () => {
     expect(kakaoResponse.body.statusCode).toEqual(409);
     expect(kakaoResponse.body.message).toEqual(USER_EXIST_WITH_SOCIAL);
     expect(kakaoResponse.body.path).toEqual(path);
+
+    await validateOrReject(
+      plainToClass(ResNotLocalUserLogin, kakaoResponse.body),
+    );
   }, 30000);
 });
