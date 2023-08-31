@@ -45,7 +45,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     return result;
   }
 
-  async isExist(name: string): Promise<boolean> {
+  async isExistBadge(name: string): Promise<boolean> {
     const isExist = await this.prisma.badge.findUnique({
       where: { name },
     });
@@ -53,7 +53,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     return true;
   }
 
-  async create(
+  async createBadge(
     name: string,
     description: string,
     iconLink: string,
@@ -71,7 +71,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     });
   }
 
-  async update(
+  async updateBadge(
     id: number,
     name?: string,
     description?: string,
@@ -104,7 +104,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     });
   }
 
-  async delete(id: number): Promise<BadgeEntity> {
+  async deleteBadge(id: number): Promise<BadgeEntity> {
     return await this.prisma.badge.delete({ where: { id } });
   }
 }

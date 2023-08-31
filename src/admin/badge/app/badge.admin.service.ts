@@ -48,9 +48,9 @@ export class BadgeAdminService implements IBadgeAdminService {
     req: ReqAdminCreateBadgeAppDto,
   ): Promise<ResAdminCreateBadgeAppDto> {
     const { name, description, iconLink, type, price } = req;
-    const isExist = await this.badgeAdminRepository.isExist(name);
+    const isExist = await this.badgeAdminRepository.isExistBadge(name);
     if (isExist) throw new ConflictException(CONFLICT_BADGE_NAME);
-    const createdBadge = await this.badgeAdminRepository.create(
+    const createdBadge = await this.badgeAdminRepository.createBadge(
       name,
       description,
       iconLink,
@@ -70,11 +70,11 @@ export class BadgeAdminService implements IBadgeAdminService {
   ): Promise<ResAdminUpdateBadgeAppDto> {
     const { id, name, description, iconLink, price } = req;
     if (name) {
-      const isExist = await this.badgeAdminRepository.isExist(name);
+      const isExist = await this.badgeAdminRepository.isExistBadge(name);
       if (isExist) throw new ConflictException(CONFLICT_BADGE_NAME);
     }
 
-    const updatedBadge = await this.badgeAdminRepository.update(
+    const updatedBadge = await this.badgeAdminRepository.updateBadge(
       id,
       name,
       description,
@@ -93,7 +93,7 @@ export class BadgeAdminService implements IBadgeAdminService {
     req: ReqAdminDeleteBadgeAppDto,
   ): Promise<ResAdminDeleteBadgeAppDto> {
     await this.userRepository.changeSelectedBadgeToDefault(req.id);
-    const deletedBadge = await this.badgeAdminRepository.delete(req.id);
+    const deletedBadge = await this.badgeAdminRepository.deleteBadge(req.id);
 
     await this.cacheService.deleteCache(`allBadges`);
     await this.redisService.deleteKeysByPrefix(`user:*`);
