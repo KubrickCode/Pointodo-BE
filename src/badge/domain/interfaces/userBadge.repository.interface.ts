@@ -11,5 +11,6 @@ export interface IUserBadgeRepository {
   ): Promise<Array<{ badgeId: number; name: string }>>;
 
   deleteUserBadgeLog(id: number): Promise<UserBadgeEntity>;
+
   deleteUserBadge(badgeId: number, userId: UUID): Promise<UserBadgeEntity>;
 }
