@@ -8,6 +8,8 @@ import { ResGetUserDto } from '@user/interface/dto/getUser.dto';
 import { AUTH_INVALID_TOKEN } from '@shared/messages/auth/auth.errors';
 import { setupLoggedIn } from '../setupLoggedIn.e2e';
 import { TEST1_USER_LOCAL } from '@shared/test/userMockData';
+import { validateOrReject } from 'class-validator';
+import { ResTokenUnauthorized } from '@auth/interface/dto/tokenError.dto';
 
 describe('유저 정보 조회 in UserController (e2e)', () => {
   let app: INestApplication;
@@ -35,13 +37,19 @@ describe('유저 정보 조회 in UserController (e2e)', () => {
   it('유저 정보 조회 e2e 테스트', async () => {
     const response = await requestE2E(app, path, 'get', 200, null, accessToken);
     const result = plainToClass(ResGetUserDto, response.body);
-    expect(result).toEqual(plainToClass(ResGetUserDto, TEST1_USER_LOCAL));
+
+    expect(result).toEqual(TEST1_USER_LOCAL);
+
+    await validateOrReject(result);
   }, 30000);
 
   it('유저 정보 조회 실패 e2e 테스트 - 토큰 에러', async () => {
     const response = await requestE2E(app, path, 'get', 401, null, 'token');
+
     expect(response.body.statusCode).toEqual(401);
     expect(response.body.message).toEqual(AUTH_INVALID_TOKEN);
     expect(response.body.path).toEqual(path);
+
+    await validateOrReject(plainToClass(ResTokenUnauthorized, response.body));
   }, 30000);
 });
