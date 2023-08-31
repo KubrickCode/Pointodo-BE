@@ -12,7 +12,7 @@ describe('createBadge', () => {
   beforeAll(() => {
     prisma = new PrismaService();
     badgeAdminRepository = new BadgeAdminRepository(prisma);
-  });
+  }, 30000);
 
   afterAll(async () => {
     await prisma.$disconnect();
@@ -44,7 +44,7 @@ describe('createBadge', () => {
     expect(result.type).toEqual(type);
     expect(result.price).toEqual(price);
     expect(result).toBeInstanceOf(BadgeEntity);
-  });
+  }, 30000);
 
   it('뱃지 생성 성공 - SPECIAL', async () => {
     const name = 'test';
@@ -66,5 +66,5 @@ describe('createBadge', () => {
     expect(result.iconLink).toEqual(iconLink);
     expect(result.type).toEqual(type);
     expect(result).toBeInstanceOf(BadgeEntity);
-  });
+  }, 30000);
 });

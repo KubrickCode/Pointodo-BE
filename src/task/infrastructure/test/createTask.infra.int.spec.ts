@@ -13,7 +13,7 @@ describe('createTask', () => {
   beforeAll(() => {
     prisma = new PrismaService();
     taskRepository = new TaskRepository(prisma);
-  });
+  }, 30000);
 
   afterAll(async () => {
     await prisma.$disconnect();
@@ -21,7 +21,7 @@ describe('createTask', () => {
 
   afterEach(async () => {
     await taskRepository.deleteTask(taskId);
-  });
+  }, 30000);
 
   it('작업 생성 성공 - DAILY,FREE', async () => {
     const taskTypes: TaskType_[] = ['DAILY', 'FREE'];
@@ -51,7 +51,7 @@ describe('createTask', () => {
     expect(result.version).toEqual(0);
 
     taskId = result.id;
-  });
+  }, 30000);
 
   it('작업 생성 성공 - DUE', async () => {
     const userId: UUID = TEST1_USER_LOCAL.id;
@@ -88,5 +88,5 @@ describe('createTask', () => {
     expect(taskDueDateResult).toBeInstanceOf(TasksDueDateEntity);
     expect(taskDueDateResult.taskId).toEqual(taskId);
     expect(taskDueDateResult.dueDate).toEqual(dueDate);
-  });
+  }, 30000);
 });

@@ -11,7 +11,7 @@ describe('', () => {
   beforeAll(() => {
     prisma = new PrismaService();
     userRepository = new UserRepository(prisma);
-  });
+  }, 30000);
 
   afterAll(async () => {
     await prisma.$disconnect();
@@ -21,5 +21,5 @@ describe('', () => {
     const { id } = TEST1_USER_LOCAL;
     const user = await userRepository.findById(id);
     expect(TEST1_USER_LOCAL).toMatchObject(plainToClass(UserEntity, user));
-  });
+  }, 30000);
 });

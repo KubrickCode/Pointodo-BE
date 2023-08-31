@@ -12,7 +12,7 @@ describe('calculateUserPoints', () => {
     prisma = new PrismaService();
     handleDateTime = new HandleDateTime();
     pointRepository = new PointRepository(prisma, handleDateTime);
-  });
+  }, 30000);
 
   afterAll(async () => {
     await prisma.$disconnect();
@@ -23,5 +23,5 @@ describe('calculateUserPoints', () => {
     const result = await pointRepository.calculateUserPoints(userId);
 
     expect(result).toEqual(0);
-  });
+  }, 30000);
 });

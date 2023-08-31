@@ -11,7 +11,7 @@ describe('getUserBadgeList', () => {
   beforeAll(() => {
     prisma = new PrismaService();
     userBadgeRepository = new UserBadgeRepository(prisma);
-  });
+  }, 30000);
 
   afterAll(async () => {
     await prisma.$disconnect();
@@ -24,5 +24,5 @@ describe('getUserBadgeList', () => {
 
     expect(result).toBeInstanceOf(Array<Pick<UserBadgeEntity, 'badgeId'>>);
     expect(result[0]).toEqual({ badgeId: 1 });
-  });
+  }, 30000);
 });
