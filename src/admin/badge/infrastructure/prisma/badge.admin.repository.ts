@@ -5,6 +5,7 @@ import {
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class BadgeAdminRepository implements IBadgeAdminRepository {
@@ -60,7 +61,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     type: BadgeType_,
     price?: number,
   ): Promise<BadgeEntity> {
-    return await this.prisma.badge.create({
+    const result = await this.prisma.badge.create({
       data: {
         name,
         description,
@@ -69,6 +70,7 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
         type,
       },
     });
+    return plainToClass(BadgeEntity, result);
   }
 
   async updateBadge(
