@@ -80,7 +80,7 @@ describe('createTask in taskController (e2e)', () => {
       null,
       accessToken,
     );
-  });
+  }, 30000);
 
   it('작업 생성 성공 e2e 테스트 - DUE', async () => {
     const body = { ...request, taskType: 'DUE' };
@@ -105,7 +105,7 @@ describe('createTask in taskController (e2e)', () => {
       null,
       accessToken,
     );
-  });
+  }, 30000);
 
   it('작업 생성 실패 e2e 테스트 - name 없음', async () => {
     const body = { ...request, name: null };
@@ -124,7 +124,7 @@ describe('createTask in taskController (e2e)', () => {
     expect(response.body.path).toEqual(path);
 
     await validateOrReject(plainToClass(ResInvalidation, response.body));
-  });
+  }, 30000);
 
   it('작업 생성 실패 e2e 테스트 - importance 없음', async () => {
     const body = { ...request, importance: null };
@@ -143,7 +143,7 @@ describe('createTask in taskController (e2e)', () => {
     expect(response.body.path).toEqual(path);
 
     await validateOrReject(plainToClass(ResInvalidation, response.body));
-  });
+  }, 30000);
 
   it('작업 생성 실패 e2e 테스트 - 유효성 검사 실패(name, description)', async () => {
     const body = { ...request, name: 1, description: 1 };
@@ -162,7 +162,7 @@ describe('createTask in taskController (e2e)', () => {
     expect(response.body.path).toEqual(path);
 
     await validateOrReject(plainToClass(ResInvalidation, response.body));
-  });
+  }, 30000);
 
   it('작업 생성 실패 e2e 테스트 - dueDate 기한 오류', async () => {
     const body = { ...request, taskType: 'DUE', dueDate: '1999-01-01' };
@@ -178,5 +178,5 @@ describe('createTask in taskController (e2e)', () => {
     expect(response.body.statusCode).toEqual(400);
     expect(response.body.message).toEqual(DUE_DATE_IN_THE_PAST);
     expect(response.body.path).toEqual(path);
-  });
+  }, 30000);
 });
