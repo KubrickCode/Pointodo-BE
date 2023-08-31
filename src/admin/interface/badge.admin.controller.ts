@@ -17,6 +17,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiConflictResponse,
+  ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
@@ -75,7 +76,7 @@ export class BadgeAdminController {
   @Post('/create')
   @HttpCode(201)
   @ApiOperation(createBadgeDocs.operation)
-  @ApiOkResponse(createBadgeDocs.okResponse)
+  @ApiCreatedResponse(createBadgeDocs.okResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   @ApiConflictResponse(createBadgeDocs.conflict)
   async createBadge(

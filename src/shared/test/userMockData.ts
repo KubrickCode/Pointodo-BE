@@ -40,6 +40,19 @@ export const TEST3_USER_KAKAO = {
   },
 };
 
+export const TEST4_USER_LOCAL = {
+  id: 'fd42d1fc-c2bf-40b4-aa4b-50cb9e01fa56' as UUID,
+  selectedBadgeId: 1,
+  email: 'test4@gmail.com',
+  provider: 'LOCAL' as ProviderType,
+  role: 'USER' as RoleType,
+  createdAt: new Date(),
+  selectedBadge: {
+    iconLink:
+      'https://pointodo-s3-bucket.s3.ap-northeast-2.amazonaws.com/pointodo/%EA%B8%B0%EB%B3%B8.png',
+  },
+};
+
 export const MOCK_USER = {
   id: 'uuid-uuid-uuid-uuid-uuid' as UUID,
   selectedBadgeId: 1,
