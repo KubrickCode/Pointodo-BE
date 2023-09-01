@@ -114,7 +114,7 @@ export class AuthController {
     res.json(result);
   }
 
-  @Get('refresh')
+  @Post('refresh')
   @HttpCode(201)
   @ApiCookieAuth('refreshToken')
   @ApiOperation(refreshDocs.operation)
