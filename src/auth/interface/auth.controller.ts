@@ -23,6 +23,8 @@ import {
   ApiConflictResponse,
   ApiCookieAuth,
   ApiCreatedResponse,
+  ApiFoundResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -30,7 +32,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ReqLoginDto } from './dto/login.dto';
-import { ResLogoutDto } from './dto/logout.dto';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
 import { ReqCheckPasswordDto } from './dto/checkPassword.dto';
 import { checkPasswordDocs } from './docs/checkPassword.docs';
@@ -100,24 +101,25 @@ export class AuthController {
   }
 
   @Post('logout')
-  @HttpCode(200)
+  @HttpCode(204)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation(logoutDocs.operation)
-  @ApiOkResponse(logoutDocs.okResponse)
+  @ApiNoContentResponse(logoutDocs.noContentResponse)
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
   async logout(@Req() req: Request, @Res() res: Response): Promise<void> {
-    const result: ResLogoutDto = await this.authService.logout(req.user);
+    await this.authService.logout(req.user);
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
-    res.json(result);
+    res.send();
   }
 
   @Post('refresh')
   @HttpCode(201)
   @ApiCookieAuth('refreshToken')
   @ApiOperation(refreshDocs.operation)
-  @ApiCreatedResponse(refreshDocs.okResponse)
+  @ApiCreatedResponse(refreshDocs.createdResponse)
+  @ApiUnauthorizedResponse(refreshDocs.unauthorizedResponse)
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
       const { refreshToken } = req.cookies;
@@ -161,7 +163,7 @@ export class AuthController {
   @Header('Location', process.env.ORIGIN)
   @UseGuards(GoogleAuthGuard)
   @ApiOperation(socialLoginDocs.google.operation)
-  @ApiCreatedResponse(socialLoginDocs.google.okResponse)
+  @ApiFoundResponse(socialLoginDocs.google.foundResponse)
   async googleCallback(
     @Req() req: Request,
     @Res() res: Response,
@@ -190,7 +192,7 @@ export class AuthController {
   @Header('Location', process.env.ORIGIN)
   @UseGuards(KakaoAuthGuard)
   @ApiOperation(socialLoginDocs.kakao.operation)
-  @ApiCreatedResponse(socialLoginDocs.kakao.okResponse)
+  @ApiFoundResponse(socialLoginDocs.kakao.foundResponse)
   async kakaoCallback(
     @Req() req: Request,
     @Res() res: Response,

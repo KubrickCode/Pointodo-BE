@@ -32,10 +32,7 @@ import {
   ResCheckPasswordAppDto,
 } from '@auth/domain/dto/checkPassword.app.dto';
 import { ReqLoginAppDto, ResLoginAppDto } from '@auth/domain/dto/login.app.dto';
-import {
-  ReqLogoutAppDto,
-  ResLogoutAppDto,
-} from '@auth/domain/dto/logout.app.dto';
+import { ReqLogoutAppDto } from '@auth/domain/dto/logout.app.dto';
 import {
   ReqRefreshAppDto,
   ResRefreshAppDto,
@@ -126,10 +123,10 @@ export class AuthService implements IAuthService {
     return { accessToken, refreshToken };
   }
 
-  async logout(req: ReqLogoutAppDto): Promise<ResLogoutAppDto> {
+  async logout(req: ReqLogoutAppDto): Promise<void> {
     await this.redisService.delete(`refresh_token:${req.id}`);
     await this.cacheService.deleteCache(`user:${req.id}`);
-    return { message: LOGOUT_SUCCESS_MESSAGE };
+    this.logger.log('info', `${LOGOUT_SUCCESS_MESSAGE}-user:${req.id}`);
   }
 
   async refresh(req: ReqRefreshAppDto): Promise<ResRefreshAppDto> {

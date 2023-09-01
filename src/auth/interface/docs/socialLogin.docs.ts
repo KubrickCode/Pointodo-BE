@@ -1,5 +1,3 @@
-import { RedirectSocialLoginDto } from '../dto/socialLogin.dto';
-
 export const socialLoginDocs = {
   google: {
     operation: {
@@ -10,9 +8,10 @@ export const socialLoginDocs = {
     클라이언트의 루트 경로로 리디렉션 합니다.
     `,
     },
-    okResponse: {
-      type: RedirectSocialLoginDto,
-      description: '구글 계정 인증 성공 및 클라이언트 리다이렉트',
+    foundResponse: {
+      description: `구글 계정 인증 성공 및 클라이언트 리다이렉트\n
+      리다이렉션 경로 : /
+      `,
     },
   },
   kakao: {
@@ -24,9 +23,10 @@ export const socialLoginDocs = {
     클라이언트의 루트 경로로 리디렉션 합니다.
     `,
     },
-    okResponse: {
-      type: RedirectSocialLoginDto,
-      description: '카카오 계정 인증 성공 및 클라이언트 리다이렉트',
+    foundResponse: {
+      description: `구글 계정 인증 성공 및 클라이언트 리다이렉트\n
+      리다이렉션 경로 : /
+      `,
     },
   },
 };
