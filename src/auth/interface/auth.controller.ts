@@ -8,13 +8,13 @@ import {
   Inject,
   Body,
   HttpCode,
+  Header,
 } from '@nestjs/common';
 import { LocalAuthGuard } from '@auth/infrastructure/passport/guards/local.guard';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import { GoogleAuthGuard } from '@auth/infrastructure/passport/guards/google.guard';
 import { KakaoAuthGuard } from '@auth/infrastructure/passport/guards/kakao.guard';
-import { globalConfig } from '@shared/config/global.config';
 import { ConfigService } from '@nestjs/config';
 import {
   ApiBadRequestResponse,
@@ -31,7 +31,6 @@ import {
 } from '@nestjs/swagger';
 import { ReqLoginDto } from './dto/login.dto';
 import { ResLogoutDto } from './dto/logout.dto';
-import { RedirectSocialLoginDto } from './dto/socialLogin.dto';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
 import { ReqCheckPasswordDto } from './dto/checkPassword.dto';
 import { checkPasswordDocs } from './docs/checkPassword.docs';
@@ -131,11 +130,11 @@ export class AuthController {
           jwtExpiration.refreshTokenExpirationDays,
         ),
       });
-      res.json(true);
+      res.send();
     } catch (error) {
       res.clearCookie('accessToken');
       res.clearCookie('refreshToken');
-      res.json(false);
+      res.send();
     }
   }
 
@@ -158,7 +157,8 @@ export class AuthController {
   }
 
   @Get('google/callback')
-  @HttpCode(201)
+  @HttpCode(302)
+  @Header('Location', process.env.ORIGIN)
   @UseGuards(GoogleAuthGuard)
   @ApiOperation(socialLoginDocs.google.operation)
   @ApiCreatedResponse(socialLoginDocs.google.okResponse)
@@ -182,14 +182,12 @@ export class AuthController {
         jwtExpiration.refreshTokenExpirationDays,
       ),
     });
-    const result: RedirectSocialLoginDto = {
-      redirectUri: `${globalConfig(this.configService).clientOrigin}`,
-    };
-    res.redirect(result.redirectUri);
+    res.send();
   }
 
   @Get('kakao/callback')
-  @HttpCode(201)
+  @HttpCode(302)
+  @Header('Location', process.env.ORIGIN)
   @UseGuards(KakaoAuthGuard)
   @ApiOperation(socialLoginDocs.kakao.operation)
   @ApiCreatedResponse(socialLoginDocs.kakao.okResponse)
@@ -213,9 +211,5 @@ export class AuthController {
         jwtExpiration.refreshTokenExpirationDays,
       ),
     });
-    const result: RedirectSocialLoginDto = {
-      redirectUri: `${globalConfig(this.configService).clientOrigin}`,
-    };
-    res.redirect(result.redirectUri);
   }
 }
