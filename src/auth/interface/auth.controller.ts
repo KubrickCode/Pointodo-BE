@@ -35,7 +35,6 @@ import { ReqLoginDto } from './dto/login.dto';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
 import { ReqCheckPasswordDto } from './dto/checkPassword.dto';
 import { checkPasswordDocs } from './docs/checkPassword.docs';
-import { ResChangePasswordDto } from '@user/interface/dto/changePassword.dto';
 import { globalDocs } from '@shared/docs/global.docs';
 import { loginDocs } from '@auth/interface/docs/login.docs';
 import { logoutDocs } from './docs/logout.docs';
@@ -141,21 +140,22 @@ export class AuthController {
   }
 
   @Post('check-password')
-  @HttpCode(200)
+  @HttpCode(204)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation(checkPasswordDocs.operation)
-  @ApiOkResponse(checkPasswordDocs.okResponse)
+  @ApiNoContentResponse(checkPasswordDocs.noContentResponse)
   @ApiUnauthorizedResponse(checkPasswordDocs.invalidCheckPassword)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   async checkPassword(
     @Req() req: Request,
     @Body() body: ReqCheckPasswordDto,
-  ): Promise<ResChangePasswordDto> {
-    return await this.authService.checkPassword({
+  ): Promise<void> {
+    await this.authService.checkPassword({
       id: req.user.id,
       password: body.password,
     });
+    return;
   }
 
   @Get('google/callback')

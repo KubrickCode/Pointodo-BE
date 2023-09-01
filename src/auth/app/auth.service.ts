@@ -27,10 +27,7 @@ import {
   ReqValidateUserAppDto,
   ResValidateUserAppDto,
 } from '@auth/domain/dto/vaildateUser.app.dto';
-import {
-  ReqCheckPasswordAppDto,
-  ResCheckPasswordAppDto,
-} from '@auth/domain/dto/checkPassword.app.dto';
+import { ReqCheckPasswordAppDto } from '@auth/domain/dto/checkPassword.app.dto';
 import { ReqLoginAppDto, ResLoginAppDto } from '@auth/domain/dto/login.app.dto';
 import { ReqLogoutAppDto } from '@auth/domain/dto/logout.app.dto';
 import {
@@ -95,9 +92,7 @@ export class AuthService implements IAuthService {
     return user;
   }
 
-  async checkPassword(
-    req: ReqCheckPasswordAppDto,
-  ): Promise<ResCheckPasswordAppDto> {
+  async checkPassword(req: ReqCheckPasswordAppDto): Promise<void> {
     const userPassword = await this.userRepository.findPasswordById(req.id);
     if (userPassword === null) {
       throw new ConflictException(USER_EXIST_WITH_SOCIAL);
@@ -109,7 +104,7 @@ export class AuthService implements IAuthService {
     if (!isCorrectPassword) {
       throw new UnauthorizedException(AUTH_INVALID_PASSWORD);
     }
-    return { message: CHECK_PASSWORD_MESSAGE };
+    this.logger.log('info', `${CHECK_PASSWORD_MESSAGE}-user:${req.id}`);
   }
 
   async login(req: ReqLoginAppDto): Promise<ResLoginAppDto> {
