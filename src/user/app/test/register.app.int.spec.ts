@@ -4,6 +4,7 @@ import { ReqRegisterAppDto } from '@user/domain/dto/register.app.dto';
 import { PrismaService } from '@shared/service/prisma.service';
 import { USER_ALREADY_EXIST } from '@shared/messages/user/user.errors';
 import { userServiceTestModuleOptions } from './userService.test.option';
+import { MOCK_USER, TEST_PASSWORD } from '@shared/test/userMockData';
 
 describe('register', () => {
   let userService: UserService;
@@ -26,8 +27,8 @@ describe('register', () => {
   });
 
   const request: ReqRegisterAppDto = {
-    email: 'test@test.test',
-    password: 'test1234!@',
+    email: MOCK_USER.email,
+    password: TEST_PASSWORD,
   };
 
   it('로컬 유저 생성 -> 리포지토리 -> DB', async () => {
