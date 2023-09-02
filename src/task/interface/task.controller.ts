@@ -11,6 +11,7 @@ import {
   Body,
   Query,
   HttpCode,
+  Res,
 } from '@nestjs/common';
 import { ITaskService } from '../domain/interfaces/task.service.interface';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
@@ -25,12 +26,12 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { globalDocs } from '@shared/docs/global.docs';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import {
   ReqGetTasksLogsQueryDto,
   ResGetTasksLogsDto,
 } from './dto/getTasksLogs.dto';
-import { ReqCreateTaskDto, ResCreateTaskDto } from './dto/createTask.dto';
+import { ReqCreateTaskDto } from './dto/createTask.dto';
 import { ReqUpdateTaskDto, ResUpdateTaskDto } from './dto/updateTask.dto';
 import { ReqDeleteTaskParamDto, ResDeleteTaskDto } from './dto/deleteTask.dto';
 import {
@@ -52,7 +53,6 @@ import {
   ReqGetTotalTaskPagesQueryDto,
   ResGetTotalTaskPagesDto,
 } from './dto/getTotalTaskPages.dto';
-import { plainToClass } from 'class-transformer';
 
 @Controller('tasks')
 @ApiTags('Task')
@@ -100,17 +100,20 @@ export class TaskController {
     });
   }
 
-  @Post('create')
+  @Post()
+  @HttpCode(201)
   @ApiOperation(createTaskDocs.operation)
-  @ApiCreatedResponse(createTaskDocs.okResponse)
+  @ApiCreatedResponse(createTaskDocs.createdResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   async createTask(
     @Req() req: Request,
+    @Res() res: Response,
     @Body() body: ReqCreateTaskDto,
-  ): Promise<ResCreateTaskDto> {
+  ): Promise<void> {
     const userId = req.user.id;
-    const result = await this.taskService.createTask({ userId, ...body });
-    return plainToClass(ResCreateTaskDto, result);
+    const { id } = await this.taskService.createTask({ userId, ...body });
+    res.header('Location', String(id));
+    res.send();
   }
 
   @Patch('update')

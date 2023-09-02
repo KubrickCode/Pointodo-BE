@@ -12,5 +12,4 @@ export class ReqCreateTaskAppDto {
 
 export class ResCreateTaskAppDto {
   readonly id: number;
-  readonly message: string;
 }

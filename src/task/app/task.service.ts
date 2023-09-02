@@ -7,7 +7,6 @@ import {
 import {
   CANCLE_TASK_COMPLETION_SUCCESS_MESSAGE,
   COMPLETE_TASK_SUCCESS_MESSAGE,
-  CREATE_TASK_SUCCESS_MESSAGE,
   DELETE_TASK_SUCCESS_MESSAGE,
   UPDATE_TASK_SUCCESS_MESSAGE,
 } from '@shared/messages/task/task.message';
@@ -59,6 +58,8 @@ import {
 } from '@task/domain/dto/getTotalTaskPages.app.dto';
 import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 import { plainToClass } from 'class-transformer';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -77,6 +78,7 @@ export class TaskService implements ITaskService {
     private readonly cacheService: ICacheService,
     @Inject('IHandleDateTime')
     private readonly handleDateTime: IHandleDateTime,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async getTasksLogs(
@@ -106,7 +108,7 @@ export class TaskService implements ITaskService {
 
   async createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto> {
     const { userId, taskType, name, description, importance, dueDate } = req;
-    const createdTask = await this.taskRepository.createTask(
+    const { id } = await this.taskRepository.createTask(
       userId,
       taskType,
       name,
@@ -116,18 +118,18 @@ export class TaskService implements ITaskService {
 
     if (taskType === 'DUE') {
       if (new Date(dueDate) < new Date(this.handleDateTime.getToday())) {
-        await this.taskRepository.deleteTask(createdTask.id);
+        await this.taskRepository.deleteTask(id);
         throw new BadRequestException([DUE_DATE_IN_THE_PAST]);
       }
-      await this.taskRepository.createTaskDueDate(createdTask.id, dueDate);
+      await this.taskRepository.createTaskDueDate(id, dueDate);
     }
 
-    const result = {
-      id: createdTask.id,
-      message: CREATE_TASK_SUCCESS_MESSAGE,
-    };
+    this.logger.log(
+      'info',
+      `CREATE_TASK_SUCCESS_MESSAGE-유저 ID:${userId}, 작업 ID:${id}`,
+    );
 
-    return plainToClass(ResCreateTaskAppDto, result);
+    return plainToClass(ResCreateTaskAppDto, { id });
   }
 
   async updateTask(req: ReqUpdateTaskAppDto): Promise<ResUpdateTaskAppDto> {

@@ -4,11 +4,7 @@ import { AppModule } from '../../src/app.module';
 import { requestE2E } from '../request.e2e';
 import * as cookieParser from 'cookie-parser';
 import { TaskType_ } from '@task/domain/entities/task.entity';
-import {
-  ReqCreateTaskDto,
-  ResCreateTaskDto,
-} from '@task/interface/dto/createTask.dto';
-import { CREATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
+import { ReqCreateTaskDto } from '@task/interface/dto/createTask.dto';
 import { validateOrReject } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { ResInvalidation } from '@shared/dto/global.dto';
@@ -38,7 +34,7 @@ describe('createTask in taskController (e2e)', () => {
     await app.close();
   });
 
-  const path = '/task/create';
+  const path = '/tasks';
   const taskTypes: TaskType_[] = ['DAILY', 'FREE'];
   const randomIndex = Math.floor(Math.random() * taskTypes.length);
 
@@ -62,13 +58,9 @@ describe('createTask in taskController (e2e)', () => {
       accessToken,
     );
 
-    expect(response.body.message).toEqual(CREATE_TASK_SUCCESS_MESSAGE);
-
-    await validateOrReject(plainToClass(ResCreateTaskDto, response.body));
-
     await requestE2E(
       app,
-      `/task/${response.body.id}`,
+      `/tasks/${response.header.location}`,
       'delete',
       200,
       null,
@@ -87,13 +79,9 @@ describe('createTask in taskController (e2e)', () => {
       accessToken,
     );
 
-    expect(response.body.message).toEqual(CREATE_TASK_SUCCESS_MESSAGE);
-
-    await validateOrReject(plainToClass(ResCreateTaskDto, response.body));
-
     await requestE2E(
       app,
-      `/task/${response.body.id}`,
+      `/tasks/${response.header.location}`,
       'delete',
       200,
       null,
