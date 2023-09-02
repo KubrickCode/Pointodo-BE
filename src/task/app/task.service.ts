@@ -7,6 +7,7 @@ import {
 import {
   CANCLE_TASK_COMPLETION_SUCCESS_MESSAGE,
   COMPLETE_TASK_SUCCESS_MESSAGE,
+  CREATE_TASK_SUCCESS_MESSAGE,
   DELETE_TASK_SUCCESS_MESSAGE,
   UPDATE_TASK_SUCCESS_MESSAGE,
 } from '@shared/messages/task/task.message';
@@ -24,10 +25,7 @@ import {
 } from '../domain/dto/getTasksLogs.app.dto';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
-import {
-  ReqCompleteTaskAppDto,
-  ResCompleteTaskAppDto,
-} from '@task/domain/dto/completeTask.app.dto';
+import { ReqCompleteTaskAppDto } from '@task/domain/dto/completeTask.app.dto';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { setTaskPoints } from './utils/setTaskPoints';
 import { completeConsistency } from './utils/completeConsistency';
@@ -40,10 +38,7 @@ import {
 } from '@shared/messages/task/task.errors';
 import { IS_COMPLETED } from '@shared/constants/task.constant';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
-import {
-  ReqCancleTaskCompletionAppDto,
-  ResCancleTaskCompletionAppDto,
-} from '@task/domain/dto/cancleTaskCompletion.app.dto';
+import { ReqCancleTaskCompletionAppDto } from '@task/domain/dto/cancleTaskCompletion.app.dto';
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import {
@@ -129,7 +124,7 @@ export class TaskService implements ITaskService {
 
     this.logger.log(
       'info',
-      `CREATE_TASK_SUCCESS_MESSAGE-유저 ID:${userId}, 작업 ID:${id}`,
+      `${CREATE_TASK_SUCCESS_MESSAGE}-유저 ID:${userId}, 작업 ID:${id}`,
     );
 
     return plainToClass(ResCreateTaskAppDto, { id });
@@ -169,9 +164,7 @@ export class TaskService implements ITaskService {
     this.logger.log('info', `${DELETE_TASK_SUCCESS_MESSAGE}-작업 ID:${req.id}`);
   }
 
-  async completeTask(
-    req: ReqCompleteTaskAppDto,
-  ): Promise<ResCompleteTaskAppDto> {
+  async completeTask(req: ReqCompleteTaskAppDto): Promise<void> {
     try {
       const { taskType, completion, version } =
         await this.taskRepository.completeTask(req.id);
@@ -183,7 +176,7 @@ export class TaskService implements ITaskService {
         throw new ConflictException(COMPLETE_TASK_CONFLICT);
       }
 
-      if (version === 1) return { message: COMPLETE_TASK_SUCCESS_MESSAGE };
+      if (version === 1) return;
 
       const isContinuous = await this.pointRepository.isContinuous(req.userId);
 
@@ -270,19 +263,15 @@ export class TaskService implements ITaskService {
       );
 
       await this.taskRepository.lockTask(req.id);
-
-      return { message: COMPLETE_TASK_SUCCESS_MESSAGE };
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
 
   async cancleTaskCompletion(
     req: ReqCancleTaskCompletionAppDto,
-  ): Promise<ResCancleTaskCompletionAppDto> {
+  ): Promise<void> {
     await this.taskRepository.cancleTaskCompletion(req.id);
-    return { message: CANCLE_TASK_COMPLETION_SUCCESS_MESSAGE };
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)

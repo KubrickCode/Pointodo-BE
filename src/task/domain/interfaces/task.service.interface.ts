@@ -1,11 +1,5 @@
-import {
-  ReqCancleTaskCompletionAppDto,
-  ResCancleTaskCompletionAppDto,
-} from '../dto/cancleTaskCompletion.app.dto';
-import {
-  ReqCompleteTaskAppDto,
-  ResCompleteTaskAppDto,
-} from '../dto/completeTask.app.dto';
+import { ReqCancleTaskCompletionAppDto } from '../dto/cancleTaskCompletion.app.dto';
+import { ReqCompleteTaskAppDto } from '../dto/completeTask.app.dto';
 import {
   ReqCreateTaskAppDto,
   ResCreateTaskAppDto,
@@ -34,9 +28,7 @@ export interface ITaskService {
 
   deleteTask(req: ReqDeleteTaskAppDto): Promise<void>;
 
-  completeTask(req: ReqCompleteTaskAppDto): Promise<ResCompleteTaskAppDto>;
+  completeTask(req: ReqCompleteTaskAppDto): Promise<void>;
 
-  cancleTaskCompletion(
-    req: ReqCancleTaskCompletionAppDto,
-  ): Promise<ResCancleTaskCompletionAppDto>;
+  cancleTaskCompletion(req: ReqCancleTaskCompletionAppDto): Promise<void>;
 }
