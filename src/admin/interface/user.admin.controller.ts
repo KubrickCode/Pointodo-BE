@@ -1,7 +1,6 @@
 import { AdminAuthGuard } from '@auth/infrastructure/passport/guards/admin.guard';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -35,7 +34,7 @@ import {
 } from './dto/user/getUserBadgeList.admin.dto';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import {
-  ReqAdminPutBadgeToUserDto,
+  ReqAdminPutBadgeToUserQueryDto,
   ResAdminPutBadgeToUserDto,
 } from './dto/user/putBadgeToUser.admin.dto';
 import {
@@ -75,7 +74,7 @@ export class UserAdminController {
     return await this.userService.getTotalUserListPages({ ...query });
   }
 
-  @Get('/badges/list/:id')
+  @Get('/badges/:id')
   @HttpCode(200)
   async getUserBadgeList(
     @Param() param: ReqAdminGetUserBadgeListParamDto,
@@ -84,12 +83,12 @@ export class UserAdminController {
     return await this.badgeService.getUserBadgeListWithName({ userId: id });
   }
 
-  @Put('/badges/put')
+  @Put('/badges')
   @HttpCode(201)
   async putBadgeToUser(
-    @Body() body: ReqAdminPutBadgeToUserDto,
+    @Query() query: ReqAdminPutBadgeToUserQueryDto,
   ): Promise<ResAdminPutBadgeToUserDto> {
-    const { userId, badgeId } = body;
+    const { userId, badgeId } = query;
     return await this.badgeService.putBadgeToUser({ userId, badgeId });
   }
 
