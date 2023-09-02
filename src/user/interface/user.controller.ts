@@ -51,7 +51,6 @@ export class UserController {
   @ApiConflictResponse(registerDocs.existUser)
   async register(@Body() user: ReqRegisterDto): Promise<void> {
     await this.userService.register(user);
-    return;
   }
 
   @Get()
@@ -79,7 +78,6 @@ export class UserController {
       id: req.user.id,
       password: body.password,
     });
-    return;
   }
 
   @Delete()

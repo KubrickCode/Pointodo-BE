@@ -15,7 +15,6 @@ import { Request, Response } from 'express';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import { GoogleAuthGuard } from '@auth/infrastructure/passport/guards/google.guard';
 import { KakaoAuthGuard } from '@auth/infrastructure/passport/guards/kakao.guard';
-import { ConfigService } from '@nestjs/config';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -52,7 +51,6 @@ export class AuthController {
     private readonly authService: IAuthService,
     @Inject('IHandleDateTime')
     private readonly handleDateTime: IHandleDateTime,
-    private readonly configService: ConfigService,
   ) {}
 
   @Get('status')
@@ -155,7 +153,6 @@ export class AuthController {
       id: req.user.id,
       password: body.password,
     });
-    return;
   }
 
   @Get('google/callback')

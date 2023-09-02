@@ -127,7 +127,6 @@ export class TaskController {
     @Body() body: ReqUpdateTaskDto,
   ): Promise<void> {
     await this.taskService.updateTask({ id: param.id, ...body });
-    return;
   }
 
   @Delete('/:id')
@@ -136,7 +135,6 @@ export class TaskController {
   @ApiNoContentResponse(deleteTaskDocs.noContentResponse)
   async deleteTask(@Param() param: ReqDeleteTaskParamDto): Promise<void> {
     await this.taskService.deleteTask({ id: param.id });
-    return;
   }
 
   @Patch('/complete/:id')
