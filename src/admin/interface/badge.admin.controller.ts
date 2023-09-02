@@ -10,6 +10,7 @@ import {
   HttpCode,
   UseInterceptors,
   UploadedFile,
+  Res,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import {
@@ -41,6 +42,7 @@ import { updateBadgeDocs } from '@admin/interface/docs/badge/updateBadge.admin.d
 import { deleteBadgeDocs } from '@admin/interface/docs/badge/deleteBadge.admin.docs';
 import { adminDocs } from '@admin/interface/docs/admin.docs';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
 
 @ApiTags('Admin - Badge')
 @ApiBearerAuth()
@@ -60,8 +62,13 @@ export class BadgeAdminController {
   @ApiCreatedResponse(createBadgeDocs.createdResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   @ApiConflictResponse(createBadgeDocs.conflict)
-  async createBadge(@Body() body: ReqAdminCreateBadgeDto): Promise<void> {
-    await this.badgeAdminService.createBadge(body);
+  async createBadge(
+    @Res() res: Response,
+    @Body() body: ReqAdminCreateBadgeDto,
+  ): Promise<void> {
+    const { id } = await this.badgeAdminService.createBadge(body);
+    res.header('Location', String(id));
+    res.send();
   }
 
   @Patch('/update/:id')

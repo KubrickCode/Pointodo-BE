@@ -7,3 +7,7 @@ export class ReqAdminCreateBadgeAppDto {
   readonly type: BadgeType_;
   readonly price?: number;
 }
+
+export class ResAdminCreateBadgeAppDto {
+  readonly id: number;
+}
