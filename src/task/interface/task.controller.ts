@@ -34,7 +34,7 @@ import {
 } from './dto/getTasksLogs.dto';
 import { ReqCreateTaskDto } from './dto/createTask.dto';
 import { ReqUpdateTaskDto, ReqUpdateTaskParamDto } from './dto/updateTask.dto';
-import { ReqDeleteTaskParamDto, ResDeleteTaskDto } from './dto/deleteTask.dto';
+import { ReqDeleteTaskParamDto } from './dto/deleteTask.dto';
 import {
   ReqCompleteTaskParamDto,
   ResCompleteTaskDto,
@@ -131,12 +131,12 @@ export class TaskController {
   }
 
   @Delete('/:id')
+  @HttpCode(204)
   @ApiOperation(deleteTaskDocs.operation)
-  @ApiOkResponse(deleteTaskDocs.okResponse)
-  async deleteTask(
-    @Param() param: ReqDeleteTaskParamDto,
-  ): Promise<ResDeleteTaskDto> {
-    return await this.taskService.deleteTask({ id: param.id });
+  @ApiNoContentResponse(deleteTaskDocs.noContentResponse)
+  async deleteTask(@Param() param: ReqDeleteTaskParamDto): Promise<void> {
+    await this.taskService.deleteTask({ id: param.id });
+    return;
   }
 
   @Patch('/complete/:id')

@@ -17,10 +17,7 @@ import {
   ResCreateTaskAppDto,
 } from '../domain/dto/createTask.app.dto';
 import { ReqUpdateTaskAppDto } from '../domain/dto/updateTask.app.dto';
-import {
-  ReqDeleteTaskAppDto,
-  ResDeleteTaskAppDto,
-} from '../domain/dto/deleteTask.app.dto';
+import { ReqDeleteTaskAppDto } from '../domain/dto/deleteTask.app.dto';
 import {
   ReqGetTasksLogsAppDto,
   ResGetTasksLogsAppDto,
@@ -141,9 +138,9 @@ export class TaskService implements ITaskService {
     this.logger.log('info', `${UPDATE_TASK_SUCCESS_MESSAGE}-작업 ID:${req.id}`);
   }
 
-  async deleteTask(req: ReqDeleteTaskAppDto): Promise<ResDeleteTaskAppDto> {
+  async deleteTask(req: ReqDeleteTaskAppDto): Promise<void> {
     await this.taskRepository.deleteTask(req.id);
-    return { message: DELETE_TASK_SUCCESS_MESSAGE };
+    this.logger.log('info', `${DELETE_TASK_SUCCESS_MESSAGE}-작업 ID:${req.id}`);
   }
 
   async completeTask(
