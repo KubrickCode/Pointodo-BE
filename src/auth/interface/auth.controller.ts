@@ -42,14 +42,18 @@ import { socialLoginDocs } from './docs/socialLogin.docs';
 import { validateLoggedInDocs } from './docs/validateLoggedIn.docs';
 import { jwtExpiration } from '@shared/config/jwt.config';
 import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
+import {
+  IAUTH_SERVICE,
+  IHANDLE_DATE_TIME,
+} from '@shared/constants/provider.constant';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
-    @Inject('IAuthService')
+    @Inject(IAUTH_SERVICE)
     private readonly authService: IAuthService,
-    @Inject('IHandleDateTime')
+    @Inject(IHANDLE_DATE_TIME)
     private readonly handleDateTime: IHandleDateTime,
   ) {}
 

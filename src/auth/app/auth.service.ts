@@ -47,22 +47,30 @@ import { ICacheService } from '@cache/domain/interfaces/cache.service.interface'
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
 import { IPasswordHasher } from '@shared/interfaces/IPasswordHasher';
+import {
+  ICACHE_SERVICE,
+  IPASSWORD_HASHER,
+  IREDIS_SERVICE,
+  ITOKEN_SERVICE,
+  IUSER_BADGE_REPOSITORY,
+  IUSER_REPOSITORY,
+} from '@shared/constants/provider.constant';
 
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(
-    @Inject('ITokenService')
+    @Inject(ITOKEN_SERVICE)
     private readonly tokenService: ITokenService,
-    @Inject('IRedisService')
+    @Inject(IREDIS_SERVICE)
     private readonly redisService: IRedisService,
-    @Inject('IUserRepository')
+    @Inject(IUSER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-    @Inject('IUserBadgeRepository')
+    @Inject(IUSER_BADGE_REPOSITORY)
     private readonly userBadgeRepository: IUserBadgeRepository,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-    @Inject('ICacheService')
+    @Inject(ICACHE_SERVICE)
     private readonly cacheService: ICacheService,
-    @Inject('IPasswordHasher')
+    @Inject(IPASSWORD_HASHER)
     private readonly passwordHasher: IPasswordHasher,
   ) {}
 

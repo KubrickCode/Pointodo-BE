@@ -34,12 +34,13 @@ import { deleteUserDocs } from './docs/deleteUser.docs';
 import { globalDocs } from '@shared/docs/global.docs';
 import { plainToClass } from 'class-transformer';
 import { updateUserDocs } from './docs/updateUser.docs';
+import { IUSER_SERVICE } from '@shared/constants/provider.constant';
 
 @Controller('users')
 @ApiTags('User')
 export class UserController {
   constructor(
-    @Inject('IUserService')
+    @Inject(IUSER_SERVICE)
     private readonly userService: IUserService,
   ) {}
 

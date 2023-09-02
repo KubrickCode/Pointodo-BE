@@ -24,18 +24,24 @@ import {
   ReqAdminUploadFileAppDto,
   ResAdminUploadFileAppDto,
 } from '../domain/dto/uploadFile.admin.app.dto';
+import {
+  IBADGE_ADMIN_REPOSITORY,
+  ICACHE_SERVICE,
+  IREDIS_SERVICE,
+  IUSER_REPOSITORY,
+} from '@shared/constants/provider.constant';
 
 @Injectable()
 export class BadgeAdminService implements IBadgeAdminService {
   constructor(
-    @Inject('IBadgeAdminRepository')
+    @Inject(IBADGE_ADMIN_REPOSITORY)
     private readonly badgeAdminRepository: IBadgeAdminRepository,
-    @Inject('IUserRepository')
+    @Inject(IUSER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-    @Inject('IRedisService')
+    @Inject(IREDIS_SERVICE)
     private readonly redisService: IRedisService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-    @Inject('ICacheService')
+    @Inject(ICACHE_SERVICE)
     private readonly cacheService: ICacheService,
   ) {}
 

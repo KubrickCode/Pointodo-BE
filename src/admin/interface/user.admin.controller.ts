@@ -43,6 +43,10 @@ import { getTotalUserListPagesDocs } from './docs/user/getTotalUserListPages.adm
 import { getUserBadgeListDocs } from '@badge/interface/docs/getUserBadgeList.docs';
 import { putBadgeToUserDocs } from './docs/user/putBadgeToUser.admin.docs';
 import { deleteUserBadgeDocs } from './docs/user/deleteUserBadge.admin.docs';
+import {
+  IBADGE_SERVICE,
+  IUSER_SERVICE,
+} from '@shared/constants/provider.constant';
 
 @ApiTags('Admin - User')
 @ApiBearerAuth()
@@ -52,9 +56,9 @@ import { deleteUserBadgeDocs } from './docs/user/deleteUserBadge.admin.docs';
 @UseGuards(JwtAuthGuard, AdminAuthGuard)
 export class UserAdminController {
   constructor(
-    @Inject('IUserService')
+    @Inject(IUSER_SERVICE)
     private readonly userService: IUserService,
-    @Inject('IBadgeService')
+    @Inject(IBADGE_SERVICE)
     private readonly badgeService: IBadgeService,
   ) {}
 

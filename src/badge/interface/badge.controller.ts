@@ -35,6 +35,7 @@ import { getAllBadgeProgressDocs } from './docs/getAllBadgeProgress.docs';
 import { changeSelectedBadgeDocs } from './docs/changeSelectedBadge.docs';
 import { ResGetAllBadgesDto } from './dto/getAllBadges.dto';
 import { getAllBadgesDocs } from './docs/getAllBadges.docs';
+import { IBADGE_SERVICE } from '@shared/constants/provider.constant';
 
 @Controller('badges')
 @ApiTags('Badge')
@@ -43,7 +44,7 @@ import { getAllBadgesDocs } from './docs/getAllBadges.docs';
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 export class BadgeController {
   constructor(
-    @Inject('IBadgeService')
+    @Inject(IBADGE_SERVICE)
     private readonly badgeService: IBadgeService,
   ) {}
 

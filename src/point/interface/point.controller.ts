@@ -30,6 +30,7 @@ import {
   ResGetTotalPointPagesDto,
 } from './dto/getTotalPointPages.dto';
 import { getTotalPointPagesDocs } from './docs/getTotalPointPages.docs';
+import { IPOINT_SERVICE } from '@shared/constants/provider.constant';
 
 @Controller('points')
 @ApiTags('Point')
@@ -38,7 +39,7 @@ import { getTotalPointPagesDocs } from './docs/getTotalPointPages.docs';
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 export class PointController {
   constructor(
-    @Inject('IPointService')
+    @Inject(IPOINT_SERVICE)
     private readonly pointService: IPointService,
   ) {}
 

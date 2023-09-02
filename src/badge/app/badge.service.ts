@@ -32,6 +32,15 @@ import { IRedisService } from '@redis/domain/interfaces/redis.service.interface'
 import { cacheConfig } from '@shared/config/cache.config';
 import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
 import {
+  IBADGE_ADMIN_REPOSITORY,
+  IBADGE_PROGRESS_REPOSITORY,
+  ICACHE_SERVICE,
+  IPOINT_REPOSITORY,
+  IREDIS_SERVICE,
+  IUSER_BADGE_REPOSITORY,
+  IUSER_REPOSITORY,
+} from '@shared/constants/provider.constant';
+import {
   ALREADY_EXIST_USER_BADGE,
   BUY_BADGE_CONFLICT_POINTS,
   CANT_DELETE_DEAFULT_BADGE,
@@ -51,19 +60,19 @@ import { Logger } from 'winston';
 @Injectable()
 export class BadgeService implements IBadgeService {
   constructor(
-    @Inject('IPointRepository')
+    @Inject(IPOINT_REPOSITORY)
     private readonly pointRepository: IPointRepository,
-    @Inject('IUserBadgeRepository')
+    @Inject(IUSER_BADGE_REPOSITORY)
     private readonly userBadgeRepository: IUserBadgeRepository,
-    @Inject('IBadgeAdminRepository')
+    @Inject(IBADGE_ADMIN_REPOSITORY)
     private readonly badgeAdminRepository: IBadgeAdminRepository,
-    @Inject('IUserRepository')
+    @Inject(IUSER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-    @Inject('IBadgeProgressRepository')
+    @Inject(IBADGE_PROGRESS_REPOSITORY)
     private readonly badgeProgressRepository: IBadgeProgressRepository,
-    @Inject('IRedisService')
+    @Inject(IREDIS_SERVICE)
     private readonly redisService: IRedisService,
-    @Inject('ICacheService')
+    @Inject(ICACHE_SERVICE)
     private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,

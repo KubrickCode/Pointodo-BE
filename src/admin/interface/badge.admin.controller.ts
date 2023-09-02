@@ -41,6 +41,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { uploadFileDocs } from './docs/badge/uploadFile.admin.docs';
 import { ResAdminUploadFileDto } from './dto/badge/uploadFile.admin.dto';
+import { IBADGE_ADMIN_SERVICE } from '@shared/constants/provider.constant';
 
 @ApiTags('Admin - Badge')
 @ApiBearerAuth()
@@ -50,7 +51,7 @@ import { ResAdminUploadFileDto } from './dto/badge/uploadFile.admin.dto';
 @UseGuards(JwtAuthGuard, AdminAuthGuard)
 export class BadgeAdminController {
   constructor(
-    @Inject('IBadgeAdminService')
+    @Inject(IBADGE_ADMIN_SERVICE)
     private readonly badgeAdminService: IBadgeAdminService,
   ) {}
 

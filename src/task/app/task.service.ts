@@ -54,23 +54,32 @@ import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 import { plainToClass } from 'class-transformer';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
+import {
+  IBADGE_ADMIN_REPOSITORY,
+  IBADGE_PROGRESS_REPOSITORY,
+  ICACHE_SERVICE,
+  IHANDLE_DATE_TIME,
+  IPOINT_REPOSITORY,
+  ITASK_REPOSITORY,
+  IUSER_BADGE_REPOSITORY,
+} from '@shared/constants/provider.constant';
 
 @Injectable()
 export class TaskService implements ITaskService {
   constructor(
-    @Inject('ITaskRepository')
+    @Inject(ITASK_REPOSITORY)
     private readonly taskRepository: ITaskRepository,
-    @Inject('IBadgeProgressRepository')
+    @Inject(IBADGE_PROGRESS_REPOSITORY)
     private readonly badgeProgressRepository: IBadgeProgressRepository,
-    @Inject('IBadgeAdminRepository')
+    @Inject(IBADGE_ADMIN_REPOSITORY)
     private readonly badgeAdminRepository: IBadgeAdminRepository,
-    @Inject('IPointRepository')
+    @Inject(IPOINT_REPOSITORY)
     private readonly pointRepository: IPointRepository,
-    @Inject('IUserBadgeRepository')
+    @Inject(IUSER_BADGE_REPOSITORY)
     private readonly userBadgeRepository: IUserBadgeRepository,
-    @Inject('ICacheService')
+    @Inject(ICACHE_SERVICE)
     private readonly cacheService: ICacheService,
-    @Inject('IHandleDateTime')
+    @Inject(IHANDLE_DATE_TIME)
     private readonly handleDateTime: IHandleDateTime,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}

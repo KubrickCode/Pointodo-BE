@@ -40,22 +40,29 @@ import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
 import { IPasswordHasher } from '@shared/interfaces/IPasswordHasher';
 import { plainToClass } from 'class-transformer';
 import { ReqUpdateUserAppDto } from '@user/domain/dto/updateUser.app.dto';
+import {
+  ICACHE_SERVICE,
+  IPASSWORD_HASHER,
+  IREDIS_SERVICE,
+  IUSER_BADGE_REPOSITORY,
+  IUSER_REPOSITORY,
+} from '@shared/constants/provider.constant';
 
 @Injectable()
 export class UserService implements IUserService {
   constructor(
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-    @Inject('IUserRepository')
+    @Inject(IUSER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-    @Inject('IUserBadgeRepository')
+    @Inject(IUSER_BADGE_REPOSITORY)
     private readonly userBadgeRepository: IUserBadgeRepository,
-    @Inject('IRedisService')
+    @Inject(IREDIS_SERVICE)
     private readonly redisService: IRedisService,
-    @Inject('ICacheService')
+    @Inject(ICACHE_SERVICE)
     private readonly cacheService: ICacheService,
-    private readonly configService: ConfigService,
-    @Inject('IPasswordHasher')
+    @Inject(IPASSWORD_HASHER)
     private readonly passwordHasher: IPasswordHasher,
+    private readonly configService: ConfigService,
   ) {}
 
   async register(newUser: ReqRegisterAppDto): Promise<void> {

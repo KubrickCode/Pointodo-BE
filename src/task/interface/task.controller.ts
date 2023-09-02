@@ -44,6 +44,7 @@ import {
   ReqGetTotalTaskPagesQueryDto,
   ResGetTotalTaskPagesDto,
 } from './dto/getTotalTaskPages.dto';
+import { ITASK_SERVICE } from '@shared/constants/provider.constant';
 
 @Controller('tasks')
 @ApiTags('Task')
@@ -52,7 +53,7 @@ import {
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 export class TaskController {
   constructor(
-    @Inject('ITaskService')
+    @Inject(ITASK_SERVICE)
     private readonly taskService: ITaskService,
   ) {}
 
