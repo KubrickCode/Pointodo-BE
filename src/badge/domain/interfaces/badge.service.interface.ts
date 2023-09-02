@@ -1,5 +1,5 @@
 import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
-import { ReqBuyBadgeAppDto, ResBuyBadgeAppDto } from '../dto/buyBadge.app.dto';
+import { ReqBuyBadgeAppDto } from '../dto/buyBadge.app.dto';
 import {
   ReqChangeSelectedBadgeAppDto,
   ResChangeSelectedBadgeAppDto,
@@ -26,7 +26,7 @@ import {
 } from '../dto/deleteUserBadge.app.dto';
 
 export interface IBadgeService {
-  buyBadge(req: ReqBuyBadgeAppDto): Promise<ResBuyBadgeAppDto>;
+  buyBadge(req: ReqBuyBadgeAppDto): Promise<void>;
 
   getUserBadgeList(
     req: ReqGetUserBadgeListAppDto,

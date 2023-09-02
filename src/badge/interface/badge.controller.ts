@@ -1,12 +1,14 @@
 import {
   Controller,
   Inject,
-  Post,
   UseGuards,
   Req,
   Body,
   Patch,
   Get,
+  Put,
+  Param,
+  HttpCode,
 } from '@nestjs/common';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import {
@@ -21,7 +23,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import { Request } from 'express';
-import { ReqBuyBadgeDto, ResBuyBadgeDto } from './dto/buyBadge.dto';
+import { ReqBuyBadgeParamDto } from './dto/buyBadge.dto';
 import { globalDocs } from '@shared/docs/global.docs';
 import {
   ReqChangeSelectedBadgeDto,
@@ -36,7 +38,7 @@ import { getAllBadgeProgressDocs } from './docs/getAllBadgeProgress.docs';
 import { changeSelectedBadgeDocs } from './docs/changeSelectedBadge.docs';
 import { ResGetAllBadgesDto } from './dto/getAllBadges.dto';
 
-@Controller('badge')
+@Controller('badges')
 @ApiTags('Badge')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
@@ -47,24 +49,25 @@ export class BadgeController {
     private readonly badgeService: IBadgeService,
   ) {}
 
-  @Post('buy')
+  @Put('/:badgeId')
+  @HttpCode(201)
   @ApiOperation(buyBadgeDocs.operation)
-  @ApiCreatedResponse(buyBadgeDocs.okResponse)
+  @ApiCreatedResponse(buyBadgeDocs.createdResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   @ApiConflictResponse(buyBadgeDocs.conflictError)
   async buyBadge(
     @Req() req: Request,
-    @Body(ValidateBadgePipe) body: ReqBuyBadgeDto,
-  ): Promise<ResBuyBadgeDto> {
-    return await this.badgeService.buyBadge({
+    @Param(ValidateBadgePipe) param: ReqBuyBadgeParamDto,
+  ): Promise<void> {
+    await this.badgeService.buyBadge({
       userId: req.user.id,
-      badgeId: body.badgeId,
+      badgeId: param.badgeId,
     });
   }
 
+  @Get('personal')
   @ApiOperation(getUserBadgeListDocs.operation)
   @ApiOkResponse(getUserBadgeListDocs.okResponse)
-  @Get('list')
   async getUserBadgeList(
     @Req() req: Request,
   ): Promise<ResGetUserBadgeListDto[]> {

@@ -1,9 +1,6 @@
 import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
-import {
-  ReqBuyBadgeAppDto,
-  ResBuyBadgeAppDto,
-} from '@badge/domain/dto/buyBadge.app.dto';
+import { ReqBuyBadgeAppDto } from '@badge/domain/dto/buyBadge.app.dto';
 import {
   ReqChangeSelectedBadgeAppDto,
   ResChangeSelectedBadgeAppDto,
@@ -57,6 +54,8 @@ import {
 } from '@shared/messages/badge/badge.messages';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import { plainToClass } from 'class-transformer';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 @Injectable()
 export class BadgeService implements IBadgeService {
@@ -76,9 +75,10 @@ export class BadgeService implements IBadgeService {
     @Inject('ICacheService')
     private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async buyBadge(req: ReqBuyBadgeAppDto): Promise<ResBuyBadgeAppDto> {
+  async buyBadge(req: ReqBuyBadgeAppDto): Promise<void> {
     const { userId, badgeId } = req;
     const price = await this.badgeAdminRepository.getBadgePrice(badgeId);
 
@@ -108,13 +108,16 @@ export class BadgeService implements IBadgeService {
       );
     }
 
-    await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
+    await this.cacheService.deleteCache(`userBadgeList:${userId}`);
     await this.redisService.deleteKeysByPrefix(
-      `userSpentPointsLogs:${req.userId}*`,
+      `userSpentPointsLogs:${userId}*`,
     );
-    await this.cacheService.deleteCache(`SPENTtotalPointPages:${req.userId}`);
+    await this.cacheService.deleteCache(`SPENTtotalPointPages:${userId}`);
 
-    return { message: BUY_BADGE_SUCCESS_MESSAGE };
+    this.logger.log(
+      'info',
+      `${BUY_BADGE_SUCCESS_MESSAGE}-유저 ID:${userId}, 뱃지 ID:${badgeId}`,
+    );
   }
 
   async getUserBadgeList(
