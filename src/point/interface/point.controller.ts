@@ -85,7 +85,8 @@ export class PointController {
     });
   }
 
-  @Get('current')
+  @Get()
+  @HttpCode(200)
   @ApiOperation(getCurrentPointsDocs.operation)
   @ApiOkResponse(getCurrentPointsDocs.okResponse)
   async getCurrentPoints(@Req() req: Request): Promise<ResGetCurrentPointsDto> {
