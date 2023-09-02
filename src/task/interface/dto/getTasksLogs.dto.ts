@@ -29,13 +29,14 @@ export class ReqGetTasksLogsQueryDto {
   @IsInt()
   readonly offset: number;
 
+  @ApiProperty({ description: TASK_LIMIT })
+  @Type(() => Number)
+  @IsInt()
+  readonly limit: number;
+
   @ApiProperty({ description: ORDER_BY })
   @IsString()
   readonly order: string;
-
-  @ApiProperty({ description: TASK_LIMIT })
-  @IsInt()
-  readonly limit: number;
 }
 
 export class ResGetTasksLogsDto {
