@@ -71,7 +71,7 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(201)
-  @Throttle(1, 10)
+  @Throttle(1, 5)
   @UseGuards(LocalAuthGuard)
   @ApiOperation(loginDocs.operation)
   @ApiCreatedResponse(loginDocs.okResponse)
@@ -163,6 +163,7 @@ export class AuthController {
 
   @Get('google/callback')
   @HttpCode(302)
+  @Throttle(1, 5)
   @Header('Location', process.env.ORIGIN)
   @UseGuards(GoogleAuthGuard)
   @ApiOperation(socialLoginDocs.google.operation)
@@ -192,6 +193,7 @@ export class AuthController {
 
   @Get('kakao/callback')
   @HttpCode(302)
+  @Throttle(1, 5)
   @Header('Location', process.env.ORIGIN)
   @UseGuards(KakaoAuthGuard)
   @ApiOperation(socialLoginDocs.kakao.operation)
