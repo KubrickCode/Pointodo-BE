@@ -26,7 +26,7 @@ import {
 } from './dto/user/getUserList.admin.dto';
 import { IUserService } from '@user/domain/interfaces/user.service.interface';
 import {
-  ReqAdminGetTotalUserListPagesParamDto,
+  ReqAdminGetTotalUserListPagesQueryDto,
   ResAdminGetTotalUserListPagesDto,
 } from './dto/user/getTotalUserListPages.admin.dto';
 import {
@@ -62,22 +62,17 @@ export class UserAdminController {
   async getUserList(
     @Query() query: ReqAdminGetUserListQueryDto,
   ): Promise<ResAdminGetUserListDto[]> {
-    const { offset, limit, order, provider } = query;
     return await this.userService.getUserList({
-      order,
-      offset,
-      limit,
-      provider,
+      ...query,
     });
   }
 
-  @Get('/count/:provider')
+  @Get('/count-pages')
   @HttpCode(200)
   async getTotalUserListPages(
-    @Param() param: ReqAdminGetTotalUserListPagesParamDto,
+    @Query() query: ReqAdminGetTotalUserListPagesQueryDto,
   ): Promise<ResAdminGetTotalUserListPagesDto> {
-    const { provider } = param;
-    return await this.userService.getTotalUserListPages({ provider });
+    return await this.userService.getTotalUserListPages({ ...query });
   }
 
   @Get('/badges/list/:id')
