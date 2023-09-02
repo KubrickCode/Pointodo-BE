@@ -131,11 +131,11 @@ export class UserService implements IUserService {
   async getUserList(
     req: ReqGetUserListAppDto,
   ): Promise<ResGetUserListAppDto[]> {
-    const { order, page, provider } = req;
+    const { order, offset, limit, provider } = req;
     return await this.userRepository.getUserList(
       order,
-      GET_USER_LIST_LIMIT,
-      (page - 1) * GET_USER_LIST_LIMIT,
+      limit,
+      (offset - 1) * limit,
       provider,
     );
   }

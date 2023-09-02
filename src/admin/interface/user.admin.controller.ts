@@ -57,13 +57,18 @@ export class UserAdminController {
     private readonly badgeService: IBadgeService,
   ) {}
 
-  @Get('/list')
+  @Get()
   @HttpCode(200)
   async getUserList(
     @Query() query: ReqAdminGetUserListQueryDto,
   ): Promise<ResAdminGetUserListDto[]> {
-    const { page, order, provider } = query;
-    return await this.userService.getUserList({ order, page, provider });
+    const { offset, limit, order, provider } = query;
+    return await this.userService.getUserList({
+      order,
+      offset,
+      limit,
+      provider,
+    });
   }
 
   @Get('/count/:provider')

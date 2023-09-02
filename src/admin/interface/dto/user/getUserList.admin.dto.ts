@@ -4,6 +4,7 @@ import {
   USER_EMAIL,
   USER_EMAIL_EXAMPLE,
   USER_ID,
+  USER_LIST_LIMIT,
   USER_LIST_PAGE,
   USER_PROVIDER,
   USER_PROVIDER_EXAMPLE,
@@ -27,7 +28,12 @@ export class ReqAdminGetUserListQueryDto {
   @ApiProperty({ description: USER_LIST_PAGE })
   @Type(() => Number)
   @IsInt()
-  readonly page: number;
+  readonly offset: number;
+
+  @ApiProperty({ description: USER_LIST_LIMIT })
+  @Type(() => Number)
+  @IsInt()
+  readonly limit: number;
 
   @ApiProperty({ description: ORDER_BY })
   @IsString()

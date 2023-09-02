@@ -3,7 +3,8 @@ import { ProviderType, RoleType } from '../entities/user.entity';
 
 export class ReqGetUserListAppDto {
   readonly order: string;
-  readonly page: number;
+  readonly offset: number;
+  readonly limit: number;
   readonly provider: ProviderType | 'ALL';
 }
 
