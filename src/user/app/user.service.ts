@@ -88,7 +88,7 @@ export class UserService implements IUserService {
 
     this.logger.log(
       'info',
-      `${REGISTER_SUCCESS_MESSAGE}-가입 이메일:${createdUser.email}, 유저 ID:${createdUser.id}, 가입 일시:${createdUser.createdAt}, 공급 업체:${createdUser.provider}`,
+      `${REGISTER_SUCCESS_MESSAGE}-가입 이메일:${createdUser.email}, 유저 ID:${createdUser.id}, 가입 일시:${createdUser.createdAt}`,
     );
   }
 
@@ -130,7 +130,7 @@ export class UserService implements IUserService {
     await this.cacheService.deleteCache(`SPENTtotalPointPages:${req.id}`);
     this.logger.log(
       'info',
-      `${DELETE_USER_SUCCESS_MESSAGE}-유저 ID:${user.id}, 유저 이메일:${user.email}`,
+      `${DELETE_USER_SUCCESS_MESSAGE}-유저 ID:${user.id}`,
     );
   }
 
