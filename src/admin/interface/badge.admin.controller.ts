@@ -93,7 +93,7 @@ export class BadgeAdminController {
     await this.badgeAdminService.deleteBadge({ id: param.id });
   }
 
-  @Post('upload')
+  @Post('upload-image')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.MulterS3.File) {
     return await this.badgeAdminService.uploadFile(file);
