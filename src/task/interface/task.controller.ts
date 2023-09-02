@@ -35,20 +35,10 @@ import {
 import { ReqCreateTaskDto } from './dto/createTask.dto';
 import { ReqUpdateTaskDto, ReqUpdateTaskParamDto } from './dto/updateTask.dto';
 import { ReqDeleteTaskParamDto } from './dto/deleteTask.dto';
-import {
-  ReqCompleteTaskParamDto,
-  ResCompleteTaskDto,
-} from './dto/completeTask.dto';
 import { getTasksLogsDocs } from './docs/getTasksLogs.docs';
 import { createTaskDocs } from './docs/createTask.docs';
 import { updateTaskDocs } from './docs/updateTask.docs';
 import { deleteTaskDocs } from './docs/deleteTask.docs';
-import { completeTaskDocs } from './docs/completeTask.docs';
-import {
-  ReqCancleTaskCompletionParamDto,
-  ResCancleTaskCompletionDto,
-} from './dto/cancleTaskCompletion.dto';
-import { cancleTaskCompletionDocs } from './docs/cancleTaskCompletion.docs';
 import { getTotalTaskPagesDocs } from './docs/getTotalTaskPages.docs';
 import {
   ReqGetTotalTaskPagesQueryDto,
@@ -121,12 +111,18 @@ export class TaskController {
   @HttpCode(204)
   @ApiOperation(updateTaskDocs.operation)
   @ApiNoContentResponse(updateTaskDocs.noContentResponse)
+  @ApiConflictResponse(updateTaskDocs.conflictResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   async updateTask(
+    @Req() req: Request,
     @Param() param: ReqUpdateTaskParamDto,
     @Body() body: ReqUpdateTaskDto,
   ): Promise<void> {
-    await this.taskService.updateTask({ id: param.id, ...body });
+    await this.taskService.updateTask({
+      userId: req.user.id,
+      id: param.id,
+      ...body,
+    });
   }
 
   @Delete('/:id')
@@ -135,27 +131,5 @@ export class TaskController {
   @ApiNoContentResponse(deleteTaskDocs.noContentResponse)
   async deleteTask(@Param() param: ReqDeleteTaskParamDto): Promise<void> {
     await this.taskService.deleteTask({ id: param.id });
-  }
-
-  @Patch('/complete/:id')
-  @ApiOperation(completeTaskDocs.operation)
-  @ApiOkResponse(completeTaskDocs.okResponse)
-  @ApiConflictResponse(completeTaskDocs.conflictError)
-  async completeTask(
-    @Req() req: Request,
-    @Param() param: ReqCompleteTaskParamDto,
-  ): Promise<ResCompleteTaskDto> {
-    const userId = req.user.id;
-    const id = param.id;
-    return await this.taskService.completeTask({ userId, id });
-  }
-
-  @Patch('/cancle/:id')
-  @ApiOperation(cancleTaskCompletionDocs.operation)
-  @ApiOkResponse(cancleTaskCompletionDocs.okResponse)
-  async cancleTaskCompletion(
-    @Param() param: ReqCancleTaskCompletionParamDto,
-  ): Promise<ResCancleTaskCompletionDto> {
-    return await this.taskService.cancleTaskCompletion({ id: param.id });
   }
 }

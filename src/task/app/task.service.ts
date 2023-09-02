@@ -127,15 +127,32 @@ export class TaskService implements ITaskService {
   }
 
   async updateTask(req: ReqUpdateTaskAppDto): Promise<void> {
+    const { id, userId, completion } = req;
+
+    if (completion === 1) {
+      await this.completeTask({ id, userId });
+      this.logger.log('info', `${COMPLETE_TASK_SUCCESS_MESSAGE}-작업 ID:${id}`);
+      return;
+    }
+
+    if (completion === 0) {
+      await this.cancleTaskCompletion({ id });
+      this.logger.log(
+        'info',
+        `${CANCLE_TASK_COMPLETION_SUCCESS_MESSAGE}-작업 ID:${id}`,
+      );
+      return;
+    }
+
     await this.taskRepository.updateTask(
-      req.id,
+      id,
       req.name,
       req.description,
       req.importance,
       req.dueDate,
     );
 
-    this.logger.log('info', `${UPDATE_TASK_SUCCESS_MESSAGE}-작업 ID:${req.id}`);
+    this.logger.log('info', `${UPDATE_TASK_SUCCESS_MESSAGE}-작업 ID:${id}`);
   }
 
   async deleteTask(req: ReqDeleteTaskAppDto): Promise<void> {
