@@ -3,7 +3,6 @@ import {
   Inject,
   UseGuards,
   Req,
-  Body,
   Patch,
   Get,
   Put,
@@ -16,6 +15,7 @@ import {
   ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -25,10 +25,7 @@ import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import { Request } from 'express';
 import { ReqBuyBadgeParamDto } from './dto/buyBadge.dto';
 import { globalDocs } from '@shared/docs/global.docs';
-import {
-  ReqChangeSelectedBadgeDto,
-  ResChangeSelectedBadgeDto,
-} from './dto/changeSelectedBadge.dto';
+import { ReqChangeSelectedBadgeParamDto } from './dto/changeSelectedBadge.dto';
 import { ResGetUserBadgeListDto } from './dto/getUserBadgeList.dto';
 import { ResGetAllBadgeProgressDto } from './dto/getAllBadgeProgress.dto';
 import { ValidateBadgePipe } from '@shared/pipes/validateBadge.pipe';
@@ -66,6 +63,7 @@ export class BadgeController {
   }
 
   @Get('personal')
+  @HttpCode(200)
   @ApiOperation(getUserBadgeListDocs.operation)
   @ApiOkResponse(getUserBadgeListDocs.okResponse)
   async getUserBadgeList(
@@ -74,30 +72,31 @@ export class BadgeController {
     return await this.badgeService.getUserBadgeList({ userId: req.user.id });
   }
 
+  @Get('progress')
+  @HttpCode(200)
   @ApiOperation(getAllBadgeProgressDocs.operation)
   @ApiOkResponse(getAllBadgeProgressDocs.okResponse)
-  @Get('progress')
   async getAllBadgeProgress(
     @Req() req: Request,
   ): Promise<ResGetAllBadgeProgressDto[]> {
     return await this.badgeService.getAllBadgeProgress({ userId: req.user.id });
   }
 
+  @Patch('/:badgeId')
   @ApiOperation(changeSelectedBadgeDocs.operation)
-  @ApiOkResponse(changeSelectedBadgeDocs.okResponse)
+  @ApiNoContentResponse(changeSelectedBadgeDocs.noContentResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
-  @Patch('selected')
   async changeSelectedBadge(
     @Req() req: Request,
-    @Body(ValidateBadgePipe) body: ReqChangeSelectedBadgeDto,
-  ): Promise<ResChangeSelectedBadgeDto> {
-    return await this.badgeService.changeSelectedBadge({
+    @Param(ValidateBadgePipe) param: ReqChangeSelectedBadgeParamDto,
+  ): Promise<void> {
+    await this.badgeService.changeSelectedBadge({
       userId: req.user.id,
-      badgeId: body.badgeId,
+      badgeId: param.badgeId,
     });
   }
 
-  @Get('all')
+  @Get()
   async getAllBadges(): Promise<ResGetAllBadgesDto[]> {
     return await this.badgeService.getAllBadges();
   }

@@ -1,10 +1,7 @@
 import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { ReqBuyBadgeAppDto } from '@badge/domain/dto/buyBadge.app.dto';
-import {
-  ReqChangeSelectedBadgeAppDto,
-  ResChangeSelectedBadgeAppDto,
-} from '@badge/domain/dto/changeSelectedBadge.app.dto';
+import { ReqChangeSelectedBadgeAppDto } from '@badge/domain/dto/changeSelectedBadge.app.dto';
 import {
   ReqDeleteUserBadgeAppDto,
   ResDeleteUserBadgeAppDto,
@@ -155,9 +152,7 @@ export class BadgeService implements IBadgeService {
     return await this.userBadgeRepository.getUserBadgeListWithName(req.userId);
   }
 
-  async changeSelectedBadge(
-    req: ReqChangeSelectedBadgeAppDto,
-  ): Promise<ResChangeSelectedBadgeAppDto> {
+  async changeSelectedBadge(req: ReqChangeSelectedBadgeAppDto): Promise<void> {
     const { userId, badgeId } = req;
     const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
       userId,
@@ -170,7 +165,10 @@ export class BadgeService implements IBadgeService {
 
     await this.cacheService.deleteCache(`user:${userId}`);
     await this.userRepository.changeSelectedBadge(userId, badgeId);
-    return { message: CHANGE_USER_BADGE_MESSAGE };
+    this.logger.log(
+      'info',
+      `${CHANGE_USER_BADGE_MESSAGE}-유저 ID:${userId}, 뱃지 ID:${badgeId}`,
+    );
   }
 
   async getAllBadgeProgress(

@@ -1,9 +1,6 @@
 import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
 import { ReqBuyBadgeAppDto } from '../dto/buyBadge.app.dto';
-import {
-  ReqChangeSelectedBadgeAppDto,
-  ResChangeSelectedBadgeAppDto,
-} from '../dto/changeSelectedBadge.app.dto';
+import { ReqChangeSelectedBadgeAppDto } from '../dto/changeSelectedBadge.app.dto';
 import {
   ReqGetAllBadgeProgressAppDto,
   ResGetAllBadgeProgressAppDto,
@@ -36,9 +33,7 @@ export interface IBadgeService {
     req: ReqGetUserBadgeListWithNameAppDto,
   ): Promise<ResGetUserBadgeListWithNameAppDto[]>;
 
-  changeSelectedBadge(
-    req: ReqChangeSelectedBadgeAppDto,
-  ): Promise<ResChangeSelectedBadgeAppDto>;
+  changeSelectedBadge(req: ReqChangeSelectedBadgeAppDto): Promise<void>;
 
   getAllBadgeProgress(
     req: ReqGetAllBadgeProgressAppDto,
