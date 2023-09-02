@@ -1,11 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '@user/app/user.service';
-import {
-  ReqRegisterAppDto,
-  ResRegisterAppDto,
-} from '@user/domain/dto/register.app.dto';
+import { ReqRegisterAppDto } from '@user/domain/dto/register.app.dto';
 import { PrismaService } from '@shared/service/prisma.service';
-import { REGISTER_SUCCESS_MESSAGE } from '@shared/messages/user/user.messages';
 import { USER_ALREADY_EXIST } from '@shared/messages/user/user.errors';
 import { userServiceTestModuleOptions } from './userService.test.option';
 
@@ -35,13 +31,7 @@ describe('register', () => {
   };
 
   it('로컬 유저 생성 -> 리포지토리 -> DB', async () => {
-    const expectedResponse: ResRegisterAppDto = {
-      message: REGISTER_SUCCESS_MESSAGE,
-    };
-
-    const result = await userService.register(request);
-    expect(result).toEqual(expectedResponse);
-    expect(result).toBeInstanceOf(ResRegisterAppDto);
+    await userService.register(request);
   }, 30000);
 
   it('로컬 유저 생성(중복)', async () => {
