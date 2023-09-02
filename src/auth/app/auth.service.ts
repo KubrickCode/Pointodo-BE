@@ -55,6 +55,7 @@ import {
   IUSER_BADGE_REPOSITORY,
   IUSER_REPOSITORY,
 } from '@shared/constants/provider.constant';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -123,7 +124,7 @@ export class AuthService implements IAuthService {
       refreshToken,
       jwtExpiration.refreshTokenExpirationSeconds,
     );
-    return { accessToken, refreshToken };
+    return plainToClass(ResLoginAppDto, { accessToken, refreshToken });
   }
 
   async logout(req: ReqLogoutAppDto): Promise<void> {
