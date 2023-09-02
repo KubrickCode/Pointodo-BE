@@ -5,6 +5,10 @@ import {
 import { ReqAdminDeleteBadgeAppDto } from '../dto/deleteBadge.admin.app.dto';
 import { ReqAdminGetBadgeListAppDto } from '../dto/getBadgeList.admin.app.dto';
 import { ReqAdminUpdateBadgeAppDto } from '../dto/updateBadge.admin.app.dto';
+import {
+  ReqAdminUploadFileAppDto,
+  ResAdminUploadFileAppDto,
+} from '../dto/uploadFile.admin.app.dto';
 import { BadgeEntity } from '../entities/badge.entity';
 
 export interface IBadgeAdminService {
@@ -18,5 +22,5 @@ export interface IBadgeAdminService {
 
   deleteBadge(req: ReqAdminDeleteBadgeAppDto): Promise<void>;
 
-  uploadFile(file: Express.Multer.File): Promise<{ filePath: string }>;
+  uploadFile(req: ReqAdminUploadFileAppDto): Promise<ResAdminUploadFileAppDto>;
 }

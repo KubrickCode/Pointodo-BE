@@ -39,6 +39,8 @@ import { deleteBadgeDocs } from '@admin/interface/docs/badge/deleteBadge.admin.d
 import { adminDocs } from '@admin/interface/docs/admin.docs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
+import { uploadFileDocs } from './docs/badge/uploadFile.admin.docs';
+import { ResAdminUploadFileDto } from './dto/badge/uploadFile.admin.dto';
 
 @ApiTags('Admin - Badge')
 @ApiBearerAuth()
@@ -94,8 +96,13 @@ export class BadgeAdminController {
   }
 
   @Post('upload-image')
+  @HttpCode(201)
+  @ApiOperation(uploadFileDocs.operation)
+  @ApiCreatedResponse(uploadFileDocs.createdResponse)
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: Express.MulterS3.File) {
-    return await this.badgeAdminService.uploadFile(file);
+  async uploadFile(
+    @UploadedFile() file: Express.MulterS3.File,
+  ): Promise<ResAdminUploadFileDto> {
+    return await this.badgeAdminService.uploadFile({ file });
   }
 }

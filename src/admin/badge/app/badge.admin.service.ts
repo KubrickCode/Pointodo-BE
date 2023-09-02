@@ -20,6 +20,10 @@ import { ICacheService } from '@cache/domain/interfaces/cache.service.interface'
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 import { plainToClass } from 'class-transformer';
+import {
+  ReqAdminUploadFileAppDto,
+  ResAdminUploadFileAppDto,
+} from '../domain/dto/uploadFile.admin.app.dto';
 
 @Injectable()
 export class BadgeAdminService implements IBadgeAdminService {
@@ -97,7 +101,13 @@ export class BadgeAdminService implements IBadgeAdminService {
     );
   }
 
-  async uploadFile(file: Express.MulterS3.File): Promise<{ filePath: string }> {
-    return { filePath: file.location };
+  async uploadFile(
+    req: ReqAdminUploadFileAppDto,
+  ): Promise<ResAdminUploadFileAppDto> {
+    this.logger.log(
+      'info',
+      `이미지 업로드 성공-이미지 경로:${req.file.location}`,
+    );
+    return { filePath: req.file.location };
   }
 }

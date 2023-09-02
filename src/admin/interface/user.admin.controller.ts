@@ -78,7 +78,7 @@ export class UserAdminController {
   }
 
   @Put('/badges')
-  @HttpCode(201)
+  @HttpCode(204)
   async putBadgeToUser(
     @Query() query: ReqAdminPutBadgeToUserQueryDto,
   ): Promise<void> {
@@ -87,7 +87,7 @@ export class UserAdminController {
   }
 
   @Delete('/badges')
-  @HttpCode(200)
+  @HttpCode(204)
   async deleteUserBadge(
     @Query() query: ReqAdminDeleteUserBadgeQueryDto,
   ): Promise<void> {
