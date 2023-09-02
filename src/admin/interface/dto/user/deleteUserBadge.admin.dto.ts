@@ -6,12 +6,12 @@ import { IsInt, IsUUID } from 'class-validator';
 import { UUID } from 'crypto';
 
 export class ReqAdminDeleteUserBadgeQueryDto {
+  @ApiProperty({ description: USER_ID })
+  @IsUUID()
+  readonly userId: UUID;
+
   @ApiProperty({ description: BADGE_ID })
   @Type(() => Number)
   @IsInt()
   readonly badgeId: number;
-
-  @ApiProperty({ description: USER_ID })
-  @IsUUID()
-  readonly userId: UUID;
 }

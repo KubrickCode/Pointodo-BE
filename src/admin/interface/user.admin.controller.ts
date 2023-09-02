@@ -16,6 +16,9 @@ import { globalDocs } from '@shared/docs/global.docs';
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -35,6 +38,11 @@ import {
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import { ReqAdminPutBadgeToUserQueryDto } from './dto/user/putBadgeToUser.admin.dto';
 import { ReqAdminDeleteUserBadgeQueryDto } from './dto/user/deleteUserBadge.admin.dto';
+import { getUserListDocs } from './docs/user/getUserList.admin.docs';
+import { getTotalUserListPagesDocs } from './docs/user/getTotalUserListPages.admin.docs';
+import { getUserBadgeListDocs } from '@badge/interface/docs/getUserBadgeList.docs';
+import { putBadgeToUserDocs } from './docs/user/putBadgeToUser.admin.docs';
+import { deleteUserBadgeDocs } from './docs/user/deleteUserBadge.admin.docs';
 
 @ApiTags('Admin - User')
 @ApiBearerAuth()
@@ -52,6 +60,8 @@ export class UserAdminController {
 
   @Get()
   @HttpCode(200)
+  @ApiOperation(getUserListDocs.operation)
+  @ApiOkResponse(getUserListDocs.okResponse)
   async getUserList(
     @Query() query: ReqAdminGetUserListQueryDto,
   ): Promise<ResAdminGetUserListDto[]> {
@@ -62,6 +72,8 @@ export class UserAdminController {
 
   @Get('/count-pages')
   @HttpCode(200)
+  @ApiOperation(getTotalUserListPagesDocs.operation)
+  @ApiOkResponse(getTotalUserListPagesDocs.okResponse)
   async getTotalUserListPages(
     @Query() query: ReqAdminGetTotalUserListPagesQueryDto,
   ): Promise<ResAdminGetTotalUserListPagesDto> {
@@ -70,6 +82,8 @@ export class UserAdminController {
 
   @Get('/badges/:id')
   @HttpCode(200)
+  @ApiOperation(getUserBadgeListDocs.operation)
+  @ApiOkResponse(getUserBadgeListDocs.okResponse)
   async getUserBadgeList(
     @Param() param: ReqAdminGetUserBadgeListParamDto,
   ): Promise<ResAdminGetUserBadgeListDto[]> {
@@ -79,6 +93,8 @@ export class UserAdminController {
 
   @Put('/badges')
   @HttpCode(204)
+  @ApiOperation(putBadgeToUserDocs.operation)
+  @ApiNoContentResponse(putBadgeToUserDocs.noContentResponse)
   async putBadgeToUser(
     @Query() query: ReqAdminPutBadgeToUserQueryDto,
   ): Promise<void> {
@@ -88,6 +104,8 @@ export class UserAdminController {
 
   @Delete('/badges')
   @HttpCode(204)
+  @ApiOperation(deleteUserBadgeDocs.operation)
+  @ApiNoContentResponse(deleteUserBadgeDocs.noContentResponse)
   async deleteUserBadge(
     @Query() query: ReqAdminDeleteUserBadgeQueryDto,
   ): Promise<void> {
