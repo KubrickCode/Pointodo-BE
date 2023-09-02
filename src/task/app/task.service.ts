@@ -45,7 +45,7 @@ import {
   COMPLETE_TASK_CONFLICT,
   DUE_DATE_IN_THE_PAST,
 } from '@shared/messages/task/task.errors';
-import { GET_TASK_LIMIT, IS_COMPLETED } from '@shared/constants/task.constant';
+import { IS_COMPLETED } from '@shared/constants/task.constant';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import {
   ReqCancleTaskCompletionAppDto,
@@ -99,7 +99,7 @@ export class TaskService implements ITaskService {
       req.taskType,
     );
 
-    const totalPages = Math.ceil(totalTasks / GET_TASK_LIMIT);
+    const totalPages = Math.ceil(totalTasks / req.limit);
 
     return { totalPages };
   }

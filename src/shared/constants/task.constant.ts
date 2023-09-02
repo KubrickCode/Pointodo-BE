@@ -12,7 +12,6 @@ export const DEADLINE_TASK_POINT = 3;
 export const DEADLINE_TASK_CONSISTENCY_POINT = 4;
 export const FREE_TASK_POINT = 5;
 export const FREE_TASK_CONSISTENCY_POINT = 6;
-export const GET_TASK_LIMIT = 5;
 
 export const TASK_TYPE_ID = '작업 타입 고유 ID(INT)';
 export const TASK_TYPE_NAME = '작업 타입 이름';

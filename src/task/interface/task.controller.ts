@@ -49,7 +49,7 @@ import {
 import { cancleTaskCompletionDocs } from './docs/cancleTaskCompletion.docs';
 import { getTotalTaskPagesDocs } from './docs/getTotalTaskPages.docs';
 import {
-  ReqGetTotalTaskPagesParamDto,
+  ReqGetTotalTaskPagesQueryDto,
   ResGetTotalTaskPagesDto,
 } from './dto/getTotalTaskPages.dto';
 import { plainToClass } from 'class-transformer';
@@ -83,16 +83,21 @@ export class TaskController {
     });
   }
 
-  @Get('/count/:taskType')
+  @Get('/count-pages')
+  @HttpCode(200)
   @ApiOperation(getTotalTaskPagesDocs.operation)
   @ApiOkResponse(getTotalTaskPagesDocs.okResponse)
   async getTotalTaskPages(
     @Req() req: Request,
-    @Param() param: ReqGetTotalTaskPagesParamDto,
+    @Query() query: ReqGetTotalTaskPagesQueryDto,
   ): Promise<ResGetTotalTaskPagesDto> {
     const userId = req.user.id;
-    const { taskType } = param;
-    return await this.taskService.getTotalTaskPages({ userId, taskType });
+    const { taskType, limit } = query;
+    return await this.taskService.getTotalTaskPages({
+      userId,
+      taskType,
+      limit,
+    });
   }
 
   @Post('create')
