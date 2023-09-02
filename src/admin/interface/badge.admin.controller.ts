@@ -55,7 +55,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @ApiBearerAuth()
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 @ApiForbiddenResponse(adminDocs.forbidden)
-@Controller('/admin/badge')
+@Controller('/admin/badges')
 @UseGuards(JwtAuthGuard, AdminAuthGuard)
 export class BadgeAdminController {
   constructor(

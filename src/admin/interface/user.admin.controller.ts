@@ -47,7 +47,7 @@ import {
 @ApiBearerAuth()
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 @ApiForbiddenResponse(adminDocs.forbidden)
-@Controller('/admin/user')
+@Controller('/admin/users')
 @UseGuards(JwtAuthGuard, AdminAuthGuard)
 export class UserAdminController {
   constructor(
@@ -75,7 +75,7 @@ export class UserAdminController {
     return await this.userService.getTotalUserListPages({ provider });
   }
 
-  @Get('/badge/list/:id')
+  @Get('/badges/list/:id')
   @HttpCode(200)
   async getUserBadgeList(
     @Param() param: ReqAdminGetUserBadgeListParamDto,
@@ -84,7 +84,7 @@ export class UserAdminController {
     return await this.badgeService.getUserBadgeListWithName({ userId: id });
   }
 
-  @Put('/badge/put')
+  @Put('/badges/put')
   @HttpCode(201)
   async putBadgeToUser(
     @Body() body: ReqAdminPutBadgeToUserDto,
@@ -93,7 +93,7 @@ export class UserAdminController {
     return await this.badgeService.putBadgeToUser({ userId, badgeId });
   }
 
-  @Delete('/badge')
+  @Delete('/badges')
   @HttpCode(200)
   async deleteUserBadge(
     @Query() query: ReqAdminDeleteUserBadgeQueryDto,
