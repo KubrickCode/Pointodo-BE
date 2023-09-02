@@ -1,10 +1,7 @@
 import { ReqGetUserAppDto, ResGetUserAppDto } from '../dto/getUser.app.dto';
 import { ReqRegisterAppDto } from '../dto/register.app.dto';
 import { ReqUpdateUserAppDto } from '../dto/updateUser.app.dto';
-import {
-  ReqDeleteUserAppDto,
-  ResDeleteUserAppDto,
-} from '../dto/deleteUser.app.dto';
+import { ReqDeleteUserAppDto } from '../dto/deleteUser.app.dto';
 import {
   ReqGetUserListAppDto,
   ResGetUserListAppDto,
@@ -21,7 +18,7 @@ export interface IUserService {
 
   updateUser(req: ReqUpdateUserAppDto): Promise<void>;
 
-  deleteUser(req: ReqDeleteUserAppDto): Promise<ResDeleteUserAppDto>;
+  deleteUser(req: ReqDeleteUserAppDto): Promise<void>;
 
   getUserList(req: ReqGetUserListAppDto): Promise<ResGetUserListAppDto[]>;
 

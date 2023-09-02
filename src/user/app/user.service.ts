@@ -25,10 +25,7 @@ import {
   ReqGetUserAppDto,
   ResGetUserAppDto,
 } from '@user/domain/dto/getUser.app.dto';
-import {
-  ReqDeleteUserAppDto,
-  ResDeleteUserAppDto,
-} from '@user/domain/dto/deleteUser.app.dto';
+import { ReqDeleteUserAppDto } from '@user/domain/dto/deleteUser.app.dto';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 import {
@@ -85,7 +82,7 @@ export class UserService implements IUserService {
 
     this.logger.log(
       'info',
-      `${REGISTER_SUCCESS_MESSAGE}-가입 이메일:${createdUser.email}, 사용자 ID:${createdUser.id}, 가입 일시:${createdUser.createdAt}, 공급 업체:${createdUser.provider}`,
+      `${REGISTER_SUCCESS_MESSAGE}-가입 이메일:${createdUser.email}, 유저 ID:${createdUser.id}, 가입 일시:${createdUser.createdAt}, 공급 업체:${createdUser.provider}`,
     );
   }
 
@@ -114,11 +111,11 @@ export class UserService implements IUserService {
     await this.userRepository.changePassword(req.id, newPassword);
     this.logger.log(
       'info',
-      `${CHANGE_PASSWORD_SUCCESS_MESSAGE}-유저ID:${req.id}`,
+      `${CHANGE_PASSWORD_SUCCESS_MESSAGE}-유저 ID:${req.id}`,
     );
   }
 
-  async deleteUser(req: ReqDeleteUserAppDto): Promise<ResDeleteUserAppDto> {
+  async deleteUser(req: ReqDeleteUserAppDto): Promise<void> {
     const user = await this.userRepository.deleteUser(req.id);
     await this.redisService.delete(`refresh_token:${req.id}`);
     await this.cacheService.deleteCache(`user:${req.id}`);
@@ -127,9 +124,8 @@ export class UserService implements IUserService {
     await this.cacheService.deleteCache(`SPENTtotalPointPages:${req.id}`);
     this.logger.log(
       'info',
-      `회원 탈퇴 - 사용자 ID:${user.id}, 유저 이메일:${user.email}`,
+      `${DELETE_USER_SUCCESS_MESSAGE}-유저 ID:${user.id}, 유저 이메일:${user.email}`,
     );
-    return { message: DELETE_USER_SUCCESS_MESSAGE };
   }
 
   async getUserList(

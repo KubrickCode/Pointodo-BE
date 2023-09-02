@@ -83,14 +83,15 @@ export class UserController {
   }
 
   @Delete()
-  @HttpCode(200)
+  @HttpCode(204)
   @UseGuards(JwtAuthGuard)
   @ApiOperation(deleteUserDocs.operation)
   @ApiBearerAuth()
-  @ApiOkResponse(deleteUserDocs.okResponse)
+  @ApiNoContentResponse(deleteUserDocs.noContentResponse)
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
   async deleteUser(@Req() req: Request, @Res() res: Response) {
     await this.userService.deleteUser({ id: req.user.id });
+    res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
     res.send();
   }
