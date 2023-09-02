@@ -1,14 +1,13 @@
-import { ResAdminDeleteBadgeDto } from '@admin/interface/dto/badge/deleteBadge.admin.dto';
+import { DELETE_BADGE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin.messages';
 
 export const deleteBadgeDocs = {
   operation: {
     summary: '뱃지 삭제',
     description: `어드민 권한\n
-    id를 parameter로 전달받아 뱃지를 삭제하고, 성공 메시지가 반환됩니다.
+    id를 parameter로 전달받아 뱃지를 삭제.
   `,
   },
-  okResponse: {
-    type: ResAdminDeleteBadgeDto,
-    description: '뱃지 삭제 성공',
+  noContentResponse: {
+    description: DELETE_BADGE_SUCCESS_MESSAGE,
   },
 };

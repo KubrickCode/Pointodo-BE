@@ -5,7 +5,3 @@ export class ReqAdminUpdateBadgeAppDto {
   readonly iconLink?: string;
   readonly price?: number;
 }
-
-export class ResAdminUpdateBadgeAppDto {
-  readonly message: string;
-}

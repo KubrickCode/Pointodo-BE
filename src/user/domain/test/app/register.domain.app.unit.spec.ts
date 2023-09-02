@@ -1,27 +1,19 @@
-import {
-  ReqRegisterAppDto,
-  ResRegisterAppDto,
-} from '@user/domain/dto/register.app.dto';
+import { ReqRegisterAppDto } from '@user/domain/dto/register.app.dto';
 import { IUserService } from '@user/domain/interfaces/user.service.interface';
-import { REGISTER_SUCCESS_MESSAGE } from '@shared/messages/user/user.messages';
 import { mockUserService } from './userService.mock';
+import { MOCK_USER, TEST_PASSWORD } from '@shared/test/userMockData';
 
 describe('Register', () => {
   const userService: IUserService = mockUserService;
 
   it('로컬 회원 가입 성공', async () => {
     const user: ReqRegisterAppDto = {
-      email: 'test@test.test',
-      password: 'test1234!@',
+      email: MOCK_USER.email,
+      password: TEST_PASSWORD,
     };
 
-    const response: ResRegisterAppDto = { message: REGISTER_SUCCESS_MESSAGE };
+    await userService.register(user);
 
-    jest.spyOn(userService, 'register').mockResolvedValue(response);
-
-    const result = await userService.register(user);
-
-    expect(result).toEqual(response);
     expect(userService.register).toHaveBeenCalledWith(user);
   });
 });

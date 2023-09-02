@@ -1,7 +1,6 @@
 import { AdminAuthGuard } from '@auth/infrastructure/passport/guards/admin.guard';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -17,6 +16,9 @@ import { globalDocs } from '@shared/docs/global.docs';
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -26,7 +28,7 @@ import {
 } from './dto/user/getUserList.admin.dto';
 import { IUserService } from '@user/domain/interfaces/user.service.interface';
 import {
-  ReqAdminGetTotalUserListPagesParamDto,
+  ReqAdminGetTotalUserListPagesQueryDto,
   ResAdminGetTotalUserListPagesDto,
 } from './dto/user/getTotalUserListPages.admin.dto';
 import {
@@ -34,49 +36,58 @@ import {
   ReqAdminGetUserBadgeListParamDto,
 } from './dto/user/getUserBadgeList.admin.dto';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
+import { ReqAdminPutBadgeToUserQueryDto } from './dto/user/putBadgeToUser.admin.dto';
+import { ReqAdminDeleteUserBadgeQueryDto } from './dto/user/deleteUserBadge.admin.dto';
+import { getUserListDocs } from './docs/user/getUserList.admin.docs';
+import { getTotalUserListPagesDocs } from './docs/user/getTotalUserListPages.admin.docs';
+import { getUserBadgeListDocs } from '@badge/interface/docs/getUserBadgeList.docs';
+import { putBadgeToUserDocs } from './docs/user/putBadgeToUser.admin.docs';
+import { deleteUserBadgeDocs } from './docs/user/deleteUserBadge.admin.docs';
 import {
-  ReqAdminPutBadgeToUserDto,
-  ResAdminPutBadgeToUserDto,
-} from './dto/user/putBadgeToUser.admin.dto';
-import {
-  ReqAdminDeleteUserBadgeQueryDto,
-  ResAdminDeleteUserBadgeDto,
-} from './dto/user/deleteUserBadge.admin.dto';
+  IBADGE_SERVICE,
+  IUSER_SERVICE,
+} from '@shared/constants/provider.constant';
 
 @ApiTags('Admin - User')
 @ApiBearerAuth()
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 @ApiForbiddenResponse(adminDocs.forbidden)
-@Controller('/admin/user')
+@Controller('/admin/users')
 @UseGuards(JwtAuthGuard, AdminAuthGuard)
 export class UserAdminController {
   constructor(
-    @Inject('IUserService')
+    @Inject(IUSER_SERVICE)
     private readonly userService: IUserService,
-    @Inject('IBadgeService')
+    @Inject(IBADGE_SERVICE)
     private readonly badgeService: IBadgeService,
   ) {}
 
-  @Get('/list')
+  @Get()
   @HttpCode(200)
+  @ApiOperation(getUserListDocs.operation)
+  @ApiOkResponse(getUserListDocs.okResponse)
   async getUserList(
     @Query() query: ReqAdminGetUserListQueryDto,
   ): Promise<ResAdminGetUserListDto[]> {
-    const { page, order, provider } = query;
-    return await this.userService.getUserList({ order, page, provider });
+    return await this.userService.getUserList({
+      ...query,
+    });
   }
 
-  @Get('/count/:provider')
+  @Get('/count-pages')
   @HttpCode(200)
+  @ApiOperation(getTotalUserListPagesDocs.operation)
+  @ApiOkResponse(getTotalUserListPagesDocs.okResponse)
   async getTotalUserListPages(
-    @Param() param: ReqAdminGetTotalUserListPagesParamDto,
+    @Query() query: ReqAdminGetTotalUserListPagesQueryDto,
   ): Promise<ResAdminGetTotalUserListPagesDto> {
-    const { provider } = param;
-    return await this.userService.getTotalUserListPages({ provider });
+    return await this.userService.getTotalUserListPages({ ...query });
   }
 
-  @Get('/badge/list/:id')
+  @Get('/badges/:id')
   @HttpCode(200)
+  @ApiOperation(getUserBadgeListDocs.operation)
+  @ApiOkResponse(getUserBadgeListDocs.okResponse)
   async getUserBadgeList(
     @Param() param: ReqAdminGetUserBadgeListParamDto,
   ): Promise<ResAdminGetUserBadgeListDto[]> {
@@ -84,21 +95,25 @@ export class UserAdminController {
     return await this.badgeService.getUserBadgeListWithName({ userId: id });
   }
 
-  @Put('/badge/put')
-  @HttpCode(201)
+  @Put('/badges')
+  @HttpCode(204)
+  @ApiOperation(putBadgeToUserDocs.operation)
+  @ApiNoContentResponse(putBadgeToUserDocs.noContentResponse)
   async putBadgeToUser(
-    @Body() body: ReqAdminPutBadgeToUserDto,
-  ): Promise<ResAdminPutBadgeToUserDto> {
-    const { userId, badgeId } = body;
-    return await this.badgeService.putBadgeToUser({ userId, badgeId });
+    @Query() query: ReqAdminPutBadgeToUserQueryDto,
+  ): Promise<void> {
+    const { userId, badgeId } = query;
+    await this.badgeService.putBadgeToUser({ userId, badgeId });
   }
 
-  @Delete('/badge')
-  @HttpCode(200)
+  @Delete('/badges')
+  @HttpCode(204)
+  @ApiOperation(deleteUserBadgeDocs.operation)
+  @ApiNoContentResponse(deleteUserBadgeDocs.noContentResponse)
   async deleteUserBadge(
     @Query() query: ReqAdminDeleteUserBadgeQueryDto,
-  ): Promise<ResAdminDeleteUserBadgeDto> {
+  ): Promise<void> {
     const { userId, badgeId } = query;
-    return await this.badgeService.deleteUserBadge({ userId, badgeId });
+    await this.badgeService.deleteUserBadge({ userId, badgeId });
   }
 }

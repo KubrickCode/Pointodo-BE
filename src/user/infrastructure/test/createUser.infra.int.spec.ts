@@ -1,4 +1,5 @@
 import { PrismaService } from '@shared/service/prisma.service';
+import { MOCK_USER, TEST_PASSWORD } from '@shared/test/userMockData';
 import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 
 describe('createUser', () => {
@@ -15,8 +16,8 @@ describe('createUser', () => {
   });
 
   const user = {
-    email: 'test@test.test',
-    password: 'test1234!@',
+    email: MOCK_USER.email,
+    password: TEST_PASSWORD,
   };
 
   it('로컬 유저 생성 In DB', async () => {

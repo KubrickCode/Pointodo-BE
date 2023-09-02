@@ -5,32 +5,16 @@ import {
   ReqAdminCreateBadgeAppDto,
   ResAdminCreateBadgeAppDto,
 } from '../../dto/createBadge.admin.app.dto';
-import { CREATE_BADGE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin.messages';
+import { mockBadge } from '@shared/test/badgeMockData';
 
 describe('createBadge', () => {
   const badgeAdminService: IBadgeAdminService = mockBadgeAdminService;
 
   it('뱃지 생성 성공 - NORMAL,ACHIEVEMENT', async () => {
-    const badgeTypes: BadgeType_[] = ['NORMAL', 'ACHIEVEMENT'];
-    const randomIndex = Math.floor(Math.random() * badgeTypes.length);
-
-    const name = 'test';
-    const description = 'test';
-    const iconLink = 'test';
-    const type: BadgeType_ = badgeTypes[randomIndex];
-    const price = 100;
-
-    const request: ReqAdminCreateBadgeAppDto = {
-      name,
-      description,
-      iconLink,
-      type,
-      price,
-    };
+    const request: ReqAdminCreateBadgeAppDto = mockBadge;
 
     const expectedResult: ResAdminCreateBadgeAppDto = {
       id: 1,
-      message: CREATE_BADGE_SUCCESS_MESSAGE,
     };
 
     jest
@@ -44,21 +28,13 @@ describe('createBadge', () => {
   });
 
   it('뱃지 생성 성공 - SPECIAL', async () => {
-    const name = 'test';
-    const description = 'test';
-    const iconLink = 'test';
-    const type: BadgeType_ = 'SPECIAL';
+    const requestBadge = { ...mockBadge, type: 'SPECIAL' as BadgeType_ };
+    delete requestBadge.price;
 
-    const request: ReqAdminCreateBadgeAppDto = {
-      name,
-      description,
-      iconLink,
-      type,
-    };
+    const request: ReqAdminCreateBadgeAppDto = requestBadge;
 
     const expectedResult: ResAdminCreateBadgeAppDto = {
       id: 1,
-      message: CREATE_BADGE_SUCCESS_MESSAGE,
     };
 
     jest

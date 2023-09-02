@@ -30,7 +30,7 @@ describe('유저 포인트 잔액 조회 in PointController (e2e)', () => {
     await app.close();
   });
 
-  const path = '/point/current';
+  const path = '/points';
 
   it('유저 포인트 잔액 조회 성공 e2e 테스트', async () => {
     const response = await requestE2E(app, path, 'get', 200, null, accessToken);

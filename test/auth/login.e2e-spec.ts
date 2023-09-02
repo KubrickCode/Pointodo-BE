@@ -22,7 +22,7 @@ import {
   ResNotLocalUserLogin,
 } from '@auth/interface/dto/login.dto';
 
-describe('로그인 in UserController (e2e)', () => {
+describe('로그인 in AuthController (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {

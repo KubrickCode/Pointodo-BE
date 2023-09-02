@@ -1,9 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsString, Matches } from 'class-validator';
-import {
-  CHECK_PASSWORD_MESSAGE,
-  VALIDATE_PASSWORD,
-} from '@shared/messages/auth/auth.messages';
+import { VALIDATE_PASSWORD } from '@shared/messages/auth/auth.messages';
 import { USER_PWD, USER_PWD_EXAMPLE } from '@shared/constants/user.constant';
 import { AUTH_INVALID_PASSWORD } from '@shared/messages/auth/auth.errors';
 
@@ -17,12 +14,6 @@ export class ReqCheckPasswordDto {
     message: VALIDATE_PASSWORD,
   })
   readonly password: string;
-}
-
-export class ResCheckPasswordDto {
-  @ApiProperty({ example: CHECK_PASSWORD_MESSAGE, description: '성공 메시지' })
-  @IsString()
-  readonly message: string;
 }
 
 export class ResInvalidCheckPassword {

@@ -1,19 +1,23 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  TASK_COMPLETION,
   TASK_DESC,
   TASK_DUE_DATE,
   TASK_IMPORTANCE,
   TASK_LOG_ID,
   TASK_NAME,
 } from '@shared/constants/task.constant';
-import { UPDATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
+import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
-export class ReqUpdateTaskDto {
+export class ReqUpdateTaskParamDto {
   @ApiProperty({ description: TASK_LOG_ID })
+  @Type(() => Number)
   @IsInt()
   readonly id: number;
+}
 
+export class ReqUpdateTaskDto {
   @ApiProperty({ description: TASK_NAME })
   @ApiPropertyOptional()
   @IsOptional()
@@ -37,13 +41,10 @@ export class ReqUpdateTaskDto {
   @IsOptional()
   @IsString()
   readonly dueDate?: string | null;
-}
 
-export class ResUpdateTaskDto {
-  @ApiProperty({
-    example: UPDATE_TASK_SUCCESS_MESSAGE,
-    description: '성공 메시지',
-  })
-  @IsString()
-  readonly message: string;
+  @ApiProperty({ description: TASK_COMPLETION })
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsInt()
+  readonly completion?: number | null;
 }

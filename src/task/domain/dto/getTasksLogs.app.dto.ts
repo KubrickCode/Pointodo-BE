@@ -4,7 +4,8 @@ import { TaskType_ } from '../entities/task.entity';
 export class ReqGetTasksLogsAppDto {
   readonly userId: UUID;
   readonly taskType: TaskType_;
-  readonly page: number;
+  readonly offset: number;
+  readonly limit: number;
   readonly order: string;
 }
 

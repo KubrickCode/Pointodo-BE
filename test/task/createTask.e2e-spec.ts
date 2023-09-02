@@ -3,18 +3,14 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import { requestE2E } from '../request.e2e';
 import * as cookieParser from 'cookie-parser';
-import { TaskType_ } from '@task/domain/entities/task.entity';
-import {
-  ReqCreateTaskDto,
-  ResCreateTaskDto,
-} from '@task/interface/dto/createTask.dto';
-import { CREATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
+import { ReqCreateTaskDto } from '@task/interface/dto/createTask.dto';
 import { validateOrReject } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { ResInvalidation } from '@shared/dto/global.dto';
 import { DUE_DATE_IN_THE_PAST } from '@shared/messages/task/task.errors';
 import { setupLoggedIn } from '../setupLoggedIn.e2e';
 import { tokenError } from '../tokenError.e2e';
+import { mockTask } from '@shared/test/taskMockData';
 
 describe('createTask in taskController (e2e)', () => {
   let app: INestApplication;
@@ -38,17 +34,9 @@ describe('createTask in taskController (e2e)', () => {
     await app.close();
   });
 
-  const path = '/task/create';
-  const taskTypes: TaskType_[] = ['DAILY', 'FREE'];
-  const randomIndex = Math.floor(Math.random() * taskTypes.length);
+  const path = '/tasks';
 
-  const request: ReqCreateTaskDto = {
-    taskType: taskTypes[randomIndex],
-    name: 'test',
-    description: 'test',
-    importance: 0,
-    dueDate: '2099-12-30',
-  };
+  const request: ReqCreateTaskDto = mockTask;
 
   it('작업 생성 성공 e2e 테스트 - DAILY,FREE', async () => {
     const body = { ...request };
@@ -62,15 +50,11 @@ describe('createTask in taskController (e2e)', () => {
       accessToken,
     );
 
-    expect(response.body.message).toEqual(CREATE_TASK_SUCCESS_MESSAGE);
-
-    await validateOrReject(plainToClass(ResCreateTaskDto, response.body));
-
     await requestE2E(
       app,
-      `/task/${response.body.id}`,
+      `/tasks/${response.header.location}`,
       'delete',
-      200,
+      204,
       null,
       accessToken,
     );
@@ -87,15 +71,11 @@ describe('createTask in taskController (e2e)', () => {
       accessToken,
     );
 
-    expect(response.body.message).toEqual(CREATE_TASK_SUCCESS_MESSAGE);
-
-    await validateOrReject(plainToClass(ResCreateTaskDto, response.body));
-
     await requestE2E(
       app,
-      `/task/${response.body.id}`,
+      `/tasks/${response.header.location}`,
       'delete',
-      200,
+      204,
       null,
       accessToken,
     );

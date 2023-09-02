@@ -31,7 +31,7 @@ describe('유저 정보 조회 in UserController (e2e)', () => {
     await app.close();
   });
 
-  const path = '/user';
+  const path = '/users';
 
   it('유저 정보 조회 e2e 테스트', async () => {
     const response = await requestE2E(app, path, 'get', 200, null, accessToken);
