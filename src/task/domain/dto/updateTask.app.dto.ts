@@ -5,7 +5,3 @@ export class ReqUpdateTaskAppDto {
   readonly importance?: number;
   readonly dueDate?: string;
 }
-
-export class ResUpdateTaskAppDto {
-  readonly message: string;
-}

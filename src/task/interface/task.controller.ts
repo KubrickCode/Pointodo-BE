@@ -20,6 +20,7 @@ import {
   ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -32,7 +33,7 @@ import {
   ResGetTasksLogsDto,
 } from './dto/getTasksLogs.dto';
 import { ReqCreateTaskDto } from './dto/createTask.dto';
-import { ReqUpdateTaskDto, ResUpdateTaskDto } from './dto/updateTask.dto';
+import { ReqUpdateTaskDto, ReqUpdateTaskParamDto } from './dto/updateTask.dto';
 import { ReqDeleteTaskParamDto, ResDeleteTaskDto } from './dto/deleteTask.dto';
 import {
   ReqCompleteTaskParamDto,
@@ -116,12 +117,17 @@ export class TaskController {
     res.send();
   }
 
-  @Patch('update')
+  @Patch('/:id')
+  @HttpCode(204)
   @ApiOperation(updateTaskDocs.operation)
-  @ApiOkResponse(updateTaskDocs.okResponse)
+  @ApiNoContentResponse(updateTaskDocs.noContentResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
-  async updateTask(@Body() body: ReqUpdateTaskDto): Promise<ResUpdateTaskDto> {
-    return await this.taskService.updateTask(body);
+  async updateTask(
+    @Param() param: ReqUpdateTaskParamDto,
+    @Body() body: ReqUpdateTaskDto,
+  ): Promise<void> {
+    await this.taskService.updateTask({ id: param.id, ...body });
+    return;
   }
 
   @Delete('/:id')

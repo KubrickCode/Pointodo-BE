@@ -22,10 +22,7 @@ import {
   ReqGetTotalTaskPagesAppDto,
   ResGetTotalTaskPagesAppDto,
 } from '../dto/getTotalTaskPages.app.dto';
-import {
-  ReqUpdateTaskAppDto,
-  ResUpdateTaskAppDto,
-} from '../dto/updateTask.app.dto';
+import { ReqUpdateTaskAppDto } from '../dto/updateTask.app.dto';
 
 export interface ITaskService {
   getTasksLogs(req: ReqGetTasksLogsAppDto): Promise<ResGetTasksLogsAppDto[]>;
@@ -36,7 +33,7 @@ export interface ITaskService {
 
   createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto>;
 
-  updateTask(req: ReqUpdateTaskAppDto): Promise<ResUpdateTaskAppDto>;
+  updateTask(req: ReqUpdateTaskAppDto): Promise<void>;
 
   deleteTask(req: ReqDeleteTaskAppDto): Promise<ResDeleteTaskAppDto>;
 
