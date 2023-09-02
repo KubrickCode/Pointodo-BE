@@ -33,14 +33,8 @@ import {
   ReqAdminGetUserBadgeListParamDto,
 } from './dto/user/getUserBadgeList.admin.dto';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
-import {
-  ReqAdminPutBadgeToUserQueryDto,
-  ResAdminPutBadgeToUserDto,
-} from './dto/user/putBadgeToUser.admin.dto';
-import {
-  ReqAdminDeleteUserBadgeQueryDto,
-  ResAdminDeleteUserBadgeDto,
-} from './dto/user/deleteUserBadge.admin.dto';
+import { ReqAdminPutBadgeToUserQueryDto } from './dto/user/putBadgeToUser.admin.dto';
+import { ReqAdminDeleteUserBadgeQueryDto } from './dto/user/deleteUserBadge.admin.dto';
 
 @ApiTags('Admin - User')
 @ApiBearerAuth()
@@ -87,17 +81,17 @@ export class UserAdminController {
   @HttpCode(201)
   async putBadgeToUser(
     @Query() query: ReqAdminPutBadgeToUserQueryDto,
-  ): Promise<ResAdminPutBadgeToUserDto> {
+  ): Promise<void> {
     const { userId, badgeId } = query;
-    return await this.badgeService.putBadgeToUser({ userId, badgeId });
+    await this.badgeService.putBadgeToUser({ userId, badgeId });
   }
 
   @Delete('/badges')
   @HttpCode(200)
   async deleteUserBadge(
     @Query() query: ReqAdminDeleteUserBadgeQueryDto,
-  ): Promise<ResAdminDeleteUserBadgeDto> {
+  ): Promise<void> {
     const { userId, badgeId } = query;
-    return await this.badgeService.deleteUserBadge({ userId, badgeId });
+    await this.badgeService.deleteUserBadge({ userId, badgeId });
   }
 }

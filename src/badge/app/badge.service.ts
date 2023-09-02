@@ -2,10 +2,7 @@ import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { ReqBuyBadgeAppDto } from '@badge/domain/dto/buyBadge.app.dto';
 import { ReqChangeSelectedBadgeAppDto } from '@badge/domain/dto/changeSelectedBadge.app.dto';
-import {
-  ReqDeleteUserBadgeAppDto,
-  ResDeleteUserBadgeAppDto,
-} from '@badge/domain/dto/deleteUserBadge.app.dto';
+import { ReqDeleteUserBadgeAppDto } from '@badge/domain/dto/deleteUserBadge.app.dto';
 import {
   ReqGetAllBadgeProgressAppDto,
   ResGetAllBadgeProgressAppDto,
@@ -18,10 +15,7 @@ import {
   ReqGetUserBadgeListWithNameAppDto,
   ResGetUserBadgeListWithNameAppDto,
 } from '@badge/domain/dto/getUserBadgeListWithName.app.dto';
-import {
-  ReqPutBadgeToUserAppDto,
-  ResPutBadgeToUserAppDto,
-} from '@badge/domain/dto/putBadgeToUser.app.dto';
+import { ReqPutBadgeToUserAppDto } from '@badge/domain/dto/putBadgeToUser.app.dto';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
@@ -194,9 +188,7 @@ export class BadgeService implements IBadgeService {
     return result;
   }
 
-  async putBadgeToUser(
-    req: ReqPutBadgeToUserAppDto,
-  ): Promise<ResPutBadgeToUserAppDto> {
+  async putBadgeToUser(req: ReqPutBadgeToUserAppDto): Promise<void> {
     const { userId, badgeId } = req;
     const createdUserBadgeLog =
       await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
@@ -213,12 +205,13 @@ export class BadgeService implements IBadgeService {
       throw new ConflictException(ALREADY_EXIST_USER_BADGE);
     }
     await this.cacheService.deleteCache(`userBadgeList:${userId}`);
-    return { message: PUT_BADGE_SUCCESS_MESSAGE };
+    this.logger.log(
+      'info',
+      `${PUT_BADGE_SUCCESS_MESSAGE}-유저 ID:${userId},뱃지 ID:${badgeId}`,
+    );
   }
 
-  async deleteUserBadge(
-    req: ReqDeleteUserBadgeAppDto,
-  ): Promise<ResDeleteUserBadgeAppDto> {
+  async deleteUserBadge(req: ReqDeleteUserBadgeAppDto): Promise<void> {
     const { userId, badgeId } = req;
     if (badgeId === DEFAULT_BADGE_ID)
       throw new BadRequestException(CANT_DELETE_DEAFULT_BADGE);
@@ -228,6 +221,9 @@ export class BadgeService implements IBadgeService {
     await this.redisService.deleteKeysByPrefix(`userSpentPointsLogs:${userId}`);
     await this.userRepository.changeSelectedBadge(userId, DEFAULT_BADGE_ID);
     await this.userBadgeRepository.deleteUserBadge(badgeId, userId);
-    return { message: DELETE_USER_BADGE_SUCCESS_MESSAGE };
+    this.logger.log(
+      'info',
+      `${DELETE_USER_BADGE_SUCCESS_MESSAGE}-유저 ID:${userId},뱃지 ID:${badgeId}`,
+    );
   }
 }

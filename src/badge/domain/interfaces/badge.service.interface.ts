@@ -13,14 +13,8 @@ import {
   ReqGetUserBadgeListWithNameAppDto,
   ResGetUserBadgeListWithNameAppDto,
 } from '../dto/getUserBadgeListWithName.app.dto';
-import {
-  ReqPutBadgeToUserAppDto,
-  ResPutBadgeToUserAppDto,
-} from '../dto/putBadgeToUser.app.dto';
-import {
-  ReqDeleteUserBadgeAppDto,
-  ResDeleteUserBadgeAppDto,
-} from '../dto/deleteUserBadge.app.dto';
+import { ReqPutBadgeToUserAppDto } from '../dto/putBadgeToUser.app.dto';
+import { ReqDeleteUserBadgeAppDto } from '../dto/deleteUserBadge.app.dto';
 
 export interface IBadgeService {
   buyBadge(req: ReqBuyBadgeAppDto): Promise<void>;
@@ -41,11 +35,7 @@ export interface IBadgeService {
 
   getAllBadges(): Promise<BadgeEntity[]>;
 
-  putBadgeToUser(
-    req: ReqPutBadgeToUserAppDto,
-  ): Promise<ResPutBadgeToUserAppDto>;
+  putBadgeToUser(req: ReqPutBadgeToUserAppDto): Promise<void>;
 
-  deleteUserBadge(
-    req: ReqDeleteUserBadgeAppDto,
-  ): Promise<ResDeleteUserBadgeAppDto>;
+  deleteUserBadge(req: ReqDeleteUserBadgeAppDto): Promise<void>;
 }
