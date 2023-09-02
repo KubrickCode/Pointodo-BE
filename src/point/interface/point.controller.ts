@@ -4,8 +4,8 @@ import {
   Get,
   Req,
   UseGuards,
-  Param,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import { IPointService } from '@point/domain/interfaces/point.service.interface';
 import { Request } from 'express';
@@ -26,7 +26,7 @@ import {
 } from './dto/getPointsLogs.dto';
 import { getPointsLogsDocs } from './docs/getPointsLogs.docs';
 import {
-  ReqGetTotalPointPagesParamDto,
+  ReqGetTotalPointPagesQueryDto,
   ResGetTotalPointPagesDto,
 } from './dto/getTotalPointPages.dto';
 import { getTotalPointPagesDocs } from './docs/getTotalPointPages.docs';
@@ -43,6 +43,7 @@ export class PointController {
   ) {}
 
   @Get('/logs')
+  @HttpCode(200)
   @ApiOperation(getPointsLogsDocs.operation)
   @ApiOkResponse(getPointsLogsDocs.okResponse)
   async getEarnedPointsLogs(
@@ -67,18 +68,20 @@ export class PointController {
       });
   }
 
-  @Get('/count/:transactionType')
+  @Get('/count-pages')
+  @HttpCode(200)
   @ApiOperation(getTotalPointPagesDocs.operation)
   @ApiOkResponse(getTotalPointPagesDocs.okResponse)
   async getTotalPointPages(
     @Req() req: Request,
-    @Param() param: ReqGetTotalPointPagesParamDto,
+    @Query() query: ReqGetTotalPointPagesQueryDto,
   ): Promise<ResGetTotalPointPagesDto> {
     const userId = req.user.id;
-    const { transactionType } = param;
+    const { transactionType, limit } = query;
     return await this.pointService.getTotalPointPages({
       userId,
       transactionType,
+      limit,
     });
   }
 

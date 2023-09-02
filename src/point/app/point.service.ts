@@ -17,7 +17,6 @@ import {
   ReqGetTotalPointPagesAppDto,
   ResGetTotalPointPagesAppDto,
 } from '@point/domain/dto/getTotalPointPages.app.dto';
-import { GET_POINTS_LOGS_LIMIT } from '@shared/constants/point.constant';
 import { plainToClass } from 'class-transformer';
 
 @Injectable()
@@ -36,7 +35,7 @@ export class PointService implements IPointService {
     const { userId, order, offset, limit } = req;
     return await this.pointRepository.getEarnedPointsLogs(
       userId,
-      GET_POINTS_LOGS_LIMIT,
+      limit,
       (offset - 1) * limit,
       order,
     );
@@ -73,7 +72,7 @@ export class PointService implements IPointService {
   async getTotalPointPages(
     req: ReqGetTotalPointPagesAppDto,
   ): Promise<ResGetTotalPointPagesAppDto> {
-    const { userId, transactionType } = req;
+    const { userId, transactionType, limit } = req;
     const cacheKey = `SPENTtotalPointPages:${userId}`;
 
     if (transactionType === 'SPENT') {
@@ -88,7 +87,7 @@ export class PointService implements IPointService {
       userId,
       transactionType,
     );
-    const totalPages = Math.ceil(totalPointsLogs / GET_POINTS_LOGS_LIMIT);
+    const totalPages = Math.ceil(totalPointsLogs / limit);
 
     if (transactionType === 'SPENT') {
       await this.cacheService.setCache(
