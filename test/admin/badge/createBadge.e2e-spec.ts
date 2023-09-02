@@ -7,7 +7,6 @@ import { plainToClass } from 'class-transformer';
 import { setupLoggedIn } from '../../setupLoggedIn.e2e';
 import { validateOrReject } from 'class-validator';
 import { tokenError } from '../../tokenError.e2e';
-import { BadgeType_ } from '@admin/badge/domain/entities/badge.entity';
 import {
   ReqAdminCreateBadgeDto,
   ResCreateBadgeConflict,
@@ -16,6 +15,7 @@ import { TEST4_USER_LOCAL, TEST_PASSWORD } from '@shared/test/userMockData';
 import { AUTH_INVALID_ADMIN } from '@shared/messages/auth/auth.errors';
 import { ResForbiddenAdmin } from '@admin/interface/dto/admin.dto';
 import { CONFLICT_BADGE_NAME } from '@shared/messages/admin/badge.admin.errors';
+import { mockBadge } from '@shared/test/badgeMockData';
 
 describe('어드민 뱃지 생성 in BadgeAdminController (e2e)', () => {
   let app: INestApplication;
@@ -40,14 +40,7 @@ describe('어드민 뱃지 생성 in BadgeAdminController (e2e)', () => {
 
   const path = '/admin/badges';
 
-  const badgeTypes: BadgeType_[] = ['NORMAL', 'ACHIEVEMENT'];
-  const randomIndex = Math.floor(Math.random() * badgeTypes.length);
-
-  const name = 'test';
-  const description = 'test';
-  const iconLink = 'test';
-  const type: BadgeType_ = badgeTypes[randomIndex];
-  const price = 100;
+  const { name, description, iconLink, type, price } = mockBadge;
 
   const body: ReqAdminCreateBadgeDto = {
     name,
@@ -69,9 +62,9 @@ describe('어드민 뱃지 생성 in BadgeAdminController (e2e)', () => {
 
     await requestE2E(
       app,
-      `/admin/badges/delete/${response.header.location}`,
+      `/admin/badges/${response.header.location}`,
       'delete',
-      200,
+      204,
       null,
       accessToken,
     );
@@ -91,9 +84,9 @@ describe('어드민 뱃지 생성 in BadgeAdminController (e2e)', () => {
 
     await requestE2E(
       app,
-      `/admin/badges/delete/${response.header.location}`,
+      `/admin/badges/${response.header.location}`,
       'delete',
-      200,
+      204,
       null,
       accessToken,
     );
