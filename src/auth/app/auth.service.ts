@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import {
   CHECK_PASSWORD_MESSAGE,
+  LOGIN_SUCCESS_MESSAGE,
   LOGOUT_SUCCESS_MESSAGE,
 } from '@shared/messages/auth/auth.messages';
 import { ITokenService } from '@auth/domain/interfaces/token.service.interface';
@@ -124,13 +125,14 @@ export class AuthService implements IAuthService {
       refreshToken,
       jwtExpiration.refreshTokenExpirationSeconds,
     );
+    this.logger.log('info', `${LOGIN_SUCCESS_MESSAGE}-유저 ID:${req.id}`);
     return plainToClass(ResLoginAppDto, { accessToken, refreshToken });
   }
 
   async logout(req: ReqLogoutAppDto): Promise<void> {
     await this.redisService.delete(`refresh_token:${req.id}`);
     await this.cacheService.deleteCache(`user:${req.id}`);
-    this.logger.log('info', `${LOGOUT_SUCCESS_MESSAGE}-user:${req.id}`);
+    this.logger.log('info', `${LOGOUT_SUCCESS_MESSAGE}-유저 ID:${req.id}`);
   }
 
   async refresh(req: ReqRefreshAppDto): Promise<ResRefreshAppDto> {
@@ -152,6 +154,7 @@ export class AuthService implements IAuthService {
     }
     const user = await this.userRepository.findById(decoded.id);
     const accessToken = this.tokenService.generateAccessToken(user);
+    this.logger.log('info', `리프레시 토큰 검증 완료-유저 ID:${user.id}`);
     return { accessToken };
   }
 
@@ -159,6 +162,7 @@ export class AuthService implements IAuthService {
     const { email, provider } = socialUser;
     const user = await this.userRepository.findByEmail(email);
     if (user) {
+      this.logger.log('info', `소셜 로그인 성공-유저 ID:${user.id}`);
       return await this.login(user);
     } else {
       const newUser = await this.userRepository.createUser(
@@ -170,6 +174,7 @@ export class AuthService implements IAuthService {
         newUser.id,
         DEFAULT_BADGE_ID,
       );
+      this.logger.log('info', `소셜 로그인 성공-유저 ID:${newUser.id}`);
       return await this.login(newUser);
     }
   }
