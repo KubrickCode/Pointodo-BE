@@ -41,8 +41,8 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
     PointModule,
     ScheduleModule.forRoot(),
     ThrottlerModule.forRoot({
-      ttl: 60,
-      limit: 60,
+      ttl: 1,
+      limit: 1,
     }),
   ],
 })
