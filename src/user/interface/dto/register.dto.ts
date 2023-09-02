@@ -11,7 +11,6 @@ import {
   USER_PWD,
   USER_PWD_EXAMPLE,
 } from '@shared/constants/user.constant';
-import { REGISTER_SUCCESS_MESSAGE } from '@shared/messages/user/user.messages';
 import { USER_ALREADY_EXIST } from '@shared/messages/user/user.errors';
 
 export class ReqRegisterDto {
@@ -29,15 +28,6 @@ export class ReqRegisterDto {
     message: VALIDATE_PASSWORD,
   })
   readonly password: string;
-}
-
-export class ResRegisterDto {
-  @ApiProperty({
-    example: REGISTER_SUCCESS_MESSAGE,
-    description: '성공 메시지',
-  })
-  @IsString()
-  readonly message: string;
 }
 
 export class ResRegisterExistUserError {

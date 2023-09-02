@@ -11,7 +11,7 @@ import {
   HttpCode,
   Res,
 } from '@nestjs/common';
-import { ReqRegisterDto, ResRegisterDto } from './dto/register.dto';
+import { ReqRegisterDto } from './dto/register.dto';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import { ResGetUserDto } from './dto/getUser.dto';
@@ -20,6 +20,7 @@ import {
   ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -28,13 +29,13 @@ import {
 import { registerDocs } from './docs/register.docs';
 import { getUserDocs } from './docs/getUser.docs';
 import { IUserService } from '@user/domain/interfaces/user.service.interface';
-import { ReqChangePasswordDto } from './dto/changePassword.dto';
-import { changePasswordDocs } from './docs/changePassword.docs';
+import { ReqUpdateUserDto } from './dto/updateUser.dto';
 import { deleteUserDocs } from './docs/deleteUser.docs';
 import { globalDocs } from '@shared/docs/global.docs';
 import { plainToClass } from 'class-transformer';
+import { updateUserDocs } from './docs/updateUser.docs';
 
-@Controller('user')
+@Controller('users')
 @ApiTags('User')
 export class UserController {
   constructor(
@@ -42,14 +43,15 @@ export class UserController {
     private readonly userService: IUserService,
   ) {}
 
-  @Post('register')
+  @Post('')
   @HttpCode(201)
   @ApiOperation(registerDocs.operation)
-  @ApiCreatedResponse(registerDocs.okResponse)
+  @ApiCreatedResponse(registerDocs.createdResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   @ApiConflictResponse(registerDocs.existUser)
-  async register(@Body() user: ReqRegisterDto): Promise<ResRegisterDto> {
-    return await this.userService.register(user);
+  async register(@Body() user: ReqRegisterDto): Promise<void> {
+    await this.userService.register(user);
+    return;
   }
 
   @Get()
@@ -64,22 +66,20 @@ export class UserController {
     return plainToClass(ResGetUserDto, result);
   }
 
-  @Patch('password')
-  @HttpCode(200)
+  @Patch('')
+  @HttpCode(204)
   @UseGuards(JwtAuthGuard)
-  @ApiOperation(changePasswordDocs.operation)
+  @ApiOperation(updateUserDocs.operation)
   @ApiBearerAuth()
-  @ApiOkResponse(changePasswordDocs.okResponse)
+  @ApiNoContentResponse(updateUserDocs.noContentResponse)
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
-  async changePassword(
-    @Req() req: Request,
-    @Body() body: ReqChangePasswordDto,
-  ) {
-    return await this.userService.changePassword({
+  async updateUser(@Req() req: Request, @Body() body: ReqUpdateUserDto) {
+    await this.userService.updateUser({
       id: req.user.id,
       password: body.password,
     });
+    return;
   }
 
   @Delete()

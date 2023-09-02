@@ -20,18 +20,11 @@ import { IUserService } from '@user/domain/interfaces/user.service.interface';
 import { ICacheService } from 'src/cache/domain/interfaces/cache.service.interface';
 import { cacheConfig } from '@shared/config/cache.config';
 import { ConfigService } from '@nestjs/config';
-import {
-  ReqRegisterAppDto,
-  ResRegisterAppDto,
-} from '@user/domain/dto/register.app.dto';
+import { ReqRegisterAppDto } from '@user/domain/dto/register.app.dto';
 import {
   ReqGetUserAppDto,
   ResGetUserAppDto,
 } from '@user/domain/dto/getUser.app.dto';
-import {
-  ReqChangePasswordAppDto,
-  ResChangePasswordAppDto,
-} from '@user/domain/dto/changePassword.app.dto';
 import {
   ReqDeleteUserAppDto,
   ResDeleteUserAppDto,
@@ -50,6 +43,7 @@ import {
 import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
 import { IPasswordHasher } from '@shared/interfaces/IPasswordHasher';
 import { plainToClass } from 'class-transformer';
+import { ReqUpdateUserAppDto } from '@user/domain/dto/updateUser.app.dto';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -68,7 +62,7 @@ export class UserService implements IUserService {
     private readonly passwordHasher: IPasswordHasher,
   ) {}
 
-  async register(newUser: ReqRegisterAppDto): Promise<ResRegisterAppDto> {
+  async register(newUser: ReqRegisterAppDto): Promise<void> {
     const { email, password } = newUser;
 
     const existingUser = await this.userRepository.findByEmail(email);
@@ -91,11 +85,8 @@ export class UserService implements IUserService {
 
     this.logger.log(
       'info',
-      `가입 이메일:${createdUser.email}, 사용자 ID:${createdUser.id}, 가입 일시:${createdUser.createdAt}, 공급 업체:${createdUser.provider}`,
+      `${REGISTER_SUCCESS_MESSAGE}-가입 이메일:${createdUser.email}, 사용자 ID:${createdUser.id}, 가입 일시:${createdUser.createdAt}, 공급 업체:${createdUser.provider}`,
     );
-
-    const result = { message: REGISTER_SUCCESS_MESSAGE };
-    return plainToClass(ResRegisterAppDto, result);
   }
 
   async getUser(req: ReqGetUserAppDto): Promise<ResGetUserAppDto> {
@@ -118,13 +109,13 @@ export class UserService implements IUserService {
     return plainToClass(ResGetUserAppDto, user);
   }
 
-  async changePassword(
-    req: ReqChangePasswordAppDto,
-  ): Promise<ResChangePasswordAppDto> {
+  async updateUser(req: ReqUpdateUserAppDto): Promise<void> {
     const newPassword = await this.passwordHasher.hashPassword(req.password);
     await this.userRepository.changePassword(req.id, newPassword);
-    this.logger.log('info', `비밀번호 변경 - 사용자 ID:${req.id}`);
-    return { message: CHANGE_PASSWORD_SUCCESS_MESSAGE };
+    this.logger.log(
+      'info',
+      `${CHANGE_PASSWORD_SUCCESS_MESSAGE}-유저ID:${req.id}`,
+    );
   }
 
   async deleteUser(req: ReqDeleteUserAppDto): Promise<ResDeleteUserAppDto> {
