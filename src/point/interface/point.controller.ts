@@ -21,22 +21,17 @@ import { globalDocs } from '@shared/docs/global.docs';
 import { ResGetCurrentPointsDto } from './dto/getCurrentPoints.dto';
 import { getCurrentPointsDocs } from './docs/getCurrentPoints.docs';
 import {
-  ReqGetEarnedPointsLogsQueryDto,
-  ResGetEarnedPointsLogsDto,
-} from './dto/getEarnedPointsLogs.dto';
-import { getEarnedPointsLogsDocs } from './docs/getEarnedPointsLogs.docs';
-import { getSpentPointsLogsDocs } from './docs/getSpentPointsLogs.docs';
-import {
-  ReqGetSpentPointsLogsQueryDto,
-  ResGetSpentPointsLogsDto,
-} from './dto/getSpentPointsLogs.dto';
+  ReqGetPointsLogsQueryDto,
+  ResGetPointsLogsDto,
+} from './dto/getPointsLogs.dto';
+import { getPointsLogsDocs } from './docs/getPointsLogs.docs';
 import {
   ReqGetTotalPointPagesParamDto,
   ResGetTotalPointPagesDto,
 } from './dto/getTotalPointPages.dto';
 import { getTotalPointPagesDocs } from './docs/getTotalPointPages.docs';
 
-@Controller('point')
+@Controller('points')
 @ApiTags('Point')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
@@ -47,34 +42,29 @@ export class PointController {
     private readonly pointService: IPointService,
   ) {}
 
-  @Get('/logs/earned')
-  @ApiOperation(getEarnedPointsLogsDocs.operation)
-  @ApiOkResponse(getEarnedPointsLogsDocs.okResponse)
+  @Get('/logs')
+  @ApiOperation(getPointsLogsDocs.operation)
+  @ApiOkResponse(getPointsLogsDocs.okResponse)
   async getEarnedPointsLogs(
     @Req() req: Request,
-    @Query() query: ReqGetEarnedPointsLogsQueryDto,
-  ): Promise<ResGetEarnedPointsLogsDto[]> {
-    const { order, page } = query;
-    return await this.pointService.getEarnedPointsLogs({
-      userId: req.user.id,
-      order,
-      page,
-    });
-  }
+    @Query() query: ReqGetPointsLogsQueryDto,
+  ): Promise<ResGetPointsLogsDto[]> {
+    const { transactionType, offset, limit, order } = query;
+    if (transactionType === 'EARNED')
+      return await this.pointService.getEarnedPointsLogs({
+        userId: req.user.id,
+        order,
+        offset,
+        limit,
+      });
 
-  @Get('/logs/spent')
-  @ApiOperation(getSpentPointsLogsDocs.operation)
-  @ApiOkResponse(getSpentPointsLogsDocs.okResponse)
-  async getSpentPointsLogs(
-    @Req() req: Request,
-    @Query() query: ReqGetSpentPointsLogsQueryDto,
-  ): Promise<ResGetSpentPointsLogsDto[]> {
-    const { order, page } = query;
-    return await this.pointService.getSpentPointsLogs({
-      userId: req.user.id,
-      order,
-      page,
-    });
+    if (transactionType === 'SPENT')
+      return await this.pointService.getSpentPointsLogs({
+        userId: req.user.id,
+        order,
+        offset,
+        limit,
+      });
   }
 
   @Get('/count/:transactionType')

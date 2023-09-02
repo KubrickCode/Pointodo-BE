@@ -1,15 +1,12 @@
 import {
-  ReqGetEarnedPointsLogsAppDto,
+  ReqGetPointsLogsAppDto,
   ResGetEarnedPointsLogsAppDto,
-} from '../dto/getEarnedPointsLogs.app.dto';
+  ResGetSpentPointsLogsAppDto,
+} from '../dto/getPointsLogs.app.dto';
 import {
   ReqGetCurrentPointsAppDto,
   ResGetCurrentPointsAppDto,
 } from '../dto/getCurrentPoints.app.dto';
-import {
-  ReqGetSpentPointsLogsAppDto,
-  ResGetSpentPointsLogsAppDto,
-} from '../dto/getSpentPointsLogs.app.dto';
 import {
   ReqGetTotalPointPagesAppDto,
   ResGetTotalPointPagesAppDto,
@@ -17,11 +14,11 @@ import {
 
 export interface IPointService {
   getEarnedPointsLogs(
-    req: ReqGetEarnedPointsLogsAppDto,
+    req: ReqGetPointsLogsAppDto,
   ): Promise<ResGetEarnedPointsLogsAppDto[]>;
 
   getSpentPointsLogs(
-    req: ReqGetSpentPointsLogsAppDto,
+    req: ReqGetPointsLogsAppDto,
   ): Promise<ResGetSpentPointsLogsAppDto[]>;
 
   getTotalPointPages(
