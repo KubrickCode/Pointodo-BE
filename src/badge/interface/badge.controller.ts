@@ -34,6 +34,7 @@ import { getUserBadgeListDocs } from './docs/getUserBadgeList.docs';
 import { getAllBadgeProgressDocs } from './docs/getAllBadgeProgress.docs';
 import { changeSelectedBadgeDocs } from './docs/changeSelectedBadge.docs';
 import { ResGetAllBadgesDto } from './dto/getAllBadges.dto';
+import { getAllBadgesDocs } from './docs/getAllBadges.docs';
 
 @Controller('badges')
 @ApiTags('Badge')
@@ -83,6 +84,7 @@ export class BadgeController {
   }
 
   @Patch('/:badgeId')
+  @HttpCode(204)
   @ApiOperation(changeSelectedBadgeDocs.operation)
   @ApiNoContentResponse(changeSelectedBadgeDocs.noContentResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
@@ -97,6 +99,9 @@ export class BadgeController {
   }
 
   @Get()
+  @HttpCode(200)
+  @ApiOperation(getAllBadgesDocs.operation)
+  @ApiOkResponse(getAllBadgesDocs.okResponse)
   async getAllBadges(): Promise<ResGetAllBadgesDto[]> {
     return await this.badgeService.getAllBadges();
   }
