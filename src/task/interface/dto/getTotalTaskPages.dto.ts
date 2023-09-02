@@ -1,15 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TaskType_ } from '@task/domain/entities/task.entity';
 import { IsInt, IsString } from 'class-validator';
-import { Transform } from 'class-transformer';
-import { TASK_TYPE_NAME } from '@shared/constants/task.constant';
+import { Transform, Type } from 'class-transformer';
+import { TASK_LIMIT, TASK_TYPE_NAME } from '@shared/constants/task.constant';
 import { TOTAL_PAGE } from '@shared/constants/global.constant';
 
-export class ReqGetTotalTaskPagesParamDto {
+export class ReqGetTotalTaskPagesQueryDto {
   @ApiProperty({ description: TASK_TYPE_NAME })
-  @IsString()
   @Transform(({ value }) => value.toUpperCase())
+  @IsString()
   readonly taskType: TaskType_;
+
+  @ApiProperty({ description: TASK_LIMIT })
+  @Type(() => Number)
+  @IsInt()
+  readonly limit: number;
 }
 
 export class ResGetTotalTaskPagesDto {

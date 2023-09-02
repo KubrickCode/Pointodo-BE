@@ -8,14 +8,13 @@ import {
   Inject,
   Body,
   HttpCode,
+  Header,
 } from '@nestjs/common';
 import { LocalAuthGuard } from '@auth/infrastructure/passport/guards/local.guard';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import { GoogleAuthGuard } from '@auth/infrastructure/passport/guards/google.guard';
 import { KakaoAuthGuard } from '@auth/infrastructure/passport/guards/kakao.guard';
-import { globalConfig } from '@shared/config/global.config';
-import { ConfigService } from '@nestjs/config';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -23,6 +22,8 @@ import {
   ApiConflictResponse,
   ApiCookieAuth,
   ApiCreatedResponse,
+  ApiFoundResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -30,12 +31,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ReqLoginDto } from './dto/login.dto';
-import { ResLogoutDto } from './dto/logout.dto';
-import { RedirectSocialLoginDto } from './dto/socialLogin.dto';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
 import { ReqCheckPasswordDto } from './dto/checkPassword.dto';
 import { checkPasswordDocs } from './docs/checkPassword.docs';
-import { ResChangePasswordDto } from '@user/interface/dto/changePassword.dto';
 import { globalDocs } from '@shared/docs/global.docs';
 import { loginDocs } from '@auth/interface/docs/login.docs';
 import { logoutDocs } from './docs/logout.docs';
@@ -44,16 +42,19 @@ import { socialLoginDocs } from './docs/socialLogin.docs';
 import { validateLoggedInDocs } from './docs/validateLoggedIn.docs';
 import { jwtExpiration } from '@shared/config/jwt.config';
 import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
+import {
+  IAUTH_SERVICE,
+  IHANDLE_DATE_TIME,
+} from '@shared/constants/provider.constant';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
-    @Inject('IAuthService')
+    @Inject(IAUTH_SERVICE)
     private readonly authService: IAuthService,
-    @Inject('IHandleDateTime')
+    @Inject(IHANDLE_DATE_TIME)
     private readonly handleDateTime: IHandleDateTime,
-    private readonly configService: ConfigService,
   ) {}
 
   @Get('status')
@@ -101,24 +102,25 @@ export class AuthController {
   }
 
   @Post('logout')
-  @HttpCode(200)
+  @HttpCode(204)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation(logoutDocs.operation)
-  @ApiOkResponse(logoutDocs.okResponse)
+  @ApiNoContentResponse(logoutDocs.noContentResponse)
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
   async logout(@Req() req: Request, @Res() res: Response): Promise<void> {
-    const result: ResLogoutDto = await this.authService.logout(req.user);
+    await this.authService.logout(req.user);
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
-    res.json(result);
+    res.send();
   }
 
-  @Get('refresh')
+  @Post('refresh')
   @HttpCode(201)
   @ApiCookieAuth('refreshToken')
   @ApiOperation(refreshDocs.operation)
-  @ApiCreatedResponse(refreshDocs.okResponse)
+  @ApiCreatedResponse(refreshDocs.createdResponse)
+  @ApiUnauthorizedResponse(refreshDocs.unauthorizedResponse)
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
       const { refreshToken } = req.cookies;
@@ -131,37 +133,38 @@ export class AuthController {
           jwtExpiration.refreshTokenExpirationDays,
         ),
       });
-      res.json(true);
+      res.send();
     } catch (error) {
       res.clearCookie('accessToken');
       res.clearCookie('refreshToken');
-      res.json(false);
+      res.send();
     }
   }
 
   @Post('check-password')
-  @HttpCode(200)
+  @HttpCode(204)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation(checkPasswordDocs.operation)
-  @ApiOkResponse(checkPasswordDocs.okResponse)
+  @ApiNoContentResponse(checkPasswordDocs.noContentResponse)
   @ApiUnauthorizedResponse(checkPasswordDocs.invalidCheckPassword)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   async checkPassword(
     @Req() req: Request,
     @Body() body: ReqCheckPasswordDto,
-  ): Promise<ResChangePasswordDto> {
-    return await this.authService.checkPassword({
+  ): Promise<void> {
+    await this.authService.checkPassword({
       id: req.user.id,
       password: body.password,
     });
   }
 
   @Get('google/callback')
-  @HttpCode(201)
+  @HttpCode(302)
+  @Header('Location', process.env.ORIGIN)
   @UseGuards(GoogleAuthGuard)
   @ApiOperation(socialLoginDocs.google.operation)
-  @ApiCreatedResponse(socialLoginDocs.google.okResponse)
+  @ApiFoundResponse(socialLoginDocs.google.foundResponse)
   async googleCallback(
     @Req() req: Request,
     @Res() res: Response,
@@ -182,17 +185,15 @@ export class AuthController {
         jwtExpiration.refreshTokenExpirationDays,
       ),
     });
-    const result: RedirectSocialLoginDto = {
-      redirectUri: `${globalConfig(this.configService).clientOrigin}`,
-    };
-    res.redirect(result.redirectUri);
+    res.send();
   }
 
   @Get('kakao/callback')
-  @HttpCode(201)
+  @HttpCode(302)
+  @Header('Location', process.env.ORIGIN)
   @UseGuards(KakaoAuthGuard)
   @ApiOperation(socialLoginDocs.kakao.operation)
-  @ApiCreatedResponse(socialLoginDocs.kakao.okResponse)
+  @ApiFoundResponse(socialLoginDocs.kakao.foundResponse)
   async kakaoCallback(
     @Req() req: Request,
     @Res() res: Response,
@@ -213,9 +214,5 @@ export class AuthController {
         jwtExpiration.refreshTokenExpirationDays,
       ),
     });
-    const result: RedirectSocialLoginDto = {
-      redirectUri: `${globalConfig(this.configService).clientOrigin}`,
-    };
-    res.redirect(result.redirectUri);
   }
 }

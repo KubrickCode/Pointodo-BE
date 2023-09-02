@@ -5,24 +5,14 @@ import {
   BUY_BADGE_CONFLICT_POINTS,
   BUY_BADGE_LESS_POINTS,
 } from '@shared/messages/badge/badge.errors';
-import { BUY_BADGE_SUCCESS_MESSAGE } from '@shared/messages/badge/badge.messages';
 import { Type } from 'class-transformer';
 import { IsArray, IsInt, IsString } from 'class-validator';
 
-export class ReqBuyBadgeDto {
+export class ReqBuyBadgeParamDto {
   @ApiProperty({ description: BADGE_ID })
   @Type(() => Number)
   @IsInt()
   readonly badgeId: number;
-}
-
-export class ResBuyBadgeDto {
-  @ApiProperty({
-    example: BUY_BADGE_SUCCESS_MESSAGE,
-    description: '성공 메시지',
-  })
-  @IsString()
-  readonly message: string;
 }
 
 export class ResBuyBadgeConflictError {

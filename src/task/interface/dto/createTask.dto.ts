@@ -3,11 +3,9 @@ import {
   TASK_DESC,
   TASK_DUE_DATE,
   TASK_IMPORTANCE,
-  TASK_LOG_ID,
   TASK_NAME,
   TASK_TYPE_NAME,
 } from '@shared/constants/task.constant';
-import { CREATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
 import { TaskType_ } from '@task/domain/entities/task.entity';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString } from 'class-validator';
@@ -37,17 +35,4 @@ export class ReqCreateTaskDto {
   @ApiPropertyOptional()
   @IsString()
   readonly dueDate?: string | null;
-}
-
-export class ResCreateTaskDto {
-  @ApiProperty({ description: TASK_LOG_ID })
-  @IsInt()
-  readonly id: number;
-
-  @ApiProperty({
-    example: CREATE_TASK_SUCCESS_MESSAGE,
-    description: '성공 메시지',
-  })
-  @IsString()
-  readonly message: string;
 }

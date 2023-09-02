@@ -4,24 +4,18 @@ import {
   ReqValidateUserAppDto,
   ResValidateUserAppDto,
 } from '@auth/domain/dto/vaildateUser.app.dto';
+import { TEST1_USER_LOCAL, TEST_PASSWORD } from '@shared/test/userMockData';
 
 describe('ValidateUser', () => {
   const authService: IAuthService = mockAuthService;
 
   it('유저 인증 성공', async () => {
     const request: ReqValidateUserAppDto = {
-      email: 'test@test.test',
-      password: 'test1234!@',
+      email: TEST1_USER_LOCAL.email,
+      password: TEST_PASSWORD,
     };
 
-    const response: ResValidateUserAppDto = {
-      id: 'uuid-uuid-uuid-uuid-uuid',
-      email: 'test@test.test',
-      provider: 'LOCAL',
-      role: 'USER',
-      selectedBadgeId: 1,
-      createdAt: new Date(),
-    };
+    const response: ResValidateUserAppDto = TEST1_USER_LOCAL;
 
     jest.spyOn(authService, 'validateUser').mockResolvedValue(response);
 

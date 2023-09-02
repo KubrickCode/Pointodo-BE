@@ -1,9 +1,6 @@
 import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
-import { ReqBuyBadgeAppDto, ResBuyBadgeAppDto } from '../dto/buyBadge.app.dto';
-import {
-  ReqChangeSelectedBadgeAppDto,
-  ResChangeSelectedBadgeAppDto,
-} from '../dto/changeSelectedBadge.app.dto';
+import { ReqBuyBadgeAppDto } from '../dto/buyBadge.app.dto';
+import { ReqChangeSelectedBadgeAppDto } from '../dto/changeSelectedBadge.app.dto';
 import {
   ReqGetAllBadgeProgressAppDto,
   ResGetAllBadgeProgressAppDto,
@@ -16,17 +13,11 @@ import {
   ReqGetUserBadgeListWithNameAppDto,
   ResGetUserBadgeListWithNameAppDto,
 } from '../dto/getUserBadgeListWithName.app.dto';
-import {
-  ReqPutBadgeToUserAppDto,
-  ResPutBadgeToUserAppDto,
-} from '../dto/putBadgeToUser.app.dto';
-import {
-  ReqDeleteUserBadgeAppDto,
-  ResDeleteUserBadgeAppDto,
-} from '../dto/deleteUserBadge.app.dto';
+import { ReqPutBadgeToUserAppDto } from '../dto/putBadgeToUser.app.dto';
+import { ReqDeleteUserBadgeAppDto } from '../dto/deleteUserBadge.app.dto';
 
 export interface IBadgeService {
-  buyBadge(req: ReqBuyBadgeAppDto): Promise<ResBuyBadgeAppDto>;
+  buyBadge(req: ReqBuyBadgeAppDto): Promise<void>;
 
   getUserBadgeList(
     req: ReqGetUserBadgeListAppDto,
@@ -36,9 +27,7 @@ export interface IBadgeService {
     req: ReqGetUserBadgeListWithNameAppDto,
   ): Promise<ResGetUserBadgeListWithNameAppDto[]>;
 
-  changeSelectedBadge(
-    req: ReqChangeSelectedBadgeAppDto,
-  ): Promise<ResChangeSelectedBadgeAppDto>;
+  changeSelectedBadge(req: ReqChangeSelectedBadgeAppDto): Promise<void>;
 
   getAllBadgeProgress(
     req: ReqGetAllBadgeProgressAppDto,
@@ -46,11 +35,7 @@ export interface IBadgeService {
 
   getAllBadges(): Promise<BadgeEntity[]>;
 
-  putBadgeToUser(
-    req: ReqPutBadgeToUserAppDto,
-  ): Promise<ResPutBadgeToUserAppDto>;
+  putBadgeToUser(req: ReqPutBadgeToUserAppDto): Promise<void>;
 
-  deleteUserBadge(
-    req: ReqDeleteUserBadgeAppDto,
-  ): Promise<ResDeleteUserBadgeAppDto>;
+  deleteUserBadge(req: ReqDeleteUserBadgeAppDto): Promise<void>;
 }

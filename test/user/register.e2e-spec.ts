@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
-import { REGISTER_SUCCESS_MESSAGE } from '@shared/messages/user/user.messages';
 import { USER_ALREADY_EXIST } from '@shared/messages/user/user.errors';
 import {
   VALIDATE_EMAIL,
@@ -10,12 +9,10 @@ import {
 import { requestE2E } from '../request.e2e';
 import * as cookieParser from 'cookie-parser';
 import { validateOrReject } from 'class-validator';
-import {
-  ResRegisterDto,
-  ResRegisterExistUserError,
-} from '@user/interface/dto/register.dto';
+import { ResRegisterExistUserError } from '@user/interface/dto/register.dto';
 import { plainToClass } from 'class-transformer';
 import { ResInvalidation } from '@shared/dto/global.dto';
+import { MOCK_USER, TEST_PASSWORD } from '@shared/test/userMockData';
 
 describe('회원가입 in UserController (e2e)', () => {
   let app: INestApplication;
@@ -38,19 +35,16 @@ describe('회원가입 in UserController (e2e)', () => {
       .split('accessToken=')[1]
       .split(';')[0];
 
-    await requestE2E(app, '/user', 'delete', 200, null, accessToken);
+    await requestE2E(app, '/users', 'delete', 204, null, accessToken);
 
     await app.close();
   });
 
-  const path = '/user/register';
-  const body = { email: 'test@test.com', password: 'test1234!@' };
+  const path = '/users';
+  const body = { email: MOCK_USER.email, password: TEST_PASSWORD };
 
   it('회원가입 e2e 테스트', async () => {
-    const response = await requestE2E(app, path, 'post', 201, body);
-
-    expect(response.body.message).toEqual(REGISTER_SUCCESS_MESSAGE);
-    await validateOrReject(plainToClass(ResRegisterDto, response.body));
+    await requestE2E(app, path, 'post', 201, body);
   }, 30000);
 
   it('회원가입 중복 e2e 테스트', async () => {

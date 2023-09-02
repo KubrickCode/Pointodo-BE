@@ -1,13 +1,14 @@
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
 import { mockAuthService } from './authService.mock';
 import { ReqLoginAppDto, ResLoginAppDto } from '@auth/domain/dto/login.app.dto';
+import { TEST1_USER_LOCAL } from '@shared/test/userMockData';
 
 describe('Login', () => {
   const authService: IAuthService = mockAuthService;
 
   it('로그인 성공', async () => {
     const request: ReqLoginAppDto = {
-      id: 'uuid-uuid-uuid-uuid-uuid',
+      id: TEST1_USER_LOCAL.id,
     };
 
     const response: ResLoginAppDto = {

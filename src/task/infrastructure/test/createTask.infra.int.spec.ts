@@ -1,9 +1,8 @@
 import { PrismaService } from '@shared/service/prisma.service';
 import { TaskRepository } from '../prisma/task.repository';
-import { TEST1_USER_LOCAL } from '@shared/test/userMockData';
-import { UUID } from 'crypto';
-import { TaskEntity, TaskType_ } from '@task/domain/entities/task.entity';
+import { TaskEntity } from '@task/domain/entities/task.entity';
 import { TasksDueDateEntity } from '@task/domain/entities/tasksDueDate.entity';
+import { mockTask } from '@shared/test/taskMockData';
 
 describe('createTask', () => {
   let prisma: PrismaService;
@@ -24,14 +23,11 @@ describe('createTask', () => {
   }, 30000);
 
   it('작업 생성 성공 - DAILY,FREE', async () => {
-    const taskTypes: TaskType_[] = ['DAILY', 'FREE'];
-    const randomIndex = Math.floor(Math.random() * taskTypes.length);
-
-    const userId: UUID = TEST1_USER_LOCAL.id;
-    const taskType: TaskType_ = taskTypes[randomIndex];
-    const name = 'test';
-    const description = 'test';
-    const importance = 0;
+    const userId = mockTask.userId;
+    const taskType = mockTask.taskType;
+    const name = mockTask.name;
+    const description = mockTask.description;
+    const importance = mockTask.importance;
 
     const result = await taskRepository.createTask(
       userId,
@@ -54,12 +50,12 @@ describe('createTask', () => {
   }, 30000);
 
   it('작업 생성 성공 - DUE', async () => {
-    const userId: UUID = TEST1_USER_LOCAL.id;
-    const taskType: TaskType_ = 'DUE';
-    const name = 'test';
-    const description = 'test';
-    const importance = 0;
-    const dueDate = '2023-12-31';
+    const userId = mockTask.userId;
+    const taskType = mockTask.taskType;
+    const name = mockTask.name;
+    const description = mockTask.description;
+    const importance = mockTask.importance;
+    const dueDate = '2099-12-30';
 
     const taskResult = await taskRepository.createTask(
       userId,

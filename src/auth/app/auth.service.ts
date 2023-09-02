@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import {
   CHECK_PASSWORD_MESSAGE,
+  LOGIN_SUCCESS_MESSAGE,
   LOGOUT_SUCCESS_MESSAGE,
 } from '@shared/messages/auth/auth.messages';
 import { ITokenService } from '@auth/domain/interfaces/token.service.interface';
@@ -27,15 +28,9 @@ import {
   ReqValidateUserAppDto,
   ResValidateUserAppDto,
 } from '@auth/domain/dto/vaildateUser.app.dto';
-import {
-  ReqCheckPasswordAppDto,
-  ResCheckPasswordAppDto,
-} from '@auth/domain/dto/checkPassword.app.dto';
+import { ReqCheckPasswordAppDto } from '@auth/domain/dto/checkPassword.app.dto';
 import { ReqLoginAppDto, ResLoginAppDto } from '@auth/domain/dto/login.app.dto';
-import {
-  ReqLogoutAppDto,
-  ResLogoutAppDto,
-} from '@auth/domain/dto/logout.app.dto';
+import { ReqLogoutAppDto } from '@auth/domain/dto/logout.app.dto';
 import {
   ReqRefreshAppDto,
   ResRefreshAppDto,
@@ -53,22 +48,31 @@ import { ICacheService } from '@cache/domain/interfaces/cache.service.interface'
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
 import { IPasswordHasher } from '@shared/interfaces/IPasswordHasher';
+import {
+  ICACHE_SERVICE,
+  IPASSWORD_HASHER,
+  IREDIS_SERVICE,
+  ITOKEN_SERVICE,
+  IUSER_BADGE_REPOSITORY,
+  IUSER_REPOSITORY,
+} from '@shared/constants/provider.constant';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(
-    @Inject('ITokenService')
+    @Inject(ITOKEN_SERVICE)
     private readonly tokenService: ITokenService,
-    @Inject('IRedisService')
+    @Inject(IREDIS_SERVICE)
     private readonly redisService: IRedisService,
-    @Inject('IUserRepository')
+    @Inject(IUSER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-    @Inject('IUserBadgeRepository')
+    @Inject(IUSER_BADGE_REPOSITORY)
     private readonly userBadgeRepository: IUserBadgeRepository,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-    @Inject('ICacheService')
+    @Inject(ICACHE_SERVICE)
     private readonly cacheService: ICacheService,
-    @Inject('IPasswordHasher')
+    @Inject(IPASSWORD_HASHER)
     private readonly passwordHasher: IPasswordHasher,
   ) {}
 
@@ -98,9 +102,7 @@ export class AuthService implements IAuthService {
     return user;
   }
 
-  async checkPassword(
-    req: ReqCheckPasswordAppDto,
-  ): Promise<ResCheckPasswordAppDto> {
+  async checkPassword(req: ReqCheckPasswordAppDto): Promise<void> {
     const userPassword = await this.userRepository.findPasswordById(req.id);
     if (userPassword === null) {
       throw new ConflictException(USER_EXIST_WITH_SOCIAL);
@@ -112,7 +114,7 @@ export class AuthService implements IAuthService {
     if (!isCorrectPassword) {
       throw new UnauthorizedException(AUTH_INVALID_PASSWORD);
     }
-    return { message: CHECK_PASSWORD_MESSAGE };
+    this.logger.log('info', `${CHECK_PASSWORD_MESSAGE}-user:${req.id}`);
   }
 
   async login(req: ReqLoginAppDto): Promise<ResLoginAppDto> {
@@ -123,13 +125,14 @@ export class AuthService implements IAuthService {
       refreshToken,
       jwtExpiration.refreshTokenExpirationSeconds,
     );
-    return { accessToken, refreshToken };
+    this.logger.log('info', `${LOGIN_SUCCESS_MESSAGE}-유저 ID:${req.id}`);
+    return plainToClass(ResLoginAppDto, { accessToken, refreshToken });
   }
 
-  async logout(req: ReqLogoutAppDto): Promise<ResLogoutAppDto> {
+  async logout(req: ReqLogoutAppDto): Promise<void> {
     await this.redisService.delete(`refresh_token:${req.id}`);
     await this.cacheService.deleteCache(`user:${req.id}`);
-    return { message: LOGOUT_SUCCESS_MESSAGE };
+    this.logger.log('info', `${LOGOUT_SUCCESS_MESSAGE}-유저 ID:${req.id}`);
   }
 
   async refresh(req: ReqRefreshAppDto): Promise<ResRefreshAppDto> {
@@ -151,6 +154,7 @@ export class AuthService implements IAuthService {
     }
     const user = await this.userRepository.findById(decoded.id);
     const accessToken = this.tokenService.generateAccessToken(user);
+    this.logger.log('info', `리프레시 토큰 검증 완료-유저 ID:${user.id}`);
     return { accessToken };
   }
 
@@ -158,6 +162,7 @@ export class AuthService implements IAuthService {
     const { email, provider } = socialUser;
     const user = await this.userRepository.findByEmail(email);
     if (user) {
+      this.logger.log('info', `소셜 로그인 성공-유저 ID:${user.id}`);
       return await this.login(user);
     } else {
       const newUser = await this.userRepository.createUser(
@@ -169,6 +174,7 @@ export class AuthService implements IAuthService {
         newUser.id,
         DEFAULT_BADGE_ID,
       );
+      this.logger.log('info', `소셜 로그인 성공-유저 ID:${newUser.id}`);
       return await this.login(newUser);
     }
   }

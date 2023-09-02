@@ -1,18 +1,15 @@
-import {
-  ResCreateBadgeConflict,
-  ResAdminCreateBadgeDto,
-} from '@admin/interface/dto/badge/createBadge.admin.dto';
+import { ResCreateBadgeConflict } from '@admin/interface/dto/badge/createBadge.admin.dto';
+import { CREATE_BADGE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin.messages';
 
 export const createBadgeDocs = {
   operation: {
     summary: '뱃지 생성',
     description: `어드민 권한\n
-    id, name, description, iconLink, type, price(옵셔널) 필드를 전달받아 새 뱃지를 생성하고, 성공 메시지와 뱃지ID가 반환됩니다.
+    name, description, iconLink, type, price(옵셔널) 필드를 전달받아 새 뱃지를 생성.
   `,
   },
-  okResponse: {
-    type: ResAdminCreateBadgeDto,
-    description: '뱃지 생성 성공',
+  createdResponse: {
+    description: CREATE_BADGE_SUCCESS_MESSAGE,
   },
   conflict: {
     type: ResCreateBadgeConflict,

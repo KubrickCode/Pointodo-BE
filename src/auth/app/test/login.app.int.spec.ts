@@ -4,7 +4,7 @@ import { AuthService } from '../auth.service';
 import { ReqLoginAppDto, ResLoginAppDto } from '@auth/domain/dto/login.app.dto';
 import { TEST1_USER_LOCAL } from '@shared/test/userMockData';
 
-describe('register', () => {
+describe('login', () => {
   let authService: AuthService;
   let module: TestingModule;
 
@@ -31,7 +31,6 @@ describe('register', () => {
     const result: ResLoginAppDto = await authService.login(request);
 
     expect(loginSpy).toHaveBeenCalledWith(request);
-    expect(result).toHaveProperty('accessToken');
-    expect(result).toHaveProperty('refreshToken');
+    expect(result).toBeInstanceOf(ResLoginAppDto);
   }, 30000);
 });

@@ -1,12 +1,13 @@
 import {
   Controller,
   Inject,
-  Post,
   UseGuards,
   Req,
-  Body,
   Patch,
   Get,
+  Put,
+  Param,
+  HttpCode,
 } from '@nestjs/common';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import {
@@ -14,6 +15,7 @@ import {
   ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -21,12 +23,9 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import { Request } from 'express';
-import { ReqBuyBadgeDto, ResBuyBadgeDto } from './dto/buyBadge.dto';
+import { ReqBuyBadgeParamDto } from './dto/buyBadge.dto';
 import { globalDocs } from '@shared/docs/global.docs';
-import {
-  ReqChangeSelectedBadgeDto,
-  ResChangeSelectedBadgeDto,
-} from './dto/changeSelectedBadge.dto';
+import { ReqChangeSelectedBadgeParamDto } from './dto/changeSelectedBadge.dto';
 import { ResGetUserBadgeListDto } from './dto/getUserBadgeList.dto';
 import { ResGetAllBadgeProgressDto } from './dto/getAllBadgeProgress.dto';
 import { ValidateBadgePipe } from '@shared/pipes/validateBadge.pipe';
@@ -35,66 +34,75 @@ import { getUserBadgeListDocs } from './docs/getUserBadgeList.docs';
 import { getAllBadgeProgressDocs } from './docs/getAllBadgeProgress.docs';
 import { changeSelectedBadgeDocs } from './docs/changeSelectedBadge.docs';
 import { ResGetAllBadgesDto } from './dto/getAllBadges.dto';
+import { getAllBadgesDocs } from './docs/getAllBadges.docs';
+import { IBADGE_SERVICE } from '@shared/constants/provider.constant';
 
-@Controller('badge')
+@Controller('badges')
 @ApiTags('Badge')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 export class BadgeController {
   constructor(
-    @Inject('IBadgeService')
+    @Inject(IBADGE_SERVICE)
     private readonly badgeService: IBadgeService,
   ) {}
 
-  @Post('buy')
+  @Put('/:badgeId')
+  @HttpCode(201)
   @ApiOperation(buyBadgeDocs.operation)
-  @ApiCreatedResponse(buyBadgeDocs.okResponse)
+  @ApiCreatedResponse(buyBadgeDocs.createdResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   @ApiConflictResponse(buyBadgeDocs.conflictError)
   async buyBadge(
     @Req() req: Request,
-    @Body(ValidateBadgePipe) body: ReqBuyBadgeDto,
-  ): Promise<ResBuyBadgeDto> {
-    return await this.badgeService.buyBadge({
+    @Param(ValidateBadgePipe) param: ReqBuyBadgeParamDto,
+  ): Promise<void> {
+    await this.badgeService.buyBadge({
       userId: req.user.id,
-      badgeId: body.badgeId,
+      badgeId: param.badgeId,
     });
   }
 
+  @Get('personal')
+  @HttpCode(200)
   @ApiOperation(getUserBadgeListDocs.operation)
   @ApiOkResponse(getUserBadgeListDocs.okResponse)
-  @Get('list')
   async getUserBadgeList(
     @Req() req: Request,
   ): Promise<ResGetUserBadgeListDto[]> {
     return await this.badgeService.getUserBadgeList({ userId: req.user.id });
   }
 
+  @Get('progress')
+  @HttpCode(200)
   @ApiOperation(getAllBadgeProgressDocs.operation)
   @ApiOkResponse(getAllBadgeProgressDocs.okResponse)
-  @Get('progress')
   async getAllBadgeProgress(
     @Req() req: Request,
   ): Promise<ResGetAllBadgeProgressDto[]> {
     return await this.badgeService.getAllBadgeProgress({ userId: req.user.id });
   }
 
+  @Patch('/:badgeId')
+  @HttpCode(204)
   @ApiOperation(changeSelectedBadgeDocs.operation)
-  @ApiOkResponse(changeSelectedBadgeDocs.okResponse)
+  @ApiNoContentResponse(changeSelectedBadgeDocs.noContentResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
-  @Patch('selected')
   async changeSelectedBadge(
     @Req() req: Request,
-    @Body(ValidateBadgePipe) body: ReqChangeSelectedBadgeDto,
-  ): Promise<ResChangeSelectedBadgeDto> {
-    return await this.badgeService.changeSelectedBadge({
+    @Param(ValidateBadgePipe) param: ReqChangeSelectedBadgeParamDto,
+  ): Promise<void> {
+    await this.badgeService.changeSelectedBadge({
       userId: req.user.id,
-      badgeId: body.badgeId,
+      badgeId: param.badgeId,
     });
   }
 
-  @Get('all')
+  @Get()
+  @HttpCode(200)
+  @ApiOperation(getAllBadgesDocs.operation)
+  @ApiOkResponse(getAllBadgesDocs.okResponse)
   async getAllBadges(): Promise<ResGetAllBadgesDto[]> {
     return await this.badgeService.getAllBadges();
   }

@@ -1,19 +1,10 @@
-import {
-  ReqCancleTaskCompletionAppDto,
-  ResCancleTaskCompletionAppDto,
-} from '../dto/cancleTaskCompletion.app.dto';
-import {
-  ReqCompleteTaskAppDto,
-  ResCompleteTaskAppDto,
-} from '../dto/completeTask.app.dto';
+import { ReqCancleTaskCompletionAppDto } from '../dto/cancleTaskCompletion.app.dto';
+import { ReqCompleteTaskAppDto } from '../dto/completeTask.app.dto';
 import {
   ReqCreateTaskAppDto,
   ResCreateTaskAppDto,
 } from '../dto/createTask.app.dto';
-import {
-  ReqDeleteTaskAppDto,
-  ResDeleteTaskAppDto,
-} from '../dto/deleteTask.app.dto';
+import { ReqDeleteTaskAppDto } from '../dto/deleteTask.app.dto';
 import {
   ReqGetTasksLogsAppDto,
   ResGetTasksLogsAppDto,
@@ -22,10 +13,7 @@ import {
   ReqGetTotalTaskPagesAppDto,
   ResGetTotalTaskPagesAppDto,
 } from '../dto/getTotalTaskPages.app.dto';
-import {
-  ReqUpdateTaskAppDto,
-  ResUpdateTaskAppDto,
-} from '../dto/updateTask.app.dto';
+import { ReqUpdateTaskAppDto } from '../dto/updateTask.app.dto';
 
 export interface ITaskService {
   getTasksLogs(req: ReqGetTasksLogsAppDto): Promise<ResGetTasksLogsAppDto[]>;
@@ -36,13 +24,11 @@ export interface ITaskService {
 
   createTask(req: ReqCreateTaskAppDto): Promise<ResCreateTaskAppDto>;
 
-  updateTask(req: ReqUpdateTaskAppDto): Promise<ResUpdateTaskAppDto>;
+  updateTask(req: ReqUpdateTaskAppDto): Promise<void>;
 
-  deleteTask(req: ReqDeleteTaskAppDto): Promise<ResDeleteTaskAppDto>;
+  deleteTask(req: ReqDeleteTaskAppDto): Promise<void>;
 
-  completeTask(req: ReqCompleteTaskAppDto): Promise<ResCompleteTaskAppDto>;
+  completeTask(req: ReqCompleteTaskAppDto): Promise<void>;
 
-  cancleTaskCompletion(
-    req: ReqCancleTaskCompletionAppDto,
-  ): Promise<ResCancleTaskCompletionAppDto>;
+  cancleTaskCompletion(req: ReqCancleTaskCompletionAppDto): Promise<void>;
 }
