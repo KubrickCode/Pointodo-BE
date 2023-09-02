@@ -30,7 +30,7 @@ describe('유저 뱃지 목록 조회 in BadgeController (e2e)', () => {
     await app.close();
   });
 
-  const path = '/badge/list';
+  const path = '/badges/personal';
 
   it('유저 뱃지 목록 조회 성공 e2e 테스트', async () => {
     const response = await requestE2E(app, path, 'get', 200, null, accessToken);
