@@ -7,7 +7,6 @@ import {
   BADGE_PRICE,
 } from '@shared/constants/badge.constant';
 import { CONFLICT_BADGE_NAME } from '@shared/messages/admin/badge.admin.errors';
-import { UPDATE_BADGE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin.messages';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
@@ -42,15 +41,6 @@ export class ReqAdminUpdateBadgeDto {
   @IsOptional()
   @IsInt()
   readonly price?: number | null;
-}
-
-export class ResAdminUpdateBadgeDto {
-  @ApiProperty({
-    example: UPDATE_BADGE_SUCCESS_MESSAGE,
-    description: '성공 메시지',
-  })
-  @IsString()
-  readonly message: string;
 }
 
 export class ResAdminUpdateBadgeConflict {

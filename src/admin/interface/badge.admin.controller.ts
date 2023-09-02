@@ -19,7 +19,7 @@ import {
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
-  ApiOkResponse,
+  ApiNoContentResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -30,12 +30,8 @@ import { ReqAdminCreateBadgeDto } from '@admin/interface/dto/badge/createBadge.a
 import {
   ReqAdminUpdateBadgeDto,
   ReqAdminUpdateBadgeParamDto,
-  ResAdminUpdateBadgeDto,
 } from '@admin/interface/dto/badge/updateBadge.admin.dto';
-import {
-  ReqAdminDeleteBadgeParamDto,
-  ResAdminDeleteBadgeDto,
-} from '@admin/interface/dto/badge/deleteBadge.admin.dto';
+import { ReqAdminDeleteBadgeParamDto } from '@admin/interface/dto/badge/deleteBadge.admin.dto';
 import { globalDocs } from '@shared/docs/global.docs';
 import { createBadgeDocs } from '@admin/interface/docs/badge/createBadge.admin.docs';
 import { updateBadgeDocs } from '@admin/interface/docs/badge/updateBadge.admin.docs';
@@ -71,30 +67,30 @@ export class BadgeAdminController {
     res.send();
   }
 
-  @Patch('/update/:id')
-  @HttpCode(201)
+  @Patch('/:id')
+  @HttpCode(204)
   @ApiOperation(updateBadgeDocs.operation)
-  @ApiOkResponse(updateBadgeDocs.okResponse)
+  @ApiNoContentResponse(updateBadgeDocs.noContentResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   @ApiConflictResponse(updateBadgeDocs.conflict)
   async updateBadge(
     @Body() body: ReqAdminUpdateBadgeDto,
     @Param() param: ReqAdminUpdateBadgeParamDto,
-  ): Promise<ResAdminUpdateBadgeDto> {
-    return await this.badgeAdminService.updateBadge({
+  ): Promise<void> {
+    await this.badgeAdminService.updateBadge({
       ...body,
       id: param.id,
     });
   }
 
-  @Delete('/delete/:id')
-  @HttpCode(200)
+  @Delete('/:id')
+  @HttpCode(204)
   @ApiOperation(deleteBadgeDocs.operation)
-  @ApiOkResponse(deleteBadgeDocs.okResponse)
+  @ApiNoContentResponse(deleteBadgeDocs.noContentResponse)
   async deleteBadge(
     @Param() param: ReqAdminDeleteBadgeParamDto,
-  ): Promise<ResAdminDeleteBadgeDto> {
-    return await this.badgeAdminService.deleteBadge({ id: param.id });
+  ): Promise<void> {
+    await this.badgeAdminService.deleteBadge({ id: param.id });
   }
 
   @Post('upload')
