@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   Patch,
-  Get,
   HttpCode,
   UseInterceptors,
   UploadedFile,
@@ -26,10 +25,7 @@ import {
 } from '@nestjs/swagger';
 import { AdminAuthGuard } from '@auth/infrastructure/passport/guards/admin.guard';
 import { IBadgeAdminService } from '@admin/badge/domain/interfaces/badge.admin.service.interface';
-import {
-  ReqAdminCreateBadgeDto,
-  ResAdminCreateBadgeDto,
-} from '@admin/interface/dto/badge/createBadge.admin.dto';
+import { ReqAdminCreateBadgeDto } from '@admin/interface/dto/badge/createBadge.admin.dto';
 import {
   ReqAdminUpdateBadgeDto,
   ReqAdminUpdateBadgeParamDto,
@@ -39,12 +35,7 @@ import {
   ReqAdminDeleteBadgeParamDto,
   ResAdminDeleteBadgeDto,
 } from '@admin/interface/dto/badge/deleteBadge.admin.dto';
-import {
-  ReqAdminGetBadgeListParamDto,
-  ResAdminGetBadgeListDto,
-} from '@admin/interface/dto/badge/getBadgeList.admin.dto';
 import { globalDocs } from '@shared/docs/global.docs';
-import { getBadgeListDocs } from '@admin/interface/docs/badge/getAllBadges.admin.docs';
 import { createBadgeDocs } from '@admin/interface/docs/badge/createBadge.admin.docs';
 import { updateBadgeDocs } from '@admin/interface/docs/badge/updateBadge.admin.docs';
 import { deleteBadgeDocs } from '@admin/interface/docs/badge/deleteBadge.admin.docs';
@@ -63,26 +54,14 @@ export class BadgeAdminController {
     private readonly badgeAdminService: IBadgeAdminService,
   ) {}
 
-  @Get('/:type')
-  @HttpCode(200)
-  @ApiOperation(getBadgeListDocs.operation)
-  @ApiOkResponse(getBadgeListDocs.okResponse)
-  async getBadgeList(
-    @Param() param: ReqAdminGetBadgeListParamDto,
-  ): Promise<ResAdminGetBadgeListDto[]> {
-    return await this.badgeAdminService.getBadgeList({ type: param.type });
-  }
-
-  @Post('/create')
+  @Post()
   @HttpCode(201)
   @ApiOperation(createBadgeDocs.operation)
-  @ApiCreatedResponse(createBadgeDocs.okResponse)
+  @ApiCreatedResponse(createBadgeDocs.createdResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
   @ApiConflictResponse(createBadgeDocs.conflict)
-  async createBadge(
-    @Body() body: ReqAdminCreateBadgeDto,
-  ): Promise<ResAdminCreateBadgeDto> {
-    return await this.badgeAdminService.createBadge(body);
+  async createBadge(@Body() body: ReqAdminCreateBadgeDto): Promise<void> {
+    await this.badgeAdminService.createBadge(body);
   }
 
   @Patch('/update/:id')

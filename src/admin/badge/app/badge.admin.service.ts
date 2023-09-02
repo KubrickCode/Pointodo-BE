@@ -1,7 +1,4 @@
-import {
-  ReqAdminCreateBadgeAppDto,
-  ResAdminCreateBadgeAppDto,
-} from '@admin/badge/domain/dto/createBadge.admin.app.dto';
+import { ReqAdminCreateBadgeAppDto } from '@admin/badge/domain/dto/createBadge.admin.app.dto';
 import {
   ReqAdminDeleteBadgeAppDto,
   ResAdminDeleteBadgeAppDto,
@@ -25,7 +22,6 @@ import { ReqAdminGetBadgeListAppDto } from '../domain/dto/getBadgeList.admin.app
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
-import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class BadgeAdminService implements IBadgeAdminService {
@@ -45,9 +41,7 @@ export class BadgeAdminService implements IBadgeAdminService {
     return await this.badgeAdminRepository.getBadgeList(req.type);
   }
 
-  async createBadge(
-    req: ReqAdminCreateBadgeAppDto,
-  ): Promise<ResAdminCreateBadgeAppDto> {
+  async createBadge(req: ReqAdminCreateBadgeAppDto): Promise<void> {
     const { name, description, iconLink, type, price } = req;
     const isExist = await this.badgeAdminRepository.isExistBadge(name);
     if (isExist) throw new ConflictException(CONFLICT_BADGE_NAME);
@@ -61,13 +55,8 @@ export class BadgeAdminService implements IBadgeAdminService {
     await this.cacheService.deleteCache(`allBadges`);
     this.logger.log(
       'info',
-      `생성 뱃지 ID:${createdBadge.id}, 뱃지명:${createdBadge.name}`,
+      `${CREATE_BADGE_SUCCESS_MESSAGE}-뱃지 ID:${createdBadge.id}, 뱃지명:${createdBadge.name}`,
     );
-    const result = {
-      id: createdBadge.id,
-      message: CREATE_BADGE_SUCCESS_MESSAGE,
-    };
-    return plainToClass(ResAdminCreateBadgeAppDto, result);
   }
 
   async updateBadge(

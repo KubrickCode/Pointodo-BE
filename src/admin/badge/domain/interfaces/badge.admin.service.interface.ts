@@ -1,7 +1,4 @@
-import {
-  ReqAdminCreateBadgeAppDto,
-  ResAdminCreateBadgeAppDto,
-} from '../dto/createBadge.admin.app.dto';
+import { ReqAdminCreateBadgeAppDto } from '../dto/createBadge.admin.app.dto';
 import {
   ReqAdminDeleteBadgeAppDto,
   ResAdminDeleteBadgeAppDto,
@@ -16,9 +13,7 @@ import { BadgeEntity } from '../entities/badge.entity';
 export interface IBadgeAdminService {
   getBadgeList(req: ReqAdminGetBadgeListAppDto): Promise<BadgeEntity[]>;
 
-  createBadge(
-    req: ReqAdminCreateBadgeAppDto,
-  ): Promise<ResAdminCreateBadgeAppDto>;
+  createBadge(req: ReqAdminCreateBadgeAppDto): Promise<void>;
 
   updateBadge(
     req: ReqAdminUpdateBadgeAppDto,
