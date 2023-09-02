@@ -5,6 +5,7 @@ import {
   TASK_DESC,
   TASK_DUE_DATE,
   TASK_IMPORTANCE,
+  TASK_LIMIT,
   TASK_LOG_ID,
   TASK_NAME,
   TASK_OCCURRED_AT,
@@ -26,11 +27,15 @@ export class ReqGetTasksLogsQueryDto {
   @ApiProperty({ description: TASK_PAGE })
   @Type(() => Number)
   @IsInt()
-  readonly page: number;
+  readonly offset: number;
 
   @ApiProperty({ description: ORDER_BY })
   @IsString()
   readonly order: string;
+
+  @ApiProperty({ description: TASK_LIMIT })
+  @IsInt()
+  readonly limit: number;
 }
 
 export class ResGetTasksLogsDto {

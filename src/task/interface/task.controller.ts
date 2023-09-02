@@ -10,6 +10,7 @@ import {
   Param,
   Body,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import { ITaskService } from '../domain/interfaces/task.service.interface';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
@@ -65,18 +66,19 @@ export class TaskController {
   ) {}
 
   @Get()
+  @HttpCode(200)
   @ApiOperation(getTasksLogsDocs.operation)
   @ApiOkResponse(getTasksLogsDocs.okResponse)
   async getTasksLogs(
     @Req() req: Request,
     @Query() query: ReqGetTasksLogsQueryDto,
   ): Promise<ResGetTasksLogsDto[]> {
-    const userId = req.user.id;
-    const { taskType, page, order } = query;
+    const { taskType, offset, order, limit } = query;
     return await this.taskService.getTasksLogs({
-      userId,
+      userId: req.user.id,
       taskType,
-      page,
+      offset,
+      limit,
       order,
     });
   }

@@ -85,8 +85,8 @@ export class TaskService implements ITaskService {
     return await this.taskRepository.getTasksLogs(
       req.userId,
       req.taskType,
-      GET_TASK_LIMIT,
-      (req.page - 1) * GET_TASK_LIMIT,
+      req.limit,
+      (req.offset - 1) * req.limit,
       req.order,
     );
   }
