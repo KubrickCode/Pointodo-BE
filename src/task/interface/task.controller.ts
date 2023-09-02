@@ -53,7 +53,7 @@ import {
 } from './dto/getTotalTaskPages.dto';
 import { plainToClass } from 'class-transformer';
 
-@Controller('task')
+@Controller('tasks')
 @ApiTags('Task')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()

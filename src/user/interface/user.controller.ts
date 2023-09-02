@@ -43,7 +43,7 @@ export class UserController {
     private readonly userService: IUserService,
   ) {}
 
-  @Post('')
+  @Post()
   @HttpCode(201)
   @ApiOperation(registerDocs.operation)
   @ApiCreatedResponse(registerDocs.createdResponse)
@@ -66,7 +66,7 @@ export class UserController {
     return plainToClass(ResGetUserDto, result);
   }
 
-  @Patch('')
+  @Patch()
   @HttpCode(204)
   @UseGuards(JwtAuthGuard)
   @ApiOperation(updateUserDocs.operation)
