@@ -12,7 +12,7 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { helmetOptions } from '@shared/config/helmet.config';
-import expressBasicAuth from 'express-basic-auth';
+import basicAuth from 'express-basic-auth';
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
@@ -23,7 +23,7 @@ const bootstrap = async () => {
 
   app.use(cookieParser());
   app.use(helmet(helmetOptions));
-  app.use([swaggerEndPoint], expressBasicAuth(swaggerAuthConfig));
+  app.use([swaggerEndPoint], basicAuth(swaggerAuthConfig));
   app.enableCors(corsOptions(configService));
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
