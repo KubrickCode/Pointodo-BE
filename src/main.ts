@@ -13,6 +13,8 @@ import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { helmetOptions } from '@shared/config/helmet.config';
 import basicAuth from 'express-basic-auth';
+import csurf from 'csurf';
+import { csrfConfg } from '@shared/config/csrf.config';
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
@@ -23,6 +25,11 @@ const bootstrap = async () => {
   SwaggerModule.setup(swaggerEndPoint, app, document);
 
   app.use(cookieParser());
+
+  app.use(csurf(csrfConfg.csrfOption));
+
+  app.use(csrfConfg.csrfMiddleWare);
+
   app.use(helmet(helmetOptions));
   app.enableCors(corsOptions(configService));
   app.setGlobalPrefix('api');
