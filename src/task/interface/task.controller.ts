@@ -18,8 +18,8 @@ import { ITaskService } from '../domain/interfaces/task.service.interface';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import {
   ApiBadRequestResponse,
-  ApiBearerAuth,
   ApiConflictResponse,
+  ApiCookieAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
@@ -49,8 +49,8 @@ import { ITASK_SERVICE } from '@shared/constants/provider.constant';
 
 @Controller('tasks')
 @ApiTags('Task')
+@ApiCookieAuth('accessToken')
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 export class TaskController {
   constructor(

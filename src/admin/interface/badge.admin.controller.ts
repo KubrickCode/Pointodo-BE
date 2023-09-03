@@ -16,8 +16,8 @@ import {
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import {
   ApiBadRequestResponse,
-  ApiBearerAuth,
   ApiConflictResponse,
+  ApiCookieAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNoContentResponse,
@@ -44,11 +44,11 @@ import { uploadFileDocs } from './docs/badge/uploadFile.admin.docs';
 import { ResAdminUploadFileDto } from './dto/badge/uploadFile.admin.dto';
 import { IBADGE_ADMIN_SERVICE } from '@shared/constants/provider.constant';
 
-@ApiTags('Admin - Badge')
-@ApiBearerAuth()
-@ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
-@ApiForbiddenResponse(adminDocs.forbidden)
 @Controller('/admin/badges')
+@ApiTags('Admin - Badge')
+@ApiCookieAuth('accessToken')
+@ApiForbiddenResponse(adminDocs.forbidden)
+@ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 @UseGuards(JwtAuthGuard, AdminAuthGuard)
 export class BadgeAdminController {
   constructor(

@@ -18,8 +18,8 @@ import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import { ResGetUserDto } from './dto/getUser.dto';
 import {
   ApiBadRequestResponse,
-  ApiBearerAuth,
   ApiConflictResponse,
+  ApiCookieAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
@@ -58,10 +58,10 @@ export class UserController {
   }
 
   @Get()
+  @ApiCookieAuth('accessToken')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @ApiOperation(getUserDocs.operation)
-  @ApiBearerAuth()
   @ApiOkResponse(getUserDocs.okResponse)
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
   async getUser(@Req() req: Request): Promise<ResGetUserDto> {
@@ -70,10 +70,10 @@ export class UserController {
   }
 
   @Patch()
+  @ApiCookieAuth('accessToken')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
   @ApiOperation(updateUserDocs.operation)
-  @ApiBearerAuth()
   @ApiNoContentResponse(updateUserDocs.noContentResponse)
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
@@ -85,10 +85,10 @@ export class UserController {
   }
 
   @Delete()
+  @ApiCookieAuth('accessToken')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
   @ApiOperation(deleteUserDocs.operation)
-  @ApiBearerAuth()
   @ApiNoContentResponse(deleteUserDocs.noContentResponse)
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
   async deleteUser(@Req() req: Request, @Res() res: Response) {

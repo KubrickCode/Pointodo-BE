@@ -13,8 +13,8 @@ import {
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import {
   ApiBadRequestResponse,
-  ApiBearerAuth,
   ApiConflictResponse,
+  ApiCookieAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
@@ -39,9 +39,9 @@ import { getAllBadgesDocs } from './docs/getAllBadges.docs';
 import { IBADGE_SERVICE } from '@shared/constants/provider.constant';
 
 @Controller('badges')
+@ApiCookieAuth('accessToken')
 @ApiTags('Badge')
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 export class BadgeController {
   constructor(

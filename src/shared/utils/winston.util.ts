@@ -1,6 +1,6 @@
 import { format, transports } from 'winston';
 import { utilities as nestWinstonModuleUtilities } from 'nest-winston';
-import * as winstonDaily from 'winston-daily-rotate-file';
+import winstonDaily from 'winston-daily-rotate-file';
 
 export const getWinstonLogger = (nodeEnv: string, moduleName: string) => {
   const isLocalEnv = ['local', 'test', undefined].includes(nodeEnv);

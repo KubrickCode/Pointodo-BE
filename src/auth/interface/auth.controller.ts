@@ -18,7 +18,6 @@ import { GoogleAuthGuard } from '@auth/infrastructure/passport/guards/google.gua
 import { KakaoAuthGuard } from '@auth/infrastructure/passport/guards/kakao.guard';
 import {
   ApiBadRequestResponse,
-  ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
   ApiCookieAuth,
@@ -49,8 +48,8 @@ import {
 } from '@shared/constants/provider.constant';
 import { Throttle } from '@nestjs/throttler';
 
-@ApiTags('Auth')
 @Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
   constructor(
     @Inject(IAUTH_SERVICE)
@@ -60,9 +59,9 @@ export class AuthController {
   ) {}
 
   @Get('status')
+  @ApiCookieAuth('accessToken')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation(validateLoggedInDocs.operation)
   @ApiOkResponse(validateLoggedInDocs.okResponse)
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
@@ -105,9 +104,9 @@ export class AuthController {
   }
 
   @Post('logout')
+  @ApiCookieAuth('accessToken')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation(logoutDocs.operation)
   @ApiNoContentResponse(logoutDocs.noContentResponse)
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
@@ -119,8 +118,8 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @HttpCode(HttpStatus.CREATED)
   @ApiCookieAuth('refreshToken')
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation(refreshDocs.operation)
   @ApiCreatedResponse(refreshDocs.createdResponse)
   @ApiUnauthorizedResponse(refreshDocs.unauthorizedResponse)
@@ -145,9 +144,9 @@ export class AuthController {
   }
 
   @Post('check-password')
+  @ApiCookieAuth('accessToken')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation(checkPasswordDocs.operation)
   @ApiNoContentResponse(checkPasswordDocs.noContentResponse)
   @ApiUnauthorizedResponse(checkPasswordDocs.invalidCheckPassword)

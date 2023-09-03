@@ -15,7 +15,7 @@ import {
 import { adminDocs } from './docs/admin.docs';
 import { globalDocs } from '@shared/docs/global.docs';
 import {
-  ApiBearerAuth,
+  ApiCookieAuth,
   ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiOkResponse,
@@ -48,12 +48,11 @@ import {
   IBADGE_SERVICE,
   IUSER_SERVICE,
 } from '@shared/constants/provider.constant';
-
+@Controller('/admin/users')
 @ApiTags('Admin - User')
-@ApiBearerAuth()
+@ApiCookieAuth('accessToken')
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 @ApiForbiddenResponse(adminDocs.forbidden)
-@Controller('/admin/users')
 @UseGuards(JwtAuthGuard, AdminAuthGuard)
 export class UserAdminController {
   constructor(

@@ -12,7 +12,7 @@ import { IPointService } from '@point/domain/interfaces/point.service.interface'
 import { Request } from 'express';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import {
-  ApiBearerAuth,
+  ApiCookieAuth,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -34,9 +34,9 @@ import { getTotalPointPagesDocs } from './docs/getTotalPointPages.docs';
 import { IPOINT_SERVICE } from '@shared/constants/provider.constant';
 
 @Controller('points')
+@ApiCookieAuth('accessToken')
 @ApiTags('Point')
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 export class PointController {
   constructor(
