@@ -46,6 +46,8 @@ jobs:
             AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
             DEFAULT_BADGE_LINK=${{ secrets.DEFAULT_BADGE_LINK }}
+            SWAGGER_USER=${{ secrets.SWAGGER_USER }}
+            SWAGGER_PASSWORD=${{ secrets.SWAGGER_PASSWORD }}
       - name: Pull and restart Docker Container
         uses: appleboy/ssh-action@master
         with:
