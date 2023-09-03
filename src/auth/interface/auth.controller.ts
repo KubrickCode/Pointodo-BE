@@ -164,7 +164,6 @@ export class AuthController {
 
   @Get('google/callback')
   @HttpCode(HttpStatus.FOUND)
-  @Throttle(1, 5)
   @Header('Location', process.env.ORIGIN)
   @UseGuards(GoogleAuthGuard)
   @ApiOperation(socialLoginDocs.google.operation)
@@ -194,7 +193,6 @@ export class AuthController {
 
   @Get('kakao/callback')
   @HttpCode(HttpStatus.FOUND)
-  @Throttle(1, 5)
   @Header('Location', process.env.ORIGIN)
   @UseGuards(KakaoAuthGuard)
   @ApiOperation(socialLoginDocs.kakao.operation)
@@ -219,5 +217,6 @@ export class AuthController {
         jwtExpiration.refreshTokenExpirationDays,
       ),
     });
+    res.send();
   }
 }

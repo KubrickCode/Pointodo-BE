@@ -35,7 +35,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       message = exceptionResponse.message as string | Array<string>;
     }
 
-    if (status === 429)
+    if (status === HttpStatus.TOO_MANY_REQUESTS)
       message = '요청이 너무 많습니다. 잠시 뒤 다시 시도해주세요';
 
     this.logger.error(
