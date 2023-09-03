@@ -6,6 +6,7 @@ import {
   UseGuards,
   Query,
   HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { IPointService } from '@point/domain/interfaces/point.service.interface';
 import { Request } from 'express';
@@ -44,7 +45,7 @@ export class PointController {
   ) {}
 
   @Get('/logs')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation(getPointsLogsDocs.operation)
   @ApiOkResponse(getPointsLogsDocs.okResponse)
   async getEarnedPointsLogs(
@@ -70,7 +71,7 @@ export class PointController {
   }
 
   @Get('/count-pages')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation(getTotalPointPagesDocs.operation)
   @ApiOkResponse(getTotalPointPagesDocs.okResponse)
   async getTotalPointPages(
@@ -87,7 +88,7 @@ export class PointController {
   }
 
   @Get()
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation(getCurrentPointsDocs.operation)
   @ApiOkResponse(getCurrentPointsDocs.okResponse)
   async getCurrentPoints(@Req() req: Request): Promise<ResGetCurrentPointsDto> {

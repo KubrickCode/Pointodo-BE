@@ -12,6 +12,7 @@ import {
   Query,
   HttpCode,
   Res,
+  HttpStatus,
 } from '@nestjs/common';
 import { ITaskService } from '../domain/interfaces/task.service.interface';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
@@ -58,7 +59,7 @@ export class TaskController {
   ) {}
 
   @Get()
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation(getTasksLogsDocs.operation)
   @ApiOkResponse(getTasksLogsDocs.okResponse)
   async getTasksLogs(
@@ -76,7 +77,7 @@ export class TaskController {
   }
 
   @Get('/count-pages')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation(getTotalTaskPagesDocs.operation)
   @ApiOkResponse(getTotalTaskPagesDocs.okResponse)
   async getTotalTaskPages(
@@ -93,7 +94,7 @@ export class TaskController {
   }
 
   @Post()
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation(createTaskDocs.operation)
   @ApiCreatedResponse(createTaskDocs.createdResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
@@ -109,7 +110,7 @@ export class TaskController {
   }
 
   @Patch('/:id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation(updateTaskDocs.operation)
   @ApiNoContentResponse(updateTaskDocs.noContentResponse)
   @ApiConflictResponse(updateTaskDocs.conflictResponse)
@@ -127,7 +128,7 @@ export class TaskController {
   }
 
   @Delete('/:id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation(deleteTaskDocs.operation)
   @ApiNoContentResponse(deleteTaskDocs.noContentResponse)
   async deleteTask(@Param() param: ReqDeleteTaskParamDto): Promise<void> {

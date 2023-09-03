@@ -9,6 +9,7 @@ import {
   Body,
   HttpCode,
   Header,
+  HttpStatus,
 } from '@nestjs/common';
 import { LocalAuthGuard } from '@auth/infrastructure/passport/guards/local.guard';
 import { Request, Response } from 'express';
@@ -59,7 +60,7 @@ export class AuthController {
   ) {}
 
   @Get('status')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation(validateLoggedInDocs.operation)
@@ -70,7 +71,7 @@ export class AuthController {
   }
 
   @Post('login')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @Throttle(1, 5)
   @UseGuards(LocalAuthGuard)
   @ApiOperation(loginDocs.operation)
@@ -104,7 +105,7 @@ export class AuthController {
   }
 
   @Post('logout')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation(logoutDocs.operation)
@@ -118,7 +119,7 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @ApiCookieAuth('refreshToken')
   @ApiOperation(refreshDocs.operation)
   @ApiCreatedResponse(refreshDocs.createdResponse)
@@ -144,7 +145,7 @@ export class AuthController {
   }
 
   @Post('check-password')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation(checkPasswordDocs.operation)
@@ -162,7 +163,7 @@ export class AuthController {
   }
 
   @Get('google/callback')
-  @HttpCode(302)
+  @HttpCode(HttpStatus.FOUND)
   @Throttle(1, 5)
   @Header('Location', process.env.ORIGIN)
   @UseGuards(GoogleAuthGuard)
@@ -192,7 +193,7 @@ export class AuthController {
   }
 
   @Get('kakao/callback')
-  @HttpCode(302)
+  @HttpCode(HttpStatus.FOUND)
   @Throttle(1, 5)
   @Header('Location', process.env.ORIGIN)
   @UseGuards(KakaoAuthGuard)

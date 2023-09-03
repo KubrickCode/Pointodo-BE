@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  HttpStatus,
   Inject,
   Param,
   Put,
@@ -63,7 +64,7 @@ export class UserAdminController {
   ) {}
 
   @Get()
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation(getUserListDocs.operation)
   @ApiOkResponse(getUserListDocs.okResponse)
   async getUserList(
@@ -75,7 +76,7 @@ export class UserAdminController {
   }
 
   @Get('/count-pages')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation(getTotalUserListPagesDocs.operation)
   @ApiOkResponse(getTotalUserListPagesDocs.okResponse)
   async getTotalUserListPages(
@@ -85,7 +86,7 @@ export class UserAdminController {
   }
 
   @Get('/badges/:id')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation(getUserBadgeListDocs.operation)
   @ApiOkResponse(getUserBadgeListDocs.okResponse)
   async getUserBadgeList(
@@ -96,7 +97,7 @@ export class UserAdminController {
   }
 
   @Put('/badges')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation(putBadgeToUserDocs.operation)
   @ApiNoContentResponse(putBadgeToUserDocs.noContentResponse)
   async putBadgeToUser(
@@ -107,7 +108,7 @@ export class UserAdminController {
   }
 
   @Delete('/badges')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation(deleteUserBadgeDocs.operation)
   @ApiNoContentResponse(deleteUserBadgeDocs.noContentResponse)
   async deleteUserBadge(

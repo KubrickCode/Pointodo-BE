@@ -10,6 +10,7 @@ import {
   Delete,
   HttpCode,
   Res,
+  HttpStatus,
 } from '@nestjs/common';
 import { ReqRegisterDto } from './dto/register.dto';
 import { Request, Response } from 'express';
@@ -46,7 +47,7 @@ export class UserController {
   ) {}
 
   @Post()
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @Throttle(1, 20)
   @ApiOperation(registerDocs.operation)
   @ApiCreatedResponse(registerDocs.createdResponse)
@@ -57,7 +58,7 @@ export class UserController {
   }
 
   @Get()
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @ApiOperation(getUserDocs.operation)
   @ApiBearerAuth()
@@ -69,7 +70,7 @@ export class UserController {
   }
 
   @Patch()
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
   @ApiOperation(updateUserDocs.operation)
   @ApiBearerAuth()
@@ -84,7 +85,7 @@ export class UserController {
   }
 
   @Delete()
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
   @ApiOperation(deleteUserDocs.operation)
   @ApiBearerAuth()

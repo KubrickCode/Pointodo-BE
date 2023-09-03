@@ -8,6 +8,7 @@ import {
   Put,
   Param,
   HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import {
@@ -49,7 +50,7 @@ export class BadgeController {
   ) {}
 
   @Put('/:badgeId')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation(buyBadgeDocs.operation)
   @ApiCreatedResponse(buyBadgeDocs.createdResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
@@ -65,7 +66,7 @@ export class BadgeController {
   }
 
   @Get('personal')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation(getUserBadgeListDocs.operation)
   @ApiOkResponse(getUserBadgeListDocs.okResponse)
   async getUserBadgeList(
@@ -75,7 +76,7 @@ export class BadgeController {
   }
 
   @Get('progress')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation(getAllBadgeProgressDocs.operation)
   @ApiOkResponse(getAllBadgeProgressDocs.okResponse)
   async getAllBadgeProgress(
@@ -85,7 +86,7 @@ export class BadgeController {
   }
 
   @Patch('/:badgeId')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation(changeSelectedBadgeDocs.operation)
   @ApiNoContentResponse(changeSelectedBadgeDocs.noContentResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
@@ -100,7 +101,7 @@ export class BadgeController {
   }
 
   @Get()
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation(getAllBadgesDocs.operation)
   @ApiOkResponse(getAllBadgesDocs.okResponse)
   async getAllBadges(): Promise<ResGetAllBadgesDto[]> {

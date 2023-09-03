@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Res,
+  HttpStatus,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import {
@@ -56,7 +57,7 @@ export class BadgeAdminController {
   ) {}
 
   @Post()
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation(createBadgeDocs.operation)
   @ApiCreatedResponse(createBadgeDocs.createdResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
@@ -71,7 +72,7 @@ export class BadgeAdminController {
   }
 
   @Patch('/:id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation(updateBadgeDocs.operation)
   @ApiNoContentResponse(updateBadgeDocs.noContentResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
@@ -87,7 +88,7 @@ export class BadgeAdminController {
   }
 
   @Delete('/:id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation(deleteBadgeDocs.operation)
   @ApiNoContentResponse(deleteBadgeDocs.noContentResponse)
   async deleteBadge(
@@ -97,7 +98,7 @@ export class BadgeAdminController {
   }
 
   @Post('upload-image')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation(uploadFileDocs.operation)
   @ApiCreatedResponse(uploadFileDocs.createdResponse)
   @UseInterceptors(FileInterceptor('file'))
