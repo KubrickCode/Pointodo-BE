@@ -46,8 +46,6 @@ import {
   IAUTH_SERVICE,
   IHANDLE_DATE_TIME,
 } from '@shared/constants/provider.constant';
-import { Throttle } from '@nestjs/throttler';
-
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -71,7 +69,6 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.CREATED)
-  @Throttle(1, 5)
   @UseGuards(LocalAuthGuard)
   @ApiOperation(loginDocs.operation)
   @ApiCreatedResponse(loginDocs.okResponse)

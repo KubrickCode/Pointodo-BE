@@ -36,7 +36,6 @@ import { globalDocs } from '@shared/docs/global.docs';
 import { plainToClass } from 'class-transformer';
 import { updateUserDocs } from './docs/updateUser.docs';
 import { IUSER_SERVICE } from '@shared/constants/provider.constant';
-import { Throttle } from '@nestjs/throttler';
 
 @Controller('users')
 @ApiTags('User')
@@ -48,7 +47,6 @@ export class UserController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @Throttle(1, 20)
   @ApiOperation(registerDocs.operation)
   @ApiCreatedResponse(registerDocs.createdResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)

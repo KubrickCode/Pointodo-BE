@@ -14,6 +14,7 @@ import { TaskModule } from './task/interface/task.module';
 import { PointModule } from './point/interface/point.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { throttlerOption } from '@shared/config/throttler.config';
 
 @Module({
   providers: [
@@ -40,10 +41,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
     TaskModule,
     PointModule,
     ScheduleModule.forRoot(),
-    ThrottlerModule.forRoot({
-      ttl: 1,
-      limit: 1,
-    }),
+    ThrottlerModule.forRoot(throttlerOption),
   ],
 })
 export class AppModule implements NestModule {

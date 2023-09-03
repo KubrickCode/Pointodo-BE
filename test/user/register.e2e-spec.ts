@@ -7,7 +7,7 @@ import {
   VALIDATE_PASSWORD,
 } from '@shared/messages/auth/auth.messages';
 import { requestE2E } from '../request.e2e';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { validateOrReject } from 'class-validator';
 import { ResRegisterExistUserError } from '@user/interface/dto/register.dto';
 import { plainToClass } from 'class-transformer';
