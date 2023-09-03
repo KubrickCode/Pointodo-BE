@@ -51,9 +51,11 @@ RUN yarn prisma generate
 
 RUN yarn build
 
-RUN yarn test
+RUN export NODE_ENV=test && yarn test
 
-RUN yarn test:e2e
+RUN export NODE_ENV=test && yarn test:e2e
+
+RUN export NODE_ENV=production
 
 EXPOSE 3000
 
