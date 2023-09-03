@@ -4,7 +4,16 @@ export const swaggerConfig = new DocumentBuilder()
   .setTitle('Pointodo API')
   .setDescription('Pointodo swagger 문서')
   .setVersion('1.0.0')
-  .addBearerAuth()
+  .addCookieAuth(
+    'auth-cookie',
+    {
+      name: 'accessToken',
+      type: 'apiKey',
+      in: 'cookie',
+      scheme: 'Bearer',
+    },
+    'accessToken',
+  )
   .addCookieAuth(
     'auth-cookie',
     {

@@ -29,6 +29,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/pointodo-server
           build-args: |
+            NODE_ENV=${{ secrets.NODE_ENV }}
             ORIGIN=${{ secrets.ORIGIN }}
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}

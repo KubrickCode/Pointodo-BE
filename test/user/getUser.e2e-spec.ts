@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import { requestE2E } from '../request.e2e';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { plainToClass } from 'class-transformer';
 import { ResGetUserDto } from '@user/interface/dto/getUser.dto';
 import { setupLoggedIn } from '../setupLoggedIn.e2e';

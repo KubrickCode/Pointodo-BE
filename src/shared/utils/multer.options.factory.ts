@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
-import * as multerS3 from 'multer-s3';
+import multerS3 from 'multer-s3';
 import { S3Client } from '@aws-sdk/client-s3';
-import * as path from 'path';
+import path from 'path';
 import { awsConfig } from '@shared/config/aws.config';
 
 export const multerOptionsFactory = (
