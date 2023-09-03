@@ -16,6 +16,7 @@ import basicAuth from 'express-basic-auth';
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);
+  app.use(swaggerEndPoint, basicAuth(swaggerAuthConfig));
   const configService = app.get(ConfigService);
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
@@ -23,7 +24,6 @@ const bootstrap = async () => {
 
   app.use(cookieParser());
   app.use(helmet(helmetOptions));
-  app.use([swaggerEndPoint], basicAuth(swaggerAuthConfig));
   app.enableCors(corsOptions(configService));
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
