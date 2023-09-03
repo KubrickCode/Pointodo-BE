@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NODE_ENV: ${{ secrets.TEST_ENV }}
       ORIGIN: ${{ secrets.ORIGIN }}
       DATABASE_URL: ${{ secrets.TEST_DB }}
       ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
