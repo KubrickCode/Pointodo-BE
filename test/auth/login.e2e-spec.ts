@@ -13,7 +13,7 @@ import {
   USER_NOT_FOUND,
 } from '@shared/messages/user/user.errors';
 import { AUTH_INVALID_PASSWORD } from '@shared/messages/auth/auth.errors';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { validateOrReject } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import {

@@ -11,12 +11,13 @@ import {
   UseInterceptors,
   UploadedFile,
   Res,
+  HttpStatus,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import {
   ApiBadRequestResponse,
-  ApiBearerAuth,
   ApiConflictResponse,
+  ApiCookieAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNoContentResponse,
@@ -43,11 +44,11 @@ import { uploadFileDocs } from './docs/badge/uploadFile.admin.docs';
 import { ResAdminUploadFileDto } from './dto/badge/uploadFile.admin.dto';
 import { IBADGE_ADMIN_SERVICE } from '@shared/constants/provider.constant';
 
-@ApiTags('Admin - Badge')
-@ApiBearerAuth()
-@ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
-@ApiForbiddenResponse(adminDocs.forbidden)
 @Controller('/admin/badges')
+@ApiTags('Admin - Badge')
+@ApiCookieAuth('accessToken')
+@ApiForbiddenResponse(adminDocs.forbidden)
+@ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 @UseGuards(JwtAuthGuard, AdminAuthGuard)
 export class BadgeAdminController {
   constructor(
@@ -56,7 +57,7 @@ export class BadgeAdminController {
   ) {}
 
   @Post()
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation(createBadgeDocs.operation)
   @ApiCreatedResponse(createBadgeDocs.createdResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
@@ -71,7 +72,7 @@ export class BadgeAdminController {
   }
 
   @Patch('/:id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation(updateBadgeDocs.operation)
   @ApiNoContentResponse(updateBadgeDocs.noContentResponse)
   @ApiBadRequestResponse(globalDocs.invalidationResponse)
@@ -87,7 +88,7 @@ export class BadgeAdminController {
   }
 
   @Delete('/:id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation(deleteBadgeDocs.operation)
   @ApiNoContentResponse(deleteBadgeDocs.noContentResponse)
   async deleteBadge(
@@ -97,7 +98,7 @@ export class BadgeAdminController {
   }
 
   @Post('upload-image')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation(uploadFileDocs.operation)
   @ApiCreatedResponse(uploadFileDocs.createdResponse)
   @UseInterceptors(FileInterceptor('file'))

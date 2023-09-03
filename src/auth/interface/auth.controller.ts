@@ -9,6 +9,7 @@ import {
   Body,
   HttpCode,
   Header,
+  HttpStatus,
 } from '@nestjs/common';
 import { LocalAuthGuard } from '@auth/infrastructure/passport/guards/local.guard';
 import { Request, Response } from 'express';
@@ -17,7 +18,6 @@ import { GoogleAuthGuard } from '@auth/infrastructure/passport/guards/google.gua
 import { KakaoAuthGuard } from '@auth/infrastructure/passport/guards/kakao.guard';
 import {
   ApiBadRequestResponse,
-  ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
   ApiCookieAuth,
@@ -46,9 +46,8 @@ import {
   IAUTH_SERVICE,
   IHANDLE_DATE_TIME,
 } from '@shared/constants/provider.constant';
-
-@ApiTags('Auth')
 @Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
   constructor(
     @Inject(IAUTH_SERVICE)
@@ -58,9 +57,9 @@ export class AuthController {
   ) {}
 
   @Get('status')
-  @HttpCode(200)
+  @ApiCookieAuth('accessToken')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation(validateLoggedInDocs.operation)
   @ApiOkResponse(validateLoggedInDocs.okResponse)
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
@@ -69,7 +68,7 @@ export class AuthController {
   }
 
   @Post('login')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @UseGuards(LocalAuthGuard)
   @ApiOperation(loginDocs.operation)
   @ApiCreatedResponse(loginDocs.okResponse)
@@ -102,9 +101,9 @@ export class AuthController {
   }
 
   @Post('logout')
-  @HttpCode(204)
+  @ApiCookieAuth('accessToken')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation(logoutDocs.operation)
   @ApiNoContentResponse(logoutDocs.noContentResponse)
   @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
@@ -116,8 +115,8 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @HttpCode(201)
   @ApiCookieAuth('refreshToken')
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation(refreshDocs.operation)
   @ApiCreatedResponse(refreshDocs.createdResponse)
   @ApiUnauthorizedResponse(refreshDocs.unauthorizedResponse)
@@ -142,9 +141,9 @@ export class AuthController {
   }
 
   @Post('check-password')
-  @HttpCode(204)
+  @ApiCookieAuth('accessToken')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation(checkPasswordDocs.operation)
   @ApiNoContentResponse(checkPasswordDocs.noContentResponse)
   @ApiUnauthorizedResponse(checkPasswordDocs.invalidCheckPassword)
@@ -160,7 +159,7 @@ export class AuthController {
   }
 
   @Get('google/callback')
-  @HttpCode(302)
+  @HttpCode(HttpStatus.FOUND)
   @Header('Location', process.env.ORIGIN)
   @UseGuards(GoogleAuthGuard)
   @ApiOperation(socialLoginDocs.google.operation)
@@ -189,7 +188,7 @@ export class AuthController {
   }
 
   @Get('kakao/callback')
-  @HttpCode(302)
+  @HttpCode(HttpStatus.FOUND)
   @Header('Location', process.env.ORIGIN)
   @UseGuards(KakaoAuthGuard)
   @ApiOperation(socialLoginDocs.kakao.operation)
@@ -214,5 +213,6 @@ export class AuthController {
         jwtExpiration.refreshTokenExpirationDays,
       ),
     });
+    res.send();
   }
 }
