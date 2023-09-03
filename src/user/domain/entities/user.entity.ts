@@ -14,7 +14,7 @@ export class UserEntity implements User {
   readonly createdAt: Date;
   @Expose() readonly selectedBadge: { iconLink: string };
 
-  @Exclude() readonly password: string;
+  @Exclude() readonly password?: string;
 }
 
 type ReadonlyRecord<K extends string, V> = Readonly<Record<K, V>>;
