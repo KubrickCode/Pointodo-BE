@@ -13,7 +13,7 @@ import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import basicAuth from 'express-basic-auth';
 import csurf from 'csurf';
-import { csrfConfg } from '@shared/config/csrf.config';
+import { csrfConfig } from '@shared/config/csrf.config';
 import { helmetConfig } from '@shared/config/helmet.config';
 
 const bootstrap = async () => {
@@ -26,9 +26,9 @@ const bootstrap = async () => {
 
   app.use(cookieParser());
 
-  app.use(csurf(csrfConfg.csrfOption));
+  app.use(csurf(csrfConfig.csrfOption));
 
-  app.use(csrfConfg.csrfMiddleWare);
+  app.use(csrfConfig.csrfMiddleWare);
 
   app.use(helmet(helmetConfig.helmetOptions));
   app.enableCors(corsOptions(configService));

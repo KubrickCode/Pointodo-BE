@@ -162,7 +162,6 @@ export class AuthService implements IAuthService {
     const { email, provider } = socialUser;
     const user = await this.userRepository.findByEmail(email);
     if (user) {
-      this.logger.log('info', `소셜 로그인 성공-유저 ID:${user.id}`);
       return await this.login(user);
     } else {
       const newUser = await this.userRepository.createUser(
@@ -174,7 +173,6 @@ export class AuthService implements IAuthService {
         newUser.id,
         DEFAULT_BADGE_ID,
       );
-      this.logger.log('info', `소셜 로그인 성공-유저 ID:${newUser.id}`);
       return await this.login(newUser);
     }
   }
