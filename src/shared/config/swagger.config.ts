@@ -32,3 +32,12 @@ export const swaggerConfig = new DocumentBuilder()
   .addTag('Admin - Badge', '관리자(뱃지) 관련 API')
   .addServer('http://localhost:3000/api')
   .build();
+
+export const swaggerAuthConfig = {
+  challenge: true,
+  users: {
+    [process.env.SWAGGER_USER]: process.env.SWAGGER_PASSWORD,
+  },
+};
+
+export const swaggerEndPoint = '/api/docs';
