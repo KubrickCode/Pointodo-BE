@@ -1,20 +1,14 @@
 import { UUID } from 'crypto';
-import { ProviderType, RoleType } from '../entities/user.entity';
-import { Transform, Type } from 'class-transformer';
+import { UserEntity } from '../entities/user.entity';
+import { Exclude, Expose } from 'class-transformer';
 
 export class ReqGetUserAppDto {
-  readonly id: UUID;
+  @Expose() readonly id: UUID;
 }
 
-export class ResGetUserAppDto {
-  readonly id: UUID;
-  readonly email: string;
-  readonly provider: ProviderType;
-  readonly role: RoleType;
-  readonly selectedBadgeId: number;
-  readonly selectedBadge: { iconLink: string };
+export class ResGetUserAppDto extends UserEntity {
+  @Expose() readonly iconLink: string;
 
-  @Type(() => Date)
-  @Transform(({ value }) => new Date(value), { toClassOnly: true })
-  readonly createdAt: Date;
+  @Exclude() readonly id: UUID;
+  @Exclude() readonly selectedBadge: { iconLink: string };
 }

@@ -3,7 +3,6 @@ import { BADGE_ICON_LINK } from '@shared/constants/badge.constant';
 import {
   USER_EMAIL,
   USER_EMAIL_EXAMPLE,
-  USER_ID,
   USER_PROVIDER,
   USER_PROVIDER_EXAMPLE,
   USER_REGISTER_DATE,
@@ -18,21 +17,9 @@ import {
   RoleTypes,
 } from '@user/domain/entities/user.entity';
 import { Transform, Type } from 'class-transformer';
-import {
-  IsDate,
-  IsEnum,
-  IsInt,
-  IsObject,
-  IsString,
-  IsUUID,
-} from 'class-validator';
-import { UUID } from 'crypto';
+import { IsDate, IsEnum, IsInt, IsString } from 'class-validator';
 
 export class ResGetUserDto {
-  @ApiProperty({ description: USER_ID })
-  @IsUUID()
-  readonly id: UUID;
-
   @ApiProperty({ example: USER_EMAIL_EXAMPLE, description: USER_EMAIL })
   @IsString()
   readonly email: string;
@@ -56,6 +43,6 @@ export class ResGetUserDto {
   readonly createdAt: Date;
 
   @ApiProperty({ description: BADGE_ICON_LINK })
-  @IsObject()
-  readonly selectedBadge: { iconLink: string };
+  @IsString()
+  readonly iconLink: string;
 }
