@@ -129,7 +129,14 @@ export class AuthController {
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
       const { refreshToken } = req.cookies;
-      const { accessToken } = await this.authService.refresh({ refreshToken });
+      const { browser, platform, os, version } = useragent.parse(
+        req.headers['user-agent'],
+      );
+      const { accessToken } = await this.authService.refresh({
+        refreshToken,
+        ip: req.ip,
+        device: { browser, platform, os, version },
+      });
       res.cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: true,

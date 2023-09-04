@@ -22,6 +22,8 @@ import {
   AUTH_INVALID_ADMIN,
   AUTH_INVALID_PASSWORD,
   AUTH_INVALID_TOKEN,
+  OTHER_DEVICE,
+  OTHER_IP,
 } from '@shared/messages/auth/auth.errors';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
 import {
@@ -123,9 +125,10 @@ export class AuthService implements IAuthService {
   async login(req: ReqLoginAppDto): Promise<ResLoginAppDto> {
     const accessToken = this.tokenService.generateAccessToken(req);
     const refreshToken = this.tokenService.generateRefreshToken(req);
+    const { ip, device } = req;
     await this.redisService.set(
       `refresh_token:${req.id}`,
-      refreshToken,
+      { refreshToken, ip, device },
       jwtExpiration.refreshTokenExpirationSeconds,
     );
     this.logger.log('info', `${LOGIN_SUCCESS_MESSAGE}-유저 ID:${req.id}`);
@@ -143,17 +146,25 @@ export class AuthService implements IAuthService {
     if (!decoded || !decoded.id) {
       throw new UnauthorizedException(AUTH_INVALID_TOKEN);
     }
-    const redisToken = await this.redisService.get(
+    const redisRefreshInfo = await this.redisService.get(
       `refresh_token:${decoded.id}`,
     );
 
-    if (redisToken === null) {
+    if (redisRefreshInfo === null) {
       this.logger.error(AUTH_EXPIRED_REFRESH_TOKEN);
       throw new UnauthorizedException(AUTH_EXPIRED_REFRESH_TOKEN);
     }
-    if (req.refreshToken !== redisToken) {
+    if (req.refreshToken !== redisRefreshInfo.refreshToken) {
       this.logger.error(AUTH_INVALID_TOKEN);
       throw new UnauthorizedException(AUTH_INVALID_TOKEN);
+    }
+    if (req.ip !== redisRefreshInfo.ip) {
+      this.logger.error(OTHER_IP);
+      throw new UnauthorizedException(OTHER_IP);
+    }
+    if (req.device !== redisRefreshInfo.device) {
+      this.logger.error(OTHER_DEVICE);
+      throw new UnauthorizedException(OTHER_DEVICE);
     }
     const user = await this.userRepository.findById(decoded.id);
     const accessToken = this.tokenService.generateAccessToken(user);

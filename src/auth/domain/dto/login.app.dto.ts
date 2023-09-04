@@ -11,7 +11,7 @@ export class ResLoginAppDto {
   readonly refreshToken?: string;
 }
 
-interface DeviceInfo {
+export interface DeviceInfo {
   readonly browser: string;
   readonly platform: string;
   readonly os: string;
