@@ -9,4 +9,5 @@ export const mockUserRepository = {
   changeSelectedBadgeToDefault: jest.fn(),
   getUserList: jest.fn(),
   getTotalUserListPages: jest.fn(),
+  getTopUsersOnDate: jest.fn(),
 };
