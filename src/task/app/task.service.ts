@@ -82,13 +82,14 @@ export class TaskService implements ITaskService {
   async getTasksLogs(
     req: ReqGetTasksLogsAppDto,
   ): Promise<ResGetTasksLogsAppDto[]> {
-    return await this.taskRepository.getTasksLogs(
+    const result = await this.taskRepository.getTasksLogs(
       req.userId,
       req.taskType,
       req.limit,
       (req.offset - 1) * req.limit,
       req.order,
     );
+    return result.map((item) => plainToClass(ResGetTasksLogsAppDto, item));
   }
 
   async getTotalTaskPages(
