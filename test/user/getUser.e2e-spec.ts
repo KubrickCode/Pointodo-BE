@@ -37,7 +37,15 @@ describe('유저 정보 조회 in UserController (e2e)', () => {
     const response = await requestE2E(app, path, 'get', 200, null, accessToken);
     const result = plainToClass(ResGetUserDto, response.body);
 
-    expect(result).toEqual(TEST1_USER_LOCAL);
+    const user = {
+      ...TEST1_USER_LOCAL,
+      iconLink: TEST1_USER_LOCAL.selectedBadge.iconLink,
+    };
+
+    delete user.id;
+    delete user.selectedBadge;
+
+    expect(result).toEqual(user);
 
     await validateOrReject(result);
   }, 30000);

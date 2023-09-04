@@ -35,6 +35,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
 
+    console.log(request.headers['user-agent']);
+
     const { accessToken } = request?.cookies;
 
     request.user = await this.validateToken(accessToken);

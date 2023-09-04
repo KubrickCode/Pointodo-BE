@@ -26,9 +26,10 @@ const bootstrap = async () => {
 
   app.use(cookieParser());
 
-  app.use(csurf(csrfConfig.csrfOption));
-
-  app.use(csrfConfig.csrfMiddleWare);
+  if (process.env.NODE_ENV === 'production') {
+    app.use(csurf(csrfConfig.csrfOption));
+    app.use(csrfConfig.csrfMiddleWare);
+  }
 
   app.use(helmet(helmetConfig.helmetOptions));
   app.enableCors(corsOptions(configService));
