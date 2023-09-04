@@ -2,6 +2,7 @@ import { UUID } from 'crypto';
 import {
   EarnedPointsLogEntity,
   EarnedPointsLogWithTaskName,
+  TopOfUserOnDate,
 } from '../entities/earnedPointsLog.entity';
 import {
   SpentPointsLogEntity,
@@ -49,4 +50,9 @@ export interface IPointRepository {
   deleteEarnedPointLog(id: number): Promise<EarnedPointsLogEntity>;
 
   deleteSpentPointLog(id: number): Promise<SpentPointsLogEntity>;
+
+  getTopUserOnDate(
+    startDate: string,
+    endDate: string,
+  ): Promise<TopOfUserOnDate[]>;
 }

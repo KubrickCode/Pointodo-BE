@@ -4,6 +4,7 @@ import { PrismaService } from '@shared/service/prisma.service';
 import {
   EarnedPointsLogEntity,
   EarnedPointsLogWithTaskName,
+  TopOfUserOnDate,
 } from '@point/domain/entities/earnedPointsLog.entity';
 import { IPointRepository } from 'src/point/domain/interfaces/point.repository.interface';
 import {
@@ -232,5 +233,12 @@ export class PointRepository implements IPointRepository {
     const deletedLog = await this.prisma.$queryRawUnsafe<number>(query, id);
 
     return deletedLog[0];
+  }
+
+  async getTopUserOnDate(
+    startDate: string,
+    endDate: string,
+  ): Promise<TopOfUserOnDate[]> {
+    return;
   }
 }

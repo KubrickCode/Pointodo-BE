@@ -3,6 +3,7 @@ import { PrismaService } from '@shared/service/prisma.service';
 import {
   EarnedPointsLogEntity,
   EarnedPointsLogWithTaskName,
+  TopOfUserOnDate,
 } from '@point/domain/entities/earnedPointsLog.entity';
 import { IPointRepository } from 'src/point/domain/interfaces/point.repository.interface';
 import {
@@ -207,5 +208,51 @@ export class PointRepository implements IPointRepository {
   async deleteSpentPointLog(id: number): Promise<SpentPointsLogEntity> {
     const result = await this.prisma.spentPointsLogs.delete({ where: { id } });
     return plainToClass(SpentPointsLogEntity, result);
+  }
+
+  async getTopUserOnDate(
+    startDate: string,
+    endDate: string,
+  ): Promise<TopOfUserOnDate[]> {
+    const topUsers = await this.prisma.earnedPointsLogs.groupBy({
+      by: ['userId'],
+      where: {
+        occurredAt: {
+          gte: new Date(startDate),
+          lt: new Date(endDate),
+        },
+      },
+      _sum: {
+        points: true,
+      },
+      orderBy: {
+        _sum: {
+          points: 'desc',
+        },
+      },
+      take: 10,
+    });
+
+    const topUsersWithEmail = await this.prisma.user.findMany({
+      where: {
+        id: {
+          in: topUsers.map((user) => user.userId),
+        },
+      },
+      select: {
+        id: true,
+        email: true,
+      },
+    });
+
+    const result = topUsers.map((user) =>
+      plainToClass(TopOfUserOnDate, {
+        userId: user.userId,
+        email: topUsersWithEmail.find((u) => u.id === user.userId).email,
+        points: user._sum.points,
+      }),
+    );
+
+    return result;
   }
 }
