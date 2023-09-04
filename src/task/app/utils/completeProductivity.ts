@@ -1,5 +1,5 @@
 import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
-import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
+import { UserBadgeLogEntity } from '@badge/domain/entities/userBadgeLog.entity';
 import {
   PRODUCTIVITY_GOAL_FOR_A_MONTH_AGO,
   PRODUCTIVITY_GOAL_FOR_A_WEEK_AGO,
@@ -12,7 +12,7 @@ export const completeProductivity = async (
   createUserBadgeLog: (
     userId: string,
     badgeId: number,
-  ) => Promise<UserBadgeEntity>,
+  ) => Promise<UserBadgeLogEntity>,
   updateProductivity: (
     dateCount: number,
     userId: string,

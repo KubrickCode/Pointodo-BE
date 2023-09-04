@@ -1,5 +1,5 @@
 import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
-import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
+import { UserBadgeLogEntity } from '@badge/domain/entities/userBadgeLog.entity';
 import { DIVERSITY_GOAL } from '@shared/constants/task.constant';
 import { TaskType_ } from '@task/domain/entities/task.entity';
 
@@ -10,7 +10,7 @@ export const completeDiversity = async (
   createUserBadgeLog: (
     userId: string,
     badgeId: number,
-  ) => Promise<UserBadgeEntity>,
+  ) => Promise<UserBadgeLogEntity>,
   getBadgeIdByName: (name: string) => Promise<Pick<BadgeEntity, 'id'>>,
 ) => {
   if (updatedDiversity === DIVERSITY_GOAL) {

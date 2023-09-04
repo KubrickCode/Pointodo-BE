@@ -1,4 +1,4 @@
-import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
+import { UserBadgeLogEntity } from '@badge/domain/entities/userBadgeLog.entity';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
@@ -12,16 +12,16 @@ export class UserBadgeRepository implements IUserBadgeRepository {
   async createUserBadgeLog(
     userId: UUID,
     badgeId: number,
-  ): Promise<UserBadgeEntity> {
+  ): Promise<UserBadgeLogEntity> {
     const result = await this.prisma.userBadgesLogs.create({
       data: { userId, badgeId },
     });
-    return plainToClass(UserBadgeEntity, result);
+    return plainToClass(UserBadgeLogEntity, result);
   }
 
   async getUserBadgeList(
     userId: UUID,
-  ): Promise<Array<Pick<UserBadgeEntity, 'badgeId'>>> {
+  ): Promise<Array<Pick<UserBadgeLogEntity, 'badgeId'>>> {
     const result = await this.prisma.userBadgesLogs.findMany({
       where: { userId },
     });
@@ -52,18 +52,18 @@ export class UserBadgeRepository implements IUserBadgeRepository {
     }));
   }
 
-  async deleteUserBadgeLog(id: number): Promise<UserBadgeEntity> {
+  async deleteUserBadgeLog(id: number): Promise<UserBadgeLogEntity> {
     const result = await this.prisma.userBadgesLogs.delete({ where: { id } });
-    return plainToClass(UserBadgeEntity, result);
+    return plainToClass(UserBadgeLogEntity, result);
   }
 
   async deleteUserBadge(
     badgeId: number,
     userId: UUID,
-  ): Promise<UserBadgeEntity> {
+  ): Promise<UserBadgeLogEntity> {
     const result = await this.prisma.userBadgesLogs.delete({
       where: { userId_badgeId: { userId, badgeId } },
     });
-    return plainToClass(UserBadgeEntity, result);
+    return plainToClass(UserBadgeLogEntity, result);
   }
 }

@@ -2,7 +2,7 @@ import { PrismaService } from '@shared/service/prisma.service';
 import { TEST1_USER_LOCAL } from '@shared/test/userMockData';
 import { UUID } from 'crypto';
 import { UserBadgeRepository } from '../prisma/userBadge.repository';
-import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
+import { UserBadgeEntity } from '@badge/domain/entities/userBadgeLog.entity';
 
 describe('getUserBadgeList', () => {
   let prisma: PrismaService;
