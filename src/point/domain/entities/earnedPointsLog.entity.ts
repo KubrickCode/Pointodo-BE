@@ -2,7 +2,7 @@ import { EarnedPointsLogs } from '@prisma/client';
 import { Expose } from 'class-transformer';
 import { UUID } from 'crypto';
 
-export class EarnedPointEntity implements EarnedPointsLogs {
+export class EarnedPointsLogEntity implements EarnedPointsLogs {
   @Expose() readonly id: number;
   @Expose() readonly taskId: number;
   @Expose() readonly userId: UUID;
@@ -10,6 +10,6 @@ export class EarnedPointEntity implements EarnedPointsLogs {
   @Expose() readonly occurredAt: Date;
 }
 
-export class EarnedPointWithTaskName extends EarnedPointEntity {
+export class EarnedPointsLogWithTaskName extends EarnedPointsLogEntity {
   @Expose() readonly taskName: string;
 }
