@@ -1,5 +1,5 @@
 import { User, Provider, Role } from '@prisma/client';
-import { Exclude, Expose, Transform, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { UUID } from 'crypto';
 
 export class UserEntity implements User {
@@ -13,8 +13,7 @@ export class UserEntity implements User {
   @Transform(({ value }) => new Date(value), { toClassOnly: true })
   readonly createdAt: Date;
   @Expose() readonly selectedBadge: { iconLink: string };
-
-  @Exclude() readonly password?: string;
+  @Expose() readonly password?: string;
 }
 
 type ReadonlyRecord<K extends string, V> = Readonly<Record<K, V>>;

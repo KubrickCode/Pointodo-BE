@@ -11,4 +11,5 @@ export class ResGetUserAppDto extends UserEntity {
 
   @Exclude() readonly id: UUID;
   @Exclude() readonly selectedBadge: { iconLink: string };
+  @Exclude() readonly password: string;
 }
