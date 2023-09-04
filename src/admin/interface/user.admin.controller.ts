@@ -1,6 +1,7 @@
 import { AdminAuthGuard } from '@auth/infrastructure/passport/guards/admin.guard';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -48,6 +49,11 @@ import {
   IBADGE_SERVICE,
   IUSER_SERVICE,
 } from '@shared/constants/provider.constant';
+import {
+  ReqGetTopUsersOnDateDto,
+  ResGetTopUsersOnDateDto,
+} from './dto/user/getTopUserOnDate.dto';
+import { plainToClass } from 'class-transformer';
 @Controller('/admin/users')
 @ApiTags('Admin - User')
 @ApiCookieAuth('accessToken')
@@ -115,5 +121,13 @@ export class UserAdminController {
   ): Promise<void> {
     const { userId, badgeId } = query;
     await this.badgeService.deleteUserBadge({ userId, badgeId });
+  }
+
+  @Get('/top-users')
+  async getTopUserOnDate(
+    @Body() body: ReqGetTopUsersOnDateDto,
+  ): Promise<ResGetTopUsersOnDateDto[]> {
+    const result = await this.userService.getTopUsersOnDate({ ...body });
+    return result.map((item) => plainToClass(ResGetTopUsersOnDateDto, item));
   }
 }
