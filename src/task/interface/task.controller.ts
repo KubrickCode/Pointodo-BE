@@ -46,6 +46,7 @@ import {
   ResGetTotalTaskPagesDto,
 } from './dto/getTotalTaskPages.dto';
 import { ITASK_SERVICE } from '@shared/constants/provider.constant';
+import { plainToClass } from 'class-transformer';
 
 @Controller('tasks')
 @ApiTags('Task')
@@ -67,13 +68,14 @@ export class TaskController {
     @Query() query: ReqGetTasksLogsQueryDto,
   ): Promise<ResGetTasksLogsDto[]> {
     const { taskType, offset, order, limit } = query;
-    return await this.taskService.getTasksLogs({
+    const result = await this.taskService.getTasksLogs({
       userId: req.user.id,
       taskType,
       offset,
       limit,
       order,
     });
+    return result.map((item) => plainToClass(ResGetTasksLogsDto, item));
   }
 
   @Get('/count-pages')

@@ -12,11 +12,9 @@ import {
   TASK_PAGE,
   TASK_TYPE_NAME,
 } from '@shared/constants/task.constant';
-import { USER_ID } from '@shared/constants/user.constant';
 import { TaskType_ } from '@task/domain/entities/task.entity';
 import { Transform, Type } from 'class-transformer';
-import { IsDate, IsInt, IsOptional, IsString, IsUUID } from 'class-validator';
-import { UUID } from 'crypto';
+import { IsDate, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqGetTasksLogsQueryDto {
   @ApiProperty({ description: TASK_TYPE_NAME })
@@ -43,10 +41,6 @@ export class ResGetTasksLogsDto {
   @ApiProperty({ description: TASK_LOG_ID })
   @IsInt()
   readonly id: number;
-
-  @ApiProperty({ description: USER_ID })
-  @IsUUID()
-  readonly userId: UUID;
 
   @ApiProperty({ description: TASK_TYPE_NAME })
   @IsInt()
