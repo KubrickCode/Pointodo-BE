@@ -35,7 +35,10 @@ import {
   ReqRefreshAppDto,
   ResRefreshAppDto,
 } from '@auth/domain/dto/refresh.app.dto';
-import { ReqSocialLoginAppDto } from '@auth/domain/dto/socialLogin.app.dto';
+import {
+  ReqSocialLoginAppDto,
+  ResSocialLoginAppDto,
+} from '@auth/domain/dto/socialLogin.app.dto';
 import {
   ReqValidateAdminAppDto,
   ResValidateAdminAppDto,
@@ -158,11 +161,13 @@ export class AuthService implements IAuthService {
     return { accessToken };
   }
 
-  async socialLogin(socialUser: ReqSocialLoginAppDto): Promise<ResLoginAppDto> {
+  async socialLogin(
+    socialUser: ReqSocialLoginAppDto,
+  ): Promise<ResSocialLoginAppDto> {
     const { email, provider } = socialUser;
     const user = await this.userRepository.findByEmail(email);
     if (user) {
-      return await this.login(user);
+      return plainToClass(ResSocialLoginAppDto, { id: user.id });
     } else {
       const newUser = await this.userRepository.createUser(
         email,
@@ -173,7 +178,7 @@ export class AuthService implements IAuthService {
         newUser.id,
         DEFAULT_BADGE_ID,
       );
-      return await this.login(newUser);
+      return plainToClass(ResSocialLoginAppDto, { id: newUser.id });
     }
   }
 

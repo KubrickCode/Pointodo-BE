@@ -168,7 +168,10 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
-    res.cookie('accessToken', req.user.accessToken, {
+    const { accessToken, refreshToken } = await this.authService.login({
+      id: req.user.id,
+    });
+    res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
@@ -176,7 +179,7 @@ export class AuthController {
         jwtExpiration.refreshTokenExpirationDays,
       ),
     });
-    res.cookie('refreshToken', req.user.refreshToken, {
+    res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
@@ -197,7 +200,10 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
-    res.cookie('accessToken', req.user.accessToken, {
+    const { accessToken, refreshToken } = await this.authService.login({
+      id: req.user.id,
+    });
+    res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
@@ -205,7 +211,7 @@ export class AuthController {
         jwtExpiration.refreshTokenExpirationDays,
       ),
     });
-    res.cookie('refreshToken', req.user.refreshToken, {
+    res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
