@@ -1,4 +1,4 @@
-import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
+import { UserBadgeLogEntity } from '@badge/domain/entities/userBadgeLog.entity';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { UserBadgesLogs } from '@prisma/client';
@@ -13,7 +13,7 @@ export class UserBadgeRepository implements IUserBadgeRepository {
   async createUserBadgeLog(
     userId: UUID,
     badgeId: number,
-  ): Promise<UserBadgeEntity> {
+  ): Promise<UserBadgeLogEntity> {
     const query = `
       INSERT INTO "UserBadgesLogs" ("userId", "badgeId")
       VALUES ($1::uuid, $2)
@@ -29,7 +29,7 @@ export class UserBadgeRepository implements IUserBadgeRepository {
 
   async getUserBadgeList(
     userId: UUID,
-  ): Promise<Array<Pick<UserBadgeEntity, 'badgeId'>>> {
+  ): Promise<Array<Pick<UserBadgeLogEntity, 'badgeId'>>> {
     const query = `
       SELECT "badgeId" FROM "UserBadgesLogs"
       WHERE "userId" = $1::uuid
@@ -58,7 +58,7 @@ export class UserBadgeRepository implements IUserBadgeRepository {
     return userBadgeList;
   }
 
-  async deleteUserBadgeLog(id: number): Promise<UserBadgeEntity> {
+  async deleteUserBadgeLog(id: number): Promise<UserBadgeLogEntity> {
     const query = `
       DELETE FROM "UserBadgesLogs"
       WHERE id = $1
@@ -68,13 +68,13 @@ export class UserBadgeRepository implements IUserBadgeRepository {
       query,
       ...values,
     );
-    return plainToClass(UserBadgeEntity, deleteBadgeLog);
+    return plainToClass(UserBadgeLogEntity, deleteBadgeLog);
   }
 
   async deleteUserBadge(
     badgeId: number,
     userId: UUID,
-  ): Promise<UserBadgeEntity> {
+  ): Promise<UserBadgeLogEntity> {
     const query = `
       DELETE FROM "UserBadgesLogs"
       WHERE "badgeId" = $1 AND "userId" = $2::uuid
@@ -84,6 +84,6 @@ export class UserBadgeRepository implements IUserBadgeRepository {
       query,
       ...values,
     );
-    return plainToClass(UserBadgeEntity, deleteBadgeLog);
+    return plainToClass(UserBadgeLogEntity, deleteBadgeLog);
   }
 }

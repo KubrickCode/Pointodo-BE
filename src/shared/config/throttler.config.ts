@@ -1,7 +1,11 @@
-export const throttlerTTL = 1;
-export const throttlerLimit = process.env.NODE_ENV === 'production' ? 1 : 1000;
+const throttlerTTL = 60;
+const throttlerLimit = process.env.NODE_ENV === 'production' ? 60 : 60000;
 
-export const throttlerOption = {
-  ttl: throttlerTTL,
-  limit: throttlerLimit,
+export const throttlerConfig = {
+  throttlerTTL,
+  throttlerLimit,
+  throttlerOption: {
+    ttl: throttlerTTL,
+    limit: throttlerLimit,
+  },
 };

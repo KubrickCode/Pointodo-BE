@@ -9,6 +9,7 @@ import { TEST1_USER_LOCAL } from '@shared/test/userMockData';
 import { v4 as uuidv4 } from 'uuid';
 import { UUID } from 'crypto';
 import { USER_NOT_FOUND } from '@shared/messages/user/user.errors';
+import { plainToClass } from 'class-transformer';
 
 describe('getUser', () => {
   let userService: UserService;
@@ -33,10 +34,13 @@ describe('getUser', () => {
   };
 
   it('유저 조회 APP에서 FROM DB', async () => {
-    const expectedResponse = TEST1_USER_LOCAL;
+    const expectedResponse = {
+      ...TEST1_USER_LOCAL,
+      iconLink: TEST1_USER_LOCAL.selectedBadge.iconLink,
+    };
 
     const user = await userService.getUser(req);
-    expect(user).toEqual(expectedResponse);
+    expect(user).toEqual(plainToClass(ResGetUserAppDto, expectedResponse));
     expect(user).toBeInstanceOf(ResGetUserAppDto);
   }, 30000);
 

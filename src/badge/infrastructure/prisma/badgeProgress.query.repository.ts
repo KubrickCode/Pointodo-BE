@@ -3,23 +3,24 @@ import { PrismaService } from '@shared/service/prisma.service';
 import { BadgeProgressEntity } from '@badge/domain/entities/badgeProgress.entity';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 import { BadgeProgress } from '@prisma/client';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class BadgeProgressRepository implements IBadgeProgressRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAllBadgeProgress(
-    userId: string,
-  ): Promise<Array<Pick<BadgeProgressEntity, 'badgeId' | 'progress'>>> {
+  async getAllBadgeProgress(userId: string): Promise<BadgeProgressEntity[]> {
     const query = `
-    SELECT "badgeId", progress FROM "BadgeProgress"
+    SELECT * FROM "BadgeProgress"
     WHERE "userId" = $1::uuid
     `;
     const values = [userId];
     const badgeProgressList = await this.prisma.$queryRawUnsafe<
-      Array<Pick<BadgeProgress, 'badgeId' | 'progress'>>
+      Array<BadgeProgress>
     >(query, ...values);
-    return badgeProgressList;
+    return badgeProgressList.map((item) =>
+      plainToClass(BadgeProgressEntity, item),
+    );
   }
 
   async updateConsistency(

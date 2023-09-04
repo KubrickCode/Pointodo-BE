@@ -1,22 +1,22 @@
 import { UUID } from 'crypto';
-import { TaskType_ } from '../entities/task.entity';
+import {
+  TASK_ORDER_TYPE,
+  TASK_VISIBLE_BY_COMPLETION_TYPE,
+  TaskEntity,
+  TaskType_,
+} from '../entities/task.entity';
+import { Exclude } from 'class-transformer';
 
 export class ReqGetTasksLogsAppDto {
   readonly userId: UUID;
   readonly taskType: TaskType_;
   readonly offset: number;
   readonly limit: number;
-  readonly order: string;
+  readonly order: TASK_ORDER_TYPE;
+  readonly completion: TASK_VISIBLE_BY_COMPLETION_TYPE;
 }
 
-export class ResGetTasksLogsAppDto {
-  readonly id: number;
-  readonly userId: UUID;
-  readonly taskType: TaskType_;
-  readonly name: string;
-  readonly description: string;
-  readonly completion: number;
-  readonly importance: number;
-  readonly occurredAt: Date;
-  readonly dueDate?: string;
+export class ResGetTasksLogsAppDto extends TaskEntity {
+  @Exclude() readonly version: number;
+  @Exclude() readonly userId: UUID;
 }

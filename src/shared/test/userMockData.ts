@@ -60,6 +60,10 @@ export const MOCK_USER = {
   provider: 'LOCAL' as ProviderType,
   role: 'USER' as RoleType,
   createdAt: new Date(),
+  selectedBadge: {
+    iconLink:
+      'https://pointodo-s3-bucket.s3.ap-northeast-2.amazonaws.com/pointodo/%EA%B8%B0%EB%B3%B8.png',
+  },
 };
 
 export const TEST_PASSWORD = 'test1234!@';

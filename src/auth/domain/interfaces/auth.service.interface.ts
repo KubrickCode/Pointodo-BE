@@ -6,7 +6,10 @@ import { ReqCheckPasswordAppDto } from '../dto/checkPassword.app.dto';
 import { ReqLoginAppDto, ResLoginAppDto } from '../dto/login.app.dto';
 import { ReqLogoutAppDto } from '../dto/logout.app.dto';
 import { ReqRefreshAppDto, ResRefreshAppDto } from '../dto/refresh.app.dto';
-import { ReqSocialLoginAppDto } from '../dto/socialLogin.app.dto';
+import {
+  ReqSocialLoginAppDto,
+  ResSocialLoginAppDto,
+} from '../dto/socialLogin.app.dto';
 import {
   ReqValidateAdminAppDto,
   ResValidateAdminAppDto,
@@ -23,7 +26,7 @@ export interface IAuthService {
 
   refresh(req: ReqRefreshAppDto): Promise<ResRefreshAppDto>;
 
-  socialLogin(socialUser: ReqSocialLoginAppDto): Promise<ResLoginAppDto>;
+  socialLogin(socialUser: ReqSocialLoginAppDto): Promise<ResSocialLoginAppDto>;
 
   validateAdmin(req: ReqValidateAdminAppDto): Promise<ResValidateAdminAppDto>;
 }

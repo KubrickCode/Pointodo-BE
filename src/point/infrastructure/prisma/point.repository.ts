@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
 import {
-  EarnedPointEntity,
-  EarnedPointWithTaskName,
-} from '@point/domain/entities/earnedPoint.entity';
+  EarnedPointsLogEntity,
+  EarnedPointsLogWithTaskName,
+} from '@point/domain/entities/earnedPointsLog.entity';
 import { IPointRepository } from 'src/point/domain/interfaces/point.repository.interface';
 import {
-  SpentPointEntity,
-  SpentPointWithBadgeName,
-} from '@point/domain/entities/spentPoint.entity';
+  SpentPointsLogEntity,
+  SpentPointsLogWithBadgeName,
+} from '@point/domain/entities/spentPointsLog.entity';
 import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 import { plainToClass } from 'class-transformer';
 import { UUID } from 'crypto';
@@ -27,7 +27,7 @@ export class PointRepository implements IPointRepository {
     limit: number,
     offset: number,
     order: string,
-  ): Promise<EarnedPointWithTaskName[]> {
+  ): Promise<EarnedPointsLogWithTaskName[]> {
     const result = await this.prisma.earnedPointsLogs.findMany({
       where: {
         userId,
@@ -52,7 +52,7 @@ export class PointRepository implements IPointRepository {
     });
 
     return result.map((item) =>
-      plainToClass(EarnedPointWithTaskName, {
+      plainToClass(EarnedPointsLogWithTaskName, {
         id: item.id,
         taskId: item.taskId,
         userId: item.userId,
@@ -68,7 +68,7 @@ export class PointRepository implements IPointRepository {
     limit: number,
     offset: number,
     order: string,
-  ): Promise<SpentPointWithBadgeName[]> {
+  ): Promise<SpentPointsLogWithBadgeName[]> {
     const result = await this.prisma.spentPointsLogs.findMany({
       where: {
         userId,
@@ -97,7 +97,7 @@ export class PointRepository implements IPointRepository {
     });
 
     return result.map((item) =>
-      plainToClass(SpentPointWithBadgeName, {
+      plainToClass(SpentPointsLogWithBadgeName, {
         id: item.id,
         badgeLogId: item.badgeLogId,
         userId: item.userId,
@@ -144,22 +144,22 @@ export class PointRepository implements IPointRepository {
     taskId: number,
     userId: UUID,
     points: number,
-  ): Promise<EarnedPointEntity> {
+  ): Promise<EarnedPointsLogEntity> {
     const result = await this.prisma.earnedPointsLogs.create({
       data: { taskId, userId, points },
     });
-    return plainToClass(EarnedPointEntity, result);
+    return plainToClass(EarnedPointsLogEntity, result);
   }
 
   async createSpentPointLog(
     badgeLogId: number,
     userId: UUID,
     points: number,
-  ): Promise<SpentPointEntity> {
+  ): Promise<SpentPointsLogEntity> {
     const result = await this.prisma.spentPointsLogs.create({
       data: { badgeLogId, userId, points },
     });
-    return plainToClass(SpentPointEntity, result);
+    return plainToClass(SpentPointsLogEntity, result);
   }
 
   async countTasksPerDate(userId: string, date: string): Promise<number> {
@@ -199,13 +199,13 @@ export class PointRepository implements IPointRepository {
     return userTotalPoints;
   }
 
-  async deleteEarnedPointLog(id: number): Promise<EarnedPointEntity> {
+  async deleteEarnedPointLog(id: number): Promise<EarnedPointsLogEntity> {
     const result = await this.prisma.earnedPointsLogs.delete({ where: { id } });
-    return plainToClass(EarnedPointEntity, result);
+    return plainToClass(EarnedPointsLogEntity, result);
   }
 
-  async deleteSpentPointLog(id: number): Promise<SpentPointEntity> {
+  async deleteSpentPointLog(id: number): Promise<SpentPointsLogEntity> {
     const result = await this.prisma.spentPointsLogs.delete({ where: { id } });
-    return plainToClass(SpentPointEntity, result);
+    return plainToClass(SpentPointsLogEntity, result);
   }
 }

@@ -2,14 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { EarnedPointsLogs, SpentPointsLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
 import {
-  EarnedPointEntity,
-  EarnedPointWithTaskName,
-} from '@point/domain/entities/earnedPoint.entity';
+  EarnedPointsLogEntity,
+  EarnedPointsLogWithTaskName,
+} from '@point/domain/entities/earnedPointsLog.entity';
 import { IPointRepository } from 'src/point/domain/interfaces/point.repository.interface';
 import {
-  SpentPointEntity,
-  SpentPointWithBadgeName,
-} from '@point/domain/entities/spentPoint.entity';
+  SpentPointsLogEntity,
+  SpentPointsLogWithBadgeName,
+} from '@point/domain/entities/spentPointsLog.entity';
 import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 import { UUID } from 'crypto';
 import { IHANDLE_DATE_TIME } from '@shared/constants/provider.constant';
@@ -27,7 +27,7 @@ export class PointRepository implements IPointRepository {
     limit: number,
     offset: number,
     order: string,
-  ): Promise<EarnedPointWithTaskName[]> {
+  ): Promise<EarnedPointsLogWithTaskName[]> {
     let orderBy: string;
 
     if (order === 'newest') orderBy = '"occurredAt" DESC';
@@ -43,7 +43,7 @@ export class PointRepository implements IPointRepository {
     const values = [userId, limit, offset];
 
     const pointsLogs = await this.prisma.$queryRawUnsafe<
-      EarnedPointWithTaskName[]
+      EarnedPointsLogWithTaskName[]
     >(query, ...values);
 
     return pointsLogs;
@@ -54,7 +54,7 @@ export class PointRepository implements IPointRepository {
     limit: number,
     offset: number,
     order: string,
-  ): Promise<SpentPointWithBadgeName[]> {
+  ): Promise<SpentPointsLogWithBadgeName[]> {
     let orderBy: string;
 
     if (order === 'newest') orderBy = '"occurredAt" DESC';
@@ -74,7 +74,7 @@ export class PointRepository implements IPointRepository {
     const values = [userId, limit, offset];
 
     const pointsLogs = await this.prisma.$queryRawUnsafe<
-      SpentPointWithBadgeName[]
+      SpentPointsLogWithBadgeName[]
     >(query, ...values);
 
     return pointsLogs;
@@ -126,7 +126,7 @@ export class PointRepository implements IPointRepository {
     taskId: number,
     userId: UUID,
     points: number,
-  ): Promise<EarnedPointEntity> {
+  ): Promise<EarnedPointsLogEntity> {
     const createPointLogQuery = `
         INSERT INTO "EarnedPointsLogs" ("taskId", "userId", points)
         VALUES ($1, $2::uuid, $3)
@@ -147,7 +147,7 @@ export class PointRepository implements IPointRepository {
     badgeLogId: number,
     userId: UUID,
     points: number,
-  ): Promise<SpentPointEntity> {
+  ): Promise<SpentPointsLogEntity> {
     const createPointLogQuery = `
         INSERT INTO "SpentPointsLogs" ("badgeId", "userId", points)
         VALUES ($1, $2::uuid, $3)
@@ -210,7 +210,7 @@ export class PointRepository implements IPointRepository {
     return userTotalPoints;
   }
 
-  async deleteEarnedPointLog(id: number): Promise<EarnedPointEntity> {
+  async deleteEarnedPointLog(id: number): Promise<EarnedPointsLogEntity> {
     const query = `
     DELETE FROM "EarnedPointsLogs"
     WHERE id = $1
@@ -222,7 +222,7 @@ export class PointRepository implements IPointRepository {
     return deletedLog[0];
   }
 
-  async deleteSpentPointLog(id: number): Promise<SpentPointEntity> {
+  async deleteSpentPointLog(id: number): Promise<SpentPointsLogEntity> {
     const query = `
     DELETE FROM "SpentPointsLogs"
     WHERE id = $1

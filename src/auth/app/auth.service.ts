@@ -12,7 +12,10 @@ import {
   LOGIN_SUCCESS_MESSAGE,
   LOGOUT_SUCCESS_MESSAGE,
 } from '@shared/messages/auth/auth.messages';
-import { ITokenService } from '@auth/domain/interfaces/token.service.interface';
+import {
+  ITokenService,
+  RefreshInfo,
+} from '@auth/domain/interfaces/token.service.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
@@ -22,6 +25,8 @@ import {
   AUTH_INVALID_ADMIN,
   AUTH_INVALID_PASSWORD,
   AUTH_INVALID_TOKEN,
+  OTHER_DEVICE,
+  OTHER_IP,
 } from '@shared/messages/auth/auth.errors';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
 import {
@@ -35,7 +40,10 @@ import {
   ReqRefreshAppDto,
   ResRefreshAppDto,
 } from '@auth/domain/dto/refresh.app.dto';
-import { ReqSocialLoginAppDto } from '@auth/domain/dto/socialLogin.app.dto';
+import {
+  ReqSocialLoginAppDto,
+  ResSocialLoginAppDto,
+} from '@auth/domain/dto/socialLogin.app.dto';
 import {
   ReqValidateAdminAppDto,
   ResValidateAdminAppDto,
@@ -120,9 +128,10 @@ export class AuthService implements IAuthService {
   async login(req: ReqLoginAppDto): Promise<ResLoginAppDto> {
     const accessToken = this.tokenService.generateAccessToken(req);
     const refreshToken = this.tokenService.generateRefreshToken(req);
+    const { ip, device } = req;
     await this.redisService.set(
       `refresh_token:${req.id}`,
-      refreshToken,
+      { refreshToken, ip, device },
       jwtExpiration.refreshTokenExpirationSeconds,
     );
     this.logger.log('info', `${LOGIN_SUCCESS_MESSAGE}-유저 ID:${req.id}`);
@@ -140,17 +149,33 @@ export class AuthService implements IAuthService {
     if (!decoded || !decoded.id) {
       throw new UnauthorizedException(AUTH_INVALID_TOKEN);
     }
-    const redisToken = await this.redisService.get(
+    const redisRefreshInfo: RefreshInfo = await this.redisService.get(
       `refresh_token:${decoded.id}`,
     );
 
-    if (redisToken === null) {
+    if (redisRefreshInfo === null) {
       this.logger.error(AUTH_EXPIRED_REFRESH_TOKEN);
       throw new UnauthorizedException(AUTH_EXPIRED_REFRESH_TOKEN);
     }
-    if (req.refreshToken !== redisToken) {
+    if (req.refreshToken !== redisRefreshInfo.refreshToken) {
       this.logger.error(AUTH_INVALID_TOKEN);
       throw new UnauthorizedException(AUTH_INVALID_TOKEN);
+    }
+    if (req.ip !== redisRefreshInfo.ip) {
+      this.logger.error(OTHER_IP);
+      throw new UnauthorizedException(OTHER_IP);
+    }
+    const { device: reqDevice } = req;
+    const { device: redisDevice } = redisRefreshInfo;
+
+    if (
+      reqDevice.browser !== redisDevice.browser ||
+      reqDevice.os !== redisDevice.os ||
+      reqDevice.platform !== redisDevice.platform ||
+      reqDevice.version !== redisDevice.version
+    ) {
+      this.logger.error(OTHER_DEVICE);
+      throw new UnauthorizedException(OTHER_DEVICE);
     }
     const user = await this.userRepository.findById(decoded.id);
     const accessToken = this.tokenService.generateAccessToken(user);
@@ -158,12 +183,13 @@ export class AuthService implements IAuthService {
     return { accessToken };
   }
 
-  async socialLogin(socialUser: ReqSocialLoginAppDto): Promise<ResLoginAppDto> {
+  async socialLogin(
+    socialUser: ReqSocialLoginAppDto,
+  ): Promise<ResSocialLoginAppDto> {
     const { email, provider } = socialUser;
     const user = await this.userRepository.findByEmail(email);
     if (user) {
-      this.logger.log('info', `소셜 로그인 성공-유저 ID:${user.id}`);
-      return await this.login(user);
+      return plainToClass(ResSocialLoginAppDto, { id: user.id });
     } else {
       const newUser = await this.userRepository.createUser(
         email,
@@ -174,8 +200,7 @@ export class AuthService implements IAuthService {
         newUser.id,
         DEFAULT_BADGE_ID,
       );
-      this.logger.log('info', `소셜 로그인 성공-유저 ID:${newUser.id}`);
-      return await this.login(newUser);
+      return plainToClass(ResSocialLoginAppDto, { id: newUser.id });
     }
   }
 

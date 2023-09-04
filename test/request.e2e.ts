@@ -12,6 +12,7 @@ export const requestE2E = async (
   return await request(app.getHttpServer())
     [method](path)
     .set('Cookie', [`accessToken=${token}`])
+    .set('User-Agent', '')
     .send(body)
     .expect(status);
 };
