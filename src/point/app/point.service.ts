@@ -3,8 +3,8 @@ import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   ReqGetPointsLogsAppDto,
-  ResGetEarnedPointsLogsAppDto,
-  ResGetSpentPointsLogsAppDto,
+  ResGetEarnedPointsLogAppDto,
+  ResGetSpentPointsLogAppDto,
 } from '@point/domain/dto/getPointsLogs.app.dto';
 import {
   ReqGetCurrentPointsAppDto,
@@ -35,7 +35,7 @@ export class PointService implements IPointService {
 
   async getEarnedPointsLogs(
     req: ReqGetPointsLogsAppDto,
-  ): Promise<ResGetEarnedPointsLogsAppDto[]> {
+  ): Promise<ResGetEarnedPointsLogAppDto[]> {
     const { userId, order, offset, limit } = req;
     return await this.pointRepository.getEarnedPointsLogs(
       userId,
@@ -47,11 +47,11 @@ export class PointService implements IPointService {
 
   async getSpentPointsLogs(
     req: ReqGetPointsLogsAppDto,
-  ): Promise<ResGetSpentPointsLogsAppDto[]> {
+  ): Promise<ResGetSpentPointsLogAppDto[]> {
     const { userId, order, offset, limit } = req;
     const cacheKey = `userSpentPointsLogs:${userId}-page:${offset}&order:${order}`;
     const cachedPointsLogs = await this.cacheService.getFromCache<
-      ResGetSpentPointsLogsAppDto[]
+      ResGetSpentPointsLogAppDto[]
     >(cacheKey);
     if (cachedPointsLogs) {
       return cachedPointsLogs;
