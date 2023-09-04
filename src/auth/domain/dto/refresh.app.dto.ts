@@ -1,4 +1,4 @@
-import { DeviceInfo } from './login.app.dto';
+import { DeviceInfo } from '../interfaces/token.service.interface';
 
 export class ReqRefreshAppDto {
   readonly refreshToken: string;

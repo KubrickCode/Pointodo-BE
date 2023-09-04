@@ -1,4 +1,5 @@
 import { UUID } from 'crypto';
+import { DeviceInfo } from '../interfaces/token.service.interface';
 
 export class ReqLoginAppDto {
   readonly id: UUID;
@@ -9,11 +10,4 @@ export class ReqLoginAppDto {
 export class ResLoginAppDto {
   readonly accessToken: string;
   readonly refreshToken?: string;
-}
-
-export interface DeviceInfo {
-  readonly browser: string;
-  readonly platform: string;
-  readonly os: string;
-  readonly version: string;
 }

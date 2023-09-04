@@ -12,7 +12,10 @@ import {
   LOGIN_SUCCESS_MESSAGE,
   LOGOUT_SUCCESS_MESSAGE,
 } from '@shared/messages/auth/auth.messages';
-import { ITokenService } from '@auth/domain/interfaces/token.service.interface';
+import {
+  ITokenService,
+  RefreshInfo,
+} from '@auth/domain/interfaces/token.service.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
@@ -146,7 +149,7 @@ export class AuthService implements IAuthService {
     if (!decoded || !decoded.id) {
       throw new UnauthorizedException(AUTH_INVALID_TOKEN);
     }
-    const redisRefreshInfo = await this.redisService.get(
+    const redisRefreshInfo: RefreshInfo = await this.redisService.get(
       `refresh_token:${decoded.id}`,
     );
 
@@ -162,7 +165,15 @@ export class AuthService implements IAuthService {
       this.logger.error(OTHER_IP);
       throw new UnauthorizedException(OTHER_IP);
     }
-    if (req.device !== redisRefreshInfo.device) {
+    const { device: reqDevice } = req;
+    const { device: redisDevice } = redisRefreshInfo;
+
+    if (
+      reqDevice.browser !== redisDevice.browser ||
+      reqDevice.os !== redisDevice.os ||
+      reqDevice.platform !== redisDevice.platform ||
+      reqDevice.version !== redisDevice.version
+    ) {
       this.logger.error(OTHER_DEVICE);
       throw new UnauthorizedException(OTHER_DEVICE);
     }
