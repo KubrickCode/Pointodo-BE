@@ -23,3 +23,9 @@ export const TaskTypes: ReadonlyRecord<TaskType_, TaskType_> = {
   DUE: 'DUE',
   FREE: 'FREE',
 };
+
+export type TASK_VISIBLE_BY_COMPLETION_TYPE = 'hide' | 'show';
+export type TASK_ORDER_TYPE = 'importance' | 'newest' | 'old' | 'name';
+
+export const TASK_VISIBLE_BY_COMPLETION_TYPES = ['hide', 'show'];
+export const TASK_ORDER_TYPES = ['importance', 'newest', 'old', 'name'];
