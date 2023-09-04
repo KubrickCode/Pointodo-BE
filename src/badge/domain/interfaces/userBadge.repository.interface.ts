@@ -1,18 +1,21 @@
 import { UUID } from 'crypto';
-import { UserBadgeEntity } from './../entities/userBadge.entity';
+import { UserBadgeLogEntity } from '../entities/userBadgeLog.entity';
 
 export interface IUserBadgeRepository {
-  createUserBadgeLog(userId: UUID, badgeId: number): Promise<UserBadgeEntity>;
+  createUserBadgeLog(
+    userId: UUID,
+    badgeId: number,
+  ): Promise<UserBadgeLogEntity>;
 
   getUserBadgeList(
     userId: UUID,
-  ): Promise<Array<Pick<UserBadgeEntity, 'badgeId'>>>;
+  ): Promise<Array<Pick<UserBadgeLogEntity, 'badgeId'>>>;
 
   getUserBadgeListWithName(
     userId: UUID,
   ): Promise<Array<{ badgeId: number; name: string }>>;
 
-  deleteUserBadgeLog(id: number): Promise<UserBadgeEntity>;
+  deleteUserBadgeLog(id: number): Promise<UserBadgeLogEntity>;
 
-  deleteUserBadge(badgeId: number, userId: UUID): Promise<UserBadgeEntity>;
+  deleteUserBadge(badgeId: number, userId: UUID): Promise<UserBadgeLogEntity>;
 }

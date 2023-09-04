@@ -11,16 +11,29 @@ import {
   TASK_OCCURRED_AT,
   TASK_PAGE,
   TASK_TYPE_NAME,
+  TASK_VISIBLE_BY_COMPLETION,
 } from '@shared/constants/task.constant';
-import { USER_ID } from '@shared/constants/user.constant';
-import { TaskType_ } from '@task/domain/entities/task.entity';
+import {
+  TASK_ORDER_TYPE,
+  TASK_ORDER_TYPES,
+  TASK_VISIBLE_BY_COMPLETION_TYPE,
+  TASK_VISIBLE_BY_COMPLETION_TYPES,
+  TaskType_,
+  TaskTypes,
+} from '@task/domain/entities/task.entity';
 import { Transform, Type } from 'class-transformer';
-import { IsDate, IsInt, IsOptional, IsString, IsUUID } from 'class-validator';
-import { UUID } from 'crypto';
+import {
+  IsDate,
+  IsEnum,
+  IsIn,
+  IsInt,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class ReqGetTasksLogsQueryDto {
   @ApiProperty({ description: TASK_TYPE_NAME })
-  @IsString()
+  @IsEnum(TaskTypes)
   @Transform(({ value }) => value.toUpperCase())
   readonly taskType: TaskType_;
 
@@ -35,18 +48,18 @@ export class ReqGetTasksLogsQueryDto {
   readonly limit: number;
 
   @ApiProperty({ description: ORDER_BY })
-  @IsString()
-  readonly order: string;
+  @IsIn(TASK_ORDER_TYPES)
+  readonly order: TASK_ORDER_TYPE;
+
+  @ApiProperty({ description: TASK_VISIBLE_BY_COMPLETION })
+  @IsIn(TASK_VISIBLE_BY_COMPLETION_TYPES)
+  readonly completion: TASK_VISIBLE_BY_COMPLETION_TYPE;
 }
 
 export class ResGetTasksLogsDto {
   @ApiProperty({ description: TASK_LOG_ID })
   @IsInt()
   readonly id: number;
-
-  @ApiProperty({ description: USER_ID })
-  @IsUUID()
-  readonly userId: UUID;
 
   @ApiProperty({ description: TASK_TYPE_NAME })
   @IsInt()

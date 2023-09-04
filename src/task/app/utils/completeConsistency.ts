@@ -1,5 +1,5 @@
 import { BadgeEntity } from '@admin/badge/domain/entities/badge.entity';
-import { UserBadgeEntity } from '@badge/domain/entities/userBadge.entity';
+import { UserBadgeLogEntity } from '@badge/domain/entities/userBadgeLog.entity';
 import { A_MONTH, A_WEEK, A_YEAR } from '@shared/constants/task.constant';
 
 export const completeConsistency = async (
@@ -8,7 +8,7 @@ export const completeConsistency = async (
   createUserBadgeLog: (
     userId: string,
     badgeId: number,
-  ) => Promise<UserBadgeEntity>,
+  ) => Promise<UserBadgeLogEntity>,
   getBadgeIdByName: (name: string) => Promise<Pick<BadgeEntity, 'id'>>,
 ) => {
   if (updatedConsistency === A_WEEK) {

@@ -2,9 +2,7 @@ import { UUID } from 'crypto';
 import { BadgeProgressEntity } from '../entities/badgeProgress.entity';
 
 export interface IBadgeProgressRepository {
-  getAllBadgeProgress(
-    userId: UUID,
-  ): Promise<Array<Pick<BadgeProgressEntity, 'badgeId' | 'progress'>>>;
+  getAllBadgeProgress(userId: UUID): Promise<BadgeProgressEntity[]>;
 
   updateConsistency(
     userId: UUID,

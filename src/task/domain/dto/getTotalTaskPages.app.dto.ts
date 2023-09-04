@@ -5,6 +5,7 @@ export class ReqGetTotalTaskPagesAppDto {
   readonly userId: UUID;
   readonly taskType: TaskType_;
   readonly limit: number;
+  readonly completion: string;
 }
 
 export class ResGetTotalTaskPagesAppDto {

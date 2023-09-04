@@ -104,12 +104,17 @@ export class UserService implements IUserService {
       throw new NotFoundException(USER_NOT_FOUND);
     }
 
+    const result = {
+      ...user,
+      iconLink: user.selectedBadge.iconLink,
+    };
+
     await this.cacheService.setCache(
       cacheKey,
-      user,
+      result,
       cacheConfig(this.configService).cacheTTL,
     );
-    return plainToClass(ResGetUserAppDto, user);
+    return plainToClass(ResGetUserAppDto, result);
   }
 
   async updateUser(req: ReqUpdateUserAppDto): Promise<void> {

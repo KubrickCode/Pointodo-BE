@@ -1,10 +1,13 @@
 import { UUID } from 'crypto';
+import { BadgeProgressEntity } from '../entities/badgeProgress.entity';
+import { Exclude } from 'class-transformer';
 
 export class ReqGetAllBadgeProgressAppDto {
   readonly userId: UUID;
 }
 
-export class ResGetAllBadgeProgressAppDto {
-  readonly badgeId: number;
-  readonly progress: number;
+export class ResGetAllBadgeProgressAppDto extends BadgeProgressEntity {
+  @Exclude() readonly id: number;
+  @Exclude() readonly userId: UUID;
+  @Exclude() readonly occurredAt: Date;
 }

@@ -1,12 +1,13 @@
 import { Badge, BadgeType } from '@prisma/client';
+import { Expose } from 'class-transformer';
 
 export class BadgeEntity implements Badge {
-  id: number;
-  name: string;
-  description: string;
-  iconLink: string;
-  price: number | null;
-  type: BadgeType_;
+  @Expose() readonly id: number;
+  @Expose() readonly name: string;
+  @Expose() readonly description: string;
+  @Expose() readonly iconLink: string;
+  @Expose() readonly price: number | null;
+  @Expose() readonly type: BadgeType_;
 }
 
 type ReadonlyRecord<K extends string, V> = Readonly<Record<K, V>>;

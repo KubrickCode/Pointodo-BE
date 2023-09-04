@@ -27,7 +27,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
       email,
       provider: 'KAKAO',
     };
-    const token = await this.authService.socialLogin(socialUser);
-    done(null, token);
+    const { id } = await this.authService.socialLogin(socialUser);
+    done(null, { id });
   }
 }

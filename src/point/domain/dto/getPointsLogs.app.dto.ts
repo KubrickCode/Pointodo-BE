@@ -1,4 +1,7 @@
 import { UUID } from 'crypto';
+import { EarnedPointsLogWithTaskName } from '../entities/earnedPointsLog.entity';
+import { SpentPointsLogWithBadgeName } from '../entities/spentPointsLog.entity';
+import { Exclude } from 'class-transformer';
 
 export class ReqGetPointsLogsAppDto {
   readonly userId: UUID;
@@ -7,18 +10,10 @@ export class ReqGetPointsLogsAppDto {
   readonly limit: number;
 }
 
-export class ResGetEarnedPointsLogsAppDto {
-  readonly id: number;
-  readonly taskId: number;
-  readonly points: number;
-  readonly occurredAt: Date;
-  readonly taskName: string;
+export class ResGetEarnedPointsLogAppDto extends EarnedPointsLogWithTaskName {
+  @Exclude() readonly userId: UUID;
 }
 
-export class ResGetSpentPointsLogsAppDto {
-  readonly id: number;
-  readonly badgeLogId: number;
-  readonly points: number;
-  readonly occurredAt: Date;
-  readonly badgeName: string;
+export class ResGetSpentPointsLogAppDto extends SpentPointsLogWithBadgeName {
+  @Exclude() readonly userId: UUID;
 }

@@ -9,9 +9,14 @@ export interface ITaskRepository {
     limit: number,
     offset: number,
     order: string,
+    completion: string,
   ): Promise<TaskEntity[]>;
 
-  getTotalTaskPages(userId: UUID, taskType: TaskType_): Promise<number>;
+  getTotalTaskPages(
+    userId: UUID,
+    taskType: TaskType_,
+    completion: string,
+  ): Promise<number>;
 
   getTaskLogById(id: number): Promise<TaskEntity>;
 

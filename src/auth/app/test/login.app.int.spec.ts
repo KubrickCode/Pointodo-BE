@@ -24,6 +24,13 @@ describe('login', () => {
 
   const request: ReqLoginAppDto = {
     id: TEST1_USER_LOCAL.id,
+    ip: '',
+    device: {
+      browser: '',
+      os: '',
+      platform: '',
+      version: '',
+    },
   };
 
   it('로그인 성공', async () => {

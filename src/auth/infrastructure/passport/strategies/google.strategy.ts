@@ -32,7 +32,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       email: profile.emails[0].value,
       provider: 'GOOGLE',
     };
-    const token = await this.authService.socialLogin(socialUser);
-    done(null, token);
+    const { id } = await this.authService.socialLogin(socialUser);
+    done(null, { id });
   }
 }

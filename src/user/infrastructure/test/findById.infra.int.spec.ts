@@ -4,7 +4,7 @@ import { UserEntity } from '@user/domain/entities/user.entity';
 import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 import { plainToClass } from 'class-transformer';
 
-describe('', () => {
+describe('findById', () => {
   let prisma: PrismaService;
   let userRepository: UserRepository;
 

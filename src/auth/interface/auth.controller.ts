@@ -46,6 +46,7 @@ import {
   IAUTH_SERVICE,
   IHANDLE_DATE_TIME,
 } from '@shared/constants/provider.constant';
+import useragent from 'express-useragent';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -78,8 +79,13 @@ export class AuthController {
   @ApiConflictResponse(loginDocs.conflictError)
   @ApiBody({ type: ReqLoginDto })
   async login(@Req() req: Request, @Res() res: Response): Promise<void> {
+    const { browser, platform, os, version } = useragent.parse(
+      req.headers['user-agent'],
+    );
     const { accessToken, refreshToken } = await this.authService.login({
       id: req.user.id,
+      ip: req.ip,
+      device: { browser, platform, os, version },
     });
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
@@ -123,7 +129,14 @@ export class AuthController {
   async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
       const { refreshToken } = req.cookies;
-      const { accessToken } = await this.authService.refresh({ refreshToken });
+      const { browser, platform, os, version } = useragent.parse(
+        req.headers['user-agent'],
+      );
+      const { accessToken } = await this.authService.refresh({
+        refreshToken,
+        ip: req.ip,
+        device: { browser, platform, os, version },
+      });
       res.cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: true,
@@ -168,7 +181,15 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
-    res.cookie('accessToken', req.user.accessToken, {
+    const { browser, platform, os, version } = useragent.parse(
+      req.headers['user-agent'],
+    );
+    const { accessToken, refreshToken } = await this.authService.login({
+      id: req.user.id,
+      ip: req.ip,
+      device: { browser, platform, os, version },
+    });
+    res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
@@ -176,7 +197,7 @@ export class AuthController {
         jwtExpiration.refreshTokenExpirationDays,
       ),
     });
-    res.cookie('refreshToken', req.user.refreshToken, {
+    res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
@@ -197,7 +218,15 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
-    res.cookie('accessToken', req.user.accessToken, {
+    const { browser, platform, os, version } = useragent.parse(
+      req.headers['user-agent'],
+    );
+    const { accessToken, refreshToken } = await this.authService.login({
+      id: req.user.id,
+      ip: req.ip,
+      device: { browser, platform, os, version },
+    });
+    res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
@@ -205,7 +234,7 @@ export class AuthController {
         jwtExpiration.refreshTokenExpirationDays,
       ),
     });
-    res.cookie('refreshToken', req.user.refreshToken, {
+    res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
