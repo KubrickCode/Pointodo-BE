@@ -67,13 +67,14 @@ export class TaskController {
     @Req() req: Request,
     @Query() query: ReqGetTasksLogsQueryDto,
   ): Promise<ResGetTasksLogsDto[]> {
-    const { taskType, offset, order, limit } = query;
+    const { taskType, offset, order, limit, completion } = query;
     const result = await this.taskService.getTasksLogs({
       userId: req.user.id,
       taskType,
       offset,
       limit,
       order,
+      completion,
     });
     return result.map((item) => plainToClass(ResGetTasksLogsDto, item));
   }

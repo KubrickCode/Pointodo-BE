@@ -16,6 +16,7 @@ export class TaskRepository implements ITaskRepository {
     limit: number,
     offset: number,
     order: string,
+    completion: string,
   ): Promise<TaskEntity[]> {
     let query: string;
     let orderBy: string;
@@ -30,7 +31,9 @@ export class TaskRepository implements ITaskRepository {
             SELECT "TasksLogs".*, "TasksDueDate"."dueDate" 
             FROM "TasksLogs"
             LEFT JOIN "TasksDueDate" ON "TasksLogs".id = "TasksDueDate"."taskId"
-            WHERE "TasksLogs"."userId" = $1::uuid
+            WHERE "TasksLogs"."userId" = $1::uuid ${
+              completion === 'hidden' ? 'AND "TasksLogs".completion = 0' : ''
+            }
             AND "TasksLogs"."taskType" = $2::"TaskType"
             ORDER BY "TasksLogs".${orderBy}
             LIMIT $3 OFFSET $4
@@ -38,7 +41,9 @@ export class TaskRepository implements ITaskRepository {
     } else {
       query = `
             SELECT * FROM "TasksLogs"
-            WHERE "userId" = $1::uuid
+            WHERE "userId" = $1::uuid ${
+              completion === 'hidden' ? 'AND completion = 0' : ''
+            }
             AND "taskType" = $2::"TaskType"
             ORDER BY ${orderBy}
             LIMIT $3 OFFSET $4

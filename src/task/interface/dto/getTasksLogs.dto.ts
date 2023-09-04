@@ -35,6 +35,10 @@ export class ReqGetTasksLogsQueryDto {
   @ApiProperty({ description: ORDER_BY })
   @IsString()
   readonly order: string;
+
+  @ApiProperty({ description: TASK_COMPLETION })
+  @IsString()
+  readonly completion: string;
 }
 
 export class ResGetTasksLogsDto {

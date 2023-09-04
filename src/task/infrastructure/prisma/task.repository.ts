@@ -16,17 +16,21 @@ export class TaskRepository implements ITaskRepository {
     limit: number,
     offset: number,
     order: string,
+    completion: string,
   ): Promise<TaskEntity[]> {
     let orderBy: object;
+    const where = { userId, taskType };
 
     if (order === 'importance') orderBy = { importance: 'asc' };
     if (order === 'newest') orderBy = { occurredAt: 'desc' };
     if (order === 'old') orderBy = { occurredAt: 'asc' };
     if (order === 'name') orderBy = { name: 'asc' };
 
+    if (completion === 'hide') Object.assign(where, { completion: 0 });
+
     if (taskType === 'DUE') {
       const result = await this.prisma.tasksLogs.findMany({
-        where: { userId, taskType },
+        where,
         include: { dueDate: true },
         orderBy,
         take: limit,
@@ -40,7 +44,7 @@ export class TaskRepository implements ITaskRepository {
       );
     } else {
       const result = await this.prisma.tasksLogs.findMany({
-        where: { userId, taskType },
+        where,
         orderBy,
         take: limit,
         skip: offset,

@@ -8,6 +8,7 @@ export class ReqGetTasksLogsAppDto {
   readonly offset: number;
   readonly limit: number;
   readonly order: string;
+  readonly completion: string;
 }
 
 export class ResGetTasksLogsAppDto extends TaskEntity {
