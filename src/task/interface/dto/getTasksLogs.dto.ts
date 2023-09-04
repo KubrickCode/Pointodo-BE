@@ -11,6 +11,7 @@ import {
   TASK_OCCURRED_AT,
   TASK_PAGE,
   TASK_TYPE_NAME,
+  TASK_VISIBLE_BY_COMPLETION,
 } from '@shared/constants/task.constant';
 import { TaskType_ } from '@task/domain/entities/task.entity';
 import { Transform, Type } from 'class-transformer';
@@ -36,7 +37,7 @@ export class ReqGetTasksLogsQueryDto {
   @IsString()
   readonly order: string;
 
-  @ApiProperty({ description: TASK_COMPLETION })
+  @ApiProperty({ description: TASK_VISIBLE_BY_COMPLETION })
   @IsString()
   readonly completion: string;
 }

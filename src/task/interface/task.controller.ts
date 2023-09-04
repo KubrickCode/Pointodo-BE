@@ -88,11 +88,12 @@ export class TaskController {
     @Query() query: ReqGetTotalTaskPagesQueryDto,
   ): Promise<ResGetTotalTaskPagesDto> {
     const userId = req.user.id;
-    const { taskType, limit } = query;
+    const { taskType, limit, completion } = query;
     return await this.taskService.getTotalTaskPages({
       userId,
       taskType,
       limit,
+      completion,
     });
   }
 

@@ -12,7 +12,11 @@ export interface ITaskRepository {
     completion: string,
   ): Promise<TaskEntity[]>;
 
-  getTotalTaskPages(userId: UUID, taskType: TaskType_): Promise<number>;
+  getTotalTaskPages(
+    userId: UUID,
+    taskType: TaskType_,
+    completion: string,
+  ): Promise<number>;
 
   getTaskLogById(id: number): Promise<TaskEntity>;
 

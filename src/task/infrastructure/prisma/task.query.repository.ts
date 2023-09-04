@@ -32,7 +32,7 @@ export class TaskRepository implements ITaskRepository {
             FROM "TasksLogs"
             LEFT JOIN "TasksDueDate" ON "TasksLogs".id = "TasksDueDate"."taskId"
             WHERE "TasksLogs"."userId" = $1::uuid ${
-              completion === 'hidden' ? 'AND "TasksLogs".completion = 0' : ''
+              completion === 'hide' ? 'AND "TasksLogs".completion = 0' : ''
             }
             AND "TasksLogs"."taskType" = $2::"TaskType"
             ORDER BY "TasksLogs".${orderBy}
@@ -42,7 +42,7 @@ export class TaskRepository implements ITaskRepository {
       query = `
             SELECT * FROM "TasksLogs"
             WHERE "userId" = $1::uuid ${
-              completion === 'hidden' ? 'AND completion = 0' : ''
+              completion === 'hide' ? 'AND completion = 0' : ''
             }
             AND "taskType" = $2::"TaskType"
             ORDER BY ${orderBy}
@@ -58,11 +58,17 @@ export class TaskRepository implements ITaskRepository {
     return tasksLogs;
   }
 
-  async getTotalTaskPages(userId: UUID, taskType: TaskType_): Promise<number> {
+  async getTotalTaskPages(
+    userId: UUID,
+    taskType: TaskType_,
+    completion: string,
+  ): Promise<number> {
     const query = `
     SELECT COUNT(*)
     FROM "TasksLogs"
-    WHERE "userId" = $1::uuid
+    WHERE "userId" = $1::uuid ${
+      completion === 'hide' ? 'AND completion = 0' : ''
+    }
     AND "taskType" = $2::"TaskType"
     `;
 

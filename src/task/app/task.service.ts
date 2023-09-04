@@ -97,12 +97,14 @@ export class TaskService implements ITaskService {
   async getTotalTaskPages(
     req: ReqGetTotalTaskPagesAppDto,
   ): Promise<ResGetTotalTaskPagesAppDto> {
+    const { userId, taskType, limit, completion } = req;
     const totalTasks = await this.taskRepository.getTotalTaskPages(
-      req.userId,
-      req.taskType,
+      userId,
+      taskType,
+      completion,
     );
 
-    const totalPages = Math.ceil(totalTasks / req.limit);
+    const totalPages = Math.ceil(totalTasks / limit);
 
     return { totalPages };
   }

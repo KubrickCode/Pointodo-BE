@@ -53,8 +53,14 @@ export class TaskRepository implements ITaskRepository {
     }
   }
 
-  async getTotalTaskPages(userId: UUID, taskType: TaskType_): Promise<number> {
-    return await this.prisma.tasksLogs.count({ where: { userId, taskType } });
+  async getTotalTaskPages(
+    userId: UUID,
+    taskType: TaskType_,
+    completion: string,
+  ): Promise<number> {
+    const where = { userId, taskType };
+    if (completion === 'hide') Object.assign(where, { completion: 0 });
+    return await this.prisma.tasksLogs.count({ where });
   }
 
   async getTaskLogById(id: number): Promise<TaskEntity> {
