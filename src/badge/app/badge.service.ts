@@ -177,7 +177,12 @@ export class BadgeService implements IBadgeService {
   async getAllBadgeProgress(
     req: ReqGetAllBadgeProgressAppDto,
   ): Promise<ResGetAllBadgeProgressAppDto[]> {
-    return await this.badgeProgressRepository.getAllBadgeProgress(req.userId);
+    const result = await this.badgeProgressRepository.getAllBadgeProgress(
+      req.userId,
+    );
+    return result.map((item) =>
+      plainToClass(ResGetAllBadgeProgressAppDto, item),
+    );
   }
 
   async getAllBadges(): Promise<BadgeEntity[]> {
