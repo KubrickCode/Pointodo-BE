@@ -1,16 +1,13 @@
 import { PrismaService } from '@shared/service/prisma.service';
-import { PointRepository } from '../prisma/point.repository';
-import { HandleDateTime } from '@shared/utils/handleDateTime';
+import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 
 describe('getTopUserOfMonth', () => {
   let prisma: PrismaService;
-  let handleDateTime: HandleDateTime;
-  let pointRepository: PointRepository;
+  let userRepository: UserRepository;
 
   beforeAll(() => {
     prisma = new PrismaService();
-    handleDateTime = new HandleDateTime();
-    pointRepository = new PointRepository(prisma, handleDateTime);
+    userRepository = new UserRepository(prisma);
   }, 30000);
 
   afterAll(async () => {
@@ -18,7 +15,7 @@ describe('getTopUserOfMonth', () => {
   });
 
   it('이달의 유저 반환', async () => {
-    const result = await pointRepository.getTopUserOnDate(
+    const result = await userRepository.getTopUsersOnDate(
       '2023-08-01',
       '2023-09-01',
     );

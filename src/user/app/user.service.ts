@@ -47,6 +47,10 @@ import {
   IUSER_BADGE_REPOSITORY,
   IUSER_REPOSITORY,
 } from '@shared/constants/provider.constant';
+import {
+  ReqGetTopUsersOnDateAppDto,
+  ResGetTopUsersOnDateAppDto,
+} from '@user/domain/dto/getTopUsersOnDate.app.dto';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -159,5 +163,15 @@ export class UserService implements IUserService {
       provider,
     );
     return { totalPages: Math.ceil(totalUsers / limit) };
+  }
+
+  async getTopUsersOnDate(
+    req: ReqGetTopUsersOnDateAppDto,
+  ): Promise<ResGetTopUsersOnDateAppDto[]> {
+    const result = await this.userRepository.getTopUsersOnDate(
+      req.startDate,
+      req.endDate,
+    );
+    return result.map((item) => plainToClass(ResGetTopUsersOnDateAppDto, item));
   }
 }

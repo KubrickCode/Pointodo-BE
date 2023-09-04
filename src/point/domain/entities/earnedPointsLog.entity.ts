@@ -13,9 +13,3 @@ export class EarnedPointsLogEntity implements EarnedPointsLogs {
 export class EarnedPointsLogWithTaskName extends EarnedPointsLogEntity {
   @Expose() readonly taskName: string;
 }
-
-export class TopOfUserOnDate {
-  @Expose() readonly userId: UUID;
-  @Expose() readonly email: string;
-  @Expose() readonly points: number;
-}
