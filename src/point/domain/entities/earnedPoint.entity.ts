@@ -1,14 +1,15 @@
 import { EarnedPointsLogs } from '@prisma/client';
+import { Expose } from 'class-transformer';
 import { UUID } from 'crypto';
 
 export class EarnedPointEntity implements EarnedPointsLogs {
-  id: number;
-  taskId: number;
-  userId: UUID;
-  points: number;
-  occurredAt: Date;
+  @Expose() readonly id: number;
+  @Expose() readonly taskId: number;
+  @Expose() readonly userId: UUID;
+  @Expose() readonly points: number;
+  @Expose() readonly occurredAt: Date;
 }
 
 export class EarnedPointWithTaskName extends EarnedPointEntity {
-  taskName: string;
+  @Expose() readonly taskName: string;
 }

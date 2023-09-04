@@ -1,14 +1,15 @@
 import { SpentPointsLogs } from '@prisma/client';
+import { Expose } from 'class-transformer';
 import { UUID } from 'crypto';
 
 export class SpentPointEntity implements SpentPointsLogs {
-  id: number;
-  badgeLogId: number;
-  userId: UUID;
-  points: number;
-  occurredAt: Date;
+  @Expose() readonly id: number;
+  @Expose() readonly badgeLogId: number;
+  @Expose() readonly userId: UUID;
+  @Expose() readonly points: number;
+  @Expose() readonly occurredAt: Date;
 }
 
 export class SpentPointWithBadgeName extends SpentPointEntity {
-  badgeName: string;
+  @Expose() readonly badgeName: string;
 }
