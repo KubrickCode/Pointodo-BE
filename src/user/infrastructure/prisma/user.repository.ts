@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
 import { Provider, User } from '@prisma/client';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
-import { ProviderType, UserEntity } from '@user/domain/entities/user.entity';
+import {
+  ProviderType,
+  TopOfUserOnDate,
+  UserEntity,
+} from '@user/domain/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { UUID } from 'crypto';
 import { plainToClass } from 'class-transformer';
@@ -124,5 +128,51 @@ export class UserRepository implements IUserRepository {
     } else {
       return await this.prisma.user.count({ where: { provider } });
     }
+  }
+
+  async getTopUsersOnDate(
+    startDate: string,
+    endDate: string,
+  ): Promise<TopOfUserOnDate[]> {
+    const topUsers = await this.prisma.earnedPointsLogs.groupBy({
+      by: ['userId'],
+      where: {
+        occurredAt: {
+          gte: new Date(startDate),
+          lt: new Date(endDate),
+        },
+      },
+      _sum: {
+        points: true,
+      },
+      orderBy: {
+        _sum: {
+          points: 'desc',
+        },
+      },
+      take: 10,
+    });
+
+    const topUsersWithEmail = await this.prisma.user.findMany({
+      where: {
+        id: {
+          in: topUsers.map((user) => user.userId),
+        },
+      },
+      select: {
+        id: true,
+        email: true,
+      },
+    });
+
+    const result = topUsers.map((user) =>
+      plainToClass(TopOfUserOnDate, {
+        userId: user.userId,
+        email: topUsersWithEmail.find((u) => u.id === user.userId).email,
+        points: user._sum.points,
+      }),
+    );
+
+    return result;
   }
 }

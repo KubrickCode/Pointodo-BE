@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
 import { Provider, User } from '@prisma/client';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
-import { ProviderType, UserEntity } from '@user/domain/entities/user.entity';
+import {
+  ProviderType,
+  TopOfUserOnDate,
+  UserEntity,
+} from '@user/domain/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { plainToClass } from 'class-transformer';
 import { UUID } from 'crypto';
@@ -166,5 +170,12 @@ export class UserRepository implements IUserRepository {
       provider,
     );
     return Number(totalUsers[0].count);
+  }
+
+  async getTopUsersOnDate(
+    startDate: string,
+    endDate: string,
+  ): Promise<TopOfUserOnDate[]> {
+    return;
   }
 }

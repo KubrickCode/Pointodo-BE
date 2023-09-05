@@ -48,6 +48,11 @@ import {
   IBADGE_SERVICE,
   IUSER_SERVICE,
 } from '@shared/constants/provider.constant';
+import {
+  ReqGetTopUsersOnDateQueryDto,
+  ResGetTopUsersOnDateDto,
+} from './dto/user/getTopUserOnDate.dto';
+import { plainToClass } from 'class-transformer';
 @Controller('/admin/users')
 @ApiTags('Admin - User')
 @ApiCookieAuth('accessToken')
@@ -115,5 +120,13 @@ export class UserAdminController {
   ): Promise<void> {
     const { userId, badgeId } = query;
     await this.badgeService.deleteUserBadge({ userId, badgeId });
+  }
+
+  @Get('/top-users')
+  async getTopUserOnDate(
+    @Query() query: ReqGetTopUsersOnDateQueryDto,
+  ): Promise<ResGetTopUsersOnDateDto[]> {
+    const result = await this.userService.getTopUsersOnDate({ ...query });
+    return result.map((item) => plainToClass(ResGetTopUsersOnDateDto, item));
   }
 }

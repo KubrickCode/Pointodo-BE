@@ -41,3 +41,9 @@ export const RoleTypes: ReadonlyRecord<RoleType, RoleType> = {
   ADMIN: 'ADMIN',
   MASTER: 'MASTER',
 };
+
+export class TopOfUserOnDate {
+  @Expose() readonly userId: UUID;
+  @Expose() readonly email: string;
+  @Expose() readonly points: number;
+}

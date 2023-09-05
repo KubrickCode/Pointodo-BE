@@ -1,5 +1,9 @@
 import { UUID } from 'crypto';
-import { ProviderType, UserEntity } from '../entities/user.entity';
+import {
+  ProviderType,
+  TopOfUserOnDate,
+  UserEntity,
+} from '../entities/user.entity';
 
 export interface IUserRepository {
   createUser(
@@ -30,4 +34,9 @@ export interface IUserRepository {
   ): Promise<UserEntity[]>;
 
   getTotalUserListPages(provider: ProviderType | 'ALL'): Promise<number>;
+
+  getTopUsersOnDate(
+    startDate: string,
+    endDate: string,
+  ): Promise<TopOfUserOnDate[]>;
 }
