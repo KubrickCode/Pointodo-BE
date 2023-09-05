@@ -5,7 +5,7 @@ import { requestE2E } from '../../request.e2e';
 import cookieParser from 'cookie-parser';
 import { setupLoggedIn } from '../../setupLoggedIn.e2e';
 import {
-  ReqGetTopUsersOnDateDto,
+  ReqGetTopUsersOnDateQueryDto,
   ResGetTopUsersOnDateDto,
 } from '@admin/interface/dto/user/getTopUserOnDate.dto';
 import { validateOrReject } from 'class-validator';
@@ -32,15 +32,15 @@ describe('이달의 유저 불러오기 in BadgeAdminController (e2e)', () => {
     await app.close();
   });
 
-  const path = '/admin/users/top-users';
-
-  const body: ReqGetTopUsersOnDateDto = {
+  const query: ReqGetTopUsersOnDateQueryDto = {
     startDate: '2023-08-01',
     endDate: '2023-09-01',
   };
 
+  const path = `/admin/users/top-users?startDate=${query.startDate}&endDate=${query.endDate}`;
+
   it('이달의 유저 불러오기 성공 e2e 테스트', async () => {
-    const response = await requestE2E(app, path, 'get', 200, body, accessToken);
+    const response = await requestE2E(app, path, 'get', 200, null, accessToken);
 
     response.body.forEach((item: any) => {
       validateOrReject(plainToClass(item, ResGetTopUsersOnDateDto));

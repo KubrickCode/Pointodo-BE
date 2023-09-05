@@ -1,7 +1,6 @@
 import { AdminAuthGuard } from '@auth/infrastructure/passport/guards/admin.guard';
 import { JwtAuthGuard } from '@auth/infrastructure/passport/guards/jwt.guard';
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -50,7 +49,7 @@ import {
   IUSER_SERVICE,
 } from '@shared/constants/provider.constant';
 import {
-  ReqGetTopUsersOnDateDto,
+  ReqGetTopUsersOnDateQueryDto,
   ResGetTopUsersOnDateDto,
 } from './dto/user/getTopUserOnDate.dto';
 import { plainToClass } from 'class-transformer';
@@ -125,9 +124,9 @@ export class UserAdminController {
 
   @Get('/top-users')
   async getTopUserOnDate(
-    @Body() body: ReqGetTopUsersOnDateDto,
+    @Query() query: ReqGetTopUsersOnDateQueryDto,
   ): Promise<ResGetTopUsersOnDateDto[]> {
-    const result = await this.userService.getTopUsersOnDate({ ...body });
+    const result = await this.userService.getTopUsersOnDate({ ...query });
     return result.map((item) => plainToClass(ResGetTopUsersOnDateDto, item));
   }
 }

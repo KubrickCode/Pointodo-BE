@@ -4,7 +4,7 @@ import { USER_EMAIL, USER_ID } from '@shared/constants/user.constant';
 import { IsString } from 'class-validator';
 import { UUID } from 'crypto';
 
-export class ReqGetTopUsersOnDateDto {
+export class ReqGetTopUsersOnDateQueryDto {
   @ApiProperty({ description: '시작 날짜' })
   @IsString()
   readonly startDate: string;
