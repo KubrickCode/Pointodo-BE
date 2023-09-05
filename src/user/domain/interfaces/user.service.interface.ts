@@ -10,6 +10,10 @@ import {
   ReqGetTotalUserListPagesAppDto,
   ResGetTotalUserListPagesAppDto,
 } from '../dto/getTotalUserListPages.app.dto';
+import {
+  ReqGetTopUsersOnDateAppDto,
+  ResGetTopUsersOnDateAppDto,
+} from '../dto/getTopUsersOnDate.app.dto';
 
 export interface IUserService {
   register(user: ReqRegisterAppDto): Promise<void>;
@@ -25,4 +29,8 @@ export interface IUserService {
   getTotalUserListPages(
     req: ReqGetTotalUserListPagesAppDto,
   ): Promise<ResGetTotalUserListPagesAppDto>;
+
+  getTopUsersOnDate(
+    req: ReqGetTopUsersOnDateAppDto,
+  ): Promise<ResGetTopUsersOnDateAppDto[]>;
 }

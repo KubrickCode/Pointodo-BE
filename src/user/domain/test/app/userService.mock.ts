@@ -5,4 +5,5 @@ export const mockUserService = {
   deleteUser: jest.fn(),
   getUserList: jest.fn(),
   getTotalUserListPages: jest.fn(),
+  getTopUsersOnDate: jest.fn(),
 };
