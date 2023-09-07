@@ -5,6 +5,7 @@ import { IUserRepository } from '@user/domain/interfaces/user.repository.interfa
 import {
   ProviderType,
   TopOfUserOnDate,
+  USER_ORDER_TYPE,
   UserEntity,
 } from '@user/domain/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
@@ -119,7 +120,7 @@ export class UserRepository implements IUserRepository {
   }
 
   async getUserList(
-    order: string,
+    order: USER_ORDER_TYPE,
     limit: number,
     offset: number,
     provider: ProviderType | 'ALL',

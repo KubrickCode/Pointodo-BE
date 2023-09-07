@@ -47,3 +47,5 @@ export class TopOfUserOnDate {
   @Expose() readonly email: string;
   @Expose() readonly points: number;
 }
+
+export type USER_ORDER_TYPE = 'newest' | 'old';

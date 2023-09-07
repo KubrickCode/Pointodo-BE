@@ -2,6 +2,7 @@ import { UUID } from 'crypto';
 import {
   ProviderType,
   TopOfUserOnDate,
+  USER_ORDER_TYPE,
   UserEntity,
 } from '../entities/user.entity';
 
@@ -27,7 +28,7 @@ export interface IUserRepository {
   changeSelectedBadgeToDefault(badgeId: number): Promise<void>;
 
   getUserList(
-    order: string,
+    order: USER_ORDER_TYPE,
     limit: number,
     offset: number,
     provider: ProviderType | 'ALL',
