@@ -1,6 +1,5 @@
 import {
   ResInvalidPassword,
-  ResLoginDto,
   ResNotFoundUser,
   ResNotLocalUserLogin,
 } from '@auth/interface/dto/login.dto';
@@ -19,7 +18,7 @@ export const loginDocs = {
     액세스 토큰과 리프레시 토큰을 쿠키에 정의합니다.
     `,
   },
-  okResponse: { type: ResLoginDto, description: LOGIN_SUCCESS_MESSAGE },
+  okResponse: { description: LOGIN_SUCCESS_MESSAGE },
   conflictError: {
     type: ResNotLocalUserLogin,
     description: USER_EXIST_WITH_SOCIAL,
