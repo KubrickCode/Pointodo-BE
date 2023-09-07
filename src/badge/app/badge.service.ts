@@ -91,16 +91,8 @@ export class BadgeService implements IBadgeService {
       price,
     );
 
-    const userBadgeList = await this.userBadgeRepository.getUserBadgeList(
-      userId,
-    );
-
-    const filteredBadgeList = userBadgeList.filter(
-      (item) => item.badgeId === badgeId,
-    );
-
     const updatedPoint = await this.pointRepository.calculateUserPoints(userId);
-    if (updatedPoint < 0 || filteredBadgeList.length > 1) {
+    if (updatedPoint < 0) {
       await this.userBadgeRepository.deleteUserBadgeLog(createdUserBadgeLog.id);
       await this.pointRepository.deleteSpentPointLog(updatedPointLog.id);
       throw new ConflictException(

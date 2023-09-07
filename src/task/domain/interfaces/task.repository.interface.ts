@@ -1,5 +1,9 @@
 import { UUID } from 'crypto';
-import { TaskEntity, TaskType_ } from '../entities/task.entity';
+import {
+  TASK_VISIBLE_BY_COMPLETION_TYPE,
+  TaskEntity,
+  TaskType_,
+} from '../entities/task.entity';
 import { TasksDueDateEntity } from '../entities/tasksDueDate.entity';
 
 export interface ITaskRepository {
@@ -9,13 +13,13 @@ export interface ITaskRepository {
     limit: number,
     offset: number,
     order: string,
-    completion: string,
+    completion: TASK_VISIBLE_BY_COMPLETION_TYPE,
   ): Promise<TaskEntity[]>;
 
   getTotalTaskPages(
     userId: UUID,
     taskType: TaskType_,
-    completion: string,
+    completion: TASK_VISIBLE_BY_COMPLETION_TYPE,
   ): Promise<number>;
 
   getTaskLogById(id: number): Promise<TaskEntity>;
