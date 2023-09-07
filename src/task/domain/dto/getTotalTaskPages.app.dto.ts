@@ -1,11 +1,14 @@
 import { UUID } from 'crypto';
-import { TaskType_ } from '../entities/task.entity';
+import {
+  TASK_VISIBLE_BY_COMPLETION_TYPE,
+  TaskType_,
+} from '../entities/task.entity';
 
 export class ReqGetTotalTaskPagesAppDto {
   readonly userId: UUID;
   readonly taskType: TaskType_;
   readonly limit: number;
-  readonly completion: string;
+  readonly completion: TASK_VISIBLE_BY_COMPLETION_TYPE;
 }
 
 export class ResGetTotalTaskPagesAppDto {

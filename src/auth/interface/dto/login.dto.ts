@@ -5,8 +5,6 @@ import {
   VALIDATE_PASSWORD,
 } from '@shared/messages/auth/auth.messages';
 import {
-  JWT_ACCESS_TOKEN,
-  JWT_REFRESH_TOKEN,
   USER_EMAIL,
   USER_EMAIL_EXAMPLE,
   USER_PWD,
@@ -32,16 +30,6 @@ export class ReqLoginDto {
     message: VALIDATE_PASSWORD,
   })
   readonly password: string;
-}
-
-export class ResLoginDto {
-  @ApiProperty({ description: JWT_ACCESS_TOKEN })
-  @IsString()
-  readonly accessToken: string;
-
-  @ApiProperty({ description: JWT_REFRESH_TOKEN })
-  @IsString()
-  readonly refreshToken?: string;
 }
 
 export class ResNotFoundUser {

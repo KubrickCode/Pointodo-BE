@@ -1,6 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { TaskType_ } from '@task/domain/entities/task.entity';
-import { IsInt, IsString } from 'class-validator';
+import {
+  TASK_VISIBLE_BY_COMPLETION_TYPE,
+  TASK_VISIBLE_BY_COMPLETION_TYPES,
+  TaskType_,
+} from '@task/domain/entities/task.entity';
+import { IsIn, IsInt, IsString } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import {
   TASK_LIMIT,
@@ -21,8 +25,8 @@ export class ReqGetTotalTaskPagesQueryDto {
   readonly limit: number;
 
   @ApiProperty({ description: TASK_VISIBLE_BY_COMPLETION })
-  @IsString()
-  readonly completion: string;
+  @IsIn(TASK_VISIBLE_BY_COMPLETION_TYPES)
+  readonly completion: TASK_VISIBLE_BY_COMPLETION_TYPE;
 }
 
 export class ResGetTotalTaskPagesDto {

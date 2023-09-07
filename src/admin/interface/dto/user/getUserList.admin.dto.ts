@@ -19,6 +19,7 @@ import {
   ProviderTypesWithAll,
   RoleType,
   RoleTypes,
+  USER_ORDER_TYPE,
 } from '@user/domain/entities/user.entity';
 import { Transform, Type } from 'class-transformer';
 import { IsDate, IsEnum, IsInt, IsString, IsUUID } from 'class-validator';
@@ -37,7 +38,7 @@ export class ReqAdminGetUserListQueryDto {
 
   @ApiProperty({ description: ORDER_BY })
   @IsString()
-  readonly order: string;
+  readonly order: USER_ORDER_TYPE;
 
   @ApiProperty({ description: USER_PROVIDER })
   @IsEnum(ProviderTypesWithAll)
