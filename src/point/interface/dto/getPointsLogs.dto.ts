@@ -34,20 +34,14 @@ export class ReqGetPointsLogsQueryDto {
   readonly order: string;
 }
 
-export class ResGetPointsLogsDto {
+export class ResGetEarnedPointsLogsDto {
   @ApiProperty({ description: POINT_LOG_ID })
   @IsInt()
   readonly id: number;
 
   @ApiProperty({ description: TASK_TYPE_ID })
-  @IsOptional()
   @IsInt()
-  readonly taskId?: number | null;
-
-  @ApiProperty({ description: BADGE_LOG_ID })
-  @IsOptional()
-  @IsInt()
-  readonly badgeLogId?: number | null;
+  readonly taskId: number;
 
   @ApiProperty({ description: POINTS })
   @IsInt()
@@ -58,12 +52,30 @@ export class ResGetPointsLogsDto {
   readonly occurredAt: Date;
 
   @ApiProperty({ description: TASK_NAME })
-  @IsOptional()
   @IsString()
-  readonly taskName?: string | null;
+  readonly taskName: string;
+}
+
+export class ResGetSpentPointsLogsDto {
+  @ApiProperty({ description: POINT_LOG_ID })
+  @IsInt()
+  readonly id: number;
+
+  @ApiProperty({ description: BADGE_LOG_ID })
+  @IsOptional()
+  @IsInt()
+  readonly badgeLogId: number;
+
+  @ApiProperty({ description: POINTS })
+  @IsInt()
+  readonly points: number;
+
+  @ApiProperty({ description: POINT_LOG_OCCURRED_AT })
+  @IsDate()
+  readonly occurredAt: Date;
 
   @ApiProperty({ description: BADGE_NAME })
   @IsOptional()
   @IsString()
-  readonly badgeName?: string | null;
+  readonly badgeName: string;
 }
