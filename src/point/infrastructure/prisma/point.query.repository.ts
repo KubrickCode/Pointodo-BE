@@ -4,12 +4,10 @@ import { PrismaService } from '@shared/service/prisma.service';
 import {
   EarnedPointsLogEntity,
   EarnedPointsLogWithTaskName,
-} from '@point/domain/entities/earnedPointsLog.entity';
-import { IPointRepository } from 'src/point/domain/interfaces/point.repository.interface';
-import {
   SpentPointsLogEntity,
   SpentPointsLogWithBadgeName,
-} from '@point/domain/entities/spentPointsLog.entity';
+} from '@point/domain/entities/pointsLog.entity';
+import { IPointRepository } from 'src/point/domain/interfaces/point.repository.interface';
 import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 import { UUID } from 'crypto';
 import { IHANDLE_DATE_TIME } from '@shared/constants/provider.constant';

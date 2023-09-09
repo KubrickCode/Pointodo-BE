@@ -1,6 +1,8 @@
 import { UUID } from 'crypto';
-import { EarnedPointsLogWithTaskName } from '../entities/earnedPointsLog.entity';
-import { SpentPointsLogWithBadgeName } from '../entities/spentPointsLog.entity';
+import {
+  EarnedPointsLogWithTaskName,
+  SpentPointsLogWithBadgeName,
+} from '../entities/pointsLog.entity';
 import { Exclude } from 'class-transformer';
 
 export class ReqGetPointsLogsAppDto {

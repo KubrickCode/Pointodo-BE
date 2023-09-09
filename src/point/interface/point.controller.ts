@@ -49,7 +49,8 @@ export class PointController {
   @Get('/logs')
   @HttpCode(HttpStatus.OK)
   @ApiOperation(getPointsLogsDocs.operation)
-  @ApiOkResponse(getPointsLogsDocs.okResponse)
+  @ApiOkResponse(getPointsLogsDocs.okResponseEarned)
+  @ApiOkResponse(getPointsLogsDocs.okResponseSpent)
   async getEarnedPointsLogs(
     @Req() req: Request,
     @Query() query: ReqGetPointsLogsQueryDto,

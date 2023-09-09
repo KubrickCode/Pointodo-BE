@@ -2,11 +2,9 @@ import { UUID } from 'crypto';
 import {
   EarnedPointsLogEntity,
   EarnedPointsLogWithTaskName,
-} from '../entities/earnedPointsLog.entity';
-import {
   SpentPointsLogEntity,
   SpentPointsLogWithBadgeName,
-} from '../entities/spentPointsLog.entity';
+} from '../entities/pointsLog.entity';
 
 export interface IPointRepository {
   getEarnedPointsLogs(
