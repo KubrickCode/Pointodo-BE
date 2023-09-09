@@ -19,17 +19,6 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     });
   }
 
-  async getBadgeList(type: BadgeType_): Promise<BadgeEntity[]> {
-    return await this.prisma.badge.findMany({
-      where: {
-        type,
-      },
-      orderBy: {
-        id: 'asc',
-      },
-    });
-  }
-
   async getBadgePrice(id: number): Promise<number> {
     const result = await this.prisma.badge.findFirst({
       where: { id },
