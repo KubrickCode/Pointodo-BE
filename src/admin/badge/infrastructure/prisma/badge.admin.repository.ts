@@ -87,12 +87,14 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
       Object.assign(data, { price });
     }
 
-    return await this.prisma.badge.update({
+    const result = await this.prisma.badge.update({
       where: {
         id,
       },
       data,
     });
+
+    return plainToClass(BadgeEntity, result);
   }
 
   async deleteBadge(id: number): Promise<BadgeEntity> {
