@@ -29,3 +29,7 @@ export class SpentPointsLogWithBadgeName extends SpentPointsLogEntity {
 export type POINT_LOG_ORDER_TYPE = 'newest' | 'old';
 
 export const POINT_LOG_ORDER_TYPES = ['newest', 'old'];
+
+export type POINT_LOG_TRANSACTION_TYPE = 'earned' | 'spent';
+
+export const POINT_LOG_TRANSACTION_TYPES = ['earned', 'spent'];

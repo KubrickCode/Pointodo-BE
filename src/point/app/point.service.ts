@@ -79,7 +79,7 @@ export class PointService implements IPointService {
     const { userId, transactionType, limit } = req;
     const cacheKey = `SPENTtotalPointPages:${userId}`;
 
-    if (transactionType === 'SPENT') {
+    if (transactionType === 'spent') {
       const cachedtotalPointPages =
         await this.cacheService.getFromCache<number>(cacheKey);
       if (cachedtotalPointPages) {
@@ -93,7 +93,7 @@ export class PointService implements IPointService {
     );
     const totalPages = Math.ceil(totalPointsLogs / limit);
 
-    if (transactionType === 'SPENT') {
+    if (transactionType === 'spent') {
       await this.cacheService.setCache(
         cacheKey,
         totalPages,

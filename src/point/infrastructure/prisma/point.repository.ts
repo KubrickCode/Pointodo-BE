@@ -4,6 +4,7 @@ import {
   EarnedPointsLogEntity,
   EarnedPointsLogWithTaskName,
   POINT_LOG_ORDER_TYPE,
+  POINT_LOG_TRANSACTION_TYPE,
   SpentPointsLogEntity,
   SpentPointsLogWithBadgeName,
 } from '@point/domain/entities/pointsLog.entity';
@@ -109,16 +110,16 @@ export class PointRepository implements IPointRepository {
 
   async getTotalPointPages(
     userId: UUID,
-    transactionType: 'EARNED' | 'SPENT',
+    transactionType: POINT_LOG_TRANSACTION_TYPE,
   ): Promise<number> {
-    if (transactionType === 'EARNED') {
+    if (transactionType === 'earned') {
       return await this.prisma.earnedPointsLogs.count({
         where: {
           userId,
         },
       });
     }
-    if (transactionType === 'SPENT') {
+    if (transactionType === 'spent') {
       return await this.prisma.spentPointsLogs.count({
         where: { userId },
       });

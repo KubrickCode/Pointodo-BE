@@ -2,6 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   POINT_LOG_ORDER_TYPE,
   POINT_LOG_ORDER_TYPES,
+  POINT_LOG_TRANSACTION_TYPE,
+  POINT_LOG_TRANSACTION_TYPES,
 } from '@point/domain/entities/pointsLog.entity';
 import { BADGE_LOG_ID, BADGE_NAME } from '@shared/constants/badge.constant';
 import { ORDER_BY } from '@shared/constants/global.constant';
@@ -14,21 +16,13 @@ import {
   POINT_TRANSACTION_TYPE,
 } from '@shared/constants/point.constant';
 import { TASK_NAME, TASK_TYPE_ID } from '@shared/constants/task.constant';
-import { Transform, Type } from 'class-transformer';
-import {
-  IsDate,
-  IsEnum,
-  IsIn,
-  IsInt,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDate, IsIn, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqGetPointsLogsQueryDto {
   @ApiProperty({ description: POINT_TRANSACTION_TYPE })
-  @Transform(({ value }) => value.toUpperCase())
-  @IsEnum(['EARNED', 'SPENT'])
-  readonly transactionType: 'EARNED' | 'SPENT';
+  @IsIn(POINT_LOG_TRANSACTION_TYPES)
+  readonly transactionType: POINT_LOG_TRANSACTION_TYPE;
 
   @ApiProperty({ description: POINT_PAGE })
   @Type(() => Number)

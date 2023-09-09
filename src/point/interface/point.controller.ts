@@ -56,7 +56,7 @@ export class PointController {
     @Query() query: ReqGetPointsLogsQueryDto,
   ): Promise<ResGetEarnedPointsLogsDto[] | ResGetSpentPointsLogsDto[]> {
     const { transactionType, offset, limit, order } = query;
-    if (transactionType === 'EARNED') {
+    if (transactionType === 'earned') {
       const result = await this.pointService.getEarnedPointsLogs({
         userId: req.user.id,
         order,
@@ -68,7 +68,7 @@ export class PointController {
       );
     }
 
-    if (transactionType === 'SPENT') {
+    if (transactionType === 'spent') {
       const result = await this.pointService.getSpentPointsLogs({
         userId: req.user.id,
         order,

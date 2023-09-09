@@ -3,6 +3,7 @@ import {
   EarnedPointsLogEntity,
   EarnedPointsLogWithTaskName,
   POINT_LOG_ORDER_TYPE,
+  POINT_LOG_TRANSACTION_TYPE,
   SpentPointsLogEntity,
   SpentPointsLogWithBadgeName,
 } from '../entities/pointsLog.entity';
@@ -24,7 +25,7 @@ export interface IPointRepository {
 
   getTotalPointPages(
     userId: UUID,
-    transactionType: 'EARNED' | 'SPENT',
+    transactionType: POINT_LOG_TRANSACTION_TYPE,
   ): Promise<number>;
 
   isContinuous(userId: UUID): Promise<boolean>;

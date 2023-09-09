@@ -5,6 +5,7 @@ import {
   EarnedPointsLogEntity,
   EarnedPointsLogWithTaskName,
   POINT_LOG_ORDER_TYPE,
+  POINT_LOG_TRANSACTION_TYPE,
   SpentPointsLogEntity,
   SpentPointsLogWithBadgeName,
 } from '@point/domain/entities/pointsLog.entity';
@@ -81,16 +82,16 @@ export class PointRepository implements IPointRepository {
 
   async getTotalPointPages(
     userId: UUID,
-    transactionType: 'EARNED' | 'SPENT',
+    transactionType: POINT_LOG_TRANSACTION_TYPE,
   ): Promise<number> {
     let query: string;
-    if (transactionType === 'EARNED') {
+    if (transactionType === 'earned') {
       query = `
     SELECT COUNT(*) FROM "EarnedPointsLogs"
     WHERE "userId" = $1::uuid
     `;
     }
-    if (transactionType === 'SPENT') {
+    if (transactionType === 'spent') {
       query = `
     SELECT COUNT(*) FROM "SpentPointsLogs"
     WHERE "userId" = $1::uuid
