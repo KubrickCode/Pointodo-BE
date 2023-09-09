@@ -4,6 +4,7 @@ import { PrismaService } from '@shared/service/prisma.service';
 import {
   EarnedPointsLogEntity,
   EarnedPointsLogWithTaskName,
+  POINT_LOG_ORDER_TYPE,
   SpentPointsLogEntity,
   SpentPointsLogWithBadgeName,
 } from '@point/domain/entities/pointsLog.entity';
@@ -24,7 +25,7 @@ export class PointRepository implements IPointRepository {
     userId: UUID,
     limit: number,
     offset: number,
-    order: string,
+    order: POINT_LOG_ORDER_TYPE,
   ): Promise<EarnedPointsLogWithTaskName[]> {
     let orderBy: string;
 
@@ -51,7 +52,7 @@ export class PointRepository implements IPointRepository {
     userId: UUID,
     limit: number,
     offset: number,
-    order: string,
+    order: POINT_LOG_ORDER_TYPE,
   ): Promise<SpentPointsLogWithBadgeName[]> {
     let orderBy: string;
 

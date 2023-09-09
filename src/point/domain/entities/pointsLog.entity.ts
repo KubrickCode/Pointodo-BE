@@ -25,3 +25,7 @@ export class SpentPointsLogEntity implements SpentPointsLogs {
 export class SpentPointsLogWithBadgeName extends SpentPointsLogEntity {
   @Expose() readonly badgeName: string;
 }
+
+export type POINT_LOG_ORDER_TYPE = 'newest' | 'old';
+
+export const POINT_LOG_ORDER_TYPES = ['newest', 'old'];

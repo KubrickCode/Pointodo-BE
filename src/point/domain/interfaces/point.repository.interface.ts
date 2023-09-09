@@ -2,6 +2,7 @@ import { UUID } from 'crypto';
 import {
   EarnedPointsLogEntity,
   EarnedPointsLogWithTaskName,
+  POINT_LOG_ORDER_TYPE,
   SpentPointsLogEntity,
   SpentPointsLogWithBadgeName,
 } from '../entities/pointsLog.entity';
@@ -11,14 +12,14 @@ export interface IPointRepository {
     userId: UUID,
     limit: number,
     offset: number,
-    order: string,
+    order: POINT_LOG_ORDER_TYPE,
   ): Promise<EarnedPointsLogWithTaskName[]>;
 
   getSpentPointsLogs(
     userId: UUID,
     limit: number,
     offset: number,
-    order: string,
+    order: POINT_LOG_ORDER_TYPE,
   ): Promise<SpentPointsLogWithBadgeName[]>;
 
   getTotalPointPages(
