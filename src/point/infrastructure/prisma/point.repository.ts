@@ -13,6 +13,7 @@ import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 import { plainToClass } from 'class-transformer';
 import { UUID } from 'crypto';
 import { IHANDLE_DATE_TIME } from '@shared/constants/provider.constant';
+import { TransactionClient } from '@shared/types/transaction.type';
 
 @Injectable()
 export class PointRepository implements IPointRepository {
@@ -155,8 +156,10 @@ export class PointRepository implements IPointRepository {
     badgeLogId: number,
     userId: UUID,
     points: number,
+    tx?: TransactionClient,
   ): Promise<SpentPointsLogEntity> {
-    const result = await this.prisma.spentPointsLogs.create({
+    const prisma = tx ?? this.prisma;
+    const result = await prisma.spentPointsLogs.create({
       data: { badgeLogId, userId, points },
     });
     return plainToClass(SpentPointsLogEntity, result);

@@ -38,10 +38,12 @@ import {
   ICACHE_SERVICE,
   IPOINT_REPOSITORY,
   IREDIS_SERVICE,
+  ITRANSACTION_SERVICE,
   IUSER_BADGE_REPOSITORY,
   IUSER_BADGE_TRANSACTION_REPOSITORY,
   IUSER_REPOSITORY,
 } from '@shared/constants/provider.constant';
+import { ITransactionService } from '@shared/interfaces/ITransaction.service.interface';
 import {
   ALREADY_EXIST_USER_BADGE,
   BUY_BADGE_CONFLICT_POINTS,
@@ -78,17 +80,34 @@ export class BadgeService implements IBadgeService {
     private readonly redisService: IRedisService,
     @Inject(ICACHE_SERVICE)
     private readonly cacheService: ICacheService,
+    @Inject(ITRANSACTION_SERVICE)
+    private readonly transactionService: ITransactionService,
     private readonly configService: ConfigService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async buyBadge(req: ReqBuyBadgeAppDto): Promise<void> {
     const { userId, badgeId } = req;
+    let badgeLogId: number;
 
-    const badgeLogId = await this.userBadgeTxRepository.buyBadge(
-      userId,
-      badgeId,
-    );
+    await this.transactionService.runInTransaction(async (tx) => {
+      const price = await this.badgeAdminRepository.getBadgePrice(badgeId, tx);
+
+      const badgeLog = await this.userBadgeRepository.createUserBadgeLog(
+        userId,
+        badgeId,
+        tx,
+      );
+
+      badgeLogId = badgeLog.id;
+
+      await this.pointRepository.createSpentPointLog(
+        badgeLogId,
+        userId,
+        price,
+        tx,
+      );
+    });
 
     const userPoints = await this.pointRepository.calculateUserPoints(userId);
     if (userPoints < 0) {

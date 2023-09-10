@@ -7,6 +7,7 @@ import {
   SpentPointsLogEntity,
   SpentPointsLogWithBadgeName,
 } from '../entities/pointsLog.entity';
+import { TransactionClient } from '@shared/types/transaction.type';
 
 export interface IPointRepository {
   getEarnedPointsLogs(
@@ -40,6 +41,7 @@ export interface IPointRepository {
     badgeLogId: number,
     userId: UUID,
     points: number,
+    tx?: TransactionClient,
   ): Promise<SpentPointsLogEntity>;
 
   countTasksPerDate(userId: UUID, date: string): Promise<number>;

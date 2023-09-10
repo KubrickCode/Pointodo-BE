@@ -1,14 +1,17 @@
 import { TransactionClient } from '@shared/types/transaction.type';
 import { PrismaService } from './prisma.service';
 import { Injectable } from '@nestjs/common';
+import { ITransactionService } from '@shared/interfaces/ITransaction.service.interface';
 
 @Injectable()
-export class TransactionService {
+export class TransactionService implements ITransactionService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async startTransaction(): Promise<TransactionClient> {
-    return await this.prisma.$transaction(async (tx: TransactionClient) => {
-      return tx;
+  async runInTransaction<T>(
+    callback: (tx: TransactionClient) => Promise<T>,
+  ): Promise<T> {
+    return this.prisma.$transaction(async (tx) => {
+      return callback(tx);
     });
   }
 }

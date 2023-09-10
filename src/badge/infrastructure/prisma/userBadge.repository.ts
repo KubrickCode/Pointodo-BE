@@ -2,6 +2,7 @@ import { UserBadgeLogEntity } from '@badge/domain/entities/userBadgeLog.entity';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
+import { TransactionClient } from '@shared/types/transaction.type';
 import { plainToClass } from 'class-transformer';
 import { UUID } from 'crypto';
 
@@ -12,8 +13,10 @@ export class UserBadgeRepository implements IUserBadgeRepository {
   async createUserBadgeLog(
     userId: UUID,
     badgeId: number,
+    tx?: TransactionClient,
   ): Promise<UserBadgeLogEntity> {
-    const result = await this.prisma.userBadgesLogs.create({
+    const prisma = tx ?? this.prisma;
+    const result = await prisma.userBadgesLogs.create({
       data: { userId, badgeId },
     });
     return plainToClass(UserBadgeLogEntity, result);
