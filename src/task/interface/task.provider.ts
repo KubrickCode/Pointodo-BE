@@ -4,6 +4,18 @@ import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repo
 import { CacheService } from '@cache/infrastructure/cache.service';
 import { PointRepository } from '@point/infrastructure/prisma/point.repository';
 import { RedisService } from '@redis/infrastructure/redis.service';
+import {
+  IBADGE_ADMIN_REPOSITORY,
+  IBADGE_PROGRESS_REPOSITORY,
+  ICACHE_SERVICE,
+  IHANDLE_DATE_TIME,
+  IPOINT_REPOSITORY,
+  IREDIS_SERVICE,
+  ITASK_REPOSITORY,
+  ITASK_SERVICE,
+  IUSER_BADGE_REPOSITORY,
+  IUSER_REPOSITORY,
+} from '@shared/constants/provider.constant';
 import { PrismaService } from '@shared/service/prisma.service';
 import { HandleDateTime } from '@shared/utils/handleDateTime';
 import { TaskService } from '@task/app/task.service';
@@ -13,43 +25,43 @@ import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 export const TaskProvider = [
   PrismaService,
   {
-    provide: 'ITaskService',
+    provide: ITASK_SERVICE,
     useClass: TaskService,
   },
   {
-    provide: 'ITaskRepository',
+    provide: ITASK_REPOSITORY,
     useClass: TaskRepository,
   },
   {
-    provide: 'IBadgeProgressRepository',
+    provide: IBADGE_PROGRESS_REPOSITORY,
     useClass: BadgeProgressRepository,
   },
   {
-    provide: 'IPointRepository',
+    provide: IPOINT_REPOSITORY,
     useClass: PointRepository,
   },
   {
-    provide: 'IUserBadgeRepository',
+    provide: IUSER_BADGE_REPOSITORY,
     useClass: UserBadgeRepository,
   },
   {
-    provide: 'ICacheService',
+    provide: ICACHE_SERVICE,
     useClass: CacheService,
   },
   {
-    provide: 'IUserRepository',
+    provide: IUSER_REPOSITORY,
     useClass: UserRepository,
   },
   {
-    provide: 'IBadgeAdminRepository',
+    provide: IBADGE_ADMIN_REPOSITORY,
     useClass: BadgeAdminRepository,
   },
   {
-    provide: 'IRedisService',
+    provide: IREDIS_SERVICE,
     useClass: RedisService,
   },
   {
-    provide: 'IHandleDateTime',
+    provide: IHANDLE_DATE_TIME,
     useClass: HandleDateTime,
   },
 ];
