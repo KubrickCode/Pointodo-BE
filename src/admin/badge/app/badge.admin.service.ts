@@ -4,7 +4,6 @@ import {
 } from '@admin/badge/domain/dto/createBadge.admin.app.dto';
 import { ReqAdminDeleteBadgeAppDto } from '@admin/badge/domain/dto/deleteBadge.admin.app.dto';
 import { ReqAdminUpdateBadgeAppDto } from '@admin/badge/domain/dto/updateBadge.admin.app.dto';
-import { BadgeEntity } from '../domain/entities/badge.entity';
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { IBadgeAdminService } from '@admin/badge/domain/interfaces/badge.admin.service.interface';
 import { Inject, Injectable, ConflictException, Logger } from '@nestjs/common';
@@ -15,7 +14,6 @@ import {
   UPDATE_BADGE_SUCCESS_MESSAGE,
 } from '@shared/messages/admin/badge.admin.messages';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { ReqAdminGetBadgeListAppDto } from '../domain/dto/getBadgeList.admin.app.dto';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
@@ -44,10 +42,6 @@ export class BadgeAdminService implements IBadgeAdminService {
     @Inject(ICACHE_SERVICE)
     private readonly cacheService: ICacheService,
   ) {}
-
-  async getBadgeList(req: ReqAdminGetBadgeListAppDto): Promise<BadgeEntity[]> {
-    return await this.badgeAdminRepository.getBadgeList(req.type);
-  }
 
   async createBadge(
     req: ReqAdminCreateBadgeAppDto,

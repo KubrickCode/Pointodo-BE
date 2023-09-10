@@ -1,6 +1,5 @@
 export const mockBadgeAdminRepository = {
   getAllBadges: jest.fn(),
-  getBadgeList: jest.fn(),
   getBadgePrice: jest.fn(),
   getBadgeIdByName: jest.fn(),
   isExistBadge: jest.fn(),

@@ -19,15 +19,6 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     return await this.prisma.$queryRawUnsafe<Badge[]>(query);
   }
 
-  async getBadgeList(type: BadgeType_): Promise<BadgeEntity[]> {
-    const query = `
-    SELECT * FROM "Badge"
-    WHERE type = $1::"BadgeType"
-    ORDER BY id ASC
-    `;
-    return await this.prisma.$queryRawUnsafe<Badge[]>(query, type);
-  }
-
   async getBadgePrice(id: number): Promise<number> {
     const query = `
     SELECT price FROM "Badge"

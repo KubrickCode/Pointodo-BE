@@ -1,17 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsInt } from 'class-validator';
+import { IsIn, IsInt } from 'class-validator';
 import {
   POINTS_LOGS_LIMIT,
   POINT_TRANSACTION_TYPE,
 } from '@shared/constants/point.constant';
 import { TOTAL_PAGE } from '@shared/constants/global.constant';
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
+import {
+  POINT_LOG_TRANSACTION_TYPE,
+  POINT_LOG_TRANSACTION_TYPES,
+} from '@point/domain/entities/pointsLog.entity';
 
 export class ReqGetTotalPointPagesQueryDto {
   @ApiProperty({ description: POINT_TRANSACTION_TYPE })
-  @Transform(({ value }) => value.toUpperCase())
-  @IsEnum(['EARNED', 'SPENT'])
-  readonly transactionType: 'EARNED' | 'SPENT';
+  @IsIn(POINT_LOG_TRANSACTION_TYPES)
+  readonly transactionType: POINT_LOG_TRANSACTION_TYPE;
 
   @ApiProperty({ description: POINTS_LOGS_LIMIT })
   @Type(() => Number)

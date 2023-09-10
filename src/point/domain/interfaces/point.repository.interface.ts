@@ -2,30 +2,30 @@ import { UUID } from 'crypto';
 import {
   EarnedPointsLogEntity,
   EarnedPointsLogWithTaskName,
-} from '../entities/earnedPointsLog.entity';
-import {
+  POINT_LOG_ORDER_TYPE,
+  POINT_LOG_TRANSACTION_TYPE,
   SpentPointsLogEntity,
   SpentPointsLogWithBadgeName,
-} from '../entities/spentPointsLog.entity';
+} from '../entities/pointsLog.entity';
 
 export interface IPointRepository {
   getEarnedPointsLogs(
     userId: UUID,
     limit: number,
     offset: number,
-    order: string,
+    order: POINT_LOG_ORDER_TYPE,
   ): Promise<EarnedPointsLogWithTaskName[]>;
 
   getSpentPointsLogs(
     userId: UUID,
     limit: number,
     offset: number,
-    order: string,
+    order: POINT_LOG_ORDER_TYPE,
   ): Promise<SpentPointsLogWithBadgeName[]>;
 
   getTotalPointPages(
     userId: UUID,
-    transactionType: 'EARNED' | 'SPENT',
+    transactionType: POINT_LOG_TRANSACTION_TYPE,
   ): Promise<number>;
 
   isContinuous(userId: UUID): Promise<boolean>;

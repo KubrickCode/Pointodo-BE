@@ -4,12 +4,12 @@ import { PrismaService } from '@shared/service/prisma.service';
 import {
   EarnedPointsLogEntity,
   EarnedPointsLogWithTaskName,
-} from '@point/domain/entities/earnedPointsLog.entity';
-import { IPointRepository } from 'src/point/domain/interfaces/point.repository.interface';
-import {
+  POINT_LOG_ORDER_TYPE,
+  POINT_LOG_TRANSACTION_TYPE,
   SpentPointsLogEntity,
   SpentPointsLogWithBadgeName,
-} from '@point/domain/entities/spentPointsLog.entity';
+} from '@point/domain/entities/pointsLog.entity';
+import { IPointRepository } from 'src/point/domain/interfaces/point.repository.interface';
 import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 import { UUID } from 'crypto';
 import { IHANDLE_DATE_TIME } from '@shared/constants/provider.constant';
@@ -26,7 +26,7 @@ export class PointRepository implements IPointRepository {
     userId: UUID,
     limit: number,
     offset: number,
-    order: string,
+    order: POINT_LOG_ORDER_TYPE,
   ): Promise<EarnedPointsLogWithTaskName[]> {
     let orderBy: string;
 
@@ -53,7 +53,7 @@ export class PointRepository implements IPointRepository {
     userId: UUID,
     limit: number,
     offset: number,
-    order: string,
+    order: POINT_LOG_ORDER_TYPE,
   ): Promise<SpentPointsLogWithBadgeName[]> {
     let orderBy: string;
 
@@ -82,16 +82,16 @@ export class PointRepository implements IPointRepository {
 
   async getTotalPointPages(
     userId: UUID,
-    transactionType: 'EARNED' | 'SPENT',
+    transactionType: POINT_LOG_TRANSACTION_TYPE,
   ): Promise<number> {
     let query: string;
-    if (transactionType === 'EARNED') {
+    if (transactionType === 'earned') {
       query = `
     SELECT COUNT(*) FROM "EarnedPointsLogs"
     WHERE "userId" = $1::uuid
     `;
     }
-    if (transactionType === 'SPENT') {
+    if (transactionType === 'spent') {
       query = `
     SELECT COUNT(*) FROM "SpentPointsLogs"
     WHERE "userId" = $1::uuid

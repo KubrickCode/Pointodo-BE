@@ -1,4 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  POINT_LOG_ORDER_TYPE,
+  POINT_LOG_ORDER_TYPES,
+  POINT_LOG_TRANSACTION_TYPE,
+  POINT_LOG_TRANSACTION_TYPES,
+} from '@point/domain/entities/pointsLog.entity';
 import { BADGE_LOG_ID, BADGE_NAME } from '@shared/constants/badge.constant';
 import { ORDER_BY } from '@shared/constants/global.constant';
 import {
@@ -10,14 +16,13 @@ import {
   POINT_TRANSACTION_TYPE,
 } from '@shared/constants/point.constant';
 import { TASK_NAME, TASK_TYPE_ID } from '@shared/constants/task.constant';
-import { Transform, Type } from 'class-transformer';
-import { IsDate, IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDate, IsIn, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqGetPointsLogsQueryDto {
   @ApiProperty({ description: POINT_TRANSACTION_TYPE })
-  @Transform(({ value }) => value.toUpperCase())
-  @IsEnum(['EARNED', 'SPENT'])
-  readonly transactionType: 'EARNED' | 'SPENT';
+  @IsIn(POINT_LOG_TRANSACTION_TYPES)
+  readonly transactionType: POINT_LOG_TRANSACTION_TYPE;
 
   @ApiProperty({ description: POINT_PAGE })
   @Type(() => Number)
@@ -30,24 +35,18 @@ export class ReqGetPointsLogsQueryDto {
   readonly limit: number;
 
   @ApiProperty({ description: ORDER_BY })
-  @IsString()
-  readonly order: string;
+  @IsIn(POINT_LOG_ORDER_TYPES)
+  readonly order: POINT_LOG_ORDER_TYPE;
 }
 
-export class ResGetPointsLogsDto {
+export class ResGetEarnedPointsLogsDto {
   @ApiProperty({ description: POINT_LOG_ID })
   @IsInt()
   readonly id: number;
 
   @ApiProperty({ description: TASK_TYPE_ID })
-  @IsOptional()
   @IsInt()
-  readonly taskId?: number | null;
-
-  @ApiProperty({ description: BADGE_LOG_ID })
-  @IsOptional()
-  @IsInt()
-  readonly badgeLogId?: number | null;
+  readonly taskId: number;
 
   @ApiProperty({ description: POINTS })
   @IsInt()
@@ -58,12 +57,30 @@ export class ResGetPointsLogsDto {
   readonly occurredAt: Date;
 
   @ApiProperty({ description: TASK_NAME })
-  @IsOptional()
   @IsString()
-  readonly taskName?: string | null;
+  readonly taskName: string;
+}
+
+export class ResGetSpentPointsLogsDto {
+  @ApiProperty({ description: POINT_LOG_ID })
+  @IsInt()
+  readonly id: number;
+
+  @ApiProperty({ description: BADGE_LOG_ID })
+  @IsOptional()
+  @IsInt()
+  readonly badgeLogId: number;
+
+  @ApiProperty({ description: POINTS })
+  @IsInt()
+  readonly points: number;
+
+  @ApiProperty({ description: POINT_LOG_OCCURRED_AT })
+  @IsDate()
+  readonly occurredAt: Date;
 
   @ApiProperty({ description: BADGE_NAME })
   @IsOptional()
   @IsString()
-  readonly badgeName?: string | null;
+  readonly badgeName: string;
 }

@@ -4,6 +4,7 @@ const badgeTypes: BadgeType_[] = ['NORMAL', 'ACHIEVEMENT'];
 const randomIndex = Math.floor(Math.random() * badgeTypes.length);
 
 export const mockBadge = {
+  id: 1,
   name: 'test',
   description: 'test',
   iconLink: 'test',

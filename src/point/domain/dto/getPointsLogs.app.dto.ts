@@ -1,11 +1,14 @@
 import { UUID } from 'crypto';
-import { EarnedPointsLogWithTaskName } from '../entities/earnedPointsLog.entity';
-import { SpentPointsLogWithBadgeName } from '../entities/spentPointsLog.entity';
+import {
+  EarnedPointsLogWithTaskName,
+  POINT_LOG_ORDER_TYPE,
+  SpentPointsLogWithBadgeName,
+} from '../entities/pointsLog.entity';
 import { Exclude } from 'class-transformer';
 
 export class ReqGetPointsLogsAppDto {
   readonly userId: UUID;
-  readonly order: string;
+  readonly order: POINT_LOG_ORDER_TYPE;
   readonly offset: number;
   readonly limit: number;
 }
