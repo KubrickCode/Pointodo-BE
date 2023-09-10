@@ -1,8 +1,9 @@
 import { IUserBadgeTransactionRepository } from '@badge/domain/interfaces/userBadge.tx.repository.interface';
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
 import { UUID } from 'crypto';
+import * as runtime from '@prisma/client/runtime/library';
 
 @Injectable()
 export class UserBadgeTransactionRepository
@@ -12,7 +13,7 @@ export class UserBadgeTransactionRepository
 
   async buyBadge(userId: UUID, badgeId: number): Promise<number> {
     return await this.prisma.$transaction(
-      async (tx) => {
+      async (tx: Omit<PrismaClient, runtime.ITXClientDenyList>) => {
         const { price } = await tx.badge.findFirst({
           where: { id: badgeId },
           select: { price: true },
