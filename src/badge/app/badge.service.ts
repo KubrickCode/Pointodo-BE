@@ -19,7 +19,6 @@ import { ReqPutBadgeToUserAppDto } from '@badge/domain/dto/putBadgeToUser.app.dt
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
-import { IUserBadgeTransactionRepository } from '@badge/domain/interfaces/userBadge.tx.repository.interface';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import {
   ConflictException,
@@ -40,7 +39,6 @@ import {
   IREDIS_SERVICE,
   ITRANSACTION_SERVICE,
   IUSER_BADGE_REPOSITORY,
-  IUSER_BADGE_TRANSACTION_REPOSITORY,
   IUSER_REPOSITORY,
 } from '@shared/constants/provider.constant';
 import { ITransactionService } from '@shared/interfaces/ITransaction.service.interface';
@@ -68,8 +66,6 @@ export class BadgeService implements IBadgeService {
     private readonly pointRepository: IPointRepository,
     @Inject(IUSER_BADGE_REPOSITORY)
     private readonly userBadgeRepository: IUserBadgeRepository,
-    @Inject(IUSER_BADGE_TRANSACTION_REPOSITORY)
-    private readonly userBadgeTxRepository: IUserBadgeTransactionRepository,
     @Inject(IBADGE_ADMIN_REPOSITORY)
     private readonly badgeAdminRepository: IBadgeAdminRepository,
     @Inject(IUSER_REPOSITORY)
