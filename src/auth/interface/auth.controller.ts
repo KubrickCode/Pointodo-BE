@@ -88,12 +88,12 @@ export class AuthController {
       device: { browser, platform, os, version },
     });
     res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      expires: this.handleDateTime.getFewDaysLater(
-        jwtExpiration.refreshTokenExpirationDays,
-      ),
+      // httpOnly: true,
+      // secure: true,
+      // sameSite: 'strict',
+      // expires: this.handleDateTime.getFewDaysLater(
+      //   jwtExpiration.refreshTokenExpirationDays,
+      // ),
     });
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,

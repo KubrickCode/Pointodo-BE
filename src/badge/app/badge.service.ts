@@ -19,6 +19,7 @@ import { ReqPutBadgeToUserAppDto } from '@badge/domain/dto/putBadgeToUser.app.dt
 import { IBadgeService } from '@badge/domain/interfaces/badge.service.interface';
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
+import { IUserBadgeTransactionRepository } from '@badge/domain/interfaces/userBadge.tx.repository.interface';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import {
   ConflictException,
@@ -38,6 +39,7 @@ import {
   IPOINT_REPOSITORY,
   IREDIS_SERVICE,
   IUSER_BADGE_REPOSITORY,
+  IUSER_BADGE_TRANSACTION_REPOSITORY,
   IUSER_REPOSITORY,
 } from '@shared/constants/provider.constant';
 import {
@@ -64,6 +66,8 @@ export class BadgeService implements IBadgeService {
     private readonly pointRepository: IPointRepository,
     @Inject(IUSER_BADGE_REPOSITORY)
     private readonly userBadgeRepository: IUserBadgeRepository,
+    @Inject(IUSER_BADGE_TRANSACTION_REPOSITORY)
+    private readonly userBadgeTxRepository: IUserBadgeTransactionRepository,
     @Inject(IBADGE_ADMIN_REPOSITORY)
     private readonly badgeAdminRepository: IBadgeAdminRepository,
     @Inject(IUSER_REPOSITORY)
@@ -80,20 +84,15 @@ export class BadgeService implements IBadgeService {
 
   async buyBadge(req: ReqBuyBadgeAppDto): Promise<void> {
     const { userId, badgeId } = req;
-    const price = await this.badgeAdminRepository.getBadgePrice(badgeId);
 
-    const createdUserBadgeLog =
-      await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
-
-    await this.pointRepository.createSpentPointLog(
-      createdUserBadgeLog.id,
+    const badgeLogId = await this.userBadgeTxRepository.buyBadge(
       userId,
-      price,
+      badgeId,
     );
 
-    const updatedPoint = await this.pointRepository.calculateUserPoints(userId);
-    if (updatedPoint < 0) {
-      await this.userBadgeRepository.deleteUserBadgeLog(createdUserBadgeLog.id);
+    const userPoints = await this.pointRepository.calculateUserPoints(userId);
+    if (userPoints < 0) {
+      await this.userBadgeRepository.deleteUserBadgeLog(badgeLogId);
       throw new ConflictException(BUY_BADGE_CONFLICT_POINTS);
     }
 

@@ -13,6 +13,8 @@ export const IBADGE_REPOSITORY = 'IBadgeRepository';
 export const IBADGE_ADMIN_REPOSITORY = 'IBadgeAdminRepository';
 export const IBADGE_PROGRESS_REPOSITORY = 'IBadgeProgressRepository';
 export const IUSER_BADGE_REPOSITORY = 'IUserBadgeRepository';
+export const IUSER_BADGE_TRANSACTION_REPOSITORY =
+  'IUserBadgeTransactionRepository';
 export const IPOINT_REPOSITORY = 'IPointRepository';
 export const ITASK_REPOSITORY = 'ITaskRepository';
 
