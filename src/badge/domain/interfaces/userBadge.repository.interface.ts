@@ -1,10 +1,12 @@
 import { UUID } from 'crypto';
 import { UserBadgeLogEntity } from '../entities/userBadgeLog.entity';
+import { TransactionClient } from '@shared/types/transaction.type';
 
 export interface IUserBadgeRepository {
   createUserBadgeLog(
     userId: UUID,
     badgeId: number,
+    tx?: TransactionClient,
   ): Promise<UserBadgeLogEntity>;
 
   getUserBadgeList(

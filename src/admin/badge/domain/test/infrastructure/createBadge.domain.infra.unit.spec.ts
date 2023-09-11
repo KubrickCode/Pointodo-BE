@@ -8,7 +8,6 @@ describe('createBadge', () => {
 
   it('뱃지 생성 성공 - NORMAL,ACHIEVEMENT', async () => {
     const expectedResult: BadgeEntity = {
-      id: 1,
       ...mockBadge,
     };
 
@@ -36,7 +35,6 @@ describe('createBadge', () => {
 
   it('뱃지 생성 성공 - SPECIAL', async () => {
     const expectedResult: BadgeEntity = {
-      id: 1,
       ...mockBadge,
     };
 

@@ -14,7 +14,7 @@ describe('createBadge', () => {
     const request: ReqAdminCreateBadgeAppDto = mockBadge;
 
     const expectedResult: ResAdminCreateBadgeAppDto = {
-      id: 1,
+      id: mockBadge.id,
     };
 
     jest

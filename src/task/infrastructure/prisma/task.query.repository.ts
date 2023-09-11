@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TasksDueDate, TasksLogs } from '@prisma/client';
 import { PrismaService } from '@shared/service/prisma.service';
+import { TransactionClient } from '@shared/types/transaction.type';
 import { TaskEntity, TaskType_ } from '@task/domain/entities/task.entity';
 import { TasksDueDateEntity } from '@task/domain/entities/tasksDueDate.entity';
 import { ITaskRepository } from '@task/domain/interfaces/task.repository.interface';
@@ -217,15 +218,16 @@ export class TaskRepository implements ITaskRepository {
     return deletedTaskDueDate[0];
   }
 
-  async completeTask(id: number, isRollback?: boolean): Promise<TaskEntity> {
+  async completeTask(id: number, tx?: TransactionClient): Promise<TaskEntity> {
+    const prisma = tx ?? this.prisma;
     const completeQuery = `
         UPDATE "TasksLogs"
-        SET completion = completion ${isRollback ? '- 1' : '+ 1'}
+        SET completion = completion + 1}
         WHERE id = $1
         RETURNING *
       `;
     const completeValues = [id];
-    const completedTaskLog = await this.prisma.$queryRawUnsafe<TasksLogs>(
+    const completedTaskLog = await prisma.$queryRawUnsafe<TasksLogs>(
       completeQuery,
       ...completeValues,
     );

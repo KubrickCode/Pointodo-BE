@@ -2,51 +2,60 @@ import { UUID } from 'crypto';
 import {
   EarnedPointsLogEntity,
   EarnedPointsLogWithTaskName,
-} from '../entities/earnedPointsLog.entity';
-import {
+  POINT_LOG_ORDER_TYPE,
+  POINT_LOG_TRANSACTION_TYPE,
   SpentPointsLogEntity,
   SpentPointsLogWithBadgeName,
-} from '../entities/spentPointsLog.entity';
+} from '../entities/pointsLog.entity';
+import { TransactionClient } from '@shared/types/transaction.type';
 
 export interface IPointRepository {
   getEarnedPointsLogs(
     userId: UUID,
     limit: number,
     offset: number,
-    order: string,
+    order: POINT_LOG_ORDER_TYPE,
   ): Promise<EarnedPointsLogWithTaskName[]>;
 
   getSpentPointsLogs(
     userId: UUID,
     limit: number,
     offset: number,
-    order: string,
+    order: POINT_LOG_ORDER_TYPE,
   ): Promise<SpentPointsLogWithBadgeName[]>;
 
   getTotalPointPages(
     userId: UUID,
-    transactionType: 'EARNED' | 'SPENT',
+    transactionType: POINT_LOG_TRANSACTION_TYPE,
   ): Promise<number>;
 
-  isContinuous(userId: UUID): Promise<boolean>;
+  isContinuous(userId: UUID, tx?: TransactionClient): Promise<boolean>;
 
   createEarnedPointLog(
     taskId: number,
     userId: UUID,
     points: number,
+    tx?: TransactionClient,
   ): Promise<EarnedPointsLogEntity>;
 
   createSpentPointLog(
     badgeLogId: number,
     userId: UUID,
     points: number,
+    tx?: TransactionClient,
   ): Promise<SpentPointsLogEntity>;
 
-  countTasksPerDate(userId: UUID, date: string): Promise<number>;
+  countTasksPerDate(
+    userId: UUID,
+    date: string,
+    tx?: TransactionClient,
+  ): Promise<number>;
 
   calculateUserPoints(userId: UUID): Promise<number>;
 
   deleteEarnedPointLog(id: number): Promise<EarnedPointsLogEntity>;
 
   deleteSpentPointLog(id: number): Promise<SpentPointsLogEntity>;
+
+  calculateConsistency(userId: UUID, tx?: TransactionClient): Promise<number>;
 }

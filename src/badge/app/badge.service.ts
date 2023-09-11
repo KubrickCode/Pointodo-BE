@@ -37,9 +37,11 @@ import {
   ICACHE_SERVICE,
   IPOINT_REPOSITORY,
   IREDIS_SERVICE,
+  ITRANSACTION_SERVICE,
   IUSER_BADGE_REPOSITORY,
   IUSER_REPOSITORY,
 } from '@shared/constants/provider.constant';
+import { ITransactionService } from '@shared/interfaces/ITransaction.service.interface';
 import {
   ALREADY_EXIST_USER_BADGE,
   BUY_BADGE_CONFLICT_POINTS,
@@ -74,30 +76,39 @@ export class BadgeService implements IBadgeService {
     private readonly redisService: IRedisService,
     @Inject(ICACHE_SERVICE)
     private readonly cacheService: ICacheService,
+    @Inject(ITRANSACTION_SERVICE)
+    private readonly transactionService: ITransactionService,
     private readonly configService: ConfigService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async buyBadge(req: ReqBuyBadgeAppDto): Promise<void> {
     const { userId, badgeId } = req;
-    const price = await this.badgeAdminRepository.getBadgePrice(badgeId);
+    let badgeLogId: number;
 
-    const createdUserBadgeLog =
-      await this.userBadgeRepository.createUserBadgeLog(userId, badgeId);
+    await this.transactionService.runInTransaction(async (tx) => {
+      const price = await this.badgeAdminRepository.getBadgePrice(badgeId, tx);
 
-    const updatedPointLog = await this.pointRepository.createSpentPointLog(
-      createdUserBadgeLog.id,
-      userId,
-      price,
-    );
-
-    const updatedPoint = await this.pointRepository.calculateUserPoints(userId);
-    if (updatedPoint < 0) {
-      await this.userBadgeRepository.deleteUserBadgeLog(createdUserBadgeLog.id);
-      await this.pointRepository.deleteSpentPointLog(updatedPointLog.id);
-      throw new ConflictException(
-        updatedPoint < 0 ? BUY_BADGE_CONFLICT_POINTS : ALREADY_EXIST_USER_BADGE,
+      const badgeLog = await this.userBadgeRepository.createUserBadgeLog(
+        userId,
+        badgeId,
+        tx,
       );
+
+      badgeLogId = badgeLog.id;
+
+      await this.pointRepository.createSpentPointLog(
+        badgeLogId,
+        userId,
+        price,
+        tx,
+      );
+    });
+
+    const userPoints = await this.pointRepository.calculateUserPoints(userId);
+    if (userPoints < 0) {
+      await this.userBadgeRepository.deleteUserBadgeLog(badgeLogId);
+      throw new ConflictException(BUY_BADGE_CONFLICT_POINTS);
     }
 
     await this.cacheService.deleteCache(`userBadgeList:${userId}`);

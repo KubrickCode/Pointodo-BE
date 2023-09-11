@@ -28,15 +28,20 @@ import { IPointRepository } from '@point/domain/interfaces/point.repository.inte
 import { ReqCompleteTaskAppDto } from '@task/domain/dto/completeTask.app.dto';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { setTaskPoints } from './utils/setTaskPoints';
-import { completeConsistency } from './utils/completeConsistency';
-import { setDiversityBadgeType } from './utils/setDiversityBadgeType';
-import { completeDiversity } from './utils/completeDiversity';
-import { completeProductivity } from './utils/completeProductivity';
 import {
   COMPLETE_TASK_CONFLICT,
   DUE_DATE_IN_THE_PAST,
 } from '@shared/messages/task/task.errors';
-import { IS_COMPLETED } from '@shared/constants/task.constant';
+import {
+  A_MONTH,
+  A_WEEK,
+  A_YEAR,
+  DIVERSITY_GOAL,
+  IS_COMPLETED,
+  PRODUCTIVITY_GOAL_FOR_A_MONTH_AGO,
+  PRODUCTIVITY_GOAL_FOR_A_WEEK_AGO,
+  PRODUCTIVITY_GOAL_FOR_TODAY,
+} from '@shared/constants/task.constant';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import { ReqCancleTaskCompletionAppDto } from '@task/domain/dto/cancleTaskCompletion.app.dto';
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
@@ -56,8 +61,25 @@ import {
   IHANDLE_DATE_TIME,
   IPOINT_REPOSITORY,
   ITASK_REPOSITORY,
+  ITRANSACTION_SERVICE,
   IUSER_BADGE_REPOSITORY,
 } from '@shared/constants/provider.constant';
+import { UUID } from 'crypto';
+import {
+  CONSISTENCY_BADGE_ID1,
+  CONSISTENCY_BADGE_ID2,
+  CONSISTENCY_BADGE_ID3,
+  DIVERSITY_BADGE_ID1,
+  DIVERSITY_BADGE_ID2,
+  DIVERSITY_BADGE_ID3,
+  PRODUCTIVITY_BADGE_ID1,
+  PRODUCTIVITY_BADGE_ID2,
+  PRODUCTIVITY_BADGE_ID3,
+} from '@shared/constants/badge.constant';
+import { ALREADY_EXIST_USER_BADGE } from '@shared/messages/badge/badge.errors';
+import { TaskType_ } from '@task/domain/entities/task.entity';
+import { ITransactionService } from '@shared/interfaces/ITransaction.service.interface';
+import { TransactionClient } from '@shared/types/transaction.type';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -76,6 +98,8 @@ export class TaskService implements ITaskService {
     private readonly cacheService: ICacheService,
     @Inject(IHANDLE_DATE_TIME)
     private readonly handleDateTime: IHandleDateTime,
+    @Inject(ITRANSACTION_SERVICE)
+    private readonly transactionService: ITransactionService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -170,113 +194,146 @@ export class TaskService implements ITaskService {
   }
 
   async completeTask(req: ReqCompleteTaskAppDto): Promise<void> {
-    try {
+    await this.transactionService.runInTransaction(async (tx) => {
       const { taskType, completion, version } =
-        await this.taskRepository.completeTask(req.id);
+        await this.taskRepository.completeTask(req.id, tx);
 
       await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
 
       if (completion !== IS_COMPLETED) {
-        await this.taskRepository.completeTask(req.id, true); // 롤백
         throw new ConflictException(COMPLETE_TASK_CONFLICT);
       }
 
       if (version === 1) return;
 
-      const isContinuous = await this.pointRepository.isContinuous(req.userId);
+      const isContinuous = await this.pointRepository.isContinuous(
+        req.userId,
+        tx,
+      );
 
       await this.pointRepository.createEarnedPointLog(
         req.id,
         req.userId,
         setTaskPoints(taskType, isContinuous),
+        tx,
       );
 
-      const consistencyBadgeNames = [
-        '일관성 뱃지1',
-        '일관성 뱃지2',
-        '일관성 뱃지3',
-      ];
+      await this.updateConsistency(req.userId, tx);
+      await this.updateDiversity(req.userId, taskType, tx);
+      await this.updateProductivity(req.userId, tx);
 
-      const badgeIds = await Promise.all(
-        consistencyBadgeNames.map((badgeName) =>
-          this.badgeAdminRepository.getBadgeIdByName(badgeName),
-        ),
-      );
-
-      const results = [];
-
-      for (const badge of badgeIds) {
-        const result = await this.badgeProgressRepository.updateConsistency(
-          req.userId,
-          isContinuous,
-          badge.id,
-        );
-        results.push(result);
-      }
-
-      await completeConsistency(
-        results[0],
-        req.userId,
-        this.userBadgeRepository.createUserBadgeLog.bind(
-          this.userBadgeRepository,
-        ),
-        this.badgeAdminRepository.getBadgeIdByName.bind(
-          this.badgeAdminRepository,
-        ),
-      );
-
-      const updatedDiversity =
-        await this.badgeProgressRepository.updateDiversity(
-          req.userId,
-          await setDiversityBadgeType(
-            taskType,
-            this.badgeAdminRepository.getBadgeIdByName.bind(
-              this.badgeAdminRepository,
-            ),
-          ),
-        );
-
-      await completeDiversity(
-        updatedDiversity,
-        taskType,
-        req.userId,
-        this.userBadgeRepository.createUserBadgeLog.bind(
-          this.userBadgeRepository,
-        ),
-        this.badgeAdminRepository.getBadgeIdByName.bind(
-          this.badgeAdminRepository,
-        ),
-      );
-
-      await completeProductivity(
-        req.userId,
-        this.pointRepository.countTasksPerDate.bind(this.pointRepository),
-        this.userBadgeRepository.createUserBadgeLog.bind(
-          this.userBadgeRepository,
-        ),
-        this.badgeProgressRepository.updateProductivity.bind(
-          this.badgeProgressRepository,
-        ),
-        this.badgeAdminRepository.getBadgeIdByName.bind(
-          this.badgeAdminRepository,
-        ),
-        [
-          this.handleDateTime.getToday(),
-          this.handleDateTime.getAWeekAgo(),
-          this.handleDateTime.getAMonthAgo(),
-        ],
-      );
-
-      await this.taskRepository.lockTask(req.id);
-    } catch (error) {
-      throw error;
-    }
+      await this.taskRepository.lockTask(req.id, tx);
+    });
   }
 
   async cancleTaskCompletion(
     req: ReqCancleTaskCompletionAppDto,
   ): Promise<void> {
     await this.taskRepository.cancleTaskCompletion(req.id);
+  }
+
+  async updateConsistency(userId: UUID, tx?: TransactionClient): Promise<void> {
+    const progress = await this.pointRepository.calculateConsistency(
+      userId,
+      tx,
+    );
+    const consistencyList = {
+      [A_WEEK]: CONSISTENCY_BADGE_ID1,
+      [A_MONTH]: CONSISTENCY_BADGE_ID2,
+      [A_YEAR]: CONSISTENCY_BADGE_ID3,
+    };
+
+    for (const prop in consistencyList) {
+      const result = await this.badgeProgressRepository.updateConsistency(
+        userId,
+        progress,
+        consistencyList[prop],
+        tx,
+      );
+
+      if (result === Number(prop)) {
+        try {
+          await this.userBadgeRepository.createUserBadgeLog(
+            userId,
+            consistencyList[prop],
+            tx,
+          );
+        } catch (error) {
+          if (error.message === ALREADY_EXIST_USER_BADGE) return;
+        }
+      }
+    }
+  }
+
+  async updateDiversity(
+    userId: UUID,
+    taskType: TaskType_,
+    tx?: TransactionClient,
+  ): Promise<void> {
+    const diversityList = {
+      DAILY: DIVERSITY_BADGE_ID1,
+      DUE: DIVERSITY_BADGE_ID2,
+      FREE: DIVERSITY_BADGE_ID3,
+    };
+
+    const updatedDiversity = await this.badgeProgressRepository.updateDiversity(
+      userId,
+      diversityList[taskType],
+      tx,
+    );
+
+    if (updatedDiversity === DIVERSITY_GOAL) {
+      await this.userBadgeRepository.createUserBadgeLog(
+        userId,
+        diversityList[taskType],
+        tx,
+      );
+    }
+  }
+
+  async updateProductivity(
+    userId: UUID,
+    tx?: TransactionClient,
+  ): Promise<void> {
+    const productivityList = [
+      {
+        period: this.handleDateTime.getToday(),
+        badgeId: PRODUCTIVITY_BADGE_ID1,
+        goal: PRODUCTIVITY_GOAL_FOR_TODAY,
+      },
+      {
+        period: this.handleDateTime.getAWeekAgo(),
+        badgeId: PRODUCTIVITY_BADGE_ID2,
+        goal: PRODUCTIVITY_GOAL_FOR_A_WEEK_AGO,
+      },
+      {
+        period: this.handleDateTime.getAMonthAgo(),
+        badgeId: PRODUCTIVITY_BADGE_ID3,
+        goal: PRODUCTIVITY_GOAL_FOR_A_MONTH_AGO,
+      },
+    ];
+
+    for (const productivity of productivityList) {
+      const count = await this.pointRepository.countTasksPerDate(
+        userId,
+        productivity.period,
+        tx,
+      );
+      await this.badgeProgressRepository.updateProductivity(
+        count,
+        userId,
+        productivity.badgeId,
+        tx,
+      );
+
+      if (count === productivity.goal) {
+        await this.userBadgeRepository.createUserBadgeLog(
+          userId,
+          productivity.badgeId,
+          tx,
+        );
+      }
+    }
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)

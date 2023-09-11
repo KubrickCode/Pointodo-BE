@@ -25,7 +25,7 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
 
   async updateConsistency(
     userId: string,
-    isContinuous: boolean,
+    progress: number,
     badgeId: number,
   ): Promise<number> {
     const consistencyQuery = `
@@ -33,7 +33,7 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
         VALUES ($1::uuid, $2, 1)
         ON CONFLICT ("userId", "badgeId")
         DO UPDATE 
-        SET progress = ${isContinuous ? '"BadgeProgress".progress + 1' : '1'}
+        SET progress = ${progress}
         RETURNING progress
       `;
 

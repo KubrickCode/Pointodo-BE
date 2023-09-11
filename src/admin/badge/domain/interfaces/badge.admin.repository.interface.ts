@@ -1,11 +1,10 @@
+import { TransactionClient } from '@shared/types/transaction.type';
 import { BadgeEntity, BadgeType_ } from '../entities/badge.entity';
 
 export interface IBadgeAdminRepository {
   getAllBadges(): Promise<BadgeEntity[]>;
 
-  getBadgeList(type: BadgeType_): Promise<BadgeEntity[]>;
-
-  getBadgePrice(id: number): Promise<number>;
+  getBadgePrice(id: number, tx?: TransactionClient): Promise<number>;
 
   getBadgeIdByName(name: string): Promise<Pick<BadgeEntity, 'id'>>;
 

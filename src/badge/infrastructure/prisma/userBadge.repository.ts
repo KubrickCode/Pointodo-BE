@@ -1,7 +1,9 @@
 import { UserBadgeLogEntity } from '@badge/domain/entities/userBadgeLog.entity';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { Injectable } from '@nestjs/common';
+import { ALREADY_EXIST_USER_BADGE } from '@shared/messages/badge/badge.errors';
 import { PrismaService } from '@shared/service/prisma.service';
+import { TransactionClient } from '@shared/types/transaction.type';
 import { plainToClass } from 'class-transformer';
 import { UUID } from 'crypto';
 
@@ -12,11 +14,19 @@ export class UserBadgeRepository implements IUserBadgeRepository {
   async createUserBadgeLog(
     userId: UUID,
     badgeId: number,
+    tx?: TransactionClient,
   ): Promise<UserBadgeLogEntity> {
-    const result = await this.prisma.userBadgesLogs.create({
-      data: { userId, badgeId },
-    });
-    return plainToClass(UserBadgeLogEntity, result);
+    try {
+      const prisma = tx ?? this.prisma;
+      const result = await prisma.userBadgesLogs.create({
+        data: { userId, badgeId },
+      });
+      return plainToClass(UserBadgeLogEntity, result);
+    } catch (error) {
+      if (error.code === 'P2002') {
+        throw new Error(ALREADY_EXIST_USER_BADGE);
+      }
+    }
   }
 
   async getUserBadgeList(

@@ -23,7 +23,8 @@ import { ResGetCurrentPointsDto } from './dto/getCurrentPoints.dto';
 import { getCurrentPointsDocs } from './docs/getCurrentPoints.docs';
 import {
   ReqGetPointsLogsQueryDto,
-  ResGetPointsLogsDto,
+  ResGetEarnedPointsLogsDto,
+  ResGetSpentPointsLogsDto,
 } from './dto/getPointsLogs.dto';
 import { getPointsLogsDocs } from './docs/getPointsLogs.docs';
 import {
@@ -32,6 +33,7 @@ import {
 } from './dto/getTotalPointPages.dto';
 import { getTotalPointPagesDocs } from './docs/getTotalPointPages.docs';
 import { IPOINT_SERVICE } from '@shared/constants/provider.constant';
+import { plainToClass } from 'class-transformer';
 
 @Controller('points')
 @ApiCookieAuth('accessToken')
@@ -47,27 +49,34 @@ export class PointController {
   @Get('/logs')
   @HttpCode(HttpStatus.OK)
   @ApiOperation(getPointsLogsDocs.operation)
-  @ApiOkResponse(getPointsLogsDocs.okResponse)
+  @ApiOkResponse(getPointsLogsDocs.okResponseEarned)
+  @ApiOkResponse(getPointsLogsDocs.okResponseSpent)
   async getEarnedPointsLogs(
     @Req() req: Request,
     @Query() query: ReqGetPointsLogsQueryDto,
-  ): Promise<ResGetPointsLogsDto[]> {
+  ): Promise<ResGetEarnedPointsLogsDto[] | ResGetSpentPointsLogsDto[]> {
     const { transactionType, offset, limit, order } = query;
-    if (transactionType === 'EARNED')
-      return await this.pointService.getEarnedPointsLogs({
+    if (transactionType === 'earned') {
+      const result = await this.pointService.getEarnedPointsLogs({
         userId: req.user.id,
         order,
         offset,
         limit,
       });
+      return result.map((item) =>
+        plainToClass(ResGetEarnedPointsLogsDto, item),
+      );
+    }
 
-    if (transactionType === 'SPENT')
-      return await this.pointService.getSpentPointsLogs({
+    if (transactionType === 'spent') {
+      const result = await this.pointService.getSpentPointsLogs({
         userId: req.user.id,
         order,
         offset,
         limit,
       });
+      return result.map((item) => plainToClass(ResGetSpentPointsLogsDto, item));
+    }
   }
 
   @Get('/count-pages')

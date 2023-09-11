@@ -3,16 +3,17 @@ import { PrismaService } from '@shared/service/prisma.service';
 import {
   EarnedPointsLogEntity,
   EarnedPointsLogWithTaskName,
-} from '@point/domain/entities/earnedPointsLog.entity';
-import { IPointRepository } from 'src/point/domain/interfaces/point.repository.interface';
-import {
+  POINT_LOG_ORDER_TYPE,
+  POINT_LOG_TRANSACTION_TYPE,
   SpentPointsLogEntity,
   SpentPointsLogWithBadgeName,
-} from '@point/domain/entities/spentPointsLog.entity';
+} from '@point/domain/entities/pointsLog.entity';
+import { IPointRepository } from 'src/point/domain/interfaces/point.repository.interface';
 import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 import { plainToClass } from 'class-transformer';
 import { UUID } from 'crypto';
 import { IHANDLE_DATE_TIME } from '@shared/constants/provider.constant';
+import { TransactionClient } from '@shared/types/transaction.type';
 
 @Injectable()
 export class PointRepository implements IPointRepository {
@@ -26,7 +27,7 @@ export class PointRepository implements IPointRepository {
     userId: UUID,
     limit: number,
     offset: number,
-    order: string,
+    order: POINT_LOG_ORDER_TYPE,
   ): Promise<EarnedPointsLogWithTaskName[]> {
     const result = await this.prisma.earnedPointsLogs.findMany({
       where: {
@@ -67,7 +68,7 @@ export class PointRepository implements IPointRepository {
     userId: UUID,
     limit: number,
     offset: number,
-    order: string,
+    order: POINT_LOG_ORDER_TYPE,
   ): Promise<SpentPointsLogWithBadgeName[]> {
     const result = await this.prisma.spentPointsLogs.findMany({
       where: {
@@ -110,24 +111,25 @@ export class PointRepository implements IPointRepository {
 
   async getTotalPointPages(
     userId: UUID,
-    transactionType: 'EARNED' | 'SPENT',
+    transactionType: POINT_LOG_TRANSACTION_TYPE,
   ): Promise<number> {
-    if (transactionType === 'EARNED') {
+    if (transactionType === 'earned') {
       return await this.prisma.earnedPointsLogs.count({
         where: {
           userId,
         },
       });
     }
-    if (transactionType === 'SPENT') {
+    if (transactionType === 'spent') {
       return await this.prisma.spentPointsLogs.count({
         where: { userId },
       });
     }
   }
 
-  async isContinuous(userId: string): Promise<boolean> {
-    const count = await this.prisma.earnedPointsLogs.count({
+  async isContinuous(userId: string, tx?: TransactionClient): Promise<boolean> {
+    const prisma = tx ?? this.prisma;
+    const count = await prisma.earnedPointsLogs.count({
       where: {
         userId,
         occurredAt: {
@@ -144,8 +146,10 @@ export class PointRepository implements IPointRepository {
     taskId: number,
     userId: UUID,
     points: number,
+    tx?: TransactionClient,
   ): Promise<EarnedPointsLogEntity> {
-    const result = await this.prisma.earnedPointsLogs.create({
+    const prisma = tx ?? this.prisma;
+    const result = await prisma.earnedPointsLogs.create({
       data: { taskId, userId, points },
     });
     return plainToClass(EarnedPointsLogEntity, result);
@@ -155,15 +159,22 @@ export class PointRepository implements IPointRepository {
     badgeLogId: number,
     userId: UUID,
     points: number,
+    tx?: TransactionClient,
   ): Promise<SpentPointsLogEntity> {
-    const result = await this.prisma.spentPointsLogs.create({
+    const prisma = tx ?? this.prisma;
+    const result = await prisma.spentPointsLogs.create({
       data: { badgeLogId, userId, points },
     });
     return plainToClass(SpentPointsLogEntity, result);
   }
 
-  async countTasksPerDate(userId: string, date: string): Promise<number> {
-    return await this.prisma.earnedPointsLogs.count({
+  async countTasksPerDate(
+    userId: string,
+    date: string,
+    tx?: TransactionClient,
+  ): Promise<number> {
+    const prisma = tx ?? this.prisma;
+    return await prisma.earnedPointsLogs.count({
       where: {
         userId,
         occurredAt: {
@@ -207,5 +218,51 @@ export class PointRepository implements IPointRepository {
   async deleteSpentPointLog(id: number): Promise<SpentPointsLogEntity> {
     const result = await this.prisma.spentPointsLogs.delete({ where: { id } });
     return plainToClass(SpentPointsLogEntity, result);
+  }
+
+  async calculateConsistency(
+    userId: UUID,
+    tx?: TransactionClient,
+  ): Promise<number> {
+    const prisma = tx ?? this.prisma;
+    const isConsecutiveDay = (date1: Date, date2: Date): number | boolean => {
+      if (
+        this.handleDateTime.getDateString(date1) ===
+        this.handleDateTime.getDateString(date2)
+      ) {
+        return 0;
+      }
+      if (
+        this.handleDateTime.getADayAgoFromDate(date1) ===
+        this.handleDateTime.getDateString(date2)
+      ) {
+        return 1;
+      }
+      return false;
+    };
+
+    const logs = await prisma.earnedPointsLogs.findMany({
+      where: {
+        userId: userId,
+      },
+      orderBy: {
+        occurredAt: 'desc',
+      },
+    });
+    let consistency = 1;
+    let currentDate = logs[0]?.occurredAt;
+
+    for (let i = 0; i < logs.length; i++) {
+      const logDate = logs[i]?.occurredAt;
+      if (isConsecutiveDay(currentDate, logDate) !== false) {
+        consistency += isConsecutiveDay(currentDate, logDate) as number;
+      } else {
+        break;
+      }
+
+      currentDate = logDate;
+    }
+
+    return consistency;
   }
 }
