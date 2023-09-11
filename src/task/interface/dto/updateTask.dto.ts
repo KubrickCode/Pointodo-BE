@@ -43,6 +43,7 @@ export class ReqUpdateTaskDto {
   readonly dueDate?: string | null;
 
   @ApiProperty({ description: TASK_COMPLETION })
+  @Type(() => Number)
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()
