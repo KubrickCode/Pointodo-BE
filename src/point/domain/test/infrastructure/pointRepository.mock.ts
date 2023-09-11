@@ -9,4 +9,5 @@ export const mockPointRepository = {
   calculateUserPoints: jest.fn(),
   deleteEarnedPointLog: jest.fn(),
   deleteSpentPointLog: jest.fn(),
+  calculateConsistency: jest.fn(),
 };

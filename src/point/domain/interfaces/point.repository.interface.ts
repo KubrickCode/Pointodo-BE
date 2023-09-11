@@ -7,6 +7,7 @@ import {
   SpentPointsLogEntity,
   SpentPointsLogWithBadgeName,
 } from '../entities/pointsLog.entity';
+import { TransactionClient } from '@shared/types/transaction.type';
 
 export interface IPointRepository {
   getEarnedPointsLogs(
@@ -28,25 +29,33 @@ export interface IPointRepository {
     transactionType: POINT_LOG_TRANSACTION_TYPE,
   ): Promise<number>;
 
-  isContinuous(userId: UUID): Promise<boolean>;
+  isContinuous(userId: UUID, tx?: TransactionClient): Promise<boolean>;
 
   createEarnedPointLog(
     taskId: number,
     userId: UUID,
     points: number,
+    tx?: TransactionClient,
   ): Promise<EarnedPointsLogEntity>;
 
   createSpentPointLog(
     badgeLogId: number,
     userId: UUID,
     points: number,
+    tx?: TransactionClient,
   ): Promise<SpentPointsLogEntity>;
 
-  countTasksPerDate(userId: UUID, date: string): Promise<number>;
+  countTasksPerDate(
+    userId: UUID,
+    date: string,
+    tx?: TransactionClient,
+  ): Promise<number>;
 
   calculateUserPoints(userId: UUID): Promise<number>;
 
   deleteEarnedPointLog(id: number): Promise<EarnedPointsLogEntity>;
 
   deleteSpentPointLog(id: number): Promise<SpentPointsLogEntity>;
+
+  calculateConsistency(userId: UUID, tx?: TransactionClient): Promise<number>;
 }

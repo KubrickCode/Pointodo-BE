@@ -5,6 +5,7 @@ import {
 import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
+import { TransactionClient } from '@shared/types/transaction.type';
 import { plainToClass } from 'class-transformer';
 
 @Injectable()
@@ -19,8 +20,9 @@ export class BadgeAdminRepository implements IBadgeAdminRepository {
     });
   }
 
-  async getBadgePrice(id: number): Promise<number> {
-    const result = await this.prisma.badge.findFirst({
+  async getBadgePrice(id: number, tx?: TransactionClient): Promise<number> {
+    const prisma = tx ?? this.prisma;
+    const result = await prisma.badge.findFirst({
       where: { id },
       select: { price: true },
     });

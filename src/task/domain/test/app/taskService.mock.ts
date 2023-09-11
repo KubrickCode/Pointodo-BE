@@ -6,4 +6,7 @@ export const mockTaskService = {
   deleteTask: jest.fn(),
   completeTask: jest.fn(),
   cancleTaskCompletion: jest.fn(),
+  updateConsistency: jest.fn(),
+  updateDiversity: jest.fn(),
+  updateProductivity: jest.fn(),
 };

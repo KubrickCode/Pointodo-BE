@@ -18,3 +18,4 @@ export const ITASK_REPOSITORY = 'ITaskRepository';
 
 export const IHANDLE_DATE_TIME = 'IHandleDateTime';
 export const IPASSWORD_HASHER = 'IPasswordHasher';
+export const ITRANSACTION_SERVICE = 'ITransactionService';

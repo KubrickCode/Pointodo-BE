@@ -33,4 +33,12 @@ export class HandleDateTime implements IHandleDateTime {
 
   getFewDaysLater = (days: number) =>
     convert(this.getNowZonedTime().plusDays(days)).toDate();
+
+  getDateString = (date: Date) =>
+    ZonedDateTime.parse(date.toISOString()).format(this.DATE_FORMATTER);
+
+  getADayAgoFromDate = (date: Date) =>
+    ZonedDateTime.parse(date.toISOString())
+      .minusDays(1)
+      .format(this.DATE_FORMATTER);
 }

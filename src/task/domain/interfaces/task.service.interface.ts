@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import { ReqCancleTaskCompletionAppDto } from '../dto/cancleTaskCompletion.app.dto';
 import { ReqCompleteTaskAppDto } from '../dto/completeTask.app.dto';
 import {
@@ -14,6 +15,7 @@ import {
   ResGetTotalTaskPagesAppDto,
 } from '../dto/getTotalTaskPages.app.dto';
 import { ReqUpdateTaskAppDto } from '../dto/updateTask.app.dto';
+import { TaskType_ } from '../entities/task.entity';
 
 export interface ITaskService {
   getTasksLogs(req: ReqGetTasksLogsAppDto): Promise<ResGetTasksLogsAppDto[]>;
@@ -31,4 +33,10 @@ export interface ITaskService {
   completeTask(req: ReqCompleteTaskAppDto): Promise<void>;
 
   cancleTaskCompletion(req: ReqCancleTaskCompletionAppDto): Promise<void>;
+
+  updateConsistency(userId: UUID): Promise<void>;
+
+  updateDiversity(userId: UUID, taskType: TaskType_): Promise<void>;
+
+  updateProductivity(userId: UUID): Promise<void>;
 }

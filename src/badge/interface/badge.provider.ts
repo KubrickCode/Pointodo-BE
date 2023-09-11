@@ -5,46 +5,63 @@ import { UserBadgeRepository } from '@badge/infrastructure/prisma/userBadge.repo
 import { CacheService } from '@cache/infrastructure/cache.service';
 import { PointRepository } from '@point/infrastructure/prisma/point.repository';
 import { RedisService } from '@redis/infrastructure/redis.service';
+import {
+  IBADGE_ADMIN_REPOSITORY,
+  IBADGE_PROGRESS_REPOSITORY,
+  IBADGE_SERVICE,
+  ICACHE_SERVICE,
+  IHANDLE_DATE_TIME,
+  IPOINT_REPOSITORY,
+  IREDIS_SERVICE,
+  ITRANSACTION_SERVICE,
+  IUSER_BADGE_REPOSITORY,
+  IUSER_REPOSITORY,
+} from '@shared/constants/provider.constant';
 import { PrismaService } from '@shared/service/prisma.service';
+import { TransactionService } from '@shared/service/transaction.service';
 import { HandleDateTime } from '@shared/utils/handleDateTime';
 import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 
 export const BadgeProvider = [
   PrismaService,
   {
-    provide: 'IBadgeService',
+    provide: IBADGE_SERVICE,
     useClass: BadgeService,
   },
   {
-    provide: 'IPointRepository',
+    provide: IPOINT_REPOSITORY,
     useClass: PointRepository,
   },
   {
-    provide: 'IUserRepository',
+    provide: IUSER_REPOSITORY,
     useClass: UserRepository,
   },
   {
-    provide: 'IUserBadgeRepository',
+    provide: IUSER_BADGE_REPOSITORY,
     useClass: UserBadgeRepository,
   },
   {
-    provide: 'IBadgeAdminRepository',
+    provide: IBADGE_ADMIN_REPOSITORY,
     useClass: BadgeAdminRepository,
   },
   {
-    provide: 'IBadgeProgressRepository',
+    provide: IBADGE_PROGRESS_REPOSITORY,
     useClass: BadgeProgressRepository,
   },
   {
-    provide: 'ICacheService',
+    provide: ICACHE_SERVICE,
     useClass: CacheService,
   },
   {
-    provide: 'IRedisService',
+    provide: IREDIS_SERVICE,
     useClass: RedisService,
   },
   {
-    provide: 'IHandleDateTime',
+    provide: IHANDLE_DATE_TIME,
     useClass: HandleDateTime,
+  },
+  {
+    provide: ITRANSACTION_SERVICE,
+    useClass: TransactionService,
   },
 ];
