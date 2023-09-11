@@ -233,4 +233,8 @@ export class PointRepository implements IPointRepository {
 
     return deletedLog[0];
   }
+
+  async calculateConsistency(userId: UUID): Promise<number> {
+    return;
+  }
 }

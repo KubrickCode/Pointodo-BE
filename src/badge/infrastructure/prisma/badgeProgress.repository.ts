@@ -25,12 +25,12 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
 
   async updateConsistency(
     userId: UUID,
-    isContinuous: boolean,
+    progress: number,
     badgeId: number,
   ): Promise<number> {
     const result = await this.prisma.badgeProgress.upsert({
       where: { userId_badgeId: { userId, badgeId } },
-      update: { progress: isContinuous ? { increment: 1 } : 1 },
+      update: { progress },
       create: { userId, badgeId, progress: 1 },
     });
 

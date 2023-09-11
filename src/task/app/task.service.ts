@@ -28,8 +28,6 @@ import { IPointRepository } from '@point/domain/interfaces/point.repository.inte
 import { ReqCompleteTaskAppDto } from '@task/domain/dto/completeTask.app.dto';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { setTaskPoints } from './utils/setTaskPoints';
-import { setDiversityBadgeType } from './utils/setDiversityBadgeType';
-import { completeDiversity } from './utils/completeDiversity';
 import { completeProductivity } from './utils/completeProductivity';
 import {
   COMPLETE_TASK_CONFLICT,
@@ -39,6 +37,7 @@ import {
   A_MONTH,
   A_WEEK,
   A_YEAR,
+  DIVERSITY_GOAL,
   IS_COMPLETED,
 } from '@shared/constants/task.constant';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
@@ -67,8 +66,12 @@ import {
   CONSISTENCY_BADGE_ID1,
   CONSISTENCY_BADGE_ID2,
   CONSISTENCY_BADGE_ID3,
+  DIVERSITY_BADGE_ID1,
+  DIVERSITY_BADGE_ID2,
+  DIVERSITY_BADGE_ID3,
 } from '@shared/constants/badge.constant';
 import { ALREADY_EXIST_USER_BADGE } from '@shared/messages/badge/badge.errors';
+import { TaskType_ } from '@task/domain/entities/task.entity';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -202,30 +205,8 @@ export class TaskService implements ITaskService {
         setTaskPoints(taskType, isContinuous),
       );
 
-      await this.updateConsistency(req.userId, isContinuous);
-
-      const updatedDiversity =
-        await this.badgeProgressRepository.updateDiversity(
-          req.userId,
-          await setDiversityBadgeType(
-            taskType,
-            this.badgeAdminRepository.getBadgeIdByName.bind(
-              this.badgeAdminRepository,
-            ),
-          ),
-        );
-
-      await completeDiversity(
-        updatedDiversity,
-        taskType,
-        req.userId,
-        this.userBadgeRepository.createUserBadgeLog.bind(
-          this.userBadgeRepository,
-        ),
-        this.badgeAdminRepository.getBadgeIdByName.bind(
-          this.badgeAdminRepository,
-        ),
-      );
+      await this.updateConsistency(req.userId);
+      await this.updateDiversity(req.userId, taskType);
 
       await completeProductivity(
         req.userId,
@@ -258,7 +239,8 @@ export class TaskService implements ITaskService {
     await this.taskRepository.cancleTaskCompletion(req.id);
   }
 
-  async updateConsistency(userId: UUID, isContinuous: boolean) {
+  async updateConsistency(userId: UUID): Promise<void> {
+    const progress = await this.pointRepository.calculateConsistency(userId);
     const consistencyList = {
       [A_WEEK]: CONSISTENCY_BADGE_ID1,
       [A_MONTH]: CONSISTENCY_BADGE_ID2,
@@ -268,7 +250,7 @@ export class TaskService implements ITaskService {
     for (const prop in consistencyList) {
       const result = await this.badgeProgressRepository.updateConsistency(
         userId,
-        isContinuous,
+        progress,
         consistencyList[prop],
       );
 
@@ -285,8 +267,24 @@ export class TaskService implements ITaskService {
     }
   }
 
-  async updateDiversity() {
-    return;
+  async updateDiversity(userId: UUID, taskType: TaskType_): Promise<void> {
+    const diversityList = {
+      DAILY: DIVERSITY_BADGE_ID1,
+      DUE: DIVERSITY_BADGE_ID2,
+      FREE: DIVERSITY_BADGE_ID3,
+    };
+
+    const updatedDiversity = await this.badgeProgressRepository.updateDiversity(
+      userId,
+      diversityList[taskType],
+    );
+
+    if (updatedDiversity === DIVERSITY_GOAL) {
+      await this.userBadgeRepository.createUserBadgeLog(
+        userId,
+        diversityList[taskType],
+      );
+    }
   }
 
   async updateProductivity() {

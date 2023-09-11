@@ -6,7 +6,7 @@ export interface IBadgeProgressRepository {
 
   updateConsistency(
     userId: UUID,
-    isContinuous: boolean,
+    progress: number,
     badgeId: number,
   ): Promise<number>;
 
