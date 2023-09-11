@@ -151,7 +151,7 @@ export class TaskRepository implements ITaskRepository {
   async cancleTaskCompletion(id: number): Promise<TaskEntity> {
     const result = await this.prisma.tasksLogs.update({
       where: { id },
-      data: { completion: { decrement: 1 } },
+      data: { completion: 0 },
     });
     return plainToClass(TaskEntity, result);
   }
