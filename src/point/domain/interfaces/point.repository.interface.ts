@@ -51,4 +51,6 @@ export interface IPointRepository {
   deleteEarnedPointLog(id: number): Promise<EarnedPointsLogEntity>;
 
   deleteSpentPointLog(id: number): Promise<SpentPointsLogEntity>;
+
+  calculateConsistency(userId: UUID): Promise<number>;
 }

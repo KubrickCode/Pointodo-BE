@@ -68,6 +68,7 @@ import {
   CONSISTENCY_BADGE_ID2,
   CONSISTENCY_BADGE_ID3,
 } from '@shared/constants/badge.constant';
+import { ALREADY_EXIST_USER_BADGE } from '@shared/messages/badge/badge.errors';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -272,10 +273,14 @@ export class TaskService implements ITaskService {
       );
 
       if (result === Number(prop)) {
-        await this.userBadgeRepository.createUserBadgeLog(
-          userId,
-          consistencyList[prop],
-        );
+        try {
+          await this.userBadgeRepository.createUserBadgeLog(
+            userId,
+            consistencyList[prop],
+          );
+        } catch (error) {
+          if (error.message === ALREADY_EXIST_USER_BADGE) return;
+        }
       }
     }
   }

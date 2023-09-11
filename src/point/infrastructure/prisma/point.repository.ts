@@ -211,4 +211,46 @@ export class PointRepository implements IPointRepository {
     const result = await this.prisma.spentPointsLogs.delete({ where: { id } });
     return plainToClass(SpentPointsLogEntity, result);
   }
+
+  async calculateConsistency(userId: UUID): Promise<number> {
+    const isConsecutiveDay = (date1: Date, date2: Date): number | boolean => {
+      if (
+        this.handleDateTime.getDateString(date1) ===
+        this.handleDateTime.getDateString(date2)
+      ) {
+        return 0;
+      }
+      if (
+        this.handleDateTime.getADayAgoFromDate(date1) ===
+        this.handleDateTime.getDateString(date2)
+      ) {
+        return 1;
+      }
+      return false;
+    };
+
+    const logs = await this.prisma.earnedPointsLogs.findMany({
+      where: {
+        userId: userId,
+      },
+      orderBy: {
+        occurredAt: 'desc',
+      },
+    });
+    let consistency = 1;
+    let currentDate = logs[0]?.occurredAt;
+
+    for (let i = 0; i < logs.length; i++) {
+      const logDate = logs[i]?.occurredAt;
+      if (isConsecutiveDay(currentDate, logDate) !== false) {
+        consistency += isConsecutiveDay(currentDate, logDate) as number;
+      } else {
+        break;
+      }
+
+      currentDate = logDate;
+    }
+
+    return consistency;
+  }
 }
