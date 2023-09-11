@@ -14,3 +14,6 @@ export const CONSISTENCY_BADGE_ID3 = 4;
 export const DIVERSITY_BADGE_ID1 = 5;
 export const DIVERSITY_BADGE_ID2 = 6;
 export const DIVERSITY_BADGE_ID3 = 7;
+export const PRODUCTIVITY_BADGE_ID1 = 8;
+export const PRODUCTIVITY_BADGE_ID2 = 9;
+export const PRODUCTIVITY_BADGE_ID3 = 10;

@@ -28,7 +28,6 @@ import { IPointRepository } from '@point/domain/interfaces/point.repository.inte
 import { ReqCompleteTaskAppDto } from '@task/domain/dto/completeTask.app.dto';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { setTaskPoints } from './utils/setTaskPoints';
-import { completeProductivity } from './utils/completeProductivity';
 import {
   COMPLETE_TASK_CONFLICT,
   DUE_DATE_IN_THE_PAST,
@@ -39,6 +38,9 @@ import {
   A_YEAR,
   DIVERSITY_GOAL,
   IS_COMPLETED,
+  PRODUCTIVITY_GOAL_FOR_A_MONTH_AGO,
+  PRODUCTIVITY_GOAL_FOR_A_WEEK_AGO,
+  PRODUCTIVITY_GOAL_FOR_TODAY,
 } from '@shared/constants/task.constant';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import { ReqCancleTaskCompletionAppDto } from '@task/domain/dto/cancleTaskCompletion.app.dto';
@@ -69,6 +71,9 @@ import {
   DIVERSITY_BADGE_ID1,
   DIVERSITY_BADGE_ID2,
   DIVERSITY_BADGE_ID3,
+  PRODUCTIVITY_BADGE_ID1,
+  PRODUCTIVITY_BADGE_ID2,
+  PRODUCTIVITY_BADGE_ID3,
 } from '@shared/constants/badge.constant';
 import { ALREADY_EXIST_USER_BADGE } from '@shared/messages/badge/badge.errors';
 import { TaskType_ } from '@task/domain/entities/task.entity';
@@ -207,25 +212,7 @@ export class TaskService implements ITaskService {
 
       await this.updateConsistency(req.userId);
       await this.updateDiversity(req.userId, taskType);
-
-      await completeProductivity(
-        req.userId,
-        this.pointRepository.countTasksPerDate.bind(this.pointRepository),
-        this.userBadgeRepository.createUserBadgeLog.bind(
-          this.userBadgeRepository,
-        ),
-        this.badgeProgressRepository.updateProductivity.bind(
-          this.badgeProgressRepository,
-        ),
-        this.badgeAdminRepository.getBadgeIdByName.bind(
-          this.badgeAdminRepository,
-        ),
-        [
-          this.handleDateTime.getToday(),
-          this.handleDateTime.getAWeekAgo(),
-          this.handleDateTime.getAMonthAgo(),
-        ],
-      );
+      await this.updateProductivity(req.userId);
 
       await this.taskRepository.lockTask(req.id);
     } catch (error) {
@@ -287,8 +274,43 @@ export class TaskService implements ITaskService {
     }
   }
 
-  async updateProductivity() {
-    return;
+  async updateProductivity(userId: UUID): Promise<void> {
+    const productivityList = [
+      {
+        period: this.handleDateTime.getToday(),
+        badgeId: PRODUCTIVITY_BADGE_ID1,
+        goal: PRODUCTIVITY_GOAL_FOR_TODAY,
+      },
+      {
+        period: this.handleDateTime.getAWeekAgo(),
+        badgeId: PRODUCTIVITY_BADGE_ID2,
+        goal: PRODUCTIVITY_GOAL_FOR_A_WEEK_AGO,
+      },
+      {
+        period: this.handleDateTime.getAMonthAgo(),
+        badgeId: PRODUCTIVITY_BADGE_ID3,
+        goal: PRODUCTIVITY_GOAL_FOR_A_MONTH_AGO,
+      },
+    ];
+
+    for (const productivity of productivityList) {
+      const count = await this.pointRepository.countTasksPerDate(
+        userId,
+        productivity.period,
+      );
+      await this.badgeProgressRepository.updateProductivity(
+        count,
+        userId,
+        productivity.badgeId,
+      );
+
+      if (count === productivity.goal) {
+        await this.userBadgeRepository.createUserBadgeLog(
+          userId,
+          productivity.badgeId,
+        );
+      }
+    }
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)

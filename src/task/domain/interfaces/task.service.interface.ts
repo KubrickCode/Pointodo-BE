@@ -37,4 +37,6 @@ export interface ITaskService {
   updateConsistency(userId: UUID): Promise<void>;
 
   updateDiversity(userId: UUID, taskType: TaskType_): Promise<void>;
+
+  updateProductivity(userId: UUID): Promise<void>;
 }
