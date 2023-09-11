@@ -13,10 +13,12 @@ import {
   IREDIS_SERVICE,
   ITASK_REPOSITORY,
   ITASK_SERVICE,
+  ITRANSACTION_SERVICE,
   IUSER_BADGE_REPOSITORY,
   IUSER_REPOSITORY,
 } from '@shared/constants/provider.constant';
 import { PrismaService } from '@shared/service/prisma.service';
+import { TransactionService } from '@shared/service/transaction.service';
 import { HandleDateTime } from '@shared/utils/handleDateTime';
 import { TaskService } from '@task/app/task.service';
 import { TaskRepository } from '@task/infrastructure/prisma/task.repository';
@@ -63,5 +65,9 @@ export const TaskProvider = [
   {
     provide: IHANDLE_DATE_TIME,
     useClass: HandleDateTime,
+  },
+  {
+    provide: ITRANSACTION_SERVICE,
+    useClass: TransactionService,
   },
 ];

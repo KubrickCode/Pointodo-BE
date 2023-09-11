@@ -127,8 +127,9 @@ export class PointRepository implements IPointRepository {
     }
   }
 
-  async isContinuous(userId: string): Promise<boolean> {
-    const count = await this.prisma.earnedPointsLogs.count({
+  async isContinuous(userId: string, tx?: TransactionClient): Promise<boolean> {
+    const prisma = tx ?? this.prisma;
+    const count = await prisma.earnedPointsLogs.count({
       where: {
         userId,
         occurredAt: {
@@ -145,8 +146,10 @@ export class PointRepository implements IPointRepository {
     taskId: number,
     userId: UUID,
     points: number,
+    tx?: TransactionClient,
   ): Promise<EarnedPointsLogEntity> {
-    const result = await this.prisma.earnedPointsLogs.create({
+    const prisma = tx ?? this.prisma;
+    const result = await prisma.earnedPointsLogs.create({
       data: { taskId, userId, points },
     });
     return plainToClass(EarnedPointsLogEntity, result);
@@ -165,8 +168,13 @@ export class PointRepository implements IPointRepository {
     return plainToClass(SpentPointsLogEntity, result);
   }
 
-  async countTasksPerDate(userId: string, date: string): Promise<number> {
-    return await this.prisma.earnedPointsLogs.count({
+  async countTasksPerDate(
+    userId: string,
+    date: string,
+    tx?: TransactionClient,
+  ): Promise<number> {
+    const prisma = tx ?? this.prisma;
+    return await prisma.earnedPointsLogs.count({
       where: {
         userId,
         occurredAt: {
@@ -212,7 +220,11 @@ export class PointRepository implements IPointRepository {
     return plainToClass(SpentPointsLogEntity, result);
   }
 
-  async calculateConsistency(userId: UUID): Promise<number> {
+  async calculateConsistency(
+    userId: UUID,
+    tx?: TransactionClient,
+  ): Promise<number> {
+    const prisma = tx ?? this.prisma;
     const isConsecutiveDay = (date1: Date, date2: Date): number | boolean => {
       if (
         this.handleDateTime.getDateString(date1) ===
@@ -229,7 +241,7 @@ export class PointRepository implements IPointRepository {
       return false;
     };
 
-    const logs = await this.prisma.earnedPointsLogs.findMany({
+    const logs = await prisma.earnedPointsLogs.findMany({
       where: {
         userId: userId,
       },

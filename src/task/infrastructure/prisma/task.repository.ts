@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/service/prisma.service';
+import { TransactionClient } from '@shared/types/transaction.type';
 import { TaskEntity, TaskType_ } from '@task/domain/entities/task.entity';
 import { TasksDueDateEntity } from '@task/domain/entities/tasksDueDate.entity';
 import { ITaskRepository } from '@task/domain/interfaces/task.repository.interface';
@@ -136,11 +137,12 @@ export class TaskRepository implements ITaskRepository {
     return await this.prisma.tasksDueDate.delete({ where: { taskId } });
   }
 
-  async completeTask(id: number, isRollback?: boolean): Promise<TaskEntity> {
-    const result = this.prisma.tasksLogs.update({
+  async completeTask(id: number, tx?: TransactionClient): Promise<TaskEntity> {
+    const prisma = tx ?? this.prisma;
+    const result = prisma.tasksLogs.update({
       where: { id },
       data: {
-        completion: isRollback ? { decrement: 1 } : { increment: 1 },
+        completion: { increment: 1 },
       },
     });
     return plainToClass(TaskEntity, result);
@@ -161,7 +163,8 @@ export class TaskRepository implements ITaskRepository {
     });
   }
 
-  async lockTask(id: number): Promise<void> {
-    await this.prisma.tasksLogs.update({ where: { id }, data: { version: 1 } });
+  async lockTask(id: number, tx?: TransactionClient): Promise<void> {
+    const prisma = tx ?? this.prisma;
+    await prisma.tasksLogs.update({ where: { id }, data: { version: 1 } });
   }
 }

@@ -4,6 +4,7 @@ import { BadgeProgressEntity } from '@badge/domain/entities/badgeProgress.entity
 import { IBadgeProgressRepository } from '@badge/domain/interfaces/badgeProgress.repository.interface';
 import { UUID } from 'crypto';
 import { plainToClass } from 'class-transformer';
+import { TransactionClient } from '@shared/types/transaction.type';
 
 @Injectable()
 export class BadgeProgressRepository implements IBadgeProgressRepository {
@@ -27,8 +28,10 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
     userId: UUID,
     progress: number,
     badgeId: number,
+    tx?: TransactionClient,
   ): Promise<number> {
-    const result = await this.prisma.badgeProgress.upsert({
+    const prisma = tx ?? this.prisma;
+    const result = await prisma.badgeProgress.upsert({
       where: { userId_badgeId: { userId, badgeId } },
       update: { progress },
       create: { userId, badgeId, progress: 1 },
@@ -37,8 +40,13 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
     return result.progress;
   }
 
-  async updateDiversity(userId: UUID, badgeId: number): Promise<number> {
-    const result = await this.prisma.badgeProgress.upsert({
+  async updateDiversity(
+    userId: UUID,
+    badgeId: number,
+    tx?: TransactionClient,
+  ): Promise<number> {
+    const prisma = tx ?? this.prisma;
+    const result = await prisma.badgeProgress.upsert({
       where: { userId_badgeId: { userId, badgeId } },
       update: { progress: { increment: 1 } },
       create: { userId, badgeId, progress: 1 },
@@ -51,8 +59,10 @@ export class BadgeProgressRepository implements IBadgeProgressRepository {
     progress: number,
     userId: UUID,
     badgeId: number,
+    tx?: TransactionClient,
   ): Promise<number> {
-    const result = await this.prisma.badgeProgress.upsert({
+    const prisma = tx ?? this.prisma;
+    const result = await prisma.badgeProgress.upsert({
       where: { userId_badgeId: { userId, badgeId } },
       update: { progress },
       create: { userId, badgeId, progress: 1 },

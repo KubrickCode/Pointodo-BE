@@ -29,12 +29,13 @@ export interface IPointRepository {
     transactionType: POINT_LOG_TRANSACTION_TYPE,
   ): Promise<number>;
 
-  isContinuous(userId: UUID): Promise<boolean>;
+  isContinuous(userId: UUID, tx?: TransactionClient): Promise<boolean>;
 
   createEarnedPointLog(
     taskId: number,
     userId: UUID,
     points: number,
+    tx?: TransactionClient,
   ): Promise<EarnedPointsLogEntity>;
 
   createSpentPointLog(
@@ -44,7 +45,11 @@ export interface IPointRepository {
     tx?: TransactionClient,
   ): Promise<SpentPointsLogEntity>;
 
-  countTasksPerDate(userId: UUID, date: string): Promise<number>;
+  countTasksPerDate(
+    userId: UUID,
+    date: string,
+    tx?: TransactionClient,
+  ): Promise<number>;
 
   calculateUserPoints(userId: UUID): Promise<number>;
 
@@ -52,5 +57,5 @@ export interface IPointRepository {
 
   deleteSpentPointLog(id: number): Promise<SpentPointsLogEntity>;
 
-  calculateConsistency(userId: UUID): Promise<number>;
+  calculateConsistency(userId: UUID, tx?: TransactionClient): Promise<number>;
 }

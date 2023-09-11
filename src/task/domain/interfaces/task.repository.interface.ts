@@ -5,6 +5,7 @@ import {
   TaskType_,
 } from '../entities/task.entity';
 import { TasksDueDateEntity } from '../entities/tasksDueDate.entity';
+import { TransactionClient } from '@shared/types/transaction.type';
 
 export interface ITaskRepository {
   getTasksLogs(
@@ -46,11 +47,11 @@ export interface ITaskRepository {
 
   deleteTaskDueDate(taskId: number): Promise<TasksDueDateEntity>;
 
-  completeTask(id: number, isRollback?: boolean): Promise<TaskEntity>;
+  completeTask(id: number, tx?: TransactionClient): Promise<TaskEntity>;
 
   cancleTaskCompletion(id: number): Promise<TaskEntity>;
 
   resetDailyTask(): Promise<void>;
 
-  lockTask(id: number): Promise<void>;
+  lockTask(id: number, tx?: TransactionClient): Promise<void>;
 }

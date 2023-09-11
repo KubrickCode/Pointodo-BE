@@ -61,6 +61,7 @@ import {
   IHANDLE_DATE_TIME,
   IPOINT_REPOSITORY,
   ITASK_REPOSITORY,
+  ITRANSACTION_SERVICE,
   IUSER_BADGE_REPOSITORY,
 } from '@shared/constants/provider.constant';
 import { UUID } from 'crypto';
@@ -77,6 +78,8 @@ import {
 } from '@shared/constants/badge.constant';
 import { ALREADY_EXIST_USER_BADGE } from '@shared/messages/badge/badge.errors';
 import { TaskType_ } from '@task/domain/entities/task.entity';
+import { ITransactionService } from '@shared/interfaces/ITransaction.service.interface';
+import { TransactionClient } from '@shared/types/transaction.type';
 
 @Injectable()
 export class TaskService implements ITaskService {
@@ -95,6 +98,8 @@ export class TaskService implements ITaskService {
     private readonly cacheService: ICacheService,
     @Inject(IHANDLE_DATE_TIME)
     private readonly handleDateTime: IHandleDateTime,
+    @Inject(ITRANSACTION_SERVICE)
+    private readonly transactionService: ITransactionService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -189,35 +194,36 @@ export class TaskService implements ITaskService {
   }
 
   async completeTask(req: ReqCompleteTaskAppDto): Promise<void> {
-    try {
+    await this.transactionService.runInTransaction(async (tx) => {
       const { taskType, completion, version } =
-        await this.taskRepository.completeTask(req.id);
+        await this.taskRepository.completeTask(req.id, tx);
 
       await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
 
       if (completion !== IS_COMPLETED) {
-        await this.taskRepository.completeTask(req.id, true); // 롤백
         throw new ConflictException(COMPLETE_TASK_CONFLICT);
       }
 
       if (version === 1) return;
 
-      const isContinuous = await this.pointRepository.isContinuous(req.userId);
+      const isContinuous = await this.pointRepository.isContinuous(
+        req.userId,
+        tx,
+      );
 
       await this.pointRepository.createEarnedPointLog(
         req.id,
         req.userId,
         setTaskPoints(taskType, isContinuous),
+        tx,
       );
 
-      await this.updateConsistency(req.userId);
-      await this.updateDiversity(req.userId, taskType);
-      await this.updateProductivity(req.userId);
+      await this.updateConsistency(req.userId, tx);
+      await this.updateDiversity(req.userId, taskType, tx);
+      await this.updateProductivity(req.userId, tx);
 
-      await this.taskRepository.lockTask(req.id);
-    } catch (error) {
-      throw error;
-    }
+      await this.taskRepository.lockTask(req.id, tx);
+    });
   }
 
   async cancleTaskCompletion(
@@ -226,8 +232,11 @@ export class TaskService implements ITaskService {
     await this.taskRepository.cancleTaskCompletion(req.id);
   }
 
-  async updateConsistency(userId: UUID): Promise<void> {
-    const progress = await this.pointRepository.calculateConsistency(userId);
+  async updateConsistency(userId: UUID, tx?: TransactionClient): Promise<void> {
+    const progress = await this.pointRepository.calculateConsistency(
+      userId,
+      tx,
+    );
     const consistencyList = {
       [A_WEEK]: CONSISTENCY_BADGE_ID1,
       [A_MONTH]: CONSISTENCY_BADGE_ID2,
@@ -239,6 +248,7 @@ export class TaskService implements ITaskService {
         userId,
         progress,
         consistencyList[prop],
+        tx,
       );
 
       if (result === Number(prop)) {
@@ -246,6 +256,7 @@ export class TaskService implements ITaskService {
           await this.userBadgeRepository.createUserBadgeLog(
             userId,
             consistencyList[prop],
+            tx,
           );
         } catch (error) {
           if (error.message === ALREADY_EXIST_USER_BADGE) return;
@@ -254,7 +265,11 @@ export class TaskService implements ITaskService {
     }
   }
 
-  async updateDiversity(userId: UUID, taskType: TaskType_): Promise<void> {
+  async updateDiversity(
+    userId: UUID,
+    taskType: TaskType_,
+    tx?: TransactionClient,
+  ): Promise<void> {
     const diversityList = {
       DAILY: DIVERSITY_BADGE_ID1,
       DUE: DIVERSITY_BADGE_ID2,
@@ -264,17 +279,22 @@ export class TaskService implements ITaskService {
     const updatedDiversity = await this.badgeProgressRepository.updateDiversity(
       userId,
       diversityList[taskType],
+      tx,
     );
 
     if (updatedDiversity === DIVERSITY_GOAL) {
       await this.userBadgeRepository.createUserBadgeLog(
         userId,
         diversityList[taskType],
+        tx,
       );
     }
   }
 
-  async updateProductivity(userId: UUID): Promise<void> {
+  async updateProductivity(
+    userId: UUID,
+    tx?: TransactionClient,
+  ): Promise<void> {
     const productivityList = [
       {
         period: this.handleDateTime.getToday(),
@@ -297,17 +317,20 @@ export class TaskService implements ITaskService {
       const count = await this.pointRepository.countTasksPerDate(
         userId,
         productivity.period,
+        tx,
       );
       await this.badgeProgressRepository.updateProductivity(
         count,
         userId,
         productivity.badgeId,
+        tx,
       );
 
       if (count === productivity.goal) {
         await this.userBadgeRepository.createUserBadgeLog(
           userId,
           productivity.badgeId,
+          tx,
         );
       }
     }
