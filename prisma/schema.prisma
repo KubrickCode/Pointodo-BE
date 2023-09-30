@@ -18,7 +18,7 @@ model User {
   userBadgeLog        UserBadgesLogs[]
   badgeProgress       BadgeProgress[]
   taskLogs            TasksLogs[]
-  userPassword        UserPassword[]
+  userPassword        UserPassword?
   earnedPointsLogs    EarnedPointsLogs[]
   spentPointsLogs     SpentPointsLogs[]
 
