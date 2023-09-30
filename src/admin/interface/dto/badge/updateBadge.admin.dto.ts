@@ -1,42 +1,36 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  BADGE_ICON_LINK,
-  BADGE_DESC,
-  BADGE_ID,
-  BADGE_NAME,
-  BADGE_PRICE,
-} from '@shared/constants/badge.constant';
-import { CONFLICT_BADGE_NAME } from '@shared/messages/admin/badge.admin.errors';
+import { BadgeConstant } from '@shared/constants/badge.constant';
+import { BadgeAdminErrorMessage } from '@shared/messages/admin/badge.admin.errors';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ReqAdminUpdateBadgeParamDto {
-  @ApiProperty({ description: BADGE_ID })
+  @ApiProperty({ description: BadgeConstant.BADGE_ID })
   @Type(() => Number)
   @IsInt()
   readonly id: number;
 }
 
 export class ReqAdminUpdateBadgeDto {
-  @ApiProperty({ description: BADGE_NAME })
+  @ApiProperty({ description: BadgeConstant.BADGE_NAME })
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   readonly name?: string | null;
 
-  @ApiProperty({ description: BADGE_DESC })
+  @ApiProperty({ description: BadgeConstant.BADGE_DESC })
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   readonly description?: string | null;
 
-  @ApiProperty({ description: BADGE_ICON_LINK })
+  @ApiProperty({ description: BadgeConstant.BADGE_ICON_LINK })
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   readonly iconLink?: string | null;
 
-  @ApiProperty({ description: BADGE_PRICE })
+  @ApiProperty({ description: BadgeConstant.BADGE_PRICE })
   @ApiPropertyOptional()
   @IsOptional()
   @IsInt()
@@ -49,7 +43,7 @@ export class ResAdminUpdateBadgeConflict {
   readonly statusCode: number;
 
   @ApiProperty({
-    example: CONFLICT_BADGE_NAME,
+    example: BadgeAdminErrorMessage.CONFLICT_BADGE_NAME,
     description: '에러 메시지',
   })
   @IsString()

@@ -30,30 +30,11 @@ import { ConfigService } from '@nestjs/config';
 import { IPointRepository } from '@point/domain/interfaces/point.repository.interface';
 import { IRedisService } from '@redis/domain/interfaces/redis.service.interface';
 import { cacheConfig } from '@shared/config/cache.config';
-import { DEFAULT_BADGE_ID } from '@shared/constants/badge.constant';
-import {
-  IBADGE_ADMIN_REPOSITORY,
-  IBADGE_PROGRESS_REPOSITORY,
-  ICACHE_SERVICE,
-  IPOINT_REPOSITORY,
-  IREDIS_SERVICE,
-  ITRANSACTION_SERVICE,
-  IUSER_BADGE_REPOSITORY,
-  IUSER_REPOSITORY,
-} from '@shared/constants/provider.constant';
+import { BadgeConstant } from '@shared/constants/badge.constant';
+import { ProviderConstant } from '@shared/constants/provider.constant';
 import { ITransactionService } from '@shared/interfaces/ITransaction.service.interface';
-import {
-  ALREADY_EXIST_USER_BADGE,
-  BUY_BADGE_CONFLICT_POINTS,
-  CANT_DELETE_DEAFULT_BADGE,
-  NOT_EXIST_USER_BADGE,
-} from '@shared/messages/badge/badge.errors';
-import {
-  BUY_BADGE_SUCCESS_MESSAGE,
-  CHANGE_USER_BADGE_MESSAGE,
-  DELETE_USER_BADGE_SUCCESS_MESSAGE,
-  PUT_BADGE_SUCCESS_MESSAGE,
-} from '@shared/messages/badge/badge.messages';
+import { BadgeErrorMessage } from '@shared/messages/badge/badge.errors';
+import { BadgeMessage } from '@shared/messages/badge/badge.messages';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import { plainToClass } from 'class-transformer';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
@@ -62,21 +43,21 @@ import { Logger } from 'winston';
 @Injectable()
 export class BadgeService implements IBadgeService {
   constructor(
-    @Inject(IPOINT_REPOSITORY)
+    @Inject(ProviderConstant.IPOINT_REPOSITORY)
     private readonly pointRepository: IPointRepository,
-    @Inject(IUSER_BADGE_REPOSITORY)
+    @Inject(ProviderConstant.IUSER_BADGE_REPOSITORY)
     private readonly userBadgeRepository: IUserBadgeRepository,
-    @Inject(IBADGE_ADMIN_REPOSITORY)
+    @Inject(ProviderConstant.IBADGE_ADMIN_REPOSITORY)
     private readonly badgeAdminRepository: IBadgeAdminRepository,
-    @Inject(IUSER_REPOSITORY)
+    @Inject(ProviderConstant.IUSER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-    @Inject(IBADGE_PROGRESS_REPOSITORY)
+    @Inject(ProviderConstant.IBADGE_PROGRESS_REPOSITORY)
     private readonly badgeProgressRepository: IBadgeProgressRepository,
-    @Inject(IREDIS_SERVICE)
+    @Inject(ProviderConstant.IREDIS_SERVICE)
     private readonly redisService: IRedisService,
-    @Inject(ICACHE_SERVICE)
+    @Inject(ProviderConstant.ICACHE_SERVICE)
     private readonly cacheService: ICacheService,
-    @Inject(ITRANSACTION_SERVICE)
+    @Inject(ProviderConstant.ITRANSACTION_SERVICE)
     private readonly transactionService: ITransactionService,
     private readonly configService: ConfigService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
@@ -108,7 +89,7 @@ export class BadgeService implements IBadgeService {
     const userPoints = await this.pointRepository.calculateUserPoints(userId);
     if (userPoints < 0) {
       await this.userBadgeRepository.deleteUserBadgeLog(badgeLogId);
-      throw new ConflictException(BUY_BADGE_CONFLICT_POINTS);
+      throw new ConflictException(BadgeErrorMessage.BUY_BADGE_CONFLICT_POINTS);
     }
 
     await this.cacheService.deleteCache(`userBadgeList:${userId}`);
@@ -119,7 +100,7 @@ export class BadgeService implements IBadgeService {
 
     this.logger.log(
       'info',
-      `${BUY_BADGE_SUCCESS_MESSAGE}-유저 ID:${userId}, 뱃지 ID:${badgeId}`,
+      `${BadgeMessage.BUY_BADGE_SUCCESS_MESSAGE}-유저 ID:${userId}, 뱃지 ID:${badgeId}`,
     );
   }
 
@@ -167,13 +148,13 @@ export class BadgeService implements IBadgeService {
     const badgeTypeList = userBadgeList.map((item) => item.badgeId);
 
     if (!badgeTypeList.includes(badgeId))
-      throw new BadRequestException(NOT_EXIST_USER_BADGE);
+      throw new BadRequestException(BadgeErrorMessage.NOT_EXIST_USER_BADGE);
 
     await this.cacheService.deleteCache(`user:${userId}`);
     await this.userRepository.changeSelectedBadge(userId, badgeId);
     this.logger.log(
       'info',
-      `${CHANGE_USER_BADGE_MESSAGE}-유저 ID:${userId}, 뱃지 ID:${badgeId}`,
+      `${BadgeMessage.CHANGE_USER_BADGE_MESSAGE}-유저 ID:${userId}, 뱃지 ID:${badgeId}`,
     );
   }
 
@@ -219,28 +200,33 @@ export class BadgeService implements IBadgeService {
 
     if (filteredBadgeList.length > 1) {
       await this.userBadgeRepository.deleteUserBadgeLog(createdUserBadgeLog.id);
-      throw new ConflictException(ALREADY_EXIST_USER_BADGE);
+      throw new ConflictException(BadgeErrorMessage.ALREADY_EXIST_USER_BADGE);
     }
     await this.cacheService.deleteCache(`userBadgeList:${userId}`);
     this.logger.log(
       'info',
-      `${PUT_BADGE_SUCCESS_MESSAGE}-유저 ID:${userId},뱃지 ID:${badgeId}`,
+      `${BadgeMessage.PUT_BADGE_SUCCESS_MESSAGE}-유저 ID:${userId},뱃지 ID:${badgeId}`,
     );
   }
 
   async deleteUserBadge(req: ReqDeleteUserBadgeAppDto): Promise<void> {
     const { userId, badgeId } = req;
-    if (badgeId === DEFAULT_BADGE_ID)
-      throw new BadRequestException(CANT_DELETE_DEAFULT_BADGE);
+    if (badgeId === BadgeConstant.DEFAULT_BADGE_ID)
+      throw new BadRequestException(
+        BadgeErrorMessage.CANT_DELETE_DEAFULT_BADGE,
+      );
     await this.cacheService.deleteCache(`userBadgeList:${userId}`);
     await this.cacheService.deleteCache(`user:${userId}`);
     await this.cacheService.deleteCache(`SPENTtotalPointPages:${userId}`);
     await this.redisService.deleteKeysByPrefix(`userSpentPointsLogs:${userId}`);
-    await this.userRepository.changeSelectedBadge(userId, DEFAULT_BADGE_ID);
+    await this.userRepository.changeSelectedBadge(
+      userId,
+      BadgeConstant.DEFAULT_BADGE_ID,
+    );
     await this.userBadgeRepository.deleteUserBadge(badgeId, userId);
     this.logger.log(
       'info',
-      `${DELETE_USER_BADGE_SUCCESS_MESSAGE}-유저 ID:${userId},뱃지 ID:${badgeId}`,
+      `${BadgeMessage.DELETE_USER_BADGE_SUCCESS_MESSAGE}-유저 ID:${userId},뱃지 ID:${badgeId}`,
     );
   }
 }

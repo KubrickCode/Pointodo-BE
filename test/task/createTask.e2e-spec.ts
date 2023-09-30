@@ -7,7 +7,7 @@ import { ReqCreateTaskDto } from '@task/interface/dto/createTask.dto';
 import { validateOrReject } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { ResInvalidation } from '@shared/dto/global.dto';
-import { DUE_DATE_IN_THE_PAST } from '@shared/messages/task/task.errors';
+import { TaskErrorMessage } from '@shared/messages/task/task.errors';
 import { setupLoggedIn } from '../setupLoggedIn.e2e';
 import { tokenError } from '../tokenError.e2e';
 import { mockTask } from '@shared/test/taskMockData';
@@ -150,7 +150,9 @@ describe('createTask in taskController (e2e)', () => {
     );
 
     expect(response.body.statusCode).toEqual(400);
-    expect(response.body.message[0]).toEqual(DUE_DATE_IN_THE_PAST);
+    expect(response.body.message[0]).toEqual(
+      TaskErrorMessage.DUE_DATE_IN_THE_PAST,
+    );
     expect(response.body.path).toEqual(path);
 
     await validateOrReject(plainToClass(ResInvalidation, response.body));

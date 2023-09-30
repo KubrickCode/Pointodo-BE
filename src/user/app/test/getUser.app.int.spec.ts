@@ -8,7 +8,7 @@ import {
 import { TEST1_USER_LOCAL } from '@shared/test/userMockData';
 import { v4 as uuidv4 } from 'uuid';
 import { UUID } from 'crypto';
-import { USER_NOT_FOUND } from '@shared/messages/user/user.errors';
+import { UserErrorMessage } from '@shared/messages/user/user.errors';
 import { plainToClass } from 'class-transformer';
 
 describe('getUser', () => {
@@ -49,7 +49,7 @@ describe('getUser', () => {
       await userService.getUser({ id: uuidv4() as UUID });
     } catch (error) {
       expect(error.response.statusCode).toEqual(404);
-      expect(error.response.message).toEqual(USER_NOT_FOUND);
+      expect(error.response.message).toEqual(UserErrorMessage.USER_NOT_FOUND);
       expect(error.response.error).toEqual('Not Found');
     }
   }, 30000);

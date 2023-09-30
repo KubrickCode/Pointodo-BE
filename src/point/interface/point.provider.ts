@@ -1,13 +1,7 @@
 import { CacheService } from '@cache/infrastructure/cache.service';
 import { PointService } from '@point/app/point.service';
 import { PointRepository } from '@point/infrastructure/prisma/point.repository';
-import {
-  ICACHE_SERVICE,
-  IHANDLE_DATE_TIME,
-  IPOINT_REPOSITORY,
-  IPOINT_SERVICE,
-  IUSER_REPOSITORY,
-} from '@shared/constants/provider.constant';
+import { ProviderConstant } from '@shared/constants/provider.constant';
 import { PrismaService } from '@shared/service/prisma.service';
 import { HandleDateTime } from '@shared/utils/handleDateTime';
 import { UserRepository } from '@user/infrastructure/prisma/user.repository';
@@ -15,23 +9,23 @@ import { UserRepository } from '@user/infrastructure/prisma/user.repository';
 export const PointProvider = [
   PrismaService,
   {
-    provide: IPOINT_SERVICE,
+    provide: ProviderConstant.IPOINT_SERVICE,
     useClass: PointService,
   },
   {
-    provide: IPOINT_REPOSITORY,
+    provide: ProviderConstant.IPOINT_REPOSITORY,
     useClass: PointRepository,
   },
   {
-    provide: ICACHE_SERVICE,
+    provide: ProviderConstant.ICACHE_SERVICE,
     useClass: CacheService,
   },
   {
-    provide: IUSER_REPOSITORY,
+    provide: ProviderConstant.IUSER_REPOSITORY,
     useClass: UserRepository,
   },
   {
-    provide: IHANDLE_DATE_TIME,
+    provide: ProviderConstant.IHANDLE_DATE_TIME,
     useClass: HandleDateTime,
   },
 ];

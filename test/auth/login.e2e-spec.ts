@@ -8,11 +8,8 @@ import {
   TEST3_USER_KAKAO,
   TEST_PASSWORD,
 } from '../../src/shared/test/userMockData';
-import {
-  USER_EXIST_WITH_SOCIAL,
-  USER_NOT_FOUND,
-} from '@shared/messages/user/user.errors';
-import { AUTH_INVALID_PASSWORD } from '@shared/messages/auth/auth.errors';
+import { UserErrorMessage } from '@shared/messages/user/user.errors';
+import { AuthErrorMessage } from '@shared/messages/auth/auth.errors';
 import cookieParser from 'cookie-parser';
 import { validateOrReject } from 'class-validator';
 import { plainToClass } from 'class-transformer';
@@ -62,7 +59,7 @@ describe('로그인 in AuthController (e2e)', () => {
 
     expect(response.statusCode).toEqual(404);
     expect(response.body.statusCode).toEqual(404);
-    expect(response.body.message).toEqual(USER_NOT_FOUND);
+    expect(response.body.message).toEqual(UserErrorMessage.USER_NOT_FOUND);
     expect(response.body.path).toEqual(path);
 
     await validateOrReject(plainToClass(ResNotFoundUser, response.body));
@@ -76,7 +73,9 @@ describe('로그인 in AuthController (e2e)', () => {
 
     expect(response.statusCode).toEqual(401);
     expect(response.body.statusCode).toEqual(401);
-    expect(response.body.message).toEqual(AUTH_INVALID_PASSWORD);
+    expect(response.body.message).toEqual(
+      AuthErrorMessage.AUTH_INVALID_PASSWORD,
+    );
     expect(response.body.path).toEqual(path);
 
     await validateOrReject(plainToClass(ResInvalidPassword, response.body));
@@ -90,7 +89,9 @@ describe('로그인 in AuthController (e2e)', () => {
 
     expect(googleResponse.statusCode).toEqual(409);
     expect(googleResponse.body.statusCode).toEqual(409);
-    expect(googleResponse.body.message).toEqual(USER_EXIST_WITH_SOCIAL);
+    expect(googleResponse.body.message).toEqual(
+      UserErrorMessage.USER_EXIST_WITH_SOCIAL,
+    );
     expect(googleResponse.body.path).toEqual(path);
 
     await validateOrReject(
@@ -104,7 +105,9 @@ describe('로그인 in AuthController (e2e)', () => {
 
     expect(kakaoResponse.statusCode).toEqual(409);
     expect(kakaoResponse.body.statusCode).toEqual(409);
-    expect(kakaoResponse.body.message).toEqual(USER_EXIST_WITH_SOCIAL);
+    expect(kakaoResponse.body.message).toEqual(
+      UserErrorMessage.USER_EXIST_WITH_SOCIAL,
+    );
     expect(kakaoResponse.body.path).toEqual(path);
 
     await validateOrReject(

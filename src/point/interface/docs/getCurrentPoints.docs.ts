@@ -1,4 +1,4 @@
-import { CURRENT_POINTS } from '@shared/constants/point.constant';
+import { PointConstant } from '@shared/constants/point.constant';
 import { ResGetCurrentPointsDto } from '../dto/getCurrentPoints.dto';
 
 export const getCurrentPointsDocs = {
@@ -10,6 +10,6 @@ export const getCurrentPointsDocs = {
   },
   okResponse: {
     type: ResGetCurrentPointsDto,
-    description: CURRENT_POINTS,
+    description: PointConstant.CURRENT_POINTS,
   },
 };

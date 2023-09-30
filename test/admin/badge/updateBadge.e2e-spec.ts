@@ -9,9 +9,9 @@ import { validateOrReject } from 'class-validator';
 import { tokenError } from '../../tokenError.e2e';
 import { ReqAdminCreateBadgeDto } from '@admin/interface/dto/badge/createBadge.admin.dto';
 import { TEST4_USER_LOCAL, TEST_PASSWORD } from '@shared/test/userMockData';
-import { AUTH_INVALID_ADMIN } from '@shared/messages/auth/auth.errors';
+import { AuthErrorMessage } from '@shared/messages/auth/auth.errors';
 import { ResForbiddenAdmin } from '@admin/interface/dto/admin.dto';
-import { CONFLICT_BADGE_NAME } from '@shared/messages/admin/badge.admin.errors';
+import { BadgeAdminErrorMessage } from '@shared/messages/admin/badge.admin.errors';
 import { mockBadge } from '@shared/test/badgeMockData';
 import {
   ReqAdminUpdateBadgeDto,
@@ -93,7 +93,9 @@ describe('어드민 뱃지 업데이트 in BadgeAdminController (e2e)', () => {
     );
 
     expect(response.body.statusCode).toEqual(409);
-    expect(response.body.message).toEqual(CONFLICT_BADGE_NAME);
+    expect(response.body.message).toEqual(
+      BadgeAdminErrorMessage.CONFLICT_BADGE_NAME,
+    );
     expect(response.body.path).toEqual(path + `/${id}`);
     await validateOrReject(
       plainToClass(ResAdminUpdateBadgeConflict, response.body),
@@ -120,7 +122,7 @@ describe('어드민 뱃지 업데이트 in BadgeAdminController (e2e)', () => {
     );
 
     expect(response.body.statusCode).toEqual(403);
-    expect(response.body.message).toEqual(AUTH_INVALID_ADMIN);
+    expect(response.body.message).toEqual(AuthErrorMessage.AUTH_INVALID_ADMIN);
     expect(response.body.path).toEqual(path + `/${id}`);
 
     await validateOrReject(plainToClass(ResForbiddenAdmin, response.body));

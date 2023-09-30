@@ -42,18 +42,15 @@ import { socialLoginDocs } from './docs/socialLogin.docs';
 import { validateLoggedInDocs } from './docs/validateLoggedIn.docs';
 import { jwtExpiration } from '@shared/config/jwt.config';
 import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
-import {
-  IAUTH_SERVICE,
-  IHANDLE_DATE_TIME,
-} from '@shared/constants/provider.constant';
+import { ProviderConstant } from '@shared/constants/provider.constant';
 import useragent from 'express-useragent';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
   constructor(
-    @Inject(IAUTH_SERVICE)
+    @Inject(ProviderConstant.IAUTH_SERVICE)
     private readonly authService: IAuthService,
-    @Inject(IHANDLE_DATE_TIME)
+    @Inject(ProviderConstant.IHANDLE_DATE_TIME)
     private readonly handleDateTime: IHandleDateTime,
   ) {}
 

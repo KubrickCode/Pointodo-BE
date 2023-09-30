@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import { setupLoggedIn } from '../setupLoggedIn.e2e';
 import { tokenError } from '../tokenError.e2e';
 import { TEST1_USER_LOCAL } from '@shared/test/userMockData';
-import { BUY_BADGE_CONFLICT_POINTS } from '@shared/messages/badge/badge.errors';
+import { BadgeErrorMessage } from '@shared/messages/badge/badge.errors';
 
 describe('유저 뱃지 구매 in BadgeController (e2e)', () => {
   let app: INestApplication;
@@ -54,7 +54,9 @@ describe('유저 뱃지 구매 in BadgeController (e2e)', () => {
       accessToken,
     );
     expect(response.body.statusCode).toEqual(HttpStatus.CONFLICT);
-    expect(response.body.message).toEqual(BUY_BADGE_CONFLICT_POINTS);
+    expect(response.body.message).toEqual(
+      BadgeErrorMessage.BUY_BADGE_CONFLICT_POINTS,
+    );
     expect(response.body.path).toEqual('/badges/2');
   }, 30000);
 

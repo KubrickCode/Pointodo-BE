@@ -4,13 +4,7 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
-import {
-  CANCLE_TASK_COMPLETION_SUCCESS_MESSAGE,
-  COMPLETE_TASK_SUCCESS_MESSAGE,
-  CREATE_TASK_SUCCESS_MESSAGE,
-  DELETE_TASK_SUCCESS_MESSAGE,
-  UPDATE_TASK_SUCCESS_MESSAGE,
-} from '@shared/messages/task/task.message';
+import { TaskMessage } from '@shared/messages/task/task.message';
 import { ITaskService } from '../domain/interfaces/task.service.interface';
 import { ITaskRepository } from '../domain/interfaces/task.repository.interface';
 import {
@@ -28,23 +22,10 @@ import { IPointRepository } from '@point/domain/interfaces/point.repository.inte
 import { ReqCompleteTaskAppDto } from '@task/domain/dto/completeTask.app.dto';
 import { IUserBadgeRepository } from '@badge/domain/interfaces/userBadge.repository.interface';
 import { setTaskPoints } from './utils/setTaskPoints';
-import {
-  COMPLETE_TASK_CONFLICT,
-  DUE_DATE_IN_THE_PAST,
-} from '@shared/messages/task/task.errors';
-import {
-  A_MONTH,
-  A_WEEK,
-  A_YEAR,
-  DIVERSITY_GOAL,
-  IS_COMPLETED,
-  PRODUCTIVITY_GOAL_FOR_A_MONTH_AGO,
-  PRODUCTIVITY_GOAL_FOR_A_WEEK_AGO,
-  PRODUCTIVITY_GOAL_FOR_TODAY,
-} from '@shared/constants/task.constant';
+import { TaskErrorMessage } from '@shared/messages/task/task.errors';
+import { TaskConstant } from '@shared/constants/task.constant';
 import { ICacheService } from '@cache/domain/interfaces/cache.service.interface';
 import { ReqCancleTaskCompletionAppDto } from '@task/domain/dto/cancleTaskCompletion.app.dto';
-import { IBadgeAdminRepository } from '@admin/badge/domain/interfaces/badge.admin.repository.interface';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import {
   ReqGetTotalTaskPagesAppDto,
@@ -54,29 +35,10 @@ import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 import { plainToClass } from 'class-transformer';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
-import {
-  IBADGE_ADMIN_REPOSITORY,
-  IBADGE_PROGRESS_REPOSITORY,
-  ICACHE_SERVICE,
-  IHANDLE_DATE_TIME,
-  IPOINT_REPOSITORY,
-  ITASK_REPOSITORY,
-  ITRANSACTION_SERVICE,
-  IUSER_BADGE_REPOSITORY,
-} from '@shared/constants/provider.constant';
+import { ProviderConstant } from '@shared/constants/provider.constant';
 import { UUID } from 'crypto';
-import {
-  CONSISTENCY_BADGE_ID1,
-  CONSISTENCY_BADGE_ID2,
-  CONSISTENCY_BADGE_ID3,
-  DIVERSITY_BADGE_ID1,
-  DIVERSITY_BADGE_ID2,
-  DIVERSITY_BADGE_ID3,
-  PRODUCTIVITY_BADGE_ID1,
-  PRODUCTIVITY_BADGE_ID2,
-  PRODUCTIVITY_BADGE_ID3,
-} from '@shared/constants/badge.constant';
-import { ALREADY_EXIST_USER_BADGE } from '@shared/messages/badge/badge.errors';
+import { BadgeConstant } from '@shared/constants/badge.constant';
+import { BadgeErrorMessage } from '@shared/messages/badge/badge.errors';
 import { TaskType_ } from '@task/domain/entities/task.entity';
 import { ITransactionService } from '@shared/interfaces/ITransaction.service.interface';
 import { TransactionClient } from '@shared/types/transaction.type';
@@ -84,21 +46,19 @@ import { TransactionClient } from '@shared/types/transaction.type';
 @Injectable()
 export class TaskService implements ITaskService {
   constructor(
-    @Inject(ITASK_REPOSITORY)
+    @Inject(ProviderConstant.ITASK_REPOSITORY)
     private readonly taskRepository: ITaskRepository,
-    @Inject(IBADGE_PROGRESS_REPOSITORY)
+    @Inject(ProviderConstant.IBADGE_PROGRESS_REPOSITORY)
     private readonly badgeProgressRepository: IBadgeProgressRepository,
-    @Inject(IBADGE_ADMIN_REPOSITORY)
-    private readonly badgeAdminRepository: IBadgeAdminRepository,
-    @Inject(IPOINT_REPOSITORY)
+    @Inject(ProviderConstant.IPOINT_REPOSITORY)
     private readonly pointRepository: IPointRepository,
-    @Inject(IUSER_BADGE_REPOSITORY)
+    @Inject(ProviderConstant.IUSER_BADGE_REPOSITORY)
     private readonly userBadgeRepository: IUserBadgeRepository,
-    @Inject(ICACHE_SERVICE)
+    @Inject(ProviderConstant.ICACHE_SERVICE)
     private readonly cacheService: ICacheService,
-    @Inject(IHANDLE_DATE_TIME)
+    @Inject(ProviderConstant.IHANDLE_DATE_TIME)
     private readonly handleDateTime: IHandleDateTime,
-    @Inject(ITRANSACTION_SERVICE)
+    @Inject(ProviderConstant.ITRANSACTION_SERVICE)
     private readonly transactionService: ITransactionService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -146,14 +106,14 @@ export class TaskService implements ITaskService {
     if (taskType === 'DUE') {
       if (new Date(dueDate) < new Date(this.handleDateTime.getToday())) {
         await this.taskRepository.deleteTask(id);
-        throw new BadRequestException([DUE_DATE_IN_THE_PAST]);
+        throw new BadRequestException([TaskErrorMessage.DUE_DATE_IN_THE_PAST]);
       }
       await this.taskRepository.createTaskDueDate(id, dueDate);
     }
 
     this.logger.log(
       'info',
-      `${CREATE_TASK_SUCCESS_MESSAGE}-유저 ID:${userId}, 작업 ID:${id}`,
+      `${TaskMessage.CREATE_TASK_SUCCESS_MESSAGE}-유저 ID:${userId}, 작업 ID:${id}`,
     );
 
     return plainToClass(ResCreateTaskAppDto, { id });
@@ -164,7 +124,10 @@ export class TaskService implements ITaskService {
 
     if (completion === 1) {
       await this.completeTask({ id, userId });
-      this.logger.log('info', `${COMPLETE_TASK_SUCCESS_MESSAGE}-작업 ID:${id}`);
+      this.logger.log(
+        'info',
+        `${TaskMessage.COMPLETE_TASK_SUCCESS_MESSAGE}-작업 ID:${id}`,
+      );
       return;
     }
 
@@ -172,7 +135,7 @@ export class TaskService implements ITaskService {
       await this.cancleTaskCompletion({ id });
       this.logger.log(
         'info',
-        `${CANCLE_TASK_COMPLETION_SUCCESS_MESSAGE}-작업 ID:${id}`,
+        `${TaskMessage.CANCLE_TASK_COMPLETION_SUCCESS_MESSAGE}-작업 ID:${id}`,
       );
       return;
     }
@@ -185,12 +148,18 @@ export class TaskService implements ITaskService {
       req.dueDate,
     );
 
-    this.logger.log('info', `${UPDATE_TASK_SUCCESS_MESSAGE}-작업 ID:${id}`);
+    this.logger.log(
+      'info',
+      `${TaskMessage.UPDATE_TASK_SUCCESS_MESSAGE}-작업 ID:${id}`,
+    );
   }
 
   async deleteTask(req: ReqDeleteTaskAppDto): Promise<void> {
     await this.taskRepository.deleteTask(req.id);
-    this.logger.log('info', `${DELETE_TASK_SUCCESS_MESSAGE}-작업 ID:${req.id}`);
+    this.logger.log(
+      'info',
+      `${TaskMessage.DELETE_TASK_SUCCESS_MESSAGE}-작업 ID:${req.id}`,
+    );
   }
 
   async completeTask(req: ReqCompleteTaskAppDto): Promise<void> {
@@ -200,8 +169,8 @@ export class TaskService implements ITaskService {
 
       await this.cacheService.deleteCache(`userBadgeList:${req.userId}`);
 
-      if (completion !== IS_COMPLETED) {
-        throw new ConflictException(COMPLETE_TASK_CONFLICT);
+      if (completion !== TaskConstant.IS_COMPLETED) {
+        throw new ConflictException(TaskErrorMessage.COMPLETE_TASK_CONFLICT);
       }
 
       if (version === 1) return;
@@ -238,9 +207,9 @@ export class TaskService implements ITaskService {
       tx,
     );
     const consistencyList = {
-      [A_WEEK]: CONSISTENCY_BADGE_ID1,
-      [A_MONTH]: CONSISTENCY_BADGE_ID2,
-      [A_YEAR]: CONSISTENCY_BADGE_ID3,
+      [TaskConstant.A_WEEK]: BadgeConstant.CONSISTENCY_BADGE_ID1,
+      [TaskConstant.A_MONTH]: BadgeConstant.CONSISTENCY_BADGE_ID2,
+      [TaskConstant.A_YEAR]: BadgeConstant.CONSISTENCY_BADGE_ID3,
     };
 
     for (const prop in consistencyList) {
@@ -259,7 +228,8 @@ export class TaskService implements ITaskService {
             tx,
           );
         } catch (error) {
-          if (error.message === ALREADY_EXIST_USER_BADGE) return;
+          if (error.message === BadgeErrorMessage.ALREADY_EXIST_USER_BADGE)
+            return;
         }
       }
     }
@@ -271,9 +241,9 @@ export class TaskService implements ITaskService {
     tx?: TransactionClient,
   ): Promise<void> {
     const diversityList = {
-      DAILY: DIVERSITY_BADGE_ID1,
-      DUE: DIVERSITY_BADGE_ID2,
-      FREE: DIVERSITY_BADGE_ID3,
+      DAILY: BadgeConstant.DIVERSITY_BADGE_ID1,
+      DUE: BadgeConstant.DIVERSITY_BADGE_ID2,
+      FREE: BadgeConstant.DIVERSITY_BADGE_ID3,
     };
 
     const updatedDiversity = await this.badgeProgressRepository.updateDiversity(
@@ -282,7 +252,7 @@ export class TaskService implements ITaskService {
       tx,
     );
 
-    if (updatedDiversity === DIVERSITY_GOAL) {
+    if (updatedDiversity === TaskConstant.DIVERSITY_GOAL) {
       await this.userBadgeRepository.createUserBadgeLog(
         userId,
         diversityList[taskType],
@@ -298,18 +268,18 @@ export class TaskService implements ITaskService {
     const productivityList = [
       {
         period: this.handleDateTime.getToday(),
-        badgeId: PRODUCTIVITY_BADGE_ID1,
-        goal: PRODUCTIVITY_GOAL_FOR_TODAY,
+        badgeId: BadgeConstant.PRODUCTIVITY_BADGE_ID1,
+        goal: TaskConstant.PRODUCTIVITY_GOAL_FOR_TODAY,
       },
       {
         period: this.handleDateTime.getAWeekAgo(),
-        badgeId: PRODUCTIVITY_BADGE_ID2,
-        goal: PRODUCTIVITY_GOAL_FOR_A_WEEK_AGO,
+        badgeId: BadgeConstant.PRODUCTIVITY_BADGE_ID2,
+        goal: TaskConstant.PRODUCTIVITY_GOAL_FOR_A_WEEK_AGO,
       },
       {
         period: this.handleDateTime.getAMonthAgo(),
-        badgeId: PRODUCTIVITY_BADGE_ID3,
-        goal: PRODUCTIVITY_GOAL_FOR_A_MONTH_AGO,
+        badgeId: BadgeConstant.PRODUCTIVITY_BADGE_ID3,
+        goal: TaskConstant.PRODUCTIVITY_GOAL_FOR_A_MONTH_AGO,
       },
     ];
 

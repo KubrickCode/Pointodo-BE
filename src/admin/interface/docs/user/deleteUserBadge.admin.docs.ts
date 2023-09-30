@@ -1,4 +1,4 @@
-import { DELETE_USER_BADGE_SUCCESS_MESSAGE } from '@shared/messages/badge/badge.messages';
+import { BadgeMessage } from '@shared/messages/badge/badge.messages';
 
 export const deleteUserBadgeDocs = {
   operation: {
@@ -8,6 +8,6 @@ export const deleteUserBadgeDocs = {
   `,
   },
   noContentResponse: {
-    description: DELETE_USER_BADGE_SUCCESS_MESSAGE,
+    description: BadgeMessage.DELETE_USER_BADGE_SUCCESS_MESSAGE,
   },
 };

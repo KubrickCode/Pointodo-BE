@@ -1,33 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsInt, IsString, Matches } from 'class-validator';
-import {
-  VALIDATE_EMAIL,
-  VALIDATE_PASSWORD,
-} from '@shared/messages/auth/auth.messages';
-import {
-  USER_EMAIL,
-  USER_EMAIL_EXAMPLE,
-  USER_PWD,
-  USER_PWD_EXAMPLE,
-} from '@shared/constants/user.constant';
-import {
-  USER_EXIST_WITH_SOCIAL,
-  USER_NOT_FOUND,
-} from '@shared/messages/user/user.errors';
-import { AUTH_INVALID_PASSWORD } from '@shared/messages/auth/auth.errors';
+import { AuthMessage } from '@shared/messages/auth/auth.messages';
+import { UserConstant } from '@shared/constants/user.constant';
+import { UserErrorMessage } from '@shared/messages/user/user.errors';
+import { AuthErrorMessage } from '@shared/messages/auth/auth.errors';
 
 export class ReqLoginDto {
-  @ApiProperty({ example: USER_EMAIL_EXAMPLE, description: USER_EMAIL })
-  @IsEmail({}, { message: VALIDATE_EMAIL })
+  @ApiProperty({
+    example: UserConstant.USER_EMAIL_EXAMPLE,
+    description: UserConstant.USER_EMAIL,
+  })
+  @IsEmail({}, { message: AuthMessage.VALIDATE_EMAIL })
   readonly email: string;
 
   @ApiProperty({
-    example: USER_PWD_EXAMPLE,
-    description: USER_PWD,
+    example: UserConstant.USER_PWD_EXAMPLE,
+    description: UserConstant.USER_PWD,
   })
   @IsString()
   @Matches(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,20}$/, {
-    message: VALIDATE_PASSWORD,
+    message: AuthMessage.VALIDATE_PASSWORD,
   })
   readonly password: string;
 }
@@ -38,7 +30,7 @@ export class ResNotFoundUser {
   readonly statusCode: number;
 
   @ApiProperty({
-    example: USER_NOT_FOUND,
+    example: UserErrorMessage.USER_NOT_FOUND,
     description: '에러 메시지',
   })
   @IsString()
@@ -55,7 +47,7 @@ export class ResInvalidPassword {
   readonly statusCode: number;
 
   @ApiProperty({
-    example: AUTH_INVALID_PASSWORD,
+    example: AuthErrorMessage.AUTH_INVALID_PASSWORD,
     description: '에러 메시지',
   })
   @IsString()
@@ -72,7 +64,7 @@ export class ResNotLocalUserLogin {
   readonly statusCode: number;
 
   @ApiProperty({
-    example: USER_EXIST_WITH_SOCIAL,
+    example: UserErrorMessage.USER_EXIST_WITH_SOCIAL,
     description: '에러 메시지',
   })
   @IsString()

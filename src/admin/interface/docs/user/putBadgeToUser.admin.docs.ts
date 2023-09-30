@@ -1,4 +1,4 @@
-import { PUT_BADGE_SUCCESS_MESSAGE } from '@shared/messages/badge/badge.messages';
+import { BadgeMessage } from '@shared/messages/badge/badge.messages';
 
 export const putBadgeToUserDocs = {
   operation: {
@@ -8,6 +8,6 @@ export const putBadgeToUserDocs = {
   `,
   },
   noContentResponse: {
-    description: PUT_BADGE_SUCCESS_MESSAGE,
+    description: BadgeMessage.PUT_BADGE_SUCCESS_MESSAGE,
   },
 };

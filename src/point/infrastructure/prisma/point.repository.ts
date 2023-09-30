@@ -12,14 +12,14 @@ import { IPointRepository } from 'src/point/domain/interfaces/point.repository.i
 import { IHandleDateTime } from '@shared/interfaces/IHandleDateTime';
 import { plainToClass } from 'class-transformer';
 import { UUID } from 'crypto';
-import { IHANDLE_DATE_TIME } from '@shared/constants/provider.constant';
+import { ProviderConstant } from '@shared/constants/provider.constant';
 import { TransactionClient } from '@shared/types/transaction.type';
 
 @Injectable()
 export class PointRepository implements IPointRepository {
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(IHANDLE_DATE_TIME)
+    @Inject(ProviderConstant.IHANDLE_DATE_TIME)
     private readonly handleDateTime: IHandleDateTime,
   ) {}
 

@@ -1,4 +1,4 @@
-import { CHANGE_USER_BADGE_MESSAGE } from '@shared/messages/badge/badge.messages';
+import { BadgeMessage } from '@shared/messages/badge/badge.messages';
 
 export const changeSelectedBadgeDocs = {
   operation: {
@@ -8,6 +8,6 @@ export const changeSelectedBadgeDocs = {
   `,
   },
   noContentResponse: {
-    description: CHANGE_USER_BADGE_MESSAGE,
+    description: BadgeMessage.CHANGE_USER_BADGE_MESSAGE,
   },
 };

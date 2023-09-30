@@ -3,11 +3,7 @@ import { GoogleStrategy } from '@auth/infrastructure/passport/strategies/google.
 import { KakaoStrategy } from '@auth/infrastructure/passport/strategies/kakao.strategy';
 import { LocalStrategy } from '@auth/infrastructure/passport/strategies/local.strategy';
 import { TokenService } from '@auth/infrastructure/token.service';
-import {
-  IAUTH_SERVICE,
-  IHANDLE_DATE_TIME,
-  ITOKEN_SERVICE,
-} from '@shared/constants/provider.constant';
+import { ProviderConstant } from '@shared/constants/provider.constant';
 import { HandleDateTime } from '@shared/utils/handleDateTime';
 
 export const AuthProvider = [
@@ -15,15 +11,15 @@ export const AuthProvider = [
   GoogleStrategy,
   KakaoStrategy,
   {
-    provide: ITOKEN_SERVICE,
+    provide: ProviderConstant.ITOKEN_SERVICE,
     useClass: TokenService,
   },
   {
-    provide: IAUTH_SERVICE,
+    provide: ProviderConstant.IAUTH_SERVICE,
     useClass: AuthService,
   },
   {
-    provide: IHANDLE_DATE_TIME,
+    provide: ProviderConstant.IHANDLE_DATE_TIME,
     useClass: HandleDateTime,
   },
 ];

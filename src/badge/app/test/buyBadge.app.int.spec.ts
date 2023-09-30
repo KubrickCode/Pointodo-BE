@@ -3,7 +3,7 @@ import { TEST1_USER_LOCAL } from '@shared/test/userMockData';
 import { BadgeService } from '../badge.service';
 import { badgeServiceTestModuleOptions } from './badgeService.test.option';
 import { ReqBuyBadgeAppDto } from '@badge/domain/dto/buyBadge.app.dto';
-import { BUY_BADGE_CONFLICT_POINTS } from '@shared/messages/badge/badge.errors';
+import { BadgeErrorMessage } from '@shared/messages/badge/badge.errors';
 import { HttpStatus } from '@nestjs/common';
 
 describe('buyBadge', () => {
@@ -40,7 +40,9 @@ describe('buyBadge', () => {
       await badgeService.buyBadge({ ...request, badgeId: 2 });
     } catch (error) {
       expect(error.response.statusCode).toEqual(HttpStatus.CONFLICT);
-      expect(error.response.message).toEqual(BUY_BADGE_CONFLICT_POINTS);
+      expect(error.response.message).toEqual(
+        BadgeErrorMessage.BUY_BADGE_CONFLICT_POINTS,
+      );
       expect(error.response.error).toEqual('Conflict');
     }
   }, 30000);

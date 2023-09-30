@@ -1,5 +1,5 @@
-import { UPDATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
-import { COMPLETE_TASK_CONFLICT } from '@shared/messages/task/task.errors';
+import { TaskMessage } from '@shared/messages/task/task.message';
+import { TaskErrorMessage } from '@shared/messages/task/task.errors';
 
 export const updateTaskDocs = {
   operation: {
@@ -9,9 +9,9 @@ export const updateTaskDocs = {
   `,
   },
   noContentResponse: {
-    description: UPDATE_TASK_SUCCESS_MESSAGE,
+    description: TaskMessage.UPDATE_TASK_SUCCESS_MESSAGE,
   },
   conflictResponse: {
-    description: COMPLETE_TASK_CONFLICT,
+    description: TaskErrorMessage.COMPLETE_TASK_CONFLICT,
   },
 };

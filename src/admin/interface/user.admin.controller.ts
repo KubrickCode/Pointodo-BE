@@ -44,10 +44,7 @@ import { getTotalUserListPagesDocs } from './docs/user/getTotalUserListPages.adm
 import { getUserBadgeListDocs } from '@badge/interface/docs/getUserBadgeList.docs';
 import { putBadgeToUserDocs } from './docs/user/putBadgeToUser.admin.docs';
 import { deleteUserBadgeDocs } from './docs/user/deleteUserBadge.admin.docs';
-import {
-  IBADGE_SERVICE,
-  IUSER_SERVICE,
-} from '@shared/constants/provider.constant';
+import { ProviderConstant } from '@shared/constants/provider.constant';
 import {
   ReqGetTopUsersOnDateQueryDto,
   ResGetTopUsersOnDateDto,
@@ -61,9 +58,9 @@ import { plainToClass } from 'class-transformer';
 @UseGuards(JwtAuthGuard, AdminAuthGuard)
 export class UserAdminController {
   constructor(
-    @Inject(IUSER_SERVICE)
+    @Inject(ProviderConstant.IUSER_SERVICE)
     private readonly userService: IUserService,
-    @Inject(IBADGE_SERVICE)
+    @Inject(ProviderConstant.IBADGE_SERVICE)
     private readonly badgeService: IBadgeService,
   ) {}
 

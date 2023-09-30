@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { AUTH_INVALID_ADMIN } from '@shared/messages/auth/auth.errors';
+import { AuthErrorMessage } from '@shared/messages/auth/auth.errors';
 import { IsInt, IsString } from 'class-validator';
 
 export class ResForbiddenAdmin {
@@ -8,7 +8,7 @@ export class ResForbiddenAdmin {
   readonly statusCode: number;
 
   @ApiProperty({
-    example: AUTH_INVALID_ADMIN,
+    example: AuthErrorMessage.AUTH_INVALID_ADMIN,
     description: '에러 메시지',
   })
   @IsString()

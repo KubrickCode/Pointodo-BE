@@ -1,31 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsInt, IsString, Matches } from 'class-validator';
-import {
-  VALIDATE_EMAIL,
-  VALIDATE_PASSWORD,
-} from '@shared/messages/auth/auth.messages';
+import { AuthMessage } from '@shared/messages/auth/auth.messages';
 import { Transform } from 'class-transformer';
-import {
-  USER_EMAIL,
-  USER_EMAIL_EXAMPLE,
-  USER_PWD,
-  USER_PWD_EXAMPLE,
-} from '@shared/constants/user.constant';
-import { USER_ALREADY_EXIST } from '@shared/messages/user/user.errors';
+import { UserConstant } from '@shared/constants/user.constant';
+import { UserErrorMessage } from '@shared/messages/user/user.errors';
 
 export class ReqRegisterDto {
-  @ApiProperty({ example: USER_EMAIL_EXAMPLE, description: USER_EMAIL })
-  @IsEmail({}, { message: VALIDATE_EMAIL })
+  @ApiProperty({
+    example: UserConstant.USER_EMAIL_EXAMPLE,
+    description: UserConstant.USER_EMAIL,
+  })
+  @IsEmail({}, { message: AuthMessage.VALIDATE_EMAIL })
   @Transform(({ value }) => value.toLowerCase())
   readonly email: string;
 
   @ApiProperty({
-    example: USER_PWD_EXAMPLE,
-    description: USER_PWD,
+    example: UserConstant.USER_PWD_EXAMPLE,
+    description: UserConstant.USER_PWD,
   })
   @IsString()
   @Matches(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,20}$/, {
-    message: VALIDATE_PASSWORD,
+    message: AuthMessage.VALIDATE_PASSWORD,
   })
   readonly password: string;
 }
@@ -36,7 +31,7 @@ export class ResRegisterExistUserError {
   readonly statusCode: number;
 
   @ApiProperty({
-    example: USER_ALREADY_EXIST,
+    example: UserErrorMessage.USER_ALREADY_EXIST,
     description: '에러 메시지',
   })
   @IsString()

@@ -45,7 +45,7 @@ import {
   ReqGetTotalTaskPagesQueryDto,
   ResGetTotalTaskPagesDto,
 } from './dto/getTotalTaskPages.dto';
-import { ITASK_SERVICE } from '@shared/constants/provider.constant';
+import { ProviderConstant } from '@shared/constants/provider.constant';
 import { plainToClass } from 'class-transformer';
 
 @Controller('tasks')
@@ -55,7 +55,7 @@ import { plainToClass } from 'class-transformer';
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 export class TaskController {
   constructor(
-    @Inject(ITASK_SERVICE)
+    @Inject(ProviderConstant.ITASK_SERVICE)
     private readonly taskService: ITaskService,
   ) {}
 

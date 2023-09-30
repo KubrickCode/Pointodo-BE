@@ -1,6 +1,6 @@
 import { ResInvalidCheckPassword } from '@auth/interface/dto/checkPassword.dto';
-import { AUTH_INVALID_PASSWORD } from '@shared/messages/auth/auth.errors';
-import { CHECK_PASSWORD_MESSAGE } from '@shared/messages/auth/auth.messages';
+import { AuthErrorMessage } from '@shared/messages/auth/auth.errors';
+import { AuthMessage } from '@shared/messages/auth/auth.messages';
 
 export const checkPasswordDocs = {
   operation: {
@@ -10,10 +10,10 @@ export const checkPasswordDocs = {
   `,
   },
   noContentResponse: {
-    description: CHECK_PASSWORD_MESSAGE,
+    description: AuthMessage.CHECK_PASSWORD_MESSAGE,
   },
   invalidCheckPassword: {
     type: ResInvalidCheckPassword,
-    description: AUTH_INVALID_PASSWORD,
+    description: AuthErrorMessage.AUTH_INVALID_PASSWORD,
   },
 };

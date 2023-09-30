@@ -5,7 +5,7 @@ import {
   ReqAdminCreateBadgeAppDto,
   ResAdminCreateBadgeAppDto,
 } from '@admin/badge/domain/dto/createBadge.admin.app.dto';
-import { CONFLICT_BADGE_NAME } from '@shared/messages/admin/badge.admin.errors';
+import { BadgeAdminErrorMessage } from '@shared/messages/admin/badge.admin.errors';
 import { mockBadge } from '@shared/test/badgeMockData';
 import { ReqAdminUpdateBadgeAppDto } from '@admin/badge/domain/dto/updateBadge.admin.app.dto';
 
@@ -57,7 +57,9 @@ describe('updateBadge', () => {
       await badgeAdminService.updateBadge({ id, name: '기본 뱃지' });
     } catch (error) {
       expect(error.response.statusCode).toEqual(409);
-      expect(error.response.message).toEqual(CONFLICT_BADGE_NAME);
+      expect(error.response.message).toEqual(
+        BadgeAdminErrorMessage.CONFLICT_BADGE_NAME,
+      );
       expect(error.response.error).toEqual('Conflict');
       await badgeAdminService.deleteBadge({ id });
     }

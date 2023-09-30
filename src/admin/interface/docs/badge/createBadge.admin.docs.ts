@@ -1,5 +1,5 @@
 import { ResCreateBadgeConflict } from '@admin/interface/dto/badge/createBadge.admin.dto';
-import { CREATE_BADGE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin.messages';
+import { BadgeAdminMessage } from '@shared/messages/admin/badge.admin.messages';
 
 export const createBadgeDocs = {
   operation: {
@@ -9,7 +9,7 @@ export const createBadgeDocs = {
   `,
   },
   createdResponse: {
-    description: CREATE_BADGE_SUCCESS_MESSAGE,
+    description: BadgeAdminMessage.CREATE_BADGE_SUCCESS_MESSAGE,
   },
   conflict: {
     type: ResCreateBadgeConflict,

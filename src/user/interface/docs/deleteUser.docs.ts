@@ -1,4 +1,4 @@
-import { DELETE_USER_SUCCESS_MESSAGE } from '@shared/messages/user/user.messages';
+import { UserMessage } from '@shared/messages/user/user.messages';
 
 export const deleteUserDocs = {
   operation: {
@@ -8,6 +8,6 @@ export const deleteUserDocs = {
   `,
   },
   noContentResponse: {
-    description: DELETE_USER_SUCCESS_MESSAGE,
+    description: UserMessage.DELETE_USER_SUCCESS_MESSAGE,
   },
 };

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '@user/app/user.service';
 import { ReqRegisterAppDto } from '@user/domain/dto/register.app.dto';
 import { PrismaService } from '@shared/service/prisma.service';
-import { USER_ALREADY_EXIST } from '@shared/messages/user/user.errors';
+import { UserErrorMessage } from '@shared/messages/user/user.errors';
 import { userServiceTestModuleOptions } from './userService.test.option';
 import { MOCK_USER, TEST_PASSWORD } from '@shared/test/userMockData';
 
@@ -40,7 +40,9 @@ describe('register', () => {
       await userService.register(request);
     } catch (error) {
       expect(error.response.statusCode).toEqual(409);
-      expect(error.response.message).toEqual(USER_ALREADY_EXIST);
+      expect(error.response.message).toEqual(
+        UserErrorMessage.USER_ALREADY_EXIST,
+      );
       await prismaService.user.delete({ where: { email: request.email } });
     }
   }, 30000);

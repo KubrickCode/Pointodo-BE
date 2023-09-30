@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { POINTS } from '@shared/constants/point.constant';
-import { USER_EMAIL, USER_ID } from '@shared/constants/user.constant';
+import { PointConstant } from '@shared/constants/point.constant';
+import { UserConstant } from '@shared/constants/user.constant';
 import { IsString } from 'class-validator';
 import { UUID } from 'crypto';
 
@@ -14,15 +14,15 @@ export class ReqGetTopUsersOnDateQueryDto {
 }
 
 export class ResGetTopUsersOnDateDto {
-  @ApiProperty({ description: USER_ID })
+  @ApiProperty({ description: UserConstant.USER_ID })
   @IsString()
   readonly userId: UUID;
 
-  @ApiProperty({ description: USER_EMAIL })
+  @ApiProperty({ description: UserConstant.USER_EMAIL })
   @IsString()
   readonly email: string;
 
-  @ApiProperty({ description: POINTS })
+  @ApiProperty({ description: PointConstant.POINTS })
   @IsString()
   readonly points: number;
 }

@@ -1,7 +1,4 @@
-import {
-  AUTH_EXPIRED_REFRESH_TOKEN,
-  AUTH_INVALID_TOKEN,
-} from '@shared/messages/auth/auth.errors';
+import { AuthErrorMessage } from '@shared/messages/auth/auth.errors';
 
 export const refreshDocs = {
   operation: {
@@ -16,7 +13,7 @@ export const refreshDocs = {
   },
   unauthorizedResponse: {
     description: `리프레시 토큰 검증 실패 및 쿠키에 정의된 액세스 토큰과 리프레시 토큰 삭제\n
-      에러 메시지 유형: ${AUTH_INVALID_TOKEN} or ${AUTH_EXPIRED_REFRESH_TOKEN}
+      에러 메시지 유형: ${AuthErrorMessage.AUTH_INVALID_TOKEN} or ${AuthErrorMessage.AUTH_EXPIRED_REFRESH_TOKEN}
       `,
   },
 };

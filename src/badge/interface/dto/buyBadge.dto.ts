@@ -1,15 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BADGE_ID } from '@shared/constants/badge.constant';
-import {
-  ALREADY_EXIST_USER_BADGE,
-  BUY_BADGE_CONFLICT_POINTS,
-  BUY_BADGE_LESS_POINTS,
-} from '@shared/messages/badge/badge.errors';
+import { BadgeConstant } from '@shared/constants/badge.constant';
+import { BadgeErrorMessage } from '@shared/messages/badge/badge.errors';
 import { Type } from 'class-transformer';
 import { IsArray, IsInt, IsString } from 'class-validator';
 
 export class ReqBuyBadgeParamDto {
-  @ApiProperty({ description: BADGE_ID })
+  @ApiProperty({ description: BadgeConstant.BADGE_ID })
   @Type(() => Number)
   @IsInt()
   readonly badgeId: number;
@@ -21,7 +17,7 @@ export class ResBuyBadgeConflictError {
   readonly statusCode: number;
 
   @ApiProperty({
-    example: `${BUY_BADGE_LESS_POINTS} | ${ALREADY_EXIST_USER_BADGE} | ${BUY_BADGE_CONFLICT_POINTS}`,
+    example: `${BadgeErrorMessage.BUY_BADGE_LESS_POINTS} | ${BadgeErrorMessage.ALREADY_EXIST_USER_BADGE} | ${BadgeErrorMessage.BUY_BADGE_CONFLICT_POINTS}`,
     description: '에러 메시지',
   })
   @IsArray()

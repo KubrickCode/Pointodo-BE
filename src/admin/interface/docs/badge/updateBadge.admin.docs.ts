@@ -1,5 +1,5 @@
 import { ResAdminUpdateBadgeConflict } from '@admin/interface/dto/badge/updateBadge.admin.dto';
-import { UPDATE_BADGE_SUCCESS_MESSAGE } from '@shared/messages/admin/badge.admin.messages';
+import { BadgeAdminMessage } from '@shared/messages/admin/badge.admin.messages';
 
 export const updateBadgeDocs = {
   operation: {
@@ -9,7 +9,7 @@ export const updateBadgeDocs = {
   `,
   },
   noContentResponse: {
-    description: UPDATE_BADGE_SUCCESS_MESSAGE,
+    description: BadgeAdminMessage.UPDATE_BADGE_SUCCESS_MESSAGE,
   },
   conflict: {
     type: ResAdminUpdateBadgeConflict,

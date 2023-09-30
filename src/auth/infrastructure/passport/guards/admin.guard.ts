@@ -1,4 +1,4 @@
-import { AUTH_INVALID_ADMIN } from '@shared/messages/auth/auth.errors';
+import { AuthErrorMessage } from '@shared/messages/auth/auth.errors';
 import { IAuthService } from '@auth/domain/interfaces/auth.service.interface';
 import {
   CanActivate,
@@ -22,7 +22,7 @@ export class AdminAuthGuard implements CanActivate {
       await this.authService.validateAdmin({ id });
       return true;
     } catch (e) {
-      throw new ForbiddenException(AUTH_INVALID_ADMIN);
+      throw new ForbiddenException(AuthErrorMessage.AUTH_INVALID_ADMIN);
     }
   }
 }

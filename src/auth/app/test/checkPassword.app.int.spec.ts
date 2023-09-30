@@ -8,8 +8,8 @@ import {
 } from '@shared/test/userMockData';
 import { ReqCheckPasswordAppDto } from '@auth/domain/dto/checkPassword.app.dto';
 import { HttpStatus } from '@nestjs/common';
-import { AUTH_INVALID_PASSWORD } from '@shared/messages/auth/auth.errors';
-import { USER_EXIST_WITH_SOCIAL } from '@shared/messages/user/user.errors';
+import { AuthErrorMessage } from '@shared/messages/auth/auth.errors';
+import { UserErrorMessage } from '@shared/messages/user/user.errors';
 
 describe('checkPassword', () => {
   let authService: AuthService;
@@ -48,7 +48,9 @@ describe('checkPassword', () => {
       });
     } catch (error) {
       expect(error.response.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
-      expect(error.response.message).toEqual(AUTH_INVALID_PASSWORD);
+      expect(error.response.message).toEqual(
+        AuthErrorMessage.AUTH_INVALID_PASSWORD,
+      );
       expect(error.response.error).toEqual('Unauthorized');
     }
   }, 30000);
@@ -61,7 +63,9 @@ describe('checkPassword', () => {
       });
     } catch (error) {
       expect(error.response.statusCode).toEqual(HttpStatus.CONFLICT);
-      expect(error.response.message).toEqual(USER_EXIST_WITH_SOCIAL);
+      expect(error.response.message).toEqual(
+        UserErrorMessage.USER_EXIST_WITH_SOCIAL,
+      );
       expect(error.response.error).toEqual('Conflict');
     }
   }, 30000);

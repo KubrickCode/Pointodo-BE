@@ -5,7 +5,7 @@ import {
   ReqCreateTaskAppDto,
   ResCreateTaskAppDto,
 } from '@task/domain/dto/createTask.app.dto';
-import { DUE_DATE_IN_THE_PAST } from '@shared/messages/task/task.errors';
+import { TaskErrorMessage } from '@shared/messages/task/task.errors';
 import { mockTask } from '@shared/test/taskMockData';
 
 describe('createTask', () => {
@@ -59,7 +59,9 @@ describe('createTask', () => {
       await taskService.createTask(request);
     } catch (error) {
       expect(error.response.statusCode).toEqual(400);
-      expect(error.response.message[0]).toEqual(DUE_DATE_IN_THE_PAST);
+      expect(error.response.message[0]).toEqual(
+        TaskErrorMessage.DUE_DATE_IN_THE_PAST,
+      );
       expect(error.response.error).toEqual('Bad Request');
     }
   }, 30000);

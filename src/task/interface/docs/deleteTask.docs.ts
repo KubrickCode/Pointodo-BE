@@ -1,4 +1,4 @@
-import { DELETE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
+import { TaskMessage } from '@shared/messages/task/task.message';
 
 export const deleteTaskDocs = {
   operation: {
@@ -8,6 +8,6 @@ export const deleteTaskDocs = {
   `,
   },
   noContentResponse: {
-    description: DELETE_TASK_SUCCESS_MESSAGE,
+    description: TaskMessage.DELETE_TASK_SUCCESS_MESSAGE,
   },
 };

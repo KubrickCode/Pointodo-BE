@@ -1,8 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  AUTH_EXPIRED_TOKEN,
-  AUTH_INVALID_TOKEN,
-} from '@shared/messages/auth/auth.errors';
+import { AuthErrorMessage } from '@shared/messages/auth/auth.errors';
 import { IsInt, IsString } from 'class-validator';
 
 export class ResTokenUnauthorized {
@@ -11,7 +8,7 @@ export class ResTokenUnauthorized {
   readonly statusCode: number;
 
   @ApiProperty({
-    example: `${AUTH_INVALID_TOKEN} | ${AUTH_EXPIRED_TOKEN}`,
+    example: `${AuthErrorMessage.AUTH_INVALID_TOKEN} | ${AuthErrorMessage.AUTH_EXPIRED_TOKEN}`,
     description: '에러 메시지',
   })
   @IsString()

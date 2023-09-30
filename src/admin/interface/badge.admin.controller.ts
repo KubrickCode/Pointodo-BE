@@ -42,7 +42,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { uploadFileDocs } from './docs/badge/uploadFile.admin.docs';
 import { ResAdminUploadFileDto } from './dto/badge/uploadFile.admin.dto';
-import { IBADGE_ADMIN_SERVICE } from '@shared/constants/provider.constant';
+import { ProviderConstant } from '@shared/constants/provider.constant';
 
 @Controller('/admin/badges')
 @ApiTags('Admin - Badge')
@@ -52,7 +52,7 @@ import { IBADGE_ADMIN_SERVICE } from '@shared/constants/provider.constant';
 @UseGuards(JwtAuthGuard, AdminAuthGuard)
 export class BadgeAdminController {
   constructor(
-    @Inject(IBADGE_ADMIN_SERVICE)
+    @Inject(ProviderConstant.IBADGE_ADMIN_SERVICE)
     private readonly badgeAdminService: IBadgeAdminService,
   ) {}
 

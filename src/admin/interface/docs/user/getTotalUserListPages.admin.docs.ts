@@ -1,5 +1,5 @@
 import { ResAdminGetTotalUserListPagesDto } from '@admin/interface/dto/user/getTotalUserListPages.admin.dto';
-import { USER_LIST_PAGE } from '@shared/constants/user.constant';
+import { UserConstant } from '@shared/constants/user.constant';
 
 export const getTotalUserListPagesDocs = {
   operation: {
@@ -10,6 +10,6 @@ export const getTotalUserListPagesDocs = {
   },
   okResponse: {
     type: ResAdminGetTotalUserListPagesDto,
-    description: USER_LIST_PAGE,
+    description: UserConstant.USER_LIST_PAGE,
   },
 };

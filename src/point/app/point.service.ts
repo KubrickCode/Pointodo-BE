@@ -18,17 +18,14 @@ import {
   ResGetTotalPointPagesAppDto,
 } from '@point/domain/dto/getTotalPointPages.app.dto';
 import { plainToClass } from 'class-transformer';
-import {
-  ICACHE_SERVICE,
-  IPOINT_REPOSITORY,
-} from '@shared/constants/provider.constant';
+import { ProviderConstant } from '@shared/constants/provider.constant';
 
 @Injectable()
 export class PointService implements IPointService {
   constructor(
-    @Inject(IPOINT_REPOSITORY)
+    @Inject(ProviderConstant.IPOINT_REPOSITORY)
     private readonly pointRepository: IPointRepository,
-    @Inject(ICACHE_SERVICE)
+    @Inject(ProviderConstant.ICACHE_SERVICE)
     private readonly cacheService: ICacheService,
     private readonly configService: ConfigService,
   ) {}

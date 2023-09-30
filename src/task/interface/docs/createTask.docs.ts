@@ -1,4 +1,4 @@
-import { CREATE_TASK_SUCCESS_MESSAGE } from '@shared/messages/task/task.message';
+import { TaskMessage } from '@shared/messages/task/task.message';
 
 export const createTaskDocs = {
   operation: {
@@ -8,6 +8,6 @@ export const createTaskDocs = {
   `,
   },
   createdResponse: {
-    description: CREATE_TASK_SUCCESS_MESSAGE,
+    description: TaskMessage.CREATE_TASK_SUCCESS_MESSAGE,
   },
 };

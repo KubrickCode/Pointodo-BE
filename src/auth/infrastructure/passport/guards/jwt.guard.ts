@@ -1,12 +1,4 @@
-import {
-  AUTH_EMPTY_TOKEN,
-  AUTH_EXPIRED_TOKEN,
-  AUTH_INVALID_TOKEN,
-  JWT_EXPIRED,
-  JWT_INVALID_TOKEN,
-  JWT_MALFORMED,
-  JWT_NOT_PROVIDED,
-} from '@shared/messages/auth/auth.errors';
+import { AuthErrorMessage } from '@shared/messages/auth/auth.errors';
 import {
   Injectable,
   ExecutionContext,
@@ -20,7 +12,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { jwtConfig } from '@shared/config/jwt.config';
 import { IUserRepository } from '@user/domain/interfaces/user.repository.interface';
 import { DecodedAccessToken } from '@auth/domain/interfaces/decodedToken.interface';
-import { USER_NOT_FOUND } from '@shared/messages/user/user.errors';
+import { UserErrorMessage } from '@shared/messages/user/user.errors';
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(
@@ -51,19 +43,20 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         secret: secretKey,
       });
       const user = await this.userRepository.findById(verify.id);
-      if (!user) throw new UnauthorizedException(USER_NOT_FOUND);
+      if (!user)
+        throw new UnauthorizedException(UserErrorMessage.USER_NOT_FOUND);
       return { id: verify.id };
     } catch (error) {
       switch (error.message) {
-        case JWT_INVALID_TOKEN:
-        case JWT_MALFORMED:
-          throw new UnauthorizedException(AUTH_INVALID_TOKEN);
-        case JWT_EXPIRED:
-          throw new UnauthorizedException(AUTH_EXPIRED_TOKEN);
-        case JWT_NOT_PROVIDED:
-          throw new UnauthorizedException(AUTH_EMPTY_TOKEN);
-        case USER_NOT_FOUND:
-          throw new UnauthorizedException(USER_NOT_FOUND);
+        case AuthErrorMessage.JWT_INVALID_TOKEN:
+        case AuthErrorMessage.JWT_MALFORMED:
+          throw new UnauthorizedException(AuthErrorMessage.AUTH_INVALID_TOKEN);
+        case AuthErrorMessage.JWT_EXPIRED:
+          throw new UnauthorizedException(AuthErrorMessage.AUTH_EXPIRED_TOKEN);
+        case AuthErrorMessage.JWT_NOT_PROVIDED:
+          throw new UnauthorizedException(AuthErrorMessage.AUTH_EMPTY_TOKEN);
+        case UserErrorMessage.USER_NOT_FOUND:
+          throw new UnauthorizedException(UserErrorMessage.USER_NOT_FOUND);
         default:
           throw new HttpException('서버 오류', 500);
       }

@@ -32,7 +32,7 @@ import {
   ResGetTotalPointPagesDto,
 } from './dto/getTotalPointPages.dto';
 import { getTotalPointPagesDocs } from './docs/getTotalPointPages.docs';
-import { IPOINT_SERVICE } from '@shared/constants/provider.constant';
+import { ProviderConstant } from '@shared/constants/provider.constant';
 import { plainToClass } from 'class-transformer';
 
 @Controller('points')
@@ -42,7 +42,7 @@ import { plainToClass } from 'class-transformer';
 @ApiUnauthorizedResponse(globalDocs.unauthorizedResponse)
 export class PointController {
   constructor(
-    @Inject(IPOINT_SERVICE)
+    @Inject(ProviderConstant.IPOINT_SERVICE)
     private readonly pointService: IPointService,
   ) {}
 
