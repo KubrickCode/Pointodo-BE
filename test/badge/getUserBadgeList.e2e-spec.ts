@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { AppModule } from '../../src/app.module';
+import { AppModule } from '../../src/App.module';
 import { requestE2E } from '../request.e2e';
 import cookieParser from 'cookie-parser';
 import { plainToClass } from 'class-transformer';
 import { setupLoggedIn } from '../setupLoggedIn.e2e';
 import { validateOrReject } from 'class-validator';
-import { ResGetUserBadgeListDto } from '@badge/interface/dto/getUserBadgeList.dto';
+import { ResGetUserBadgeListDto } from '@badge/interface/dto/GetUserBadgeList.dto';
 import { tokenError } from '../tokenError.e2e';
 
 describe('유저 뱃지 목록 조회 in BadgeController (e2e)', () => {

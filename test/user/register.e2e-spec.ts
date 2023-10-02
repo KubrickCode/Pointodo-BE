@@ -1,18 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { AppModule } from '../../src/app.module';
-import { USER_ALREADY_EXIST } from '@shared/messages/user/user.errors';
-import {
-  VALIDATE_EMAIL,
-  VALIDATE_PASSWORD,
-} from '@shared/messages/auth/auth.messages';
+import { AppModule } from '../../src/App.module';
+import { UserErrorMessage } from '@shared/messages/user/User.errors';
+import { AuthMessage } from '@shared/messages/auth/Auth.messages';
 import { requestE2E } from '../request.e2e';
 import cookieParser from 'cookie-parser';
 import { validateOrReject } from 'class-validator';
-import { ResRegisterExistUserError } from '@user/interface/dto/register.dto';
+import { ResRegisterExistUserError } from '@user/interface/dto/Register.dto';
 import { plainToClass } from 'class-transformer';
-import { ResInvalidation } from '@shared/dto/global.dto';
-import { MOCK_USER, TEST_PASSWORD } from '@shared/test/userMockData';
+import { ResInvalidation } from '@shared/dto/Global.dto';
+import { MOCK_USER, TEST_PASSWORD } from '@shared/test/UserMockData';
 
 describe('회원가입 in UserController (e2e)', () => {
   let app: INestApplication;
@@ -51,7 +48,7 @@ describe('회원가입 in UserController (e2e)', () => {
     const response = await requestE2E(app, path, 'post', 409, body);
 
     expect(response.body.statusCode).toEqual(409);
-    expect(response.body.message).toEqual(USER_ALREADY_EXIST);
+    expect(response.body.message).toEqual(UserErrorMessage.USER_ALREADY_EXIST);
     expect(response.body.path).toEqual(path);
     await validateOrReject(
       plainToClass(ResRegisterExistUserError, response.body),
@@ -65,7 +62,10 @@ describe('회원가입 in UserController (e2e)', () => {
     });
 
     expect(response.body.statusCode).toEqual(400);
-    expect(response.body.message).toEqual([VALIDATE_EMAIL, VALIDATE_PASSWORD]);
+    expect(response.body.message).toEqual([
+      AuthMessage.VALIDATE_EMAIL,
+      AuthMessage.VALIDATE_PASSWORD,
+    ]);
     expect(response.body.path).toEqual(path);
     await validateOrReject(plainToClass(ResInvalidation, response.body));
   }, 30000);

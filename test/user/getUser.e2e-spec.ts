@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { AppModule } from '../../src/app.module';
+import { AppModule } from '../../src/App.module';
 import { requestE2E } from '../request.e2e';
 import cookieParser from 'cookie-parser';
 import { plainToClass } from 'class-transformer';
-import { ResGetUserDto } from '@user/interface/dto/getUser.dto';
+import { ResGetUserDto } from '@user/interface/dto/GetUser.dto';
 import { setupLoggedIn } from '../setupLoggedIn.e2e';
-import { TEST1_USER_LOCAL } from '@shared/test/userMockData';
+import { TEST1_USER_LOCAL } from '@shared/test/UserMockData';
 import { validateOrReject } from 'class-validator';
 import { tokenError } from '../tokenError.e2e';
 

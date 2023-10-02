@@ -1,4 +1,4 @@
-import { TransactionClient } from '@shared/types/transaction.type';
+import { TransactionClient } from '@shared/types/Transaction.type';
 
 export interface ITransactionService {
   runInTransaction<T>(

@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { AppModule } from '../../src/app.module';
+import { AppModule } from '../../src/App.module';
 import { requestE2E } from '../request.e2e';
 import cookieParser from 'cookie-parser';
-import { ReqCreateTaskDto } from '@task/interface/dto/createTask.dto';
+import { ReqCreateTaskDto } from '@task/interface/dto/CreateTask.dto';
 import { validateOrReject } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { ResInvalidation } from '@shared/dto/global.dto';
-import { DUE_DATE_IN_THE_PAST } from '@shared/messages/task/task.errors';
+import { ResInvalidation } from '@shared/dto/Global.dto';
+import { TaskErrorMessage } from '@shared/messages/task/Task.errors';
 import { setupLoggedIn } from '../setupLoggedIn.e2e';
 import { tokenError } from '../tokenError.e2e';
-import { mockTask } from '@shared/test/taskMockData';
+import { mockTask } from '@shared/test/TaskMockData';
 
 describe('createTask in taskController (e2e)', () => {
   let app: INestApplication;
@@ -150,7 +150,9 @@ describe('createTask in taskController (e2e)', () => {
     );
 
     expect(response.body.statusCode).toEqual(400);
-    expect(response.body.message[0]).toEqual(DUE_DATE_IN_THE_PAST);
+    expect(response.body.message[0]).toEqual(
+      TaskErrorMessage.DUE_DATE_IN_THE_PAST,
+    );
     expect(response.body.path).toEqual(path);
 
     await validateOrReject(plainToClass(ResInvalidation, response.body));

@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { AppModule } from '../../src/app.module';
+import { AppModule } from '../../src/App.module';
 import { requestE2E } from '../request.e2e';
 import cookieParser from 'cookie-parser';
 import { plainToClass } from 'class-transformer';
 import { setupLoggedIn } from '../setupLoggedIn.e2e';
 import { validateOrReject } from 'class-validator';
 import { tokenError } from '../tokenError.e2e';
-import { ResGetCurrentPointsDto } from '@point/interface/dto/getCurrentPoints.dto';
+import { ResGetCurrentPointsDto } from '@point/interface/dto/GetCurrentPoints.dto';
 
 describe('유저 포인트 잔액 조회 in PointController (e2e)', () => {
   let app: INestApplication;

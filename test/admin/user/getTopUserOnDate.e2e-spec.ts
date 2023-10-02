@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { AppModule } from '../../../src/app.module';
+import { AppModule } from '../../../src/App.module';
 import { requestE2E } from '../../request.e2e';
 import cookieParser from 'cookie-parser';
 import { setupLoggedIn } from '../../setupLoggedIn.e2e';
 import {
   ReqGetTopUsersOnDateQueryDto,
   ResGetTopUsersOnDateDto,
-} from '@admin/interface/dto/user/getTopUserOnDate.dto';
+} from '@admin/interface/dto/user/GetTopUserOnDate.dto';
 import { validateOrReject } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 

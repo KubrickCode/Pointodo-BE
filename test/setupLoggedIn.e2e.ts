@@ -1,4 +1,4 @@
-import { TEST1_USER_LOCAL, TEST_PASSWORD } from '@shared/test/userMockData';
+import { TEST1_USER_LOCAL, TEST_PASSWORD } from '@shared/test/UserMockData';
 import { requestE2E } from './request.e2e';
 import { INestApplication } from '@nestjs/common';
 

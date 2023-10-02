@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
-import { AppModule } from '../../src/app.module';
+import { AppModule } from '../../src/App.module';
 import { requestE2E } from '../request.e2e';
-import { TEST_PASSWORD } from '../../src/shared/test/userMockData';
+import { TEST_PASSWORD } from '../../src/shared/test/UserMockData';
 import cookieParser from 'cookie-parser';
 import { setupLoggedIn } from '../setupLoggedIn.e2e';
-import { AUTH_INVALID_PASSWORD } from '@shared/messages/auth/auth.errors';
+import { AuthErrorMessage } from '@shared/messages/auth/Auth.errors';
 
 describe('checkPassword in AuthController (e2e)', () => {
   let app: INestApplication;
@@ -47,7 +47,9 @@ describe('checkPassword in AuthController (e2e)', () => {
       accessToken,
     );
     expect(response.body.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
-    expect(response.body.message).toEqual(AUTH_INVALID_PASSWORD);
+    expect(response.body.message).toEqual(
+      AuthErrorMessage.AUTH_INVALID_PASSWORD,
+    );
     expect(response.body.path).toEqual(path);
   }, 30000);
 });
