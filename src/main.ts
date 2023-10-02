@@ -1,20 +1,20 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './App.module';
 import { ConfigService } from '@nestjs/config';
 import cookieParser from 'cookie-parser';
-import { corsOptions } from '@shared/config/cors.config';
+import { corsOptions } from '@shared/config/Cors.config';
 import {
   swaggerAuthConfig,
   swaggerConfig,
   swaggerEndPoint,
-} from '@shared/config/swagger.config';
+} from '@shared/config/Swagger.config';
 import { SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import basicAuth from 'express-basic-auth';
 import csurf from 'csurf';
-import { csrfConfig } from '@shared/config/csrf.config';
-import { helmetConfig } from '@shared/config/helmet.config';
+import { csrfConfig } from '@shared/config/Csrf.config';
+import { helmetConfig } from '@shared/config/Helmet.config';
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);

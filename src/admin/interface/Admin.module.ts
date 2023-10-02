@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { BadgeAdminController } from '@admin/interface/badge.admin.controller';
-import { jwtConfig } from '@shared/config/jwt.config';
+import { BadgeAdminController } from '@admin/interface/Badge.admin.controller';
+import { jwtConfig } from '@shared/config/Jwt.config';
 import { MulterModule } from '@nestjs/platform-express';
-import { multerOptionsFactory } from '@shared/utils/multer.options.factory';
-import { UserAdminController } from './user.admin.controller';
-import { AdminProvider } from './admin.provider';
-import { UserModule } from '@user/interface/user.module';
-import { AuthModule } from '@auth/interface/auth.module';
-import { BadgeModule } from '@badge/interface/badge.module';
+import { multerOptionsFactory } from '@shared/utils/Multer.options.factory';
+import { UserAdminController } from './User.admin.controller';
+import { AdminProvider } from './Admin.provider';
+import { UserModule } from '@user/interface/User.module';
+import { AuthModule } from '@auth/interface/Auth.module';
+import { BadgeModule } from '@badge/interface/Badge.module';
 @Module({
   controllers: [BadgeAdminController, UserAdminController],
   providers: AdminProvider,
